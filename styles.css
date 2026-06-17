@@ -670,6 +670,52 @@ ul {
     line-height: 1.7;
 }
 
+.feature-card-lg {
+    text-align: left !important;
+    padding: 32px !important;
+}
+
+.feature-card-lg h3 {
+    text-align: center;
+}
+
+.feature-card-lg p {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.feature-detail {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-detail li {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+}
+
+.feature-detail li:last-child {
+    border-bottom: none;
+}
+
+.feature-detail li i {
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.feature-detail li strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
 /* ========== 数据统计 ========== */
 .stats-section {
     background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
@@ -1291,6 +1337,20 @@ ul {
 
 body.modal-open {
     overflow: hidden;
+}
+
+/* 可选方案点击样式 */
+.option-item {
+    transition: var(--transition);
+}
+
+.option-item:hover {
+    background: var(--primary-light) !important;
+    transform: translateX(4px);
+}
+
+.btn-back:hover {
+    color: var(--primary-dark) !important;
 }
 
 /* 搜索框禁用状态 */
