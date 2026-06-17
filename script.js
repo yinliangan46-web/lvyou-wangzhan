@@ -178,6 +178,38 @@ function handleSearch() {
         '迪拜': 'dubai', '阿联酋': 'dubai', 'dubai': 'dubai',
         '曼谷': 'bangkok', '泰国': 'bangkok', 'bangkok': 'bangkok',
         '伦敦': 'london', '英国': 'london', 'london': 'london',
+        '北京': 'beijing', '首都': 'beijing',
+        '上海': 'shanghai', '魔都': 'shanghai',
+        '广州': 'guangzhou', '深圳': 'shenzhen',
+        '成都': 'chengdu', '四川': 'chengdu',
+        '杭州': 'hangzhou', '浙江': 'hangzhou',
+        '西安': 'xian', '陕西': 'xian',
+        '重庆': 'chongqing',
+        '武汉': 'wuhan', '湖北': 'wuhan',
+        '长沙': 'changsha', '湖南': 'changsha',
+        '南京': 'nanjing', '江苏': 'nanjing',
+        '沈阳': 'shenyang', '辽宁': 'shenyang',
+        '哈尔滨': 'harbin', '黑龙江': 'harbin',
+        '昆明': 'kunming', '云南': 'kunming',
+        '合肥': 'hefei', '安徽': 'hefei',
+        '福州': 'fuzhou', '福建': 'fuzhou',
+        '南昌': 'nanchang', '江西': 'nanchang',
+        '郑州': 'zhengzhou', '河南': 'zhengzhou',
+        '济南': 'jinan', '山东': 'jinan',
+        '石家庄': 'shijiazhuang', '河北': 'shijiazhuang',
+        '太原': 'taiyuan', '山西': 'taiyuan',
+        '呼和浩特': 'huhehaote', '内蒙古': 'huhehaote',
+        '长春': 'changchun', '吉林': 'changchun',
+        '南宁': 'nanning', '广西': 'nanning',
+        '海口': 'haikou', '海南': 'haikou',
+        '贵阳': 'guiyang', '贵州': 'guiyang',
+        '拉萨': 'lasa', '西藏': 'lasa',
+        '兰州': 'lanzhou', '甘肃': 'lanzhou',
+        '西宁': 'xining', '青海': 'xining',
+        '银川': 'yinchuan', '宁夏': 'yinchuan',
+        '乌鲁木齐': 'urumqi', '新疆': 'urumqi',
+        '桂林': 'guilin', '阳朔': 'guilin',
+        '大理': 'dali',
     };
 
     // 检查是否匹配目的地
@@ -194,6 +226,7 @@ function handleSearch() {
         '海岛': 'island', '海滩': 'island', '度假': 'island',
         '文化': 'culture', '历史': 'culture', '古迹': 'culture',
         '城市': 'city', '都市': 'city', '漫游': 'city',
+        '南京': 'nanjing_tour', '六安': 'luan_tour', '大别山': 'luan_tour',
     };
 
     for (const [key, value] of Object.entries(tourMap)) {
@@ -204,7 +237,7 @@ function handleSearch() {
         }
     }
 
-    alert('未找到 "' + keyword + '" 相关内容。试试搜索：巴黎、东京、巴厘岛、迪拜、曼谷、伦敦');
+    alert('未找到 "' + keyword + '" 相关内容。试试搜索城市名：巴黎、东京、北京、上海、南京、成都、西安等');
 }
 
 // 回车搜索
@@ -331,7 +364,75 @@ const destinationData = {
             { day: 'Day 8', title: '返程', desc: '自由活动，前往机场返程。' },
         ],
         includes: ['往返机票', '四星级酒店', '中文导游', '景点门票', '伦敦眼体验', '旅行保险']
-    }
+    },
+    // ==== 中国省会/直辖市 ====
+    beijing: {name:'北京',country:'北京',tag:'千年古都',rating:4.9,days:'5天4晚',price:'¥3,299',img:'https://images.unsplash.com/photo-1570320324089-8997b16ea7e1?w=800&q=80',description:'北京，中华人民共和国的首都，一座拥有三千年历史的文化古都。故宫的红墙黄瓦、长城的雄伟壮观、颐和园的皇家园林、胡同里的老北京生活，处处展现着这座城市的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达北京',desc:'接机入住，傍晚游览王府井大街。'},{day:'Day 2',title:'天安门 & 故宫',desc:'上午参观天安门广场、故宫博物院，下午游览景山公园俯瞰故宫全景。'},{day:'Day 3',title:'八达岭长城',desc:'全天游览八达岭长城，感受"不到长城非好汉"的豪情。'},{day:'Day 4',title:'颐和园 & 天坛',desc:'游览颐和园、天坛公园，晚上品尝北京烤鸭。'},{day:'Day 5',title:'返程',desc:'自由活动，根据航班/高铁时间送站。'}],includes:['往返交通','四星级酒店','中文导游','景点门票','烤鸭体验','旅行保险']},
+    shanghai: {name:'上海',country:'上海',tag:'魔都风情',rating:4.8,days:'4天3晚',price:'¥2,999',img:'https://images.unsplash.com/photo-1537531383496-f4749b66e522?w=800&q=80',description:'上海，中国的经济中心，一座传统与现代完美融合的国际大都市。外滩的万国建筑群、陆家嘴的摩天大楼、豫园的江南园林、弄堂里的市井烟火，共同演绎着"魔都"的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达上海',desc:'接机入住，晚上游览外滩、欣赏陆家嘴夜景。'},{day:'Day 2',title:'迪士尼乐园',desc:'全天畅游上海迪士尼乐园。'},{day:'Day 3',title:'豫园 & 新天地',desc:'游览豫园、城隍庙，下午逛新天地、南京路步行街。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','迪士尼门票','中文导游','旅行保险']},
+    guangzhou: {name:'广州',country:'广东',tag:'食在广州',rating:4.7,days:'4天3晚',price:'¥2,599',img:'https://images.unsplash.com/photo-1571825024545-b4f155927ee5?w=800&q=80',description:'广州，一座有着两千多年历史的文化名城，也是中国南方的美食之都。从早茶到宵夜，从广州塔到沙面，从陈家祠到白云山，美食与美景完美融合。',itinerary:[
+        {day:'Day 1',title:'抵达广州',desc:'接机入住，晚上品尝正宗粤式晚茶。'},{day:'Day 2',title:'广州塔 & 沙面',desc:'登广州塔俯瞰全城，游览沙面欧陆风情建筑群。'},{day:'Day 3',title:'陈家祠 & 上下九',desc:'参观陈家祠，在上下九步行街品尝地道美食。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','粤式美食体验','景点门票','旅行保险']},
+    shenzhen: {name:'深圳',country:'广东',tag:'创新之都',rating:4.6,days:'4天3晚',price:'¥2,799',img:'https://images.unsplash.com/photo-1571825024545-b4f155927ee5?w=800&q=80',description:'深圳，中国改革开放的窗口，从一个小渔村蜕变为国际化创新大都市。世界之窗、华侨城、大梅沙海滨公园，展现着这座年轻城市的活力与魅力。',itinerary:[
+        {day:'Day 1',title:'抵达深圳',desc:'接机入住，晚上游览深圳湾公园。'},{day:'Day 2',title:'世界之窗 & 欢乐谷',desc:'游览世界之窗，下午在欢乐谷体验刺激游乐项目。'},{day:'Day 3',title:'大梅沙 & 中英街',desc:'在大梅沙海滨公园享受阳光沙滩，下午游览中英街。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','旅行保险']},
+    chengdu: {name:'成都',country:'四川',tag:'天府之国',rating:4.9,days:'5天4晚',price:'¥2,899',img:'https://images.unsplash.com/photo-1590073242678-70ee3fc28f8e?w=800&q=80',description:'成都，一座来了就不想走的城市。大熊猫的故乡，美食的天堂。宽窄巷子的悠闲、锦里的繁华、都江堰的千年水利工程，处处散发着"天府之国"的魅力。',itinerary:[
+        {day:'Day 1',title:'抵达成都',desc:'接机入住，晚上逛锦里古街、品尝火锅。'},{day:'Day 2',title:'大熊猫基地',desc:'上午参观大熊猫繁育研究基地，下午游览宽窄巷子。'},{day:'Day 3',title:'都江堰 & 青城山',desc:'游览都江堰水利工程，登青城山感受道教文化。'},{day:'Day 4',title:'乐山大佛',desc:'前往乐山参观世界最大石刻坐佛——乐山大佛。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','火锅体验','景点门票','大熊猫基地','旅行保险']},
+    hangzhou: {name:'杭州',country:'浙江',tag:'人间天堂',rating:4.8,days:'4天3晚',price:'¥2,699',img:'https://images.unsplash.com/photo-1599571234902-5180d2b1c58d?w=800&q=80',description:'杭州，"上有天堂，下有苏杭"。西湖的断桥残雪、雷峰夕照，灵隐寺的钟声，龙井茶的清香，让这座城市充满了诗意与浪漫。',itinerary:[
+        {day:'Day 1',title:'抵达杭州',desc:'接站入住，傍晚漫步西湖断桥。'},{day:'Day 2',title:'西湖全景',desc:'乘船游西湖，登雷峰塔，参观岳王庙、苏堤春晓。'},{day:'Day 3',title:'灵隐寺 & 龙井村',desc:'游览灵隐寺，前往龙井村品茶、品尝杭帮菜。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','西湖游船','龙井茶体验','旅行保险']},
+    xian: {name:'西安',country:'陕西',tag:'千年古都',rating:4.8,days:'5天4晚',price:'¥2,899',img:'https://images.unsplash.com/photo-1621970186201-7c70d0d74278?w=800&q=80',description:'西安，十三朝古都，中华文明的发源地之一。秦始皇兵马俑的震撼、古城墙的雄伟、大雁塔的庄严、回民街的美食，让你穿越千年感受历史的厚重。',itinerary:[
+        {day:'Day 1',title:'抵达西安',desc:'接机入住，晚上游览钟楼、鼓楼广场。'},{day:'Day 2',title:'兵马俑 & 华清宫',desc:'参观世界第八大奇迹秦始皇兵马俑，下午游览华清宫。'},{day:'Day 3',title:'古城墙 & 大雁塔',desc:'骑行西安古城墙，参观大慈恩寺和大雁塔。'},{day:'Day 4',title:'陕西历史博物馆',desc:'参观陕西历史博物馆，晚上在回民街品尝美食。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','景点门票','中文导游','回民街美食','旅行保险']},
+    chongqing: {name:'重庆',country:'重庆',tag:'8D魔幻之城',rating:4.7,days:'4天3晚',price:'¥2,599',img:'https://images.unsplash.com/photo-1593253787226-567eda4ad32c?w=800&q=80',description:'重庆，一座建在山上的城市，被称为"8D魔幻城市"。洪崖洞的吊脚楼、李子坝轻轨穿楼、长江索道、麻辣火锅，每一个元素都让人流连忘返。',itinerary:[
+        {day:'Day 1',title:'抵达重庆',desc:'接机入住，晚上吃正宗重庆火锅。'},{day:'Day 2',title:'洪崖洞 & 解放碑',desc:'游览洪崖洞、解放碑步行街，乘坐长江索道。'},{day:'Day 3',title:'磁器口 & 李子坝',desc:'逛磁器口古镇，看李子坝轻轨穿楼奇观。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','重庆火锅体验','长江索道','旅行保险']},
+    wuhan: {name:'武汉',country:'湖北',tag:'江城名片',rating:4.6,days:'4天3晚',price:'¥2,299',img:'https://images.unsplash.com/photo-1602279678626-2572680f8b1b?w=800&q=80',description:'武汉，长江与汉江的交汇处，"九省通衢"的枢纽城市。黄鹤楼的千年诗韵、武大樱花的浪漫、户部巷的美食、东湖的碧波，构成了这座江城的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达武汉',desc:'接站入住，晚上户部巷品尝武汉小吃。'},{day:'Day 2',title:'黄鹤楼 & 长江大桥',desc:'登黄鹤楼远眺长江，步行武汉长江大桥。'},{day:'Day 3',title:'武大 & 东湖',desc:'游览武汉大学，在东湖绿道骑行。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','武汉小吃体验','东湖骑行','旅行保险']},
+    changsha: {name:'长沙',country:'湖南',tag:'娱乐之都',rating:4.6,days:'4天3晚',price:'¥2,199',img:'https://images.unsplash.com/photo-1602279678626-2572680f8b1b?w=800&q=80',description:'长沙，一座充满活力的娱乐之都。岳麓书院的书香、橘子洲头的伟人风采、太平街的美食、茶颜悦色的网红奶茶，让这座千年古城焕发着青春活力。',itinerary:[
+        {day:'Day 1',title:'抵达长沙',desc:'接站入住，晚上逛太平街、品尝湘菜。'},{day:'Day 2',title:'岳麓山 & 橘子洲',desc:'游览岳麓书院、爱晚亭，下午瞻仰橘子洲青年毛泽东雕像。'},{day:'Day 3',title:'湖南省博 & 五一广场',desc:'参观湖南省博物馆看马王堆汉墓，逛五一商圈。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','湘菜体验','景点门票','旅行保险']},
+    nanjing: {name:'南京',country:'江苏',tag:'六朝古都',rating:4.8,days:'4天3晚',price:'¥2,599',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'南京，六朝古都，十朝都会。中山陵的庄严肃穆、夫子庙的秦淮风情、明孝陵的皇家气派、南京博物院的文化珍藏，处处彰显着这座历史文化名城的深厚底蕴。',itinerary:[
+        {day:'Day 1',title:'抵达南京',desc:'接站入住，晚上游览夫子庙、秦淮河畔。'},{day:'Day 2',title:'中山陵 & 明孝陵',desc:'游览中山陵、明孝陵，感受钟山风景区的壮美。'},{day:'Day 3',title:'南京博物院 & 总统府',desc:'参观南京博物院、总统府，下午逛老门东历史街区。'},{day:'Day 4',title:'返程',desc:'自由活动，前往高铁站/机场返程。'}],includes:['往返交通','四星级酒店','秦淮河游船','景点门票','旅行保险']},
+    shenyang: {name:'沈阳',country:'辽宁',tag:'共和国长子',rating:4.5,days:'4天3晚',price:'¥2,199',img:'https://images.unsplash.com/photo-1611843467160-25afb1de7c7c?w=800&q=80',description:'沈阳，辽宁省省会，"共和国长子"，东北地区的中心城市。沈阳故宫的皇家气派、张氏帅府的历史印记、中街的繁华热闹，展现着这座工业重镇的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达沈阳',desc:'接机入住，晚上逛中街步行街。'},{day:'Day 2',title:'沈阳故宫 & 张氏帅府',desc:'参观沈阳故宫、张氏帅府，感受历史风云。'},{day:'Day 3',title:'九一八博物馆 & 北陵',desc:'参观九一八历史博物馆，游览北陵公园。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','旅行保险']},
+    harbin: {name:'哈尔滨',country:'黑龙江',tag:'冰城夏都',rating:4.5,days:'5天4晚',price:'¥2,399',img:'https://images.unsplash.com/photo-1611843467160-25afb1de7c7c?w=800&q=80',description:'哈尔滨，被誉为"东方莫斯科"和"东方小巴黎"。中央大街的欧式建筑、索菲亚大教堂的穹顶、冰雪大世界的奇幻、松花江的壮阔，让你感受北国风光的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达哈尔滨',desc:'接机入住，晚上游览中央大街。'},{day:'Day 2',title:'索菲亚教堂 & 冰雪大世界',desc:'参观索菲亚大教堂，冬季前往冰雪大世界。'},{day:'Day 3',title:'太阳岛 & 东北虎林园',desc:'游览太阳岛风景区，参观东北虎林园。'},{day:'Day 4',title:'松花江 & 老道外',desc:'漫步松花江畔，探访老道外中华巴洛克建筑群。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','冰雪大世界门票','取暖装备','旅行保险']},
+    kunming: {name:'昆明',country:'云南',tag:'春城花都',rating:4.7,days:'5天4晚',price:'¥2,699',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'昆明，"春城"之名享誉全国，四季如春的气候让这座城市永远充满生机。石林的鬼斧神工、滇池的碧波万顷、云南民族村的多彩文化，是感受云南之美的绝佳起点。',itinerary:[
+        {day:'Day 1',title:'抵达昆明',desc:'接机入住，晚上游览南屏步行街。'},{day:'Day 2',title:'石林一日游',desc:'前往石林风景区，欣赏喀斯特地貌奇观。'},{day:'Day 3',title:'滇池 & 西山',desc:'乘船游滇池，登西山龙门俯瞰昆明全景。'},{day:'Day 4',title:'云南民族村',desc:'游览云南民族村，体验25个少数民族的风情。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','少数民族表演','旅行保险']},
+    hefei: {name:'合肥',country:'安徽',tag:'大湖名城',rating:4.5,days:'4天3晚',price:'¥2,099',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'合肥，安徽省省会，一座融合了历史与创新的城市。包公园的清正廉明、三河古镇的水乡风情、巢湖的烟波浩渺，展现着这座"大湖名城"的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达合肥',desc:'接站入住，晚上逛淮河路步行街。'},{day:'Day 2',title:'包公园 & 李鸿章故居',desc:'游览包公园、李鸿章故居，感受历史文化。'},{day:'Day 3',title:'三河古镇',desc:'前往三河古镇，体验徽派水乡风情。'},{day:'Day 4',title:'返程',desc:'自由活动，前往高铁站返程。'}],includes:['往返交通','四星级酒店','徽菜体验','旅行保险']},
+    fuzhou: {name:'福州',country:'福建',tag:'榕城古韵',rating:4.5,days:'4天3晚',price:'¥2,299',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'福州，福建省省会，一座有着两千多年历史的文化名城。三坊七巷的明清建筑、鼓山的摩崖石刻、西湖公园的秀美风光，处处散发着"榕城"的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达福州',desc:'接站入住，晚上逛三坊七巷。'},{day:'Day 2',title:'三坊七巷 & 林则徐纪念馆',desc:'深度游览三坊七巷，参观林则徐纪念馆。'},{day:'Day 3',title:'鼓山 & 西湖',desc:'登鼓山观摩崖石刻，游览福州西湖公园。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','福州鱼丸体验','旅行保险']},
+    nanchang: {name:'南昌',country:'江西',tag:'英雄之城',rating:4.4,days:'3天2晚',price:'¥1,899',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'南昌，江西省省会，"英雄城"的美誉源于八一起义。滕王阁的千古绝唱、八一起义纪念馆的红色记忆、鄱阳湖的候鸟天堂，让这座城市充满了历史与自然的双重魅力。',itinerary:[
+        {day:'Day 1',title:'抵达南昌',desc:'接站入住，晚上游览滕王阁夜景。'},{day:'Day 2',title:'滕王阁 & 八一起义纪念馆',desc:'登滕王阁，参观八一起义纪念馆。'},{day:'Day 3',title:'返程',desc:'自由活动，前往高铁站返程。'}],includes:['往返交通','四星级酒店','景点门票','旅行保险']},
+    zhengzhou: {name:'郑州',country:'河南',tag:'天地之中',rating:4.4,days:'4天3晚',price:'¥2,099',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'郑州，河南省省会，地处中华腹地，"天地之中"。黄河风景区的壮阔、少林寺的禅武合一、河南博物院的文物珍藏，带你领略中原文化的博大精深。',itinerary:[
+        {day:'Day 1',title:'抵达郑州',desc:'接站入住，晚上品尝河南烩面。'},{day:'Day 2',title:'少林寺一日游',desc:'前往少林寺，观看武术表演，游览塔林。'},{day:'Day 3',title:'河南博物院 & 黄河风景区',desc:'参观河南博物院，游览黄河风景名胜区。'},{day:'Day 4',title:'返程',desc:'自由活动，前往高铁站返程。'}],includes:['往返交通','四星级酒店','少林寺门票','河南美食体验','旅行保险']},
+    jinan: {name:'济南',country:'山东',tag:'泉城风光',rating:4.5,days:'4天3晚',price:'¥2,199',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'济南，山东省省会，以"泉城"闻名天下。趵突泉的三股泉水、大明湖的荷风柳韵、千佛山的石刻造像、芙蓉街的美食飘香，构成了一幅"家家泉水，户户垂杨"的美景。',itinerary:[
+        {day:'Day 1',title:'抵达济南',desc:'接站入住，晚上逛芙蓉街、品尝鲁菜。'},{day:'Day 2',title:'趵突泉 & 大明湖',desc:'游览趵突泉公园，乘船游大明湖。'},{day:'Day 3',title:'千佛山 & 泉城广场',desc:'登千佛山，游览泉城广场。'},{day:'Day 4',title:'返程',desc:'自由活动，前往高铁站返程。'}],includes:['往返交通','四星级酒店','鲁菜体验','景点门票','旅行保险']},
+    shijiazhuang: {name:'石家庄',country:'河北',tag:'燕赵风骨',rating:4.3,days:'3天2晚',price:'¥1,799',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'石家庄，河北省省会，一座充满活力的现代都市。西柏坡的红色记忆、正定古城的千年历史、赵州桥的建筑奇迹，让这座城市既有历史的厚重又有现代的繁华。',itinerary:[
+        {day:'Day 1',title:'抵达石家庄',desc:'接站入住，晚上逛正定古城。'},{day:'Day 2',title:'西柏坡 & 赵州桥',desc:'前往西柏坡纪念馆，参观赵州桥。'},{day:'Day 3',title:'返程',desc:'自由活动，前往高铁站返程。'}],includes:['往返交通','三星级酒店','景点门票','旅行保险']},
+    taiyuan: {name:'太原',country:'山西',tag:'晋商故里',rating:4.4,days:'4天3晚',price:'¥2,099',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'太原，山西省省会，一座拥有两千五百多年建城史的文化古城。晋祠的千年古柏、天龙山的石窟造像、山西博物院的青铜珍藏，让人感受三晋大地的深厚文化底蕴。',itinerary:[
+        {day:'Day 1',title:'抵达太原',desc:'接站入住，晚上品尝山西面食。'},{day:'Day 2',title:'晋祠 & 天龙山',desc:'游览晋祠，登天龙山参观石窟。'},{day:'Day 3',title:'山西博物院',desc:'参观山西博物院，欣赏青铜器珍藏。'},{day:'Day 4',title:'返程',desc:'自由活动，前往高铁站返程。'}],includes:['往返交通','四星级酒店','山西面食体验','景点门票','旅行保险']},
+    huhehaote: {name:'呼和浩特',country:'内蒙古',tag:'草原青城',rating:4.4,days:'4天3晚',price:'¥2,299',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'呼和浩特，内蒙古自治区首府，"青城"之意。广阔无垠的希拉穆仁草原、庄严的席力图召、热闹的塞上老街，让你感受草原文化与城市文明的完美融合。',itinerary:[
+        {day:'Day 1',title:'抵达呼和浩特',desc:'接机入住，晚上逛塞上老街。'},{day:'Day 2',title:'希拉穆仁草原',desc:'前往希拉穆仁草原，体验骑马、住蒙古包。'},{day:'Day 3',title:'席力图召 & 博物馆',desc:'参观席力图召、内蒙古博物院。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店+蒙古包','草原骑马体验','旅行保险']},
+    changchun: {name:'长春',country:'吉林',tag:'北国春城',rating:4.3,days:'4天3晚',price:'¥2,099',img:'https://images.unsplash.com/photo-1611843467160-25afb1de7c7c?w=800&q=80',description:'长春，吉林省省会，"北国春城"。伪满皇宫的历史印记、净月潭的国家森林公园、长影世纪城的电影文化，让这座城市充满了历史与自然的双重魅力。',itinerary:[
+        {day:'Day 1',title:'抵达长春',desc:'接机入住，晚上逛重庆路步行街。'},{day:'Day 2',title:'伪满皇宫 & 净月潭',desc:'参观伪满皇宫博物院，下午游览净月潭。'},{day:'Day 3',title:'长影世纪城',desc:'全天畅游长影世纪城。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','旅行保险']},
+    nanning: {name:'南宁',country:'广西',tag:'绿城南宁',rating:4.4,days:'4天3晚',price:'¥2,199',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'南宁，广西壮族自治区首府，被誉为"绿城"。青秀山的葱郁、南湖的宁静、中山路的美食、广西民族博物馆的多彩文化，展现着这座南国城市的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达南宁',desc:'接机入住，晚上逛中山路夜市。'},{day:'Day 2',title:'青秀山 & 南湖',desc:'游览青秀山风景区，漫步南湖公园。'},{day:'Day 3',title:'德天跨国瀑布',desc:'前往德天瀑布，感受中越边境的壮美风光。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','旅行保险']},
+    haikou: {name:'海口',country:'海南',tag:'椰风海韵',rating:4.5,days:'5天4晚',price:'¥2,599',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'海口，海南省省会，一座充满热带风情的海滨城市。骑楼老街的南洋风情、假日海滩的阳光沙滩、火山口公园的地质奇观，让你感受椰风海韵的惬意生活。',itinerary:[
+        {day:'Day 1',title:'抵达海口',desc:'接机入住，晚上逛骑楼老街。'},{day:'Day 2',title:'火山口 & 假日海滩',desc:'游览火山口地质公园，下午在假日海滩休闲。'},{day:'Day 3',title:'文昌卫星发射中心',desc:'前往文昌参观卫星发射中心，游览东郊椰林。'},{day:'Day 4',title:'自由活动',desc:'全天自由活动，享受海滨度假时光。'},{day:'Day 5',title:'返程',desc:'前往机场返程。'}],includes:['往返交通','四星级酒店','海鲜大餐','旅行保险']},
+    guiyang: {name:'贵阳',country:'贵州',tag:'避暑之都',rating:4.5,days:'5天4晚',price:'¥2,399',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'贵阳，贵州省省会，"避暑之都"的美誉名副其实。黄果树瀑布的壮阔、荔波小七孔的秀美、黔灵山的灵秀、酸汤鱼的鲜美，让这座城市成为越来越受欢迎的旅游目的地。',itinerary:[
+        {day:'Day 1',title:'抵达贵阳',desc:'接机入住，晚上品尝酸汤鱼。'},{day:'Day 2',title:'黄果树瀑布',desc:'前往黄果树瀑布景区，感受亚洲最大瀑布的震撼。'},{day:'Day 3',title:'荔波小七孔',desc:'游览荔波小七孔景区，欣赏喀斯特森林风光。'},{day:'Day 4',title:'黔灵山 & 甲秀楼',desc:'游览黔灵山公园、甲秀楼。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','贵州酸汤鱼体验','旅行保险']},
+    lasa: {name:'拉萨',country:'西藏',tag:'日光之城',rating:4.9,days:'7天6晚',price:'¥4,599',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'拉萨，西藏自治区首府，"日光之城"。布达拉宫的雄伟壮丽、大昭寺的虔诚信仰、八廓街的转经人流、纳木错的圣湖碧水，让人心灵得到净化和升华。',itinerary:[
+        {day:'Day 1',title:'抵达拉萨',desc:'抵达拉萨，适应高原环境，入住供氧酒店。'},{day:'Day 2',title:'布达拉宫 & 大昭寺',desc:'参观布达拉宫、大昭寺，在八廓街转经。'},{day:'Day 3',title:'纳木错',desc:'前往纳木错，欣赏西藏三大圣湖之一的壮美风光。'},{day:'Day 4',title:'羊卓雍措',desc:'游览羊卓雍措（羊湖），感受高原湖泊的纯净。'},{day:'Day 5',title:'色拉寺 & 哲蚌寺',desc:'参观色拉寺（看辨经）、哲蚌寺。'},{day:'Day 6',title:'自由活动',desc:'自由探索拉萨，购买纪念品。'},{day:'Day 7',title:'返程',desc:'前往机场返程。'}],includes:['往返机票','供氧酒店','高原旅游保险','专业导游','氧气瓶配备']},
+    lanzhou: {name:'兰州',country:'甘肃',tag:'黄河之都',rating:4.4,days:'4天3晚',price:'¥2,199',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'兰州，甘肃省省会，黄河穿城而过的唯一省会城市。百年中山桥的铁骨铮铮、白塔山的俯瞰全城、正宁路夜市的烟火气息、一碗地道的兰州牛肉面，是这座西北之城的独特名片。',itinerary:[
+        {day:'Day 1',title:'抵达兰州',desc:'接站入住，晚上吃正宗兰州牛肉面。'},{day:'Day 2',title:'中山桥 & 白塔山',desc:'游览中山桥、白塔山公园，乘坐黄河游船。'},{day:'Day 3',title:'甘肃省博物馆',desc:'参观甘肃省博物馆，欣赏马踏飞燕铜奔马。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','兰州牛肉面体验','黄河游船','旅行保险']},
+    xining: {name:'西宁',country:'青海',tag:'夏都西宁',rating:4.4,days:'5天4晚',price:'¥2,599',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'西宁，青海省省会，被誉为"夏都"。青海湖的碧波万顷、塔尔寺的藏传佛教文化、茶卡盐湖的天空之镜，让这座城市成为青藏高原上一颗璀璨的明珠。',itinerary:[
+        {day:'Day 1',title:'抵达西宁',desc:'接机入住，适应高原环境。'},{day:'Day 2',title:'塔尔寺',desc:'参观塔尔寺，欣赏酥油花、壁画和堆绣。'},{day:'Day 3',title:'青海湖',desc:'前往青海湖，环湖游览，欣赏油菜花海。'},{day:'Day 4',title:'茶卡盐湖',desc:'游览茶卡盐湖，体验"天空之镜"的奇幻。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','高原旅行保险']},
+    yinchuan: {name:'银川',country:'宁夏',tag:'塞上江南',rating:4.3,days:'4天3晚',price:'¥2,099',img:'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',description:'银川，宁夏回族自治区首府，"塞上江南"的美称。西夏王陵的千年神秘、沙湖的沙漠与湖泊共生、镇北堡西部影城的电影情怀，让人感受到西北大地的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达银川',desc:'接机入住，晚上逛怀远夜市。'},{day:'Day 2',title:'西夏王陵 & 镇北堡',desc:'参观西夏王陵，游览镇北堡西部影城。'},{day:'Day 3',title:'沙湖',desc:'游览沙湖风景区，体验沙漠与湖泊的双重风光。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返交通','四星级酒店','景点门票','旅行保险']},
+    urumqi: {name:'乌鲁木齐',country:'新疆',tag:'亚心之都',rating:4.5,days:'6天5晚',price:'¥3,599',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'乌鲁木齐，新疆维吾尔自治区首府，亚洲大陆的地理中心。天山天池的雪山倒影、大巴扎的异域风情、南山牧场的辽阔草原，让你感受多元文化交融的独特魅力。',itinerary:[
+        {day:'Day 1',title:'抵达乌鲁木齐',desc:'接机入住，晚上逛国际大巴扎。'},{day:'Day 2',title:'天山天池',desc:'前往天山天池，欣赏博格达峰雪山倒影。'},{day:'Day 3',title:'吐鲁番火焰山',desc:'前往吐鲁番，游览火焰山、坎儿井、葡萄沟。'},{day:'Day 4',title:'南山牧场',desc:'前往南山牧场，体验草原骑马。'},{day:'Day 5',title:'新疆博物馆',desc:'参观新疆博物馆，了解丝绸之路历史。'},{day:'Day 6',title:'返程',desc:'自由活动，前往机场返程。'}],includes:['往返机票','四星级酒店','景点门票','新疆美食体验','旅行保险']},
+    // 额外城市
+    guilin: {name:'桂林',country:'广西',tag:'山水甲天下',rating:4.8,days:'5天4晚',price:'¥2,599',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'桂林，"桂林山水甲天下"名扬四海。漓江的百里画廊、阳朔的十里画廊、龙脊梯田的壮美、象鼻山的奇特，构成了一幅流动的山水画卷。',itinerary:[
+        {day:'Day 1',title:'抵达桂林',desc:'接站入住，晚上游览两江四湖夜景。'},{day:'Day 2',title:'漓江游船 & 阳朔',desc:'乘船游览漓江精华段，抵达阳朔逛西街。'},{day:'Day 3',title:'阳朔十里画廊',desc:'骑行十里画廊，游览遇龙河、大榕树。'},{day:'Day 4',title:'龙脊梯田',desc:'前往龙脊梯田，欣赏壮美梯田风光。'},{day:'Day 5',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','四星级酒店','漓江游船','景点门票','旅行保险']},
+    dali: {name:'大理',country:'云南',tag:'风花雪月',rating:4.7,days:'4天3晚',price:'¥2,399',img:'https://images.unsplash.com/photo-1596452206106-e1b6c5a88ce0?w=800&q=80',description:'大理，"风花雪月"的浪漫之地。洱海的碧波、苍山的雪顶、大理古城的悠然、崇圣寺三塔的庄严，让这座古城成为无数人心中的诗和远方。',itinerary:[
+        {day:'Day 1',title:'抵达大理',desc:'抵达大理，入住古城客栈，享受悠闲午后。'},{day:'Day 2',title:'洱海环湖',desc:'环洱海骑行或自驾，打卡双廊、喜洲古镇。'},{day:'Day 3',title:'大理古城 & 三塔',desc:'游览大理古城、崇圣寺三塔。'},{day:'Day 4',title:'返程',desc:'自由活动，前往机场/高铁站返程。'}],includes:['往返交通','特色客栈','洱海骑行','旅行保险']}
 };
 
 // 套餐数据
@@ -397,6 +498,46 @@ const tourData = {
             { name: '曼谷+芭提雅 6天5晚', price: '¥3,299' },
         ],
         includes: ['往返机票', '市中心酒店', '交通卡赠送', '自由活动充裕', '中文服务', '旅行保险']
+    },
+    // 南京精选游
+    nanjing_tour: {
+        name: '🏯 南京古都深度游',
+        subtitle: '六朝古都·秦淮风韵 | 4天3晚',
+        img: 'https://images.unsplash.com/photo-1578088650637-d8d509c1a957?w=800&q=80',
+        description: '南京，六朝古都，十朝都会。MYL 精心打造的南京深度游线路，带你穿越千年历史长河。从中山陵的庄严到夫子庙的繁华，从明孝陵的皇家气派到老门东的市井烟火，全方位感受这座历史文化名城的独特魅力。',
+        price: '¥2,599',
+        itineraries: [
+            { day: 'Day 1', title: '抵达南京 · 秦淮夜色', desc: '接站入住酒店，傍晚游览夫子庙秦淮河风光带，乘画舫游秦淮河，品尝南京特色小吃（鸭血粉丝汤、小笼包）。' },
+            { day: 'Day 2', title: '钟山风景区 · 中山陵', desc: '全天游览钟山风景区：中山陵（392级台阶）、明孝陵（神道石刻）、灵谷寺。晚上逛老门东历史街区，品南京盐水鸭。' },
+            { day: 'Day 3', title: '南京博物院 · 总统府', desc: '上午参观南京博物院（一院六馆，看镇馆之宝），下午游览总统府（中国近代史博物馆），傍晚逛1912街区。' },
+            { day: 'Day 4', title: '牛首山/栖霞山 · 返程', desc: '上午游览牛首山（佛顶宫）或栖霞山（秋季赏枫），下午根据航班/高铁时间送站返程。' },
+        ],
+        options: [
+            { name: '南京经典 4天3晚', price: '¥2,599' },
+            { name: '南京+扬州 5天4晚', price: '¥3,299' },
+            { name: '南京+苏州+杭州 7天6晚', price: '¥4,999' },
+        ],
+        includes: ['往返高铁票', '四星级酒店', '秦淮河游船', '景点门票', '南京特色美食', '旅行保险']
+    },
+    // 六安大别山之旅
+    luan_tour: {
+        name: '⛰️ 六安·大别山生态游',
+        subtitle: '山水六安·生态天堂 | 4天3晚',
+        img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+        description: '六安，位于安徽省西部，大别山北麓，是一座集山水风光与红色文化于一体的魅力之城。天堂寨的雄奇险秀、万佛湖的碧波万顷、大别山主峰的云海日出，是回归自然、放松身心的绝佳目的地。',
+        price: '¥1,899',
+        itineraries: [
+            { day: 'Day 1', title: '抵达六安 · 市区休闲', desc: '接站入住酒店，傍晚游览月亮岛、六安古城墙，品尝六安特色美食（皖西大白鹅、蒿子粑粑）。' },
+            { day: 'Day 2', title: '天堂寨风景区', desc: '全天游览天堂寨：登山观瀑布群、走玻璃栈道、探秘白马大峡谷。感受"吴楚东南第一关"的雄奇壮美。' },
+            { day: 'Day 3', title: '万佛湖 · 大别山主峰', desc: '上午游览万佛湖风景区（乘船游湖、登岛观光），下午前往大别山主峰景区，欣赏云海日落。' },
+            { day: 'Day 4', title: '霍山石斛园 · 返程', desc: '参观霍山石斛种植基地，品六安瓜片茶，下午根据时间送站返程。' },
+        ],
+        options: [
+            { name: '六安经典 4天3晚', price: '¥1,899' },
+            { name: '六安+合肥 5天4晚', price: '¥2,599' },
+            { name: '大别山徒步 5天4晚', price: '¥2,299' },
+        ],
+        includes: ['往返交通', '三星级酒店', '景点门票', '景区交通车', '六安瓜片品鉴', '旅行保险']
     }
 };
 

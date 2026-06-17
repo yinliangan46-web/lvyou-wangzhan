@@ -468,6 +468,48 @@ ul {
     color: var(--accent);
 }
 
+/* ========== 中国国内目的地 ========== */
+.china {
+    background: var(--bg-alt);
+}
+
+.china-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.china-card {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+.china-card .dest-img {
+    height: 180px;
+}
+
+.china-card .dest-info {
+    padding: 16px;
+}
+
+.china-card .dest-info h3 {
+    font-size: 1.1rem;
+}
+
+.china-card .dest-info p {
+    font-size: 0.85rem;
+    margin: 4px 0 10px;
+}
+
+.china-card .dest-meta {
+    font-size: 0.8rem;
+    gap: 12px;
+}
+
+.china-card.visible {
+    animation: none !important;
+}
+
 /* ========== 旅游套餐 ========== */
 .tours {
     background: var(--bg-alt);
@@ -1268,6 +1310,10 @@ body.modal-open {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .china-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1366,6 +1412,15 @@ body.modal-open {
     .features-grid,
     .testimonial-grid {
         grid-template-columns: 1fr;
+    }
+
+    .china-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .china-card .dest-img {
+        height: 160px;
     }
 
     .stats-grid {
