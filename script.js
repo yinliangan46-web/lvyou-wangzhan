@@ -308,7 +308,7 @@ const destinationData = {
         rating: 4.7,
         days: '5天4晚',
         price: '¥2,799',
-        img: 'https://images.unsplash.com/https://images.unsplash.com/photo-1514282401047-d79a71a590e8',
+        img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8',
         description: '巴厘岛，被誉为"众神之岛"，是一个充满神秘与浪漫的热带天堂。金色沙滩、碧蓝海水、古老寺庙与梯田风光交相辉映，是度假蜜月的绝佳选择。',
         itinerary: [
             { day: 'Day 1', title: '抵达巴厘岛', desc: '抵达努拉莱伊机场，入住海边度假村，享受悠闲傍晚。' },
