@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>环球旅行 - 探索世界之美</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+    <!-- ========== 导航栏 ========== -->
+    <header class="header" id="header">
+        <div class="container">
+            <a href="#" class="logo">
+                <i class="fas fa-globe-asia"></i>
+                <span>环球旅行</span>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="#home" class="active">首页</a>
+                <a href="#destinations">目的地</a>
+                <a href="#tours">旅游套餐</a>
+                <a href="#features">特色服务</a>
+                <a href="#contact">联系我们</a>
+            </nav>
+            <div class="header-actions">
+                <a href="#" class="btn btn-sm">登录</a>
+                <button class="menu-toggle" id="menuToggle" aria-label="菜单">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== 首页 Hero ========== -->
+    <section class="hero" id="home">
+        <div class="hero-overlay"></div>
+        <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80');"></div>
+        <div class="hero-content container">
+            <h1>探索世界，<br />发现不一样的自己</h1>
+            <p>精选全球 200+ 个目的地，为你打造独一无二的旅行体验</p>
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="搜索目的地、城市或国家..." />
+                <button class="btn">搜索</button>
+            </div>
+            <div class="hero-stats">
+                <div><span>200+</span> 目的地</div>
+                <div><span>15,000+</span> 满意旅客</div>
+                <div><span>98%</span> 好评率</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 目的地 ========== -->
+    <section class="section" id="destinations">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">热门目的地</span>
+                <h2>最受欢迎的旅行目的地</h2>
+                <p>从迷人的海滩到古老的文化遗址，总有一个地方在等你</p>
+            </div>
+            <div class="dest-grid">
+                <div class="dest-card" data-delay="0">
+                    <div class="dest-img">
+                        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80" alt="巴黎" loading="lazy" />
+                        <span class="dest-price">¥8,999起</span>
+                    </div>
+                    <div class="dest-info">
+                        <h3>巴黎 <span>法国</span></h3>
+                        <p>浪漫之都，埃菲尔铁塔下的塞纳河畔</p>
+                        <div class="dest-meta">
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                            <span><i class="far fa-clock"></i> 7天</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card" data-delay="100">
+                    <div class="dest-img">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80" alt="东京" loading="lazy" />
+                        <span class="dest-price">¥5,999起</span>
+                    </div>
+                    <div class="dest-info">
+                        <h3>东京 <span>日本</span></h3>
+                        <p>传统与现代完美融合的繁华都市</p>
+                        <div class="dest-meta">
+                            <span><i class="fas fa-star"></i> 4.9</span>
+                            <span><i class="far fa-clock"></i> 6天</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card" data-delay="200">
+                    <div class="dest-img">
+                        <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=600&q=80" alt="巴厘岛" loading="lazy" />
+                        <span class="dest-price">¥4,599起</span>
+                    </div>
+                    <div class="dest-info">
+                        <h3>巴厘岛 <span>印尼</span></h3>
+                        <p>天堂之岛，享受阳光沙滩与印度洋风情</p>
+                        <div class="dest-meta">
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                            <span><i class="far fa-clock"></i> 5天</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card" data-delay="0">
+                    <div class="dest-img">
+                        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" alt="迪拜" loading="lazy" />
+                        <span class="dest-price">¥6,999起</span>
+                    </div>
+                    <div class="dest-info">
+                        <h3>迪拜 <span>阿联酋</span></h3>
+                        <p>奢华与现代的奇迹之城</p>
+                        <div class="dest-meta">
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                            <span><i class="far fa-clock"></i> 6天</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card" data-delay="100">
+                    <div class="dest-img">
+                        <img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80" alt="曼谷" loading="lazy" />
+                        <span class="dest-price">¥2,599起</span>
+                    </div>
+                    <div class="dest-info">
+                        <h3>曼谷 <span>泰国</span></h3>
+                        <p>微笑之国的美食与佛教文化之旅</p>
+                        <div class="dest-meta">
+                            <span><i class="fas fa-star"></i> 4.6</span>
+                            <span><i class="far fa-clock"></i> 5天</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card" data-delay="200">
+                    <div class="dest-img">
+                        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80" alt="伦敦" loading="lazy" />
+                        <span class="dest-price">¥9,999起</span>
+                    </div>
+                    <div class="dest-info">
+                        <h3>伦敦 <span>英国</span></h3>
+                        <p>大英博物馆与大本钟的英伦风情</p>
+                        <div class="dest-meta">
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                            <span><i class="far fa-clock"></i> 8天</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 旅游套餐 ========== -->
+    <section class="section tours" id="tours">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">精选套餐</span>
+                <h2>为你精心策划的旅程</h2>
+                <p>无论独自旅行还是家庭出游，我们都有适合你的方案</p>
+            </div>
+            <div class="tour-grid">
+                <div class="tour-card">
+                    <div class="tour-badge">热销</div>
+                    <div class="tour-icon">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <h3>海岛度假</h3>
+                    <p class="tour-desc">马尔代夫、巴厘岛、普吉岛，享受最美海岛风光</p>
+                    <ul class="tour-features">
+                        <li><i class="fas fa-check"></i> 全程四星级以上酒店</li>
+                        <li><i class="fas fa-check"></i> 私人导游服务</li>
+                        <li><i class="fas fa-check"></i> 机场接送</li>
+                        <li><i class="fas fa-check"></i> 旅行保险</li>
+                    </ul>
+                    <p class="tour-price"><span>¥4,599</span> /人起</p>
+                    <a href="#" class="btn btn-outline">查看详情</a>
+                </div>
+                <div class="tour-card featured">
+                    <div class="tour-badge">推荐</div>
+                    <div class="tour-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3>文化探索</h3>
+                    <p class="tour-desc">欧洲古城、日本神社、东南亚寺庙，深度文化之旅</p>
+                    <ul class="tour-features">
+                        <li><i class="fas fa-check"></i> 全程四星级以上酒店</li>
+                        <li><i class="fas fa-check"></i> 资深文化讲解导游</li>
+                        <li><i class="fas fa-check"></i> 特色美食体验</li>
+                        <li><i class="fas fa-check"></i> 旅行保险</li>
+                    </ul>
+                    <p class="tour-price"><span>¥6,999</span> /人起</p>
+                    <a href="#" class="btn">立即预订</a>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-badge">优惠</div>
+                    <div class="tour-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h3>城市漫游</h3>
+                    <p class="tour-desc">东京、首尔、曼谷、新加坡，感受都市脉动</p>
+                    <ul class="tour-features">
+                        <li><i class="fas fa-check"></i> 市中心精品酒店</li>
+                        <li><i class="fas fa-check"></i> 自由活动时间充裕</li>
+                        <li><i class="fas fa-check"></i> 交通卡赠送</li>
+                        <li><i class="fas fa-check"></i> 旅行保险</li>
+                    </ul>
+                    <p class="tour-price"><span>¥3,299</span> /人起</p>
+                    <a href="#" class="btn btn-outline">查看详情</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 特色服务 ========== -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">为什么选择我们</span>
+                <h2>我们提供最优质的旅行服务</h2>
+                <p>十年专注，只为让你拥有最美好的旅行回忆</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <h3>机票预订</h3>
+                    <p>与全球 200+ 航空公司合作，为你提供最优惠的机票价格</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h3>酒店住宿</h3>
+                    <p>精选全球优质酒店，从经济型到奢华型满足不同需求</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>私人导游</h3>
+                    <p>专业持证导游，中英文服务，带你深入了解当地文化</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>接送服务</h3>
+                    <p>机场专车接送，让旅途从落地开始就轻松无忧</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>旅行保险</h3>
+                    <p>全程旅行意外险覆盖，让每一次出行都安心有保障</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24小时客服</h3>
+                    <p>全天候中文客服支持，遇到任何问题随时联系我们</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 数据统计 ========== -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="15">0</span>
+                    <span class="stat-suffix">年</span>
+                    <p>行业经验</p>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="200">0</span>
+                    <span class="stat-suffix">+</span>
+                    <p>覆盖目的地</p>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="15000">0</span>
+                    <span class="stat-suffix">+</span>
+                    <p>满意客户</p>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="98">0</span>
+                    <span class="stat-suffix">%</span>
+                    <p>客户好评率</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 用户评价 ========== -->
+    <section class="section testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">客户评价</span>
+                <h2>听听他们怎么说</h2>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"非常棒的旅行体验！行程安排合理，导游知识丰富，住宿条件也很好。下次旅行还会选择环球旅行！"</p>
+                    <div class="testimonial-user">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="用户" />
+                        <div>
+                            <h4>张女士</h4>
+                            <span>巴厘岛之旅</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"巴黎之旅超出预期！行程安排很贴心，还给我们推荐了很多当地人才知道的美食店。强烈推荐！"</p>
+                    <div class="testimonial-user">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="用户" />
+                        <div>
+                            <h4>李先生</h4>
+                            <span>法国巴黎之旅</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"带孩子去的东京，行程非常亲子友好。导游很有耐心，孩子玩得特别开心。已经推荐给朋友们了！"</p>
+                    <div class="testimonial-user">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="用户" />
+                        <div>
+                            <h4>王女士</h4>
+                            <span>日本亲子之旅</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 联系与订阅 ========== -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h2>联系我们</h2>
+                    <p>有任何问题或需要定制旅行方案？随时联系我们</p>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>电话</h4>
+                            <span>400-888-9999</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>邮箱</h4>
+                            <span>contact@globaltravel.com</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>地址</h4>
+                            <span>上海市浦东新区世纪大道100号</span>
+                        </div>
+                    </div>
+                    <div class="contact-social">
+                        <a href="#"><i class="fab fa-weixin"></i></a>
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-xiaohongshu"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>发送咨询</h3>
+                    <form id="contactForm">
+                        <div class="form-row">
+                            <input type="text" placeholder="您的姓名" required />
+                            <input type="tel" placeholder="联系电话" />
+                        </div>
+                        <input type="email" placeholder="电子邮箱" required />
+                        <select>
+                            <option>选择咨询类型</option>
+                            <option>旅游套餐咨询</option>
+                            <option>定制旅行方案</option>
+                            <option>订单问题</option>
+                            <option>其他</option>
+                        </select>
+                        <textarea rows="4" placeholder="请输入您的留言..." required></textarea>
+                        <button type="submit" class="btn btn-block">发送消息</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 底部 ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <i class="fas fa-globe-asia"></i>
+                        <span>环球旅行</span>
+                    </a>
+                    <p>探索世界，发现不一样的自己。<br />十年专注高品质旅行服务。</p>
+                </div>
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <a href="#">关于我们</a>
+                    <a href="#">旅游攻略</a>
+                    <a href="#">签证服务</a>
+                    <a href="#">常见问题</a>
+                </div>
+                <div class="footer-links">
+                    <h4>热门目的地</h4>
+                    <a href="#">东南亚</a>
+                    <a href="#">欧洲</a>
+                    <a href="#">日本韩国</a>
+                    <a href="#">海岛度假</a>
+                </div>
+                <div class="footer-links">
+                    <h4>支持</h4>
+                    <a href="#">隐私政策</a>
+                    <a href="#">服务条款</a>
+                    <a href="#">退款政策</a>
+                    <a href="#">合作伙伴</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 环球旅行 GlobalTravel. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== 回到顶部 ========== -->
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- ========== 手机菜单遮罩 ========== -->
+    <div class="overlay" id="overlay"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
