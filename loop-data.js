@@ -7717,16 +7717,9 @@ window.LOOP_ROUTES = [
         '香港特别行政区': [114.1700, 22.3000], '澳门特别行政区': [113.5500, 22.2000]
     };
 
-    window.renderRichDetail = function(data) {
-        if (!data) return '';
-        
-        // === routePins + coords 同步重建 ===
-        // 关键：CITY_ROUTE_COORDS 的坐标和硬编码 routePins 是**一一对应**的！
-        // 去掉机场后，必须同步重建 coords，否则 coords[0]（机场）会错配给前门。
-        // 策略：硬编码去机场 → 骨架保序；补 itinerary-only 新景点到末尾；
-        // 同时重建 coords：骨架的 pin 从 CITY_ROUTE_COORDS 按原始索引查，新 pin 留 null 给发散器。
-        (function syncRoutePinsFromItinerary() {
-            if (!data.itinerary || !data.itinerary.length) return;
+    window.syncCityData = function(data) {
+    if (!data) return;
+if (!data.itinerary || !data.itinerary.length) return;
             var isTransportHub = function(s) {
                 return /机场|北站|东站|南站|西站|火车站|高铁站|车站|HK机场/.test(s);
             };
@@ -8129,7 +8122,14 @@ window.LOOP_ROUTES = [
                     data.days = mDays + '天' + (mDays - 1) + '晚';
                 }
             }
-        })();
+};
+window.renderRichDetail = function(data) {
+        if (!data) return '';
+        window.syncCityData(data);
+        
+        // === routePins + coords + itinerary 自动同步（核心逻辑提取为 window.syncCityData） ===
+        
+
 
         // 路线
         const pins = (data.routePins || []).map((p,i) => `<span class="route-pin"><span class="pin-num">${i+1}</span>${safe(p)}</span>`).join('<span class="route-arrow">→</span>');
