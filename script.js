@@ -1032,6 +1032,8 @@ function openModal(city) {
 
     // 优先使用富数据版本
     const richData = (window.CITY_DETAIL && window.CITY_DETAIL[city]) || null;
+    // ⭐ 副标题天数以实际展示的行程（richData）为准，避免"8天行程却写7天6晚"
+    const displayDays = (richData && richData.days) || data.days;
 
     let itineraryHtml, extraHtml = '';
 
@@ -1053,7 +1055,7 @@ function openModal(city) {
     modalBody.innerHTML = `
         <div class="modal-body">
             <h2>${data.name} · ${data.country}</h2>
-            <div class="modal-subtitle">⭐ ${data.rating} · ${data.days} · ${data.tag}</div>
+            <div class="modal-subtitle">⭐ ${data.rating} · ${displayDays} · ${data.tag}</div>
             <img class="modal-hero" src="${data.img}" alt="${data.name}" />
 
             <div class="modal-section">
@@ -2380,7 +2382,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var cityKey = m[1] || m[2];
         var ddData = (typeof destinationData !== 'undefined' && destinationData[cityKey]) || null;
         var cdData = (window.CITY_DETAIL && window.CITY_DETAIL[cityKey]) || null;
-        var data = ddData || cdData;
+        // ⭐ 优先用弹窗实际展示的 CITY_DETAIL 数据，保证卡片天数与弹窗一致
+        var data = cdData || ddData;
         if (!data || !data.days) return;
         var nMatch = data.days.match(/(\d+)天/);
         if (!nMatch) return;
