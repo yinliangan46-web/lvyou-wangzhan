@@ -7383,21 +7383,31 @@ window.LOOP_ROUTES = [
     window.renderRichDetail = function(data) {
         if (!data) return '';
         
-        // === 自动从 itinerary 提取真实景点作为 routePins ===
-        // 老城市 CITY_DETAIL 里的 routePins 是硬编码的，和 itinerary 经常不同步
-        // 直接从行程里按天提取真实景点，保证"地图画的景点"="行程安排的景点"
+        // === routePins + coords 同步重建 ===
+        // 关键：CITY_ROUTE_COORDS 的坐标和硬编码 routePins 是**一一对应**的！
+        // 去掉机场后，必须同步重建 coords，否则 coords[0]（机场）会错配给前门。
+        // 策略：硬编码去机场 → 骨架保序；补 itinerary-only 新景点到末尾；
+        // 同时重建 coords：骨架的 pin 从 CITY_ROUTE_COORDS 按原始索引查，新 pin 留 null 给发散器。
         (function syncRoutePinsFromItinerary() {
             if (!data.itinerary || !data.itinerary.length) return;
-            // 过滤词：这些出现在活动名里说明它不是真实景点
+            var isTransportHub = function(s) {
+                return /机场|北站|东站|南站|西站|火车站|高铁站|车站|HK机场/.test(s);
+            };
+            var oldRoutePins = (data.routePins || []).slice(); // 留备份查原始索引
+            // 第 1 步：骨架 = 硬编码 routePins 去机场，**保序**
+            var backbone = [];
+            oldRoutePins.forEach(function(oldPin) {
+                if (oldPin && !isTransportHub(oldPin)) backbone.push(oldPin);
+            });
+            // 第 2 步：从 itinerary 提取真实景点
             var filterWords = ['抵达','入住','酒店','早餐','午餐','晚餐','退房','返程','值机','登机','出发','前往机场','前往车站',
                 '自由闲逛','下午茶','休息','返回','起床','整理','打包','行李','打车','地铁','寄存','办理','值机','安检','候机','候车',
                 '深度游览','自由活动','漫游','打卡','自由体验','周边商圈','晚餐时间','周边一日游','返程','再见','精华景点',
                 '深度文化','城市漫步','咖啡馆','书店','SPA','购物','最后','告别','漫步','夜游','游船','散步','徒步',
-                '特色体验','精华','日出','深度','玻璃栈道','玻璃桥','景区内','市区游览','博物馆','水磨沟'];
+                '特色体验','精华','日出','深度','玻璃栈道','玻璃桥','景区内','市区游览','博物馆','水磨沟','景区','游览'];
             var badThemeWords = ['返程','再见','周边一日游','精华','深度','文化','最后','购物','SPA','咖啡馆','特色体验'];
             var extracted = [];
             data.itinerary.forEach(function(d) {
-                // 1. 优先从 Day theme 提取（按时间顺序，最可靠）
                 var theme = (d.theme || d.day || '').replace(/第[一二三四五六七八九十\d]+天/g, '').trim();
                 if (theme && theme.length >= 2) {
                     theme.split(/[·\-—,，、/]/).forEach(function(s) {
@@ -7405,45 +7415,74 @@ window.LOOP_ROUTES = [
                         if (s.length >= 2 && s.length <= 10) {
                             var isBadTheme = badThemeWords.some(function(bw) { return s.indexOf(bw) >= 0; });
                             var isFiltered = filterWords.some(function(fw) { return s.indexOf(fw) >= 0; });
-                            if (!isBadTheme && !isFiltered && !extracted.includes(s)) {
-                                extracted.push(s);
-                            }
+                            if (!isBadTheme && !isFiltered && !extracted.includes(s)) extracted.push(s);
                         }
                     });
                 }
-                // 2. 再从 timeline 补充 theme 里没有的真实景点
                 (d.timeline || []).forEach(function(tl) {
                     var act = (tl.activity || '').trim();
                     if (!act) return;
-                    var isFiltered = filterWords.some(function(fw) { return act.indexOf(fw) >= 0; });
-                    if (isFiltered) return;
+                    if (filterWords.some(function(fw) { return act.indexOf(fw) >= 0; })) return;
                     if (act.length < 2 || act.length > 12) return;
-                    // 去掉前缀
                     act = act.replace(/^(出发|前往|到达|抵达)/, '').trim();
-                    // 去掉后缀（"傍晚漫步"、"夜游XX" 等）
                     act = act.replace(/(傍晚|清晨|黄昏|公园游览|市内游览|游船|夜游|散步|徒步|逛逛).*$/, '').trim();
-                    // 如果去掉后缀后还 ≥2 字符且没重复，就加入
                     if (act.length >= 2 && !extracted.includes(act)) extracted.push(act);
                 });
             });
-            // 3. 补充硬编码 routePins 里的经典景点（取并集）
-            // itinerary 可能没列尽一个城市的所有经典景点（如北京 itinerary 没列八达岭/天坛/什刹海），
-            // 把硬编码里 itinerary 没覆盖的经典景点也加进来，机场/车站这种交通枢纽除外
-            if (data.routePins && data.routePins.length) {
-                var isTransportHub = function(s) {
-                    return /机场|北站|东站|南站|西站|火车站|高铁站|车站|HK机场/.test(s);
-                };
-                data.routePins.forEach(function(oldPin) {
-                    if (!oldPin) return;
-                    // 跳过交通枢纽
-                    if (isTransportHub(oldPin)) return;
-                    // 跳过 extracted 已有的（子串匹配）
-                    var already = extracted.some(function(e) { return e.indexOf(oldPin) >= 0 || oldPin.indexOf(e) >= 0; });
-                    if (!already) extracted.push(oldPin);
-                });
+            // 第 3 步：骨架 + itinerary-only 新景点（去重补末尾）
+            var result = backbone.slice();
+            extracted.forEach(function(ep) {
+                var already = result.some(function(r) { return r === ep || r.indexOf(ep) >= 0 || ep.indexOf(r) >= 0; });
+                if (!already) result.push(ep);
+            });
+            // 第 4 步：同步重建 coords，保证每个 pin 的坐标正确对齐
+            var cityKey = data._cityKey || data.name;
+            var srcCoords = (window.CITY_ROUTE_COORDS || {})[cityKey] || [];
+            var rebuiltCoords = [];
+            result.forEach(function(pin) {
+                var origIdx = -1;
+                for (var j = 0; j < oldRoutePins.length; j++) {
+                    if (oldRoutePins[j] === pin || (oldRoutePins[j] && oldRoutePins[j].indexOf(pin) >= 0) || pin.indexOf(oldRoutePins[j]) >= 0) {
+                        origIdx = j; break;
+                    }
+                }
+                if (origIdx >= 0 && srcCoords[origIdx] && srcCoords[origIdx].length >= 2) {
+                    rebuiltCoords.push(srcCoords[origIdx]);
+                } else {
+                    rebuiltCoords.push(null);
+                }
+            });
+            // 4b. 把 null coords 也填上（围绕上一个真实坐标/市中心发散）
+            var lastKnown = null;
+            for (var k = 0; k < rebuiltCoords.length; k++) {
+                if (rebuiltCoords[k]) {
+                    lastKnown = rebuiltCoords[k];
+                } else if (lastKnown) {
+                    // 围绕 lastKnown 发散（3-8km 均匀角度）
+                    var latRad = lastKnown[1] * Math.PI / 180;
+                    var kmPerDegLat = 111.32, kmPerDegLng = 111.32 * Math.cos(latRad);
+                    var idxNew = rebuiltCoords.slice(0, k).filter(function(x){ return x === null; }).length;
+                    var angleDeg = ((k + 1) * 57) % 360; // 均匀角度
+                    var distKm = 3 + idxNew * 2;
+                    var angleRad = angleDeg * Math.PI / 180;
+                    var dLat = (distKm * Math.cos(angleRad)) / kmPerDegLat;
+                    var dLng = (distKm * Math.sin(angleRad)) / kmPerDegLng;
+                    rebuiltCoords[k] = [
+                        +(lastKnown[0] + dLng).toFixed(4),
+                        +(lastKnown[1] + dLat).toFixed(4)
+                    ];
+                } else {
+                    // 没有任何已知坐标，用市中心兜底
+                    rebuiltCoords[k] = [116.4, 39.9];
+                }
             }
-            // 至少要 2 个真实景点才覆盖（避免提取失败导致 routePins 变空）
-            if (extracted.length >= 2) {
+            // 应用
+            if (result.length >= 2) {
+                data.routePins = result;
+                if (srcCoords.length || rebuiltCoords.some(function(c){ return c; })) {
+                    window.CITY_ROUTE_COORDS[cityKey] = rebuiltCoords;
+                }
+            } else if (extracted.length >= 2) {
                 data.routePins = extracted;
             }
         })();
