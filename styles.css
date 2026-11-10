@@ -2105,3 +2105,55 @@ textarea:focus-visible {
     .loop-map { height: 350px; }
     .map-node text { font-size: 10px; }
 }
+
+/* ========== 真实地图（高德嵌入） ========== */
+.amap-wrapper { position: relative; }
+.amap-placeholder { width: 100%; padding-bottom: 60%; position: relative; overflow: hidden; border-radius: var(--radius); border: 1px solid #e2e8f0; background: #f1f5f9; }
+.amap-embed { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.svg-overlay { pointer-events: none; }
+.svg-overlay .map-pin { pointer-events: auto; position: absolute; transform: translate(-50%, -100%); cursor: pointer; z-index: 10; }
+.svg-overlay .pin-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #ef4444; border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(239,68,68,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; margin: 0 auto;
+}
+.svg-overlay .pin-dot::after {
+    content: ''; position: absolute; left: 50%; bottom: -6px;
+    transform: translateX(-50%); width: 12px; height: 12px; background: #ef4444;
+    transform: translateX(-50%) rotate(45deg); border-radius: 2px;
+}
+.svg-overlay .map-pin:hover .pin-dot { transform: scale(1.2); box-shadow: 0 6px 16px rgba(239,68,68,0.7); }
+.svg-overlay .map-pin.active .pin-dot { background: #10b981; border-color: white; }
+.svg-overlay .pin-label {
+    margin-top: 8px; background: rgba(255,255,255,0.95);
+    color: #1e293b; padding: 4px 10px; border-radius: 4px;
+    font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;
+}
+.map-tip { font-size: 0.8rem; color: var(--text-light); margin-top: 10px; text-align: center; }
+
+/* 老 SVG 地图清理 */
+.sloop-map, .china-outline { display: none !important; }
+
+/* ========== 城市行程 Day 卡片标题必须是景点名（已在数据层解决） ========== */
+.itinerary-day h4 .day-tag { background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important; }
+
+/* 酒店卡片更突出预订按钮 */
+.hotel-card a.hotel-book { display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--primary); color: white; border-radius: 16px; font-size: 0.78rem; text-decoration: none; }
+.hotel-card a.hotel-book:hover { background: var(--primary-dark); }
+
+/* ========== 机票卡片升级 ========== */
+.airfare-card { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 16px; border: 1px solid #93c5fd; }
+.airfare-card h5 { color: #1e40af; margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.airfare-card h5::before { content: '✈️'; font-size: 1.2rem; }
+.airfare-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 0.9rem; border-bottom: 1px dashed #bfdbfe; }
+.airfare-item:last-child { border-bottom: none; }
+.airfare-item .from, .airfare-item .to { font-weight: 700; color: #1e3a8a; }
+.airfare-item .arrow { color: #64748b; }
+.airfare-item .price { font-weight: 800; color: #dc2626; margin-left: auto; font-size: 1rem; }
+.airfare-item .time { color: var(--text-light); font-size: 0.78rem; margin-left: 12px; }
+
+/* 环线封面图（确保有背景） */
+.loop-card .loop-cover { background-size: cover !important; background-position: center !important; }

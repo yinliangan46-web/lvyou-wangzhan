@@ -1920,57 +1920,37 @@ window.LOOP_ROUTES = [
   }
 ];
 
-// ========== SVG 互动地图 ==========
+// ========== 真实地图 + SVG 节点联动 ==========
 window.renderLoopMap = function(data) {
-    if (!data || !data.mapPoints) return '';
-    const W = 500, H = 450;
-    const pts = data.mapPoints;
-    const lines = pts.map((p,i) => 
-        (i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`)
-    ).join(' ');
-    const nodes = pts.map(p => `
-        <g class="map-node" data-day="${p.day}" data-name="${p.name}">
-            <circle cx="${p.x}" cy="${p.y}" r="14" class="node-ring"/>
-            <circle cx="${p.x}" cy="${p.y}" r="8" class="node-dot"/>
-            <text x="${p.x+18}" y="${p.y+5}" class="node-label">${p.name}</text>
-        </g>
+    if (!data) return '';
+    const safe = (v) => String(v == null ? '' : v);
+    // 构建高德搜索链接（用城市搜索关键词拼接）
+    const cityNames = (data.routePins || []).slice(0, 8).join('|');
+    // 使用通用地图嵌入 + 简易 SVG 节点覆盖层
+    const pins = (data.mapPoints || []);
+    const nodes = pins.map(p => `
+        <div class="map-pin" style="left:${p.x/p.mapSize*100}%;top:${p.y/p.mapSize*100}%" data-day="${safe(p.day)}" data-name="${safe(p.name)}">
+            <div class="pin-dot"></div>
+            <div class="pin-label">${safe(p.name)}</div>
+        </div>
     `).join('');
+    // 地图嵌入：使用高德搜索多地点的链接（让用户能跳转高德APP查看真实路线）
+    const mapUrl = `https://uri.amap.com/marker?position=${(data.mapPoints||[]).map(p=>`${(p.x/10).toFixed(1)},${(p.y/10).toFixed(1)}`).join('|')}&name=${encodeURIComponent(data.name||'')}&src=mylvyou&coordinate=gaode&callnative=1`;
+    
     return `
         <div class="map-container">
-            <div class="map-title"><i class="fas fa-map"></i> 路线地图 · 点击节点查看行程</div>
-            <svg viewBox="0 0 ${W} ${H}" class="loop-map" id="loopMap">
-                <defs>
-                    <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#ef4444"/>
-                        <stop offset="100%" stop-color="#f59e0b"/>
-                    </linearGradient>
-                </defs>
-                <!-- 中国地图简化轮廓 -->
-                <path class="china-outline" d="M 60 200 Q 50 150 80 120 Q 120 80 200 70 Q 280 60 380 80 Q 450 100 480 150 Q 490 200 480 260 Q 470 320 430 380 Q 380 420 300 430 Q 200 440 120 420 Q 60 380 50 320 Q 40 260 60 200 Z"/>
-                <!-- 路线 -->
-                <path d="${lines}" class="route-path" stroke="url(#routeGrad)"/>
-                <path d="${lines}" class="route-path-bg"/>
-                <!-- 节点 -->
-                ${nodes}
-            </svg>
+            <div class="map-title"><i class="fas fa-map-marked-alt"></i> 路线地图 · 点击节点查看行程 <a href="${mapUrl}" target="_blank" style="font-size:.75rem;color:#3b82f6;margin-left:8px">📱 在高德地图打开</a></div>
+            <div class="amap-wrapper">
+                <div class="amap-placeholder">
+                    <iframe class="amap-embed" src="https://uri.amap.com/navigation?to=${(data.mapPoints||[]).map(p=>`${(p.x/10).toFixed(1)},${(p.y/10).toFixed(1)},${encodeURIComponent(p.name)}`).join('&to=')}&mode=car&policy=1&src=mylvyou&coordinate=gaode&callnative=1" frameborder="0"></iframe>
+                    <div class="svg-overlay" style="position:absolute;inset:0">
+                        ${nodes}
+                    </div>
+                </div>
+                <div class="map-tip">💡 点击上方节点跳转到对应 Day 行程 · 点击底部「在高德地图打开」查看真实路线导航</div>
+            </div>
         </div>
     `;
-};
-
-window.bindLoopMap = function() {
-    const svg = document.getElementById('loopMap');
-    if (!svg) return;
-    svg.querySelectorAll('.map-node').forEach(node => {
-        node.addEventListener('click', () => {
-            const day = node.dataset.day;
-            document.querySelectorAll('.map-node').forEach(n => n.classList.remove('active'));
-            node.classList.add('active');
-            const target = document.querySelector(`.itinerary-day[data-day="${day}"]`);
-            if (target) { target.scrollIntoView({behavior:'smooth', block:'center'}); target.classList.add('highlight'); setTimeout(()=>target.classList.remove('highlight'), 1500); }
-        });
-        node.addEventListener('mouseenter', () => { node.querySelectorAll('circle')[0].setAttribute('r', '18'); });
-        node.addEventListener('mouseleave', () => { node.querySelectorAll('circle')[0].setAttribute('r', '14'); });
-    });
 };
 
 // ========== 环线弹窗渲染 ==========
