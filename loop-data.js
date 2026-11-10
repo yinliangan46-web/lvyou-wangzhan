@@ -7905,6 +7905,36 @@ window.LOOP_ROUTES = [
                     if (!uniqPins.some(function(x) { return x === p || x.indexOf(p) >= 0 || p.indexOf(x) >= 0; })) uniqPins.push(p);
                 });
                 
+                // ══════ 自动扩展天数：景点多就多几天 ══════
+                // 公式：每3个景点=1个游玩日；总Day=2(Day1抵达+返程) + 游玩日
+                var needPlayDays = Math.max(1, Math.ceil(uniqPins.length / 3));
+                var needTotalDays = Math.max(3, needPlayDays + 2); // Day1抵达 + 游玩日 + 最后返程
+                
+                // 先找返程 Day 的 index（theme 含返程/再见，或 timeline 含返程/机场/车站）
+                var _returnDayIdx = data.itinerary.length - 1;
+                for (var _ri = data.itinerary.length - 1; _ri >= 0; _ri--) {
+                    var _d = data.itinerary[_ri];
+                    var _tstr = (_d.theme || '') + '|' + (_d.timeline || []).map(function(t){return t.activity||'';}).join('|');
+                    if (/返程|再见|机场|车站|登机|值机|退房/.test(_tstr)) { _returnDayIdx = _ri; break; }
+                }
+                
+                if (data.itinerary.length < needTotalDays) {
+                    // 只在 _returnDayIdx 之前插入空 Day（保留返程 Day 永远在最后！）
+                    while (data.itinerary.length < needTotalDays) {
+                        data.itinerary.splice(_returnDayIdx, 0, { theme: '景点日', timeline: [] });
+                        _returnDayIdx++; // 插入后 index 后移
+                    }
+                } else if (data.itinerary.length > needTotalDays && needTotalDays >= 3) {
+                    // 天数过多 → 删除 _returnDayIdx 之前多余的 Day
+                    while (data.itinerary.length > needTotalDays && _returnDayIdx > 1) {
+                        data.itinerary.splice(_returnDayIdx - 1, 1);
+                        _returnDayIdx--;
+                    }
+                }
+                // ══════ 同步 card.days 字段（首页卡片显示的"几天几晚"） ══════
+                var _actualDays = data.itinerary.length;
+                data.days = _actualDays + '天' + (_actualDays - 1) + '晚';
+                
                 // 收集 Day1 已用景点（避免重复）
                 var usedPins = [];
                 (data.itinerary[0].timeline || []).forEach(function(tl) {
@@ -8015,33 +8045,31 @@ window.LOOP_ROUTES = [
                         }
                     }
                 }
-                // === 返程日（isLastDayReturn=true）模板词清理 ===
-                // 保留返程框架（起床→早餐→退房→机场/车站→值机→登机）
-                // 但替换模板词"最后打卡+购物"、"退房+午餐"等
+                // === 返程日（isLastDayReturn=true）彻底重建 ===
+                // 不管原始 itinerary Day 里有什么（景点/模板/返程），统一用返程框架
                 if (isLastDayReturn) {
                     var rd = data.itinerary[lastDayIdx];
-                    var cleanedTimeline = [];
-                    (rd.timeline || []).forEach(function(tl) {
-                        var act = (tl.activity || '').trim();
-                        // 模板词映射替换
-                        if (/最后打卡\+购物|最后打卡|购物/.test(act)) return; // 直接删掉
-                        if (/退房\+午餐/.test(act)) act = '退房';
-                        if (/退房/.test(act)) act = '办理退房手续';
-                        if (/自由活动|随心漫游|深度游玩|周边一日游/.test(act)) return;
-                        if (/景区深度游览/.test(act)) return;
-                        if (/深度文化|精华景点/.test(act)) return;
-                        if (/SPA|咖啡馆|书店/.test(act)) return;
-                        cleanedTimeline.push({
-                            time: tl.time || '',
-                            activity: act,
-                            detail: tl.detail || '',
-                            duration: tl.duration || '',
-                            ticket: tl.ticket || '',
-                            price: tl.price || '',
-                            tip: tl.tip || ''
-                        });
-                    });
-                    if (cleanedTimeline.length >= 2) rd.timeline = cleanedTimeline;
+                    rd.theme = '返程 · 再见';
+                    rd.timeline = [
+                        { time: '07:30', activity: '起床·整理行李',
+                          detail: '最后检查行李，不要遗漏贵重物品',
+                          duration: '1小时', price: '¥0', ticket: '', tip: '护照/身份证/充电器/充电宝务必带上' },
+                        { time: '08:00', activity: '酒店早餐',
+                          detail: '如果赶早航班/高铁可以请酒店打包带走',
+                          duration: '30分钟', price: '¥0-50', ticket: '', tip: '和前台约好早上6点打包' },
+                        { time: '09:00', activity: '办理退房手续',
+                          detail: '办理退房，行李寄存或带走',
+                          duration: '20分钟', price: '¥0', ticket: '', tip: '提前10分钟下楼，避免排队' },
+                        { time: '09:30', activity: '前往机场/火车站',
+                          detail: '打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站',
+                          duration: '1-3小时', price: '¥30-150', ticket: '', tip: '高峰期地铁可能限流，预留充足时间' },
+                        { time: '12:00-14:00', activity: '值机·安检',
+                          detail: '办理登机牌，过安检，到候机/候车厅休息',
+                          duration: '1-2小时', price: '¥0', ticket: '', tip: '液体不能超100ml，充电宝不能托运' },
+                        { time: '14:00+', activity: '登机·出发',
+                          detail: '在候机厅可以逛逛免税店或纪念品店',
+                          duration: '1-3小时', price: '¥0', ticket: '', tip: '起飞后记得关机或开飞行模式' }
+                    ];
                 }
             }
         })();
