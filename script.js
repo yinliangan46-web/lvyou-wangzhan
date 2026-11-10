@@ -2365,26 +2365,24 @@ document.addEventListener('DOMContentLoaded', function() {
         var m = onclick.match(/openModal\(['"]([^'"]+)['"]|openProvinceCityModal\(['"][^'"]+['"],\s*['"]([^'"]+)['"]/);
         if (!m) return;
         var cityKey = m[1] || m[2];
-        // 找同步后的 data
         var ddData = (typeof destinationData !== 'undefined' && destinationData[cityKey]) || null;
         var cdData = (window.CITY_DETAIL && window.CITY_DETAIL[cityKey]) || null;
         var data = ddData || cdData;
         if (!data || !data.days) return;
-        // 从 "N天M晚" 提取 "N天"
         var nMatch = data.days.match(/(\d+)天/);
         if (!nMatch) return;
         var daysText = nMatch[1] + '天';
-        // 更新卡片里包含 far fa-clock 的 span
-        var clockSpan = card.querySelector('.dest-meta span i.far.fa-clock, .dest-meta span .far.fa-clock');
-        if (!clockSpan) {
-            // 备选：找最后一个 span
-            var spans = card.querySelectorAll('.dest-meta span');
-            if (spans.length >= 2) clockSpan = spans[spans.length - 2] || spans[spans.length - 1];
-        }
-        if (clockSpan) {
-            // 移除旧的 icon，设新文本
-            var icon = clockSpan.querySelector('i');
-            clockSpan.innerHTML = (icon ? icon.outerHTML + ' ' : '') + daysText;
+        // 找包含 fa-clock icon 的那个 span 元素（用 span:has(i.fa-clock) 或遍历找）
+        var meta = card.querySelector('.dest-meta');
+        if (!meta) return;
+        var spans = meta.querySelectorAll('span');
+        for (var si = 0; si < spans.length; si++) {
+            var hasClockIcon = spans[si].querySelector('i.far.fa-clock, i.fas.fa-clock, i.fa-clock');
+            if (hasClockIcon) {
+                // 彻底替换这个 span 的内容：保留 icon + 新天数
+                spans[si].innerHTML = '<i class="far fa-clock"></i> ' + daysText;
+                break;
+            }
         }
     });
     
