@@ -7467,7 +7467,7 @@ window.LOOP_ROUTES = [
         '亚龙湾': [109.6150, 18.1910], '蜈支洲岛': [109.7620, 18.3100],
         '天涯海角': [109.3400, 18.2980], '南山': [109.1990, 18.2800],
         '太平山': [114.1550, 22.2750], '尖沙咀': [114.1650, 22.2990],
-        '中环': [114.1560, 22.2820], '迪士尼': [113.9170, 22.3120],
+        '中环': [114.1560, 22.2820],
         '铜锣湾': [114.1830, 22.2820],
         '伪满皇宫': [125.3500, 43.9180], '净月潭': [125.4500, 43.7800],
         '长春电影世纪城': [125.4100, 43.8100],
@@ -7766,7 +7766,15 @@ window.LOOP_ROUTES = [
                     if (act.length >= 2 && !extracted.includes(act)) extracted.push(act);
                 });
             });
-            // 第 3 步：骨架 + itinerary-only 新景点（去重补末尾）
+            // 第 3 步：骨架通用名升级成全名（known dict 优先替换短名）
+            var knownForThis = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
+            backbone = backbone.map(function(bp) {
+                // known dict 里如果有更长的、互相包含的全名 → 替换（"迪士尼"→"上海迪士尼"）
+                var full = knownForThis.find(function(kn) { return kn !== bp && (kn.indexOf(bp) >= 0 || bp.indexOf(kn) >= 0); });
+                if (full && full.length > bp.length) return full;
+                return bp;
+            });
+            // 第 3.1 步：骨架 + itinerary-only 新景点（去重补末尾）
             var result = backbone.slice();
             // 白名单：骨架原始景点 ∪ known dict 本地景点
             var whitelist = backbone.slice(); // 骨架里的全允许
@@ -7893,7 +7901,7 @@ window.LOOP_ROUTES = [
             if (data.itinerary && data.itinerary.length >= 2) {
                 var allLandmarks = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
                 // 真实景点池 = routePins 里的 + known dict 补充的（去机场/去模板词）
-                var allRealPins = (data.routePins || []).concat(allLandmarks).filter(function(p) {
+                var allRealPins = allLandmarks.concat(data.routePins || []).filter(function(p) {
                     if (!p) return false;
                     if (isTransportHub(p)) return false;
                     if (/景点\d|周边|深度|自由|活动|返程|再见|最后打卡/.test(p)) return false;
