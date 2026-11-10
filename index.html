@@ -40,6 +40,7 @@
             </a>
             <nav class="nav" id="nav">
                 <a href="#home" class="active">首页</a>
+                <a href="#loops" class="nav-mobile-only">爆点环线</a>
                 <a href="#destinations">出境游</a>
                 <a href="#china">国内游</a>
                 <a href="#routes">线路方案</a>
@@ -571,6 +572,10 @@
                         <li><i class="fas fa-check-circle"></i> <strong>24小时出票</strong> — 全天候快速出票，紧急出行也能轻松应对</li>
                         <li><i class="fas fa-check-circle"></i> <strong>会员专享价</strong> — MYL会员可享受额外折扣和升舱优惠</li>
                     </ul>
+                    <div class="feature-actions">
+                        <a href="https://flights.ctrip.com/" target="_blank" rel="noopener" class="feature-btn"><i class="fas fa-plane-departure"></i> 携程机票预订</a>
+                        <a href="#contact" class="feature-btn feature-btn-ghost">专属顾问</a>
+                    </div>
                 </div>
                 <div class="feature-card feature-card-lg">
                     <div class="feature-icon">
@@ -584,6 +589,10 @@
                         <li><i class="fas fa-check-circle"></i> <strong>灵活入住</strong> — 支持提前入住/延迟退房，行程更自由</li>
                         <li><i class="fas fa-check-circle"></i> <strong>专属礼遇</strong> — 房型升级、欢迎果盘、延迟退房等专属权益</li>
                     </ul>
+                    <div class="feature-actions">
+                        <a href="https://hotels.ctrip.com/" target="_blank" rel="noopener" class="feature-btn"><i class="fas fa-bed"></i> 携程酒店预订</a>
+                        <a href="#contact" class="feature-btn feature-btn-ghost">专属顾问</a>
+                    </div>
                 </div>
                 <div class="feature-card feature-card-lg">
                     <div class="feature-icon">
@@ -597,6 +606,10 @@
                         <li><i class="fas fa-check-circle"></i> <strong>深度讲解</strong> — 不只是走马观花，带你了解背后的历史故事</li>
                         <li><i class="fas fa-check-circle"></i> <strong>灵活定制</strong> — 行程可根据你的兴趣随时调整</li>
                     </ul>
+                    <div class="feature-actions">
+                        <a href="#contact" class="feature-btn"><i class="fas fa-user-tie"></i> 预约私人导游</a>
+                        <a href="tel:4008889999" class="feature-btn feature-btn-ghost"><i class="fas fa-phone"></i> 400-888-9999</a>
+                    </div>
                 </div>
                 <div class="feature-card feature-card-lg">
                     <div class="feature-icon">
@@ -610,6 +623,10 @@
                         <li><i class="fas fa-check-circle"></i> <strong>全天候接机</strong> — 无论凌晨深夜，专车准时等候</li>
                         <li><i class="fas fa-check-circle"></i> <strong>免费等待</strong> — 航班延误免费等待，无需担心</li>
                     </ul>
+                    <div class="feature-actions">
+                        <a href="https://car.ctrip.com/" target="_blank" rel="noopener" class="feature-btn"><i class="fas fa-car-side"></i> 携程用车预订</a>
+                        <a href="#contact" class="feature-btn feature-btn-ghost">专属顾问</a>
+                    </div>
                 </div>
                 <div class="feature-card feature-card-lg">
                     <div class="feature-icon">
@@ -623,6 +640,10 @@
                         <li><i class="fas fa-check-circle"></i> <strong>全球救援</strong> — 24小时全球紧急救援服务</li>
                         <li><i class="fas fa-check-circle"></i> <strong>免费赠送</strong> — 所有MYL套餐均赠送旅行保险</li>
                     </ul>
+                    <div class="feature-actions">
+                        <a href="#contact" class="feature-btn"><i class="fas fa-shield-alt"></i> 咨询保险方案</a>
+                        <a href="tel:4008889999" class="feature-btn feature-btn-ghost"><i class="fas fa-phone"></i> 400-888-9999</a>
+                    </div>
                 </div>
                 <div class="feature-card feature-card-lg">
                     <div class="feature-icon">
@@ -636,6 +657,10 @@
                         <li><i class="fas fa-check-circle"></i> <strong>全程跟进</strong> — 从咨询到返程，专属客服一对一服务</li>
                         <li><i class="fas fa-check-circle"></i> <strong>售后无忧</strong> — 行程中任何问题，我们第一时间解决</li>
                     </ul>
+                    <div class="feature-actions">
+                        <a href="tel:4008889999" class="feature-btn"><i class="fas fa-phone-volume"></i> 立即致电客服</a>
+                        <a href="#contact" class="feature-btn feature-btn-ghost">在线留言</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -716,6 +741,28 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- 发布评价 -->
+            <div class="review-box">
+                <h3><i class="fas fa-pen-fancy"></i> 分享你的旅行故事</h3>
+                <p class="review-box-desc">真实体验由你来写，发布后将即时展示在上方评价区</p>
+                <form id="reviewForm" class="review-form">
+                    <div class="review-form-row">
+                        <input type="text" id="reviewName" placeholder="你的昵称，如：李女士" maxlength="20" required />
+                        <input type="text" id="reviewDest" placeholder="去了哪里？如：东京亲子之旅" maxlength="30" />
+                        <select id="reviewRating" aria-label="评分">
+                            <option value="5">★★★★★ 5星</option>
+                            <option value="4">★★★★ 4星</option>
+                            <option value="3">★★★ 3星</option>
+                        </select>
+                    </div>
+                    <textarea id="reviewText" placeholder="写下你的真实旅行体验..." rows="4" maxlength="300" required></textarea>
+                    <div class="review-form-footer">
+                        <span class="review-hint"><i class="fas fa-shield-alt"></i> 评价将保存并展示在评价区</span>
+                        <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> 发布评价</button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>

@@ -1039,6 +1039,71 @@ if (contactForm) {
     });
 }
 
+// ========== 用户评价发布 ==========
+const reviewForm = document.getElementById('reviewForm');
+const reviewGrid = document.querySelector('.testimonial-grid');
+const REVIEW_KEY = 'myl_reviews_v1';
+
+function reviewEscape(str) {
+    return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
+}
+
+function reviewStars(rating) {
+    return '★★★★★'.slice(0, rating) + '☆☆☆☆☆'.slice(0, Math.max(0, 5 - rating));
+}
+
+function renderReviewCard(review, prepend) {
+    if (!reviewGrid) return;
+    const card = document.createElement('div');
+    card.className = 'testimonial-card';
+    card.innerHTML = `
+        <div class="testimonial-stars">${reviewStars(review.rating)}</div>
+        <p>“${reviewEscape(review.text)}”</p>
+        <div class="testimonial-user">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" alt="${reviewEscape(review.name)}">
+            <div>
+                <h4>${reviewEscape(review.name)}</h4>
+                <span>${reviewEscape(review.dest || 'MYL 旅行')}</span>
+            </div>
+        </div>`;
+    if (prepend) reviewGrid.prepend(card); else reviewGrid.appendChild(card);
+}
+
+function loadReviews() {
+    try {
+        const list = JSON.parse(localStorage.getItem(REVIEW_KEY) || '[]');
+        list.forEach(r => renderReviewCard(r, false));
+    } catch (e) { /* 忽略解析异常 */ }
+}
+
+if (reviewForm) {
+    reviewForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('reviewName').value.trim();
+        const dest = document.getElementById('reviewDest').value.trim();
+        const rating = parseInt(document.getElementById('reviewRating').value, 10) || 5;
+        const text = document.getElementById('reviewText').value.trim();
+        if (!name || !text) {
+            showToast('请填写昵称和评价内容');
+            return;
+        }
+        const review = { name, dest, rating, text, time: Date.now() };
+        renderReviewCard(review, true);
+        try {
+            const list = JSON.parse(localStorage.getItem(REVIEW_KEY) || '[]');
+            list.unshift(review);
+            localStorage.setItem(REVIEW_KEY, JSON.stringify(list.slice(0, 30)));
+        } catch (e) { /* 存储不可用时仍展示本次评价 */ }
+        reviewForm.reset();
+        showToast('评价发布成功，感谢分享！');
+        if (reviewGrid && reviewGrid.firstElementChild) {
+            reviewGrid.firstElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+}
+
+if (reviewGrid) loadReviews();
+
 // ========== 平滑滚动 ==========
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
