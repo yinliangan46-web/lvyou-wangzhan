@@ -7383,6 +7383,55 @@ window.LOOP_ROUTES = [
     window.renderRichDetail = function(data) {
         if (!data) return '';
         
+        // === 自动从 itinerary 提取真实景点作为 routePins ===
+        // 老城市 CITY_DETAIL 里的 routePins 是硬编码的，和 itinerary 经常不同步
+        // 直接从行程里按天提取真实景点，保证"地图画的景点"="行程安排的景点"
+        (function syncRoutePinsFromItinerary() {
+            if (!data.itinerary || !data.itinerary.length) return;
+            // 过滤词：这些出现在活动名里说明它不是真实景点
+            var filterWords = ['抵达','入住','酒店','早餐','午餐','晚餐','退房','返程','值机','登机','出发','前往机场','前往车站',
+                '自由闲逛','下午茶','休息','返回','起床','整理','打包','行李','打车','地铁','寄存','办理','值机','安检','候机','候车',
+                '深度游览','自由活动','漫游','打卡','自由体验','周边商圈','晚餐时间','周边一日游','返程','再见','精华景点',
+                '深度文化','城市漫步','咖啡馆','书店','SPA','购物','最后','告别','漫步','夜游','游船','散步','徒步',
+                '特色体验','精华','日出','深度','玻璃栈道','玻璃桥','景区内','市区游览','博物馆','水磨沟'];
+            var badThemeWords = ['返程','再见','周边一日游','精华','深度','文化','最后','购物','SPA','咖啡馆','特色体验'];
+            var extracted = [];
+            data.itinerary.forEach(function(d) {
+                // 1. 优先从 Day theme 提取（按时间顺序，最可靠）
+                var theme = (d.theme || d.day || '').replace(/第[一二三四五六七八九十\d]+天/g, '').trim();
+                if (theme && theme.length >= 2) {
+                    theme.split(/[·\-—,，、/]/).forEach(function(s) {
+                        s = s.trim();
+                        if (s.length >= 2 && s.length <= 10) {
+                            var isBadTheme = badThemeWords.some(function(bw) { return s.indexOf(bw) >= 0; });
+                            var isFiltered = filterWords.some(function(fw) { return s.indexOf(fw) >= 0; });
+                            if (!isBadTheme && !isFiltered && !extracted.includes(s)) {
+                                extracted.push(s);
+                            }
+                        }
+                    });
+                }
+                // 2. 再从 timeline 补充 theme 里没有的真实景点
+                (d.timeline || []).forEach(function(tl) {
+                    var act = (tl.activity || '').trim();
+                    if (!act) return;
+                    var isFiltered = filterWords.some(function(fw) { return act.indexOf(fw) >= 0; });
+                    if (isFiltered) return;
+                    if (act.length < 2 || act.length > 12) return;
+                    // 去掉前缀
+                    act = act.replace(/^(出发|前往|到达|抵达)/, '').trim();
+                    // 去掉后缀（"傍晚漫步"、"夜游XX" 等）
+                    act = act.replace(/(傍晚|清晨|黄昏|公园游览|市内游览|游船|夜游|散步|徒步|逛逛).*$/, '').trim();
+                    // 如果去掉后缀后还 ≥2 字符且没重复，就加入
+                    if (act.length >= 2 && !extracted.includes(act)) extracted.push(act);
+                });
+            });
+            // 至少要 2 个真实景点才覆盖（避免提取失败导致 routePins 变空）
+            if (extracted.length >= 2) {
+                data.routePins = extracted;
+            }
+        })();
+
         // 路线
         const pins = (data.routePins || []).map((p,i) => `<span class="route-pin"><span class="pin-num">${i+1}</span>${safe(p)}</span>`).join('<span class="route-arrow">→</span>');
         const routeHtml = pins ? `<div class="route-visual"><div class="route-visual-title"><i class="fas fa-map-marked-alt"></i> 推荐游玩路线</div><div class="route-pins">${pins}</div></div>` : '';
