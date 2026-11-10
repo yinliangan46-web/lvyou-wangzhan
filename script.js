@@ -271,7 +271,28 @@ function handleSearch() {
         '西双版纳': 'xishuangbanna', '版纳': 'xishuangbanna',
         '黄果树': 'huangguoshu',
         '乐山': 'leshan', '大佛': 'leshan',
+        // 省份（__ 前缀，搜索时特殊处理）
+        '江苏': '__jiangsu', '江苏省': '__jiangsu',
+        '安徽': '__anhui', '安徽省': '__anhui',
+        '浙江': '__zhejiang', '浙江省': '__zhejiang',
+        '湖南': '__hunan', '湖南省': '__hunan',
+        '四川': '__sichuan', '四川省': '__sichuan',
+        // 新城市
+        '无锡': 'wuxi', '扬州': 'yangzhou', '镇江': 'zhenjiang', '徐州': 'xuzhou',
+        '芜湖': 'wuhu', '池州': 'chizhou',
+        '宁波': 'ningbo', '绍兴': 'shaoxing', '温州': 'wenzhou', '嘉兴': 'jiaxing',
+        '凤凰': 'fenghuang', '岳阳': 'yueyang', '衡阳': 'hengyang',
+        '都江堰': 'dujiangyan', '峨眉山': 'emeishan',
     };
+
+    // 检查省份（__ 前缀）
+    for (const [key, value] of Object.entries(destMap)) {
+        if (value.startsWith('__') && (key.includes(keyword) || keyword.includes(key))) {
+            openProvinceModal(value.slice(2));
+            input.value = '';
+            return;
+        }
+    }
 
     // 检查是否匹配目的地
     for (const [key, value] of Object.entries(destMap)) {
@@ -518,7 +539,22 @@ const destinationData = {
     huangguoshu: {name:'黄果树',country:'贵州',tag:'亚洲最大瀑布',rating:4.6,days:'3天2晚',price:'¥1,599',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/HuangguoshuFall.jpg/960px-HuangguoshuFall.jpg',description:'黄果树瀑布，亚洲最大的瀑布，宽101米，高78米。奔腾而下的水流如银河倾泻，水雾弥漫，彩虹横跨，气势磅礴。景区内还有天星桥、陡坡塘等多个景点。',itinerary:[
         {day:'Day 1',title:'抵达贵阳',desc:'抵达贵阳，乘车前往黄果树，入住酒店。'},{day:'Day 2',title:'黄果树瀑布',desc:'全天游览黄果树瀑布景区：大瀑布、天星桥、陡坡塘。'},{day:'Day 3',title:'返程',desc:'自由活动，返程。'}],includes:['往返交通','三星级酒店','景点门票','景区观光车','旅行保险']},
     leshan: {name:'乐山',country:'四川',tag:'世界最大石刻坐佛',rating:4.6,days:'3天2晚',price:'¥1,399',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Panorama_of_Leshan_03.2025.jpg/960px-Panorama_of_Leshan_03.2025.jpg',description:'乐山，举世闻名的乐山大佛所在地。大佛通高71米，是世界上最大的石刻弥勒佛坐像，历时90年建成。登临大佛脚下，感受"山是一尊佛，佛是一座山"的震撼。',itinerary:[
-        {day:'Day 1',title:'抵达乐山',desc:'抵达乐山，入住酒店，晚上品尝乐山钵钵鸡。'},{day:'Day 2',title:'乐山大佛 & 峨眉山',desc:'上午游览乐山大佛，下午前往峨眉山。'},{day:'Day 3',title:'返程',desc:'自由活动，返程。'}],includes:['往返交通','三星级酒店','大佛门票','峨眉山半山游','旅行保险']}
+        {day:'Day 1',title:'抵达乐山',desc:'抵达乐山，入住酒店，晚上品尝乐山钵钵鸡。'},{day:'Day 2',title:'乐山大佛 & 峨眉山',desc:'上午游览乐山大佛，下午前往峨眉山。'},{day:'Day 3',title:'返程',desc:'自由活动，返程。'}],includes:['往返交通','三星级酒店','大佛门票','峨眉山半山游','旅行保险']},
+    wuxi: {name:'无锡',country:'中国',province:'江苏省',tag:'太湖明珠',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'无锡，江苏省的一座美丽城市，以太湖明珠而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'太湖明珠',desc:'游览无锡，体验太湖明珠的魅力。'},{day:'Day 2',title:'太湖明珠',desc:'游览无锡，体验太湖明珠的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    yangzhou: {name:'扬州',country:'中国',province:'江苏省',tag:'烟花三月',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'扬州，江苏省的一座美丽城市，以烟花三月而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'烟花三月',desc:'游览扬州，体验烟花三月的魅力。'},{day:'Day 2',title:'烟花三月',desc:'游览扬州，体验烟花三月的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    zhenjiang: {name:'镇江',country:'中国',province:'江苏省',tag:'三山名胜',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'镇江，江苏省的一座美丽城市，以三山名胜而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'三山名胜',desc:'游览镇江，体验三山名胜的魅力。'},{day:'Day 2',title:'三山名胜',desc:'游览镇江，体验三山名胜的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    xuzhou: {name:'徐州',country:'中国',province:'江苏省',tag:'汉风楚韵',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'徐州，江苏省的一座美丽城市，以汉风楚韵而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'汉风楚韵',desc:'游览徐州，体验汉风楚韵的魅力。'},{day:'Day 2',title:'汉风楚韵',desc:'游览徐州，体验汉风楚韵的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    wuhu: {name:'芜湖',country:'中国',province:'安徽省',tag:'江城芜湖',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'芜湖，安徽省的一座美丽城市，以江城芜湖而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'江城芜湖',desc:'游览芜湖，体验江城芜湖的魅力。'},{day:'Day 2',title:'江城芜湖',desc:'游览芜湖，体验江城芜湖的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    chizhou: {name:'池州',country:'中国',province:'安徽省',tag:'九华山佛教',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'池州，安徽省的一座美丽城市，以九华山佛教而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'九华山佛教',desc:'游览池州，体验九华山佛教的魅力。'},{day:'Day 2',title:'九华山佛教',desc:'游览池州，体验九华山佛教的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    ningbo: {name:'宁波',country:'中国',province:'浙江省',tag:'港口名城',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'宁波，浙江省的一座美丽城市，以港口名城而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'港口名城',desc:'游览宁波，体验港口名城的魅力。'},{day:'Day 2',title:'港口名城',desc:'游览宁波，体验港口名城的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    shaoxing: {name:'绍兴',country:'中国',province:'浙江省',tag:'黄酒之乡',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'绍兴，浙江省的一座美丽城市，以黄酒之乡而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'黄酒之乡',desc:'游览绍兴，体验黄酒之乡的魅力。'},{day:'Day 2',title:'黄酒之乡',desc:'游览绍兴，体验黄酒之乡的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    wenzhou: {name:'温州',country:'中国',province:'浙江省',tag:'瓯越山水',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'温州，浙江省的一座美丽城市，以瓯越山水而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'瓯越山水',desc:'游览温州，体验瓯越山水的魅力。'},{day:'Day 2',title:'瓯越山水',desc:'游览温州，体验瓯越山水的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    jiaxing: {name:'嘉兴',country:'中国',province:'浙江省',tag:'红船乌镇',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'嘉兴，浙江省的一座美丽城市，以红船乌镇而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'红船乌镇',desc:'游览嘉兴，体验红船乌镇的魅力。'},{day:'Day 2',title:'红船乌镇',desc:'游览嘉兴，体验红船乌镇的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    fenghuang: {name:'凤凰',country:'中国',province:'湖南省',tag:'古城烟雨',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'凤凰，湖南省的一座美丽城市，以古城烟雨而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'古城烟雨',desc:'游览凤凰，体验古城烟雨的魅力。'},{day:'Day 2',title:'古城烟雨',desc:'游览凤凰，体验古城烟雨的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    yueyang: {name:'岳阳',country:'中国',province:'湖南省',tag:'洞庭天下水',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'岳阳，湖南省的一座美丽城市，以洞庭天下水而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'洞庭天下水',desc:'游览岳阳，体验洞庭天下水的魅力。'},{day:'Day 2',title:'洞庭天下水',desc:'游览岳阳，体验洞庭天下水的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    hengyang: {name:'衡阳',country:'中国',province:'湖南省',tag:'南岳衡山',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'衡阳，湖南省的一座美丽城市，以南岳衡山而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'南岳衡山',desc:'游览衡阳，体验南岳衡山的魅力。'},{day:'Day 2',title:'南岳衡山',desc:'游览衡阳，体验南岳衡山的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    dujiangyan: {name:'都江堰',country:'中国',province:'四川省',tag:'千年水利',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'都江堰，四川省的一座美丽城市，以千年水利而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'千年水利',desc:'游览都江堰，体验千年水利的魅力。'},{day:'Day 2',title:'千年水利',desc:'游览都江堰，体验千年水利的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
+    emeishan: {name:'峨眉山',country:'中国',province:'四川省',tag:'佛教名山',rating:4.5,days:'2天1晚',price:'¥1,299起',img:'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',description:'峨眉山，四川省的一座美丽城市，以佛教名山而闻名。MYL 精选当地精华景点与美食，带你一次玩透。',itinerary:[{day:'Day 1',title:'佛教名山',desc:'游览峨眉山，体验佛教名山的魅力。'},{day:'Day 2',title:'佛教名山',desc:'游览峨眉山，体验佛教名山的魅力。'}],includes:['往返高铁','三星级酒店','景点门票','旅行保险']},
 };
 
 // 套餐数据
@@ -858,6 +894,114 @@ function showOptionDetail(optionId) {
 }
 
 // Helper: open tour modal with custom data and back link
+
+// ========== 省份弹窗 ==========
+function openProvinceModal(provinceKey) {
+    const provData = (window.PROVINCE_DATA || []).find(p => p.key === provinceKey);
+    if (!provData) { showToast('该省份数据加载中'); return; }
+
+    // 已有城市 key 列表
+    const existingCities = ['nanjing','suzhou','hefei','huangshan','luan',
+        'hangzhou','changsha','zhangjiajie','chengdu','leshan','jiuzhaigou',
+        'wuxi','yangzhou','zhenjiang','xuzhou','wuhu','chizhou',
+        'ningbo','shaoxing','wenzhou','jiaxing',
+        'fenghuang','yueyang','hengyang','dujiangyan','emeishan'];
+
+    const citiesHtml = provData.cities.map(c => {
+        const onclick = existingCities.includes(c.key)
+            ? `openModal('${c.key}')`
+            : `showToast('${c.name} 详情即将上线')`;
+        return `
+        <div class="dest-card china-card" onclick="${onclick}" style="cursor:pointer">
+            <div class="dest-info" style="padding:12px 16px">
+                <h3 style="font-size:1rem;margin-bottom:4px">${c.name}</h3>
+                <p style="font-size:0.8rem;color:#888;margin:0">${c.tag} · ${c.days}</p>
+            </div>
+        </div>`;
+    }).join('');
+
+    const optionsHtml = provData.options.map(o => `
+        <div class="itinerary-day option-item" style="border-left-color:var(--accent);cursor:pointer;padding:10px 14px;margin-bottom:8px;border-radius:8px;background:#fafafa" onclick="showProvinceOptionDetail('${o.id}')">
+            <div style="flex:1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:200px">
+                    <h4 style="margin:0 0 4px 0;font-size:0.95rem">${o.name}</h4>
+                    <p style="margin:0;font-size:0.8rem;color:#888">${o.desc || ''}</p>
+                </div>
+                <div style="text-align:right;flex-shrink:0">
+                    <div style="color:var(--primary);font-weight:600;font-size:1rem">${o.price}</div>
+                    <div style="font-size:0.75rem;color:#888">查看详情 →</div>
+                </div>
+            </div>
+        </div>`).join('');
+
+    modalBody.innerHTML = `
+        <div class="modal-body">
+            <h2 style="margin-bottom:4px">${provData.name}</h2>
+            <div class="modal-subtitle" style="margin-bottom:12px">⭐ ${provData.rating} · ${provData.days} · ${provData.price}</div>
+            <div class="modal-section">
+                <h3><i class="fas fa-info-circle"></i> 省份简介</h3>
+                <p>${provData.desc}</p>
+            </div>
+            <div class="modal-section">
+                <h3><i class="fas fa-city"></i> 下辖精选城市</h3>
+                <p style="font-size:0.85rem;color:#888;margin-bottom:12px">点击城市卡片进入详情</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${citiesHtml}</div>
+            </div>
+            ${optionsHtml ? `
+            <div class="modal-section">
+                <h3><i class="fas fa-list-alt"></i> 可选方案（多城组合）</h3>
+                <p style="font-size:0.85rem;color:#888;margin-bottom:12px">小城市周边一起玩更划算，MYL 为你组合最佳路线</p>
+                <div>${optionsHtml}</div>
+            </div>` : ''}
+            <div class="modal-price-box">
+                <div>
+                    <div class="price">${provData.price} <small>/人起</small></div>
+                </div>
+                <a href="#contact" class="btn" style="background:white;color:var(--primary);flex-shrink:0" onclick="closeModal()">立即咨询</a>
+            </div>
+        </div>
+    `;
+
+    destModal.classList.add('active');
+    document.body.classList.add('modal-open');
+    document.body.style.paddingRight = getScrollbarWidth() + 'px';
+}
+
+// ========== 省份可选方案详情 ==========
+function showProvinceOptionDetail(optionId) {
+    const optDetail = (window.PROVINCE_OPTION_DETAIL || {})[optionId];
+    if (!optDetail) { showToast('该方案详情即将上线'); return; }
+
+    const itineraryHtml = optDetail.itinerary.map(item => `
+        <div class="itinerary-day">
+            <h4>${item.day} — ${item.title}</h4>
+            <p>${item.desc}</p>
+        </div>
+    `).join('');
+
+    modalBody.innerHTML = `
+        <div class="modal-body">
+            <h2>${optDetail.name}</h2>
+            <div class="modal-subtitle">${optDetail.price}</div>
+            <div class="modal-section">
+                <h3><i class="fas fa-info-circle"></i> 方案介绍</h3>
+                <p>${optDetail.description}</p>
+            </div>
+            ${itineraryHtml}
+            <div class="modal-section">
+                <h3><i class="fas fa-check-circle"></i> 包含项目</h3>
+                <p>${optDetail.includes.join(' · ')}</p>
+            </div>
+            <div class="modal-price-box">
+                <div>
+                    <div class="price">${optDetail.price} <small>/人起</small></div>
+                </div>
+                <a href="#contact" class="btn" style="background:white;color:var(--primary);flex-shrink:0" onclick="closeModal()">立即预订</a>
+            </div>
+        </div>
+    `;
+}
+
 function openTourModalBack(data, backType) {
     const itineraryData = data.itineraries || [];
     const itinHtml = itineraryData.map(day => {
@@ -1036,6 +1180,114 @@ function buildTourMapHtmlLegacy(data) {
         pins.map((p,i) => '<text x="' + p.x + '" y="' + (p.y - 2.5) + '" text-anchor="middle" font-size="2.2" fill="' + textColor + '" font-weight="800">' + (i+1) + '</text>').join('') +
         '</svg><div class="loop-map-nodes">' + nodesHtml + segLabelsHtml + '</div></div>' +
         '<div class="loop-map-tip">💡 提示：点击编号圆点可跳转到对应 Day 的行程 · 绿色=起点 · 带数字标签为分段里程或天数</div></div>';
+}
+
+
+// ========== 省份弹窗 ==========
+function openProvinceModal(provinceKey) {
+    const provData = (window.PROVINCE_DATA || []).find(p => p.key === provinceKey);
+    if (!provData) { showToast('该省份数据加载中'); return; }
+
+    // 已有城市 key 列表
+    const existingCities = ['nanjing','suzhou','hefei','huangshan','luan',
+        'hangzhou','changsha','zhangjiajie','chengdu','leshan','jiuzhaigou',
+        'wuxi','yangzhou','zhenjiang','xuzhou','wuhu','chizhou',
+        'ningbo','shaoxing','wenzhou','jiaxing',
+        'fenghuang','yueyang','hengyang','dujiangyan','emeishan'];
+
+    const citiesHtml = provData.cities.map(c => {
+        const onclick = existingCities.includes(c.key)
+            ? `openModal('${c.key}')`
+            : `showToast('${c.name} 详情即将上线')`;
+        return `
+        <div class="dest-card china-card" onclick="${onclick}" style="cursor:pointer">
+            <div class="dest-info" style="padding:12px 16px">
+                <h3 style="font-size:1rem;margin-bottom:4px">${c.name}</h3>
+                <p style="font-size:0.8rem;color:#888;margin:0">${c.tag} · ${c.days}</p>
+            </div>
+        </div>`;
+    }).join('');
+
+    const optionsHtml = provData.options.map(o => `
+        <div class="itinerary-day option-item" style="border-left-color:var(--accent);cursor:pointer;padding:10px 14px;margin-bottom:8px;border-radius:8px;background:#fafafa" onclick="showProvinceOptionDetail('${o.id}')">
+            <div style="flex:1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:200px">
+                    <h4 style="margin:0 0 4px 0;font-size:0.95rem">${o.name}</h4>
+                    <p style="margin:0;font-size:0.8rem;color:#888">${o.desc || ''}</p>
+                </div>
+                <div style="text-align:right;flex-shrink:0">
+                    <div style="color:var(--primary);font-weight:600;font-size:1rem">${o.price}</div>
+                    <div style="font-size:0.75rem;color:#888">查看详情 →</div>
+                </div>
+            </div>
+        </div>`).join('');
+
+    modalBody.innerHTML = `
+        <div class="modal-body">
+            <h2 style="margin-bottom:4px">${provData.name}</h2>
+            <div class="modal-subtitle" style="margin-bottom:12px">⭐ ${provData.rating} · ${provData.days} · ${provData.price}</div>
+            <div class="modal-section">
+                <h3><i class="fas fa-info-circle"></i> 省份简介</h3>
+                <p>${provData.desc}</p>
+            </div>
+            <div class="modal-section">
+                <h3><i class="fas fa-city"></i> 下辖精选城市</h3>
+                <p style="font-size:0.85rem;color:#888;margin-bottom:12px">点击城市卡片进入详情</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${citiesHtml}</div>
+            </div>
+            ${optionsHtml ? `
+            <div class="modal-section">
+                <h3><i class="fas fa-list-alt"></i> 可选方案（多城组合）</h3>
+                <p style="font-size:0.85rem;color:#888;margin-bottom:12px">小城市周边一起玩更划算，MYL 为你组合最佳路线</p>
+                <div>${optionsHtml}</div>
+            </div>` : ''}
+            <div class="modal-price-box">
+                <div>
+                    <div class="price">${provData.price} <small>/人起</small></div>
+                </div>
+                <a href="#contact" class="btn" style="background:white;color:var(--primary);flex-shrink:0" onclick="closeModal()">立即咨询</a>
+            </div>
+        </div>
+    `;
+
+    destModal.classList.add('active');
+    document.body.classList.add('modal-open');
+    document.body.style.paddingRight = getScrollbarWidth() + 'px';
+}
+
+// ========== 省份可选方案详情 ==========
+function showProvinceOptionDetail(optionId) {
+    const optDetail = (window.PROVINCE_OPTION_DETAIL || {})[optionId];
+    if (!optDetail) { showToast('该方案详情即将上线'); return; }
+
+    const itineraryHtml = optDetail.itinerary.map(item => `
+        <div class="itinerary-day">
+            <h4>${item.day} — ${item.title}</h4>
+            <p>${item.desc}</p>
+        </div>
+    `).join('');
+
+    modalBody.innerHTML = `
+        <div class="modal-body">
+            <h2>${optDetail.name}</h2>
+            <div class="modal-subtitle">${optDetail.price}</div>
+            <div class="modal-section">
+                <h3><i class="fas fa-info-circle"></i> 方案介绍</h3>
+                <p>${optDetail.description}</p>
+            </div>
+            ${itineraryHtml}
+            <div class="modal-section">
+                <h3><i class="fas fa-check-circle"></i> 包含项目</h3>
+                <p>${optDetail.includes.join(' · ')}</p>
+            </div>
+            <div class="modal-price-box">
+                <div>
+                    <div class="price">${optDetail.price} <small>/人起</small></div>
+                </div>
+                <a href="#contact" class="btn" style="background:white;color:var(--primary);flex-shrink:0" onclick="closeModal()">立即预订</a>
+            </div>
+        </div>
+    `;
 }
 
 function openTourModal(type) {

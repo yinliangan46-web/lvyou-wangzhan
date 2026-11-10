@@ -1,0 +1,437 @@
+{
+  "wuxi": {
+    "name": "无锡",
+    "country": "中国",
+    "province": "江苏省",
+    "tag": "太湖明珠",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "无锡，江苏省的一座美丽城市，以太湖明珠而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "太湖明珠",
+        "desc": "游览无锡，体验太湖明珠的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "太湖明珠",
+        "desc": "游览无锡，体验太湖明珠的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "yangzhou": {
+    "name": "扬州",
+    "country": "中国",
+    "province": "江苏省",
+    "tag": "烟花三月",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "扬州，江苏省的一座美丽城市，以烟花三月而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "烟花三月",
+        "desc": "游览扬州，体验烟花三月的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "烟花三月",
+        "desc": "游览扬州，体验烟花三月的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "zhenjiang": {
+    "name": "镇江",
+    "country": "中国",
+    "province": "江苏省",
+    "tag": "三山名胜",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "镇江，江苏省的一座美丽城市，以三山名胜而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "三山名胜",
+        "desc": "游览镇江，体验三山名胜的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "三山名胜",
+        "desc": "游览镇江，体验三山名胜的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "xuzhou": {
+    "name": "徐州",
+    "country": "中国",
+    "province": "江苏省",
+    "tag": "汉风楚韵",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "徐州，江苏省的一座美丽城市，以汉风楚韵而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "汉风楚韵",
+        "desc": "游览徐州，体验汉风楚韵的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "汉风楚韵",
+        "desc": "游览徐州，体验汉风楚韵的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "wuhu": {
+    "name": "芜湖",
+    "country": "中国",
+    "province": "安徽省",
+    "tag": "江城芜湖",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "芜湖，安徽省的一座美丽城市，以江城芜湖而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "江城芜湖",
+        "desc": "游览芜湖，体验江城芜湖的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "江城芜湖",
+        "desc": "游览芜湖，体验江城芜湖的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "chizhou": {
+    "name": "池州",
+    "country": "中国",
+    "province": "安徽省",
+    "tag": "九华山佛教",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "池州，安徽省的一座美丽城市，以九华山佛教而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "九华山佛教",
+        "desc": "游览池州，体验九华山佛教的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "九华山佛教",
+        "desc": "游览池州，体验九华山佛教的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "ningbo": {
+    "name": "宁波",
+    "country": "中国",
+    "province": "浙江省",
+    "tag": "港口名城",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "宁波，浙江省的一座美丽城市，以港口名城而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "港口名城",
+        "desc": "游览宁波，体验港口名城的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "港口名城",
+        "desc": "游览宁波，体验港口名城的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "shaoxing": {
+    "name": "绍兴",
+    "country": "中国",
+    "province": "浙江省",
+    "tag": "黄酒之乡",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "绍兴，浙江省的一座美丽城市，以黄酒之乡而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "黄酒之乡",
+        "desc": "游览绍兴，体验黄酒之乡的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "黄酒之乡",
+        "desc": "游览绍兴，体验黄酒之乡的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "wenzhou": {
+    "name": "温州",
+    "country": "中国",
+    "province": "浙江省",
+    "tag": "瓯越山水",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "温州，浙江省的一座美丽城市，以瓯越山水而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "瓯越山水",
+        "desc": "游览温州，体验瓯越山水的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "瓯越山水",
+        "desc": "游览温州，体验瓯越山水的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "jiaxing": {
+    "name": "嘉兴",
+    "country": "中国",
+    "province": "浙江省",
+    "tag": "红船乌镇",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "嘉兴，浙江省的一座美丽城市，以红船乌镇而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "红船乌镇",
+        "desc": "游览嘉兴，体验红船乌镇的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "红船乌镇",
+        "desc": "游览嘉兴，体验红船乌镇的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "fenghuang": {
+    "name": "凤凰",
+    "country": "中国",
+    "province": "湖南省",
+    "tag": "古城烟雨",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "凤凰，湖南省的一座美丽城市，以古城烟雨而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "古城烟雨",
+        "desc": "游览凤凰，体验古城烟雨的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "古城烟雨",
+        "desc": "游览凤凰，体验古城烟雨的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "yueyang": {
+    "name": "岳阳",
+    "country": "中国",
+    "province": "湖南省",
+    "tag": "洞庭天下水",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "岳阳，湖南省的一座美丽城市，以洞庭天下水而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "洞庭天下水",
+        "desc": "游览岳阳，体验洞庭天下水的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "洞庭天下水",
+        "desc": "游览岳阳，体验洞庭天下水的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "hengyang": {
+    "name": "衡阳",
+    "country": "中国",
+    "province": "湖南省",
+    "tag": "南岳衡山",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "衡阳，湖南省的一座美丽城市，以南岳衡山而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "南岳衡山",
+        "desc": "游览衡阳，体验南岳衡山的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "南岳衡山",
+        "desc": "游览衡阳，体验南岳衡山的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "dujiangyan": {
+    "name": "都江堰",
+    "country": "中国",
+    "province": "四川省",
+    "tag": "千年水利",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "都江堰，四川省的一座美丽城市，以千年水利而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "千年水利",
+        "desc": "游览都江堰，体验千年水利的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "千年水利",
+        "desc": "游览都江堰，体验千年水利的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  },
+  "emeishan": {
+    "name": "峨眉山",
+    "country": "中国",
+    "province": "四川省",
+    "tag": "佛教名山",
+    "rating": 4.5,
+    "days": "2天1晚",
+    "price": "¥1,299起",
+    "img": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80",
+    "description": "峨眉山，四川省的一座美丽城市，以佛教名山而闻名。MYL 精选当地精华景点与美食，带你一次玩透。",
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "title": "佛教名山",
+        "desc": "游览峨眉山，体验佛教名山的魅力。"
+      },
+      {
+        "day": "Day 2",
+        "title": "佛教名山",
+        "desc": "游览峨眉山，体验佛教名山的魅力。"
+      }
+    ],
+    "includes": [
+      "往返高铁",
+      "三星级酒店",
+      "景点门票",
+      "旅行保险"
+    ]
+  }
+}
