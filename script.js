@@ -631,12 +631,22 @@ function openModal(city) {
     const data = destinationData[city];
     if (!data) return;
 
-    const itineraryHtml = data.itinerary.map(item => `
-        <div class="itinerary-day">
-            <h4>${item.day} — ${item.title}</h4>
-            <p>${item.desc}</p>
-        </div>
-    `).join('');
+    // 优先使用富数据版本
+    const richData = (window.CITY_DETAIL && window.CITY_DETAIL[city]) || null;
+
+    let itineraryHtml, extraHtml = '';
+
+    if (richData && window.renderRichDetail) {
+        itineraryHtml = window.renderRichDetail(richData);
+    } else {
+        // 回退到原有简单版本
+        itineraryHtml = data.itinerary.map(item => `
+            <div class="itinerary-day">
+                <h4>${item.day} — ${item.title}</h4>
+                <p>${item.desc}</p>
+            </div>
+        `).join('');
+    }
 
     const includesHtml = data.includes.join(' · ');
 
@@ -651,10 +661,7 @@ function openModal(city) {
                 <p>${data.description}</p>
             </div>
 
-            <div class="modal-section">
-                <h3><i class="fas fa-route"></i> 详细行程安排</h3>
-                ${itineraryHtml}
-            </div>
+            ${itineraryHtml}
 
             <div class="modal-price-box">
                 <div>
