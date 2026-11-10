@@ -7699,24 +7699,17 @@ window.LOOP_ROUTES = [
                     });
                 var daysToFill = isLastDayReturn ? data.itinerary.length - 1 : data.itinerary.length;
                 
-                // 均匀分配 remainingPins 到 Day2...DayN（每个 Day 2-4 个景点）
+                // 均匀分配 remainingPins 到 Day2...DayN（每个 Day 2-3 个，最后一天最多 3 个）
                 var pinIdx = 0;
                 for (var di = 1; di < daysToFill; di++) {
                     var d = data.itinerary[di];
-                    // 最后一个非返程 Day 多取几个（把剩余景点全塞进去）
-                    var isLast = (di === daysToFill - 1);
                     var remaining = remainingPins.length - pinIdx;
-                    var totalDays = daysToFill - 1; // Day2...DayN 共几个
-                    var daysLeft = daysToFill - di; // 当前 Day 后面还有几个
-                    var takeCount;
-                    if (isLast) {
-                        takeCount = remaining; // 最后一个 Day 全取走（最多 4 个）
-                    } else {
-                        takeCount = Math.max(2, Math.ceil(remaining / daysLeft));
-                        takeCount = Math.min(takeCount, 3); // 普通 Day 最多 3 个
-                    }
-                    if (takeCount <= 0) takeCount = 2;
+                    var daysLeft = daysToFill - di; // 当前 Day 后面还有几个 Day（含自己）
+                    // 取几个：均匀分配，最后一个非返程 Day 也最多 3 个
+                    var takeCount = Math.max(2, Math.ceil(remaining / daysLeft));
+                    takeCount = Math.min(takeCount, 3); // 每个 Day 最多 3 个
                     takeCount = Math.min(takeCount, remaining);
+                    if (takeCount <= 0) takeCount = 2;
                     
                     var dayPins = [];
                     for (var t = 0; t < takeCount && pinIdx < remainingPins.length; t++) {
@@ -7762,6 +7755,34 @@ window.LOOP_ROUTES = [
                             ];
                         }
                     }
+                }
+                // === 返程日（isLastDayReturn=true）模板词清理 ===
+                // 保留返程框架（起床→早餐→退房→机场/车站→值机→登机）
+                // 但替换模板词"最后打卡+购物"、"退房+午餐"等
+                if (isLastDayReturn) {
+                    var rd = data.itinerary[lastDayIdx];
+                    var cleanedTimeline = [];
+                    (rd.timeline || []).forEach(function(tl) {
+                        var act = (tl.activity || '').trim();
+                        // 模板词映射替换
+                        if (/最后打卡\+购物|最后打卡|购物/.test(act)) return; // 直接删掉
+                        if (/退房\+午餐/.test(act)) act = '退房';
+                        if (/退房/.test(act)) act = '办理退房手续';
+                        if (/自由活动|随心漫游|深度游玩|周边一日游/.test(act)) return;
+                        if (/景区深度游览/.test(act)) return;
+                        if (/深度文化|精华景点/.test(act)) return;
+                        if (/SPA|咖啡馆|书店/.test(act)) return;
+                        cleanedTimeline.push({
+                            time: tl.time || '',
+                            activity: act,
+                            detail: tl.detail || '',
+                            duration: tl.duration || '',
+                            ticket: tl.ticket || '',
+                            price: tl.price || '',
+                            tip: tl.tip || ''
+                        });
+                    });
+                    if (cleanedTimeline.length >= 2) rd.timeline = cleanedTimeline;
                 }
             }
         })();

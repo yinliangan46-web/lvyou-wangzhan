@@ -1706,57 +1706,78 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
             }]
         }));
     } else {
-        // === 兜底：高质量 itinerary（2天，真实景点名 + 环线同标准）===
+        // === 兜底：高质量 itinerary（3天，真实景点名 + 热门城市同标准）===
+        // known dict 已经给了每个城市 6-10 个景点，3 天刚好塞下
+        var _p0 = _realPoi[0] || cityName + '核心景区';
+        var _p1 = _realPoi[1] || cityName + '博物馆';
+        var _p2 = _realPoi[2] || cityName + '历史街区';
+        var _p3 = _realPoi[3] || cityName + '夜市';
+        var _p4 = _realPoi[4] || cityName + '自然景点';
+        var _p5 = _realPoi[5] || cityName + '地标';
         itinerary = [
             {
                 day: 'Day 1',
-                theme: _realPoi[0] + ' + ' + _realPoi[1] + ' 经典精华游',
+                theme: '抵达·' + _p0 + '·' + _p1,
                 timeline: [
-                    { time: '08:30', activity: '抵达' + cityName + '站（高铁/机场）',
-                      detail: '高铁/飞机抵达' + cityName + '，MYL专车接站直达市中心酒店办理入住，稍作休整后开启第一天行程',
-                      duration: '1-2小时', ticket: '', price: '¥100-300 接站费', tip: '建议上午抵达，可把全天时间留给游玩；旺季高铁票提前2周订',
+                    { time: '14:00', activity: '抵达' + cityName + '站（高铁/机场）',
+                      detail: '高铁/飞机抵达，MYL专车接站直达酒店办理入住',
+                      duration: '1-2小时', ticket: '', price: '¥100-300 接站费', tip: '上午抵达可多玩半天；旺季高铁票提前2周订',
                     },
-                    { time: '10:30', activity: _realPoi[0] + '（重点游览）',
-                      detail: '这是' + cityName + '最具代表性的核心景区，感受当地标志性的人文历史与独特自然风光，必打卡！',
-                      duration: '3-4小时', ticket: '¥50-150', price: '¥50-150', tip: '提前在官方小程序订票更便宜，避开周末和节假日高峰',
+                    { time: '16:30', activity: _p0 + '（重点游览）',
+                      detail: cityName + '最具代表性的核心景区，感受标志性人文历史与自然风光',
+                      duration: '2-3小时', ticket: '¥50-150', price: '¥50-150', tip: '提前在官方小程序订票更便宜，避开周末高峰',
                     },
-                    { time: '14:30', activity: _realPoi[1] + '（文化体验）',
-                      detail: '深度体验' + cityName + '当地文化，逛博物馆/历史街区/特色古镇，了解这座城市的历史底蕴',
-                      duration: '2-3小时', ticket: '免费-¥80', price: '¥0-80', tip: '博物馆大多周一闭馆，建议避开；古镇老街拍照最好看',
-                    },
-                    { time: '17:30', activity: cityName + '当地特色美食',
-                      detail: '前往本地人气餐厅品尝' + cityName + '招牌菜，找老字号/本地人推荐的不踩雷',
-                      duration: '2小时', ticket: '', price: '¥80-180/人', tip: '搜大众点评"本地好评榜"；别在景区门口吃，贵又不好吃',
-                    },
-                    { time: '19:30', activity: cityName + '夜市/夜景 + 回酒店',
-                      detail: '吃饱喝足后逛' + cityName + '夜市/文创街，买点伴手礼带回家；时间充裕可看城市夜景',
-                      duration: '2小时', ticket: '', price: '¥50-150', tip: '夜景通常比白天更美！早点回酒店休息，第二天还有行程',
+                    { time: '19:30', activity: cityName + '当地特色晚餐',
+                      detail: '前往本地人气餐厅品尝' + cityName + '招牌菜，找老字号不踩雷',
+                      duration: '2小时', price: '¥80-180/人', tip: '搜大众点评本地好评榜，别在景区门口吃',
                     },
                 ]
             },
             {
                 day: 'Day 2',
-                theme: _realPoi[2] + ' + 自由探索 深度体验',
+                theme: _p1 + '·' + _p2 + '·' + _p3,
                 timeline: [
-                    { time: '08:30', activity: '酒店早餐后出发',
-                      detail: '酒店吃完早餐，退房后携带行李出发开始第二天行程',
-                      duration: '1小时', ticket: '', price: '含在房费里', tip: '大部分酒店含早餐；退房后行李可寄存在前台',
+                    { time: '08:30', activity: _p1,
+                      detail: '上午游览' + _p1 + '，了解' + cityName + '的历史底蕴',
+                      duration: '3-4小时', ticket: '¥30-120', price: '¥30-120', tip: '博物馆大多周一闭馆，建议避开',
                     },
-                    { time: '10:00', activity: _realPoi[2] + '（第二天重点）',
-                      detail: '这是' + cityName + '另一个必玩景点，和第一天风格不同的体验角度',
-                      duration: '3-4小时', ticket: '¥30-120', price: '¥30-120', tip: '记得穿舒适运动鞋，很多景点需要步行；带好水',
+                    { time: '12:00', activity: '当地特色午餐',
+                      detail: '逛到哪吃到哪，尝尝本地特色小吃',
+                      duration: '1.5小时', price: '¥50-100',
                     },
-                    { time: '14:30', activity: cityName + '自由探索 + 特色小景点',
-                      detail: '逛本地特色街区/文创园/小众景点，感受最地道的' + cityName + '本地生活节奏',
-                      duration: '2-3小时', ticket: '免费-¥50', price: '¥0-50', tip: '问问酒店前台本地人推荐什么，比旅游攻略更实用',
+                    { time: '14:00', activity: _p2,
+                      detail: '下午游览' + _p2 + '，体验最地道的本地生活节奏',
+                      duration: '2-3小时', ticket: '免费-¥50', price: '¥0-50', tip: '问问酒店前台本地人推荐什么',
                     },
-                    { time: '17:30', activity: '告别晚餐（推荐特色菜）',
-                      detail: '最后一顿一定要吃当地最招牌的菜，留个深刻印象',
-                      duration: '2小时', ticket: '', price: '¥100-200/人', tip: '提前订位，热门餐厅晚上容易满座',
+                    { time: '17:30', activity: _p3 + '（傍晚）',
+                      detail: '傍晚逛逛' + _p3 + '，拍照最佳时间，买点伴手礼',
+                      duration: '2小时', price: '¥50-150', tip: '夜景通常比白天更美',
                     },
-                    { time: '20:00', activity: '送站返程（或继续住一晚）',
-                      detail: '专车送往高铁站/机场，结束愉快的' + cityName + '之旅；如果玩得不够可以续住多一天',
-                      duration: '2-3小时', ticket: '', price: '¥100-300 送站费', tip: '至少提前2小时到机场/火车站，别赶时间',
+                    { time: '19:30', activity: cityName + '当地特色晚餐',
+                      detail: '晚上继续品尝当地美食',
+                      duration: '2小时', price: '¥80-180/人', tip: '提前订位，热门餐厅晚上容易满座',
+                    },
+                ]
+            },
+            {
+                day: 'Day 3',
+                theme: _p4 + '·' + _p5 + '（返程日）',
+                timeline: [
+                    { time: '08:30', activity: _p4,
+                      detail: '上午游览' + _p4 + '，和前两天风格不同的体验',
+                      duration: '3-4小时', ticket: '¥30-120', price: '¥30-120', tip: '穿舒适运动鞋，很多景点需要步行',
+                    },
+                    { time: '12:30', activity: '午餐',
+                      detail: '吃一顿告别午餐，尝尝当地招牌菜',
+                      duration: '1.5小时', price: '¥60-120',
+                    },
+                    { time: '14:30', activity: _p5,
+                      detail: '最后逛' + _p5 + '，拍几张合影留念',
+                      duration: '2小时', ticket: '免费-¥50', price: '¥0-50',
+                    },
+                    { time: '17:30', activity: '送站返程',
+                      detail: '专车送往高铁站/机场，结束愉快的' + cityName + '之旅',
+                      duration: '2-3小时', ticket: '', price: '¥100-300 送站费', tip: '至少提前2小时到机场/火车站',
                     },
                 ]
             }
