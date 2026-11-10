@@ -3,7 +3,7 @@ window.LOOP_ROUTES = [
     "id": "qinghai-gansu",
     "name": "青甘大环线",
     "days": "15天14晚",
-    "cover": "https://images.unsplash.com/photo-1606112219146-f13f07505fa4?w=1200&q=80",
+    "cover": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80",
     "price": "¥4,200/人起",
     "rating": "★★★★★",
     "tag": "爆点·爆款",
