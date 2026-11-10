@@ -2027,3 +2027,81 @@ textarea:focus-visible {
     .dest-filter { gap: 8px; }
     .dest-filter .filter-btn { padding: 8px 16px; font-size: 0.82rem; }
 }
+
+/* ========== SVG 互动地图 ========== */
+.map-container { background: #f8fafc; border-radius: var(--radius); padding: 20px; margin-bottom: 16px; border: 1px solid #e2e8f0; }
+.map-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+.map-title i { color: #ef4444; }
+.loop-map { width: 100%; height: auto; max-width: 600px; margin: 0 auto; display: block; cursor: pointer; }
+.china-outline { fill: #e2e8f0; stroke: #cbd5e1; stroke-width: 1.5; }
+.route-path-bg { fill: none; stroke: white; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+.route-path { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 8 4; animation: dash 1.5s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -24; } }
+.map-node { cursor: pointer; transition: transform 0.2s; }
+.node-ring { fill: #fef3c7; stroke: #f59e0b; stroke-width: 2; transition: all 0.2s; }
+.node-dot { fill: #ef4444; stroke: white; stroke-width: 2; }
+.node-label { font-size: 12px; fill: #334155; font-weight: 600; font-family: -apple-system, sans-serif; }
+.map-node:hover .node-ring { fill: #fde68a; stroke: #ef4444; }
+.map-node.active .node-ring { fill: #ef4444; stroke: #dc2626; }
+.map-node.active .node-dot { fill: white; }
+.itinerary-day.highlight { animation: highlightDay 1.2s ease; }
+@keyframes highlightDay {
+    0% { background: #fef3c7; }
+    100% { background: transparent; }
+}
+
+/* ========== 环线封面横幅 ========== */
+.loop-banner {
+    height: 240px; background-size: cover; background-position: center;
+    border-radius: var(--radius); position: relative; overflow: hidden;
+    margin-bottom: 20px;
+}
+.loop-banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(239,68,68,0.75), rgba(245,158,11,0.6));
+}
+.loop-banner-overlay { position: relative; z-index: 1; color: white; padding: 24px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+.loop-banner-tag { background: white; color: #ef4444; padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; align-self: flex-start; margin-bottom: 8px; }
+.loop-banner h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.loop-banner-meta { display: flex; gap: 16px; font-size: 0.9rem; opacity: 0.95; margin-bottom: 8px; }
+.loop-banner-price { font-size: 1.4rem; font-weight: 800; }
+.loop-banner-price small { font-size: 0.8rem; font-weight: 500; opacity: 0.9; }
+
+/* 环线卡片升级 */
+.loop-card .loop-cover { background-size: cover; background-position: center; position: relative; }
+.loop-card .loop-cover::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.4)); }
+.loop-card .loop-cover > * { position: relative; z-index: 2; }
+
+/* ========== 酒店图片卡片 ========== */
+.hotel-card.with-image { display: flex; gap: 16px; padding: 16px; }
+.hotel-card.with-image .hotel-img { width: 140px; height: 100px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+.hotel-card.with-image .hotel-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.hotel-card.with-image:hover .hotel-img img { transform: scale(1.08); }
+.hotel-card.with-image .hotel-info { flex: 1; }
+.hotel-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.hotel-top h5 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--text); }
+.hotel-price { font-size: 1.1rem; font-weight: 800; color: #ef4444; margin-bottom: 4px; }
+
+/* ========== 机票卡片 ========== */
+.airfare-card { background: #eff6ff; border-radius: var(--radius); padding: 16px; margin-bottom: 16px; border: 1px solid #bfdbfe; }
+.airfare-card h5 { color: #2563eb; margin-bottom: 12px; font-size: 0.95rem; }
+.airfare-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 0.88rem; border-bottom: 1px dashed #bfdbfe; }
+.airfare-item:last-child { border-bottom: none; }
+.airfare-item .from { font-weight: 600; color: #1e40af; min-width: 60px; }
+.airfare-item .to { font-weight: 600; color: #1e40af; min-width: 60px; }
+.airfare-item .price { font-weight: 800; color: #ef4444; margin-left: auto; }
+.airfare-item .time { color: var(--text-light); font-size: 0.8rem; }
+
+/* ========== 环线亮点标签 ========== */
+.loop-hl { background: #fee2e2; color: #dc2626; }
+.loop-day { border-left: 4px solid #ef4444; padding-left: 16px; margin: 12px 0; }
+
+/* 响应式 */
+@media (max-width: 640px) {
+    .loop-banner { height: 200px; }
+    .loop-banner h2 { font-size: 1.3rem; }
+    .hotel-card.with-image { flex-direction: column; }
+    .hotel-card.with-image .hotel-img { width: 100%; height: 140px; }
+    .loop-map { height: 350px; }
+    .map-node text { font-size: 10px; }
+}

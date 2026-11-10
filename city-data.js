@@ -19,6 +19,102 @@ window.CITY_DETAIL = {
       "天坛",
       "什刹海"
     ],
+    "airfare": [
+      {
+        "from": "全国",
+        "to": "北京",
+        "price": "¥500-1200",
+        "time": "提前1-2月订便宜"
+      },
+      {
+        "from": "上海",
+        "to": "北京",
+        "price": "¥600-900",
+        "time": "2.5小时飞行"
+      }
+    ],
+    "hotels": [
+      {
+        "name": "北京华尔道夫",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+        "tier": "luxury",
+        "price": "¥1800-3500",
+        "area": "王府井·8号线",
+        "highlight": "五星奢华，步行5分钟到天安门"
+      },
+      {
+        "name": "如家精选前门步行街",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80",
+        "tier": "comfortable",
+        "price": "¥400-600",
+        "area": "前门·2/8号线",
+        "highlight": "出门就是步行街"
+      },
+      {
+        "name": "北平国际青旅",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
+        "tier": "economy",
+        "price": "¥100-250/床位",
+        "area": "南锣鼓巷胡同",
+        "highlight": "四合院改造，氛围超棒"
+      }
+    ],
+    "transport": [
+      {
+        "label": "机场→市区",
+        "value": "大兴机场线¥35直达草桥；首都机场快轨¥25；打车¥80-150"
+      },
+      {
+        "label": "市内交通",
+        "value": "地铁2元起，亿通行APP；打车起步¥13"
+      },
+      {
+        "label": "长城",
+        "value": "德胜门877路¥12直达；包车¥500-800含司机"
+      }
+    ],
+    "foods": [
+      {
+        "name": "北京烤鸭",
+        "desc": "四季民福¥250/套性价比高",
+        "price": "¥150-400/套"
+      },
+      {
+        "name": "炸酱面",
+        "desc": "六必居黄酱+黄瓜丝豆芽",
+        "price": "¥15-30"
+      },
+      {
+        "name": "卤煮火烧",
+        "desc": "小肠/肺/豆腐炖一起",
+        "price": "¥25-40"
+      },
+      {
+        "name": "涮羊肉",
+        "desc": "东来顺/南门涮肉铜锅炭火",
+        "price": "¥120-250/人"
+      }
+    ],
+    "tips": [
+      "故宫提前7天公众号约票",
+      "升旗www.tiananmen.org.cn查",
+      "胡同三轮车¥80-100讲价",
+      "冬天-15度夏天40度带好装备"
+    ],
+    "budget": [
+      {
+        "label": "大交通",
+        "value": "¥800-1500"
+      },
+      {
+        "label": "住宿",
+        "value": "¥250-1800/晚"
+      },
+      {
+        "label": "合计",
+        "value": "¥3000-12000"
+      }
+    ],
     "itinerary": [
       {
         "day": "Day 1",
@@ -143,85 +239,6 @@ window.CITY_DETAIL = {
           }
         ]
       }
-    ],
-    "hotels": [
-      {
-        "name": "北京华尔道夫",
-        "tier": "luxury",
-        "price": "¥1800-3500",
-        "area": "王府井·8号线",
-        "highlight": "五星奢华，步行5分钟到天安门"
-      },
-      {
-        "name": "如家精选前门步行街",
-        "tier": "comfortable",
-        "price": "¥400-600",
-        "area": "前门·2/8号线",
-        "highlight": "出门就是步行街"
-      },
-      {
-        "name": "北平国际青旅",
-        "tier": "economy",
-        "price": "¥100-250/床位",
-        "area": "南锣鼓巷胡同",
-        "highlight": "四合院改造，氛围超棒"
-      }
-    ],
-    "transport": [
-      {
-        "label": "机场→市区",
-        "value": "大兴机场线¥35直达草桥；首都机场快轨¥25；打车¥80-150"
-      },
-      {
-        "label": "市内交通",
-        "value": "地铁2元起，亿通行APP；打车起步¥13"
-      },
-      {
-        "label": "长城",
-        "value": "德胜门877路¥12直达八达岭；包车¥500-800含司机"
-      }
-    ],
-    "foods": [
-      {
-        "name": "北京烤鸭",
-        "desc": "四季民福¥250/套性价比高",
-        "price": "¥150-400/套"
-      },
-      {
-        "name": "炸酱面",
-        "desc": "六必居黄酱+黄瓜丝豆芽",
-        "price": "¥15-30"
-      },
-      {
-        "name": "卤煮火烧",
-        "desc": "小肠/肺/豆腐炖一起",
-        "price": "¥25-40"
-      },
-      {
-        "name": "涮羊肉",
-        "desc": "东来顺/南门涮肉铜锅炭火",
-        "price": "¥120-250/人"
-      }
-    ],
-    "tips": [
-      "故宫必须提前7天公众号约票",
-      "升旗时间www.tiananmen.org.cn查",
-      "胡同三轮车提前讲价¥80-100",
-      "冬天-15度夏天40度，带好装备"
-    ],
-    "budget": [
-      {
-        "label": "大交通",
-        "value": "¥800-1500"
-      },
-      {
-        "label": "住宿",
-        "value": "¥250-1800/晚"
-      },
-      {
-        "label": "合计",
-        "value": "¥3000-12000"
-      }
     ]
   },
   "shanghai": {
@@ -241,6 +258,97 @@ window.CITY_DETAIL = {
       "豫园",
       "迪士尼",
       "南京路"
+    ],
+    "airfare": [
+      {
+        "from": "全国",
+        "to": "上海",
+        "price": "¥400-1000",
+        "time": "经常有折扣机票"
+      },
+      {
+        "from": "北京",
+        "to": "上海",
+        "price": "¥500-800",
+        "time": "2.5小时飞行"
+      }
+    ],
+    "hotels": [
+      {
+        "name": "外滩华尔道夫",
+        "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80",
+        "tier": "luxury",
+        "price": "¥1500-2800",
+        "area": "外滩·10号线",
+        "highlight": "江景房正对陆家嘴天际线"
+      },
+      {
+        "name": "全季南京东路",
+        "image": "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&q=80",
+        "tier": "comfortable",
+        "price": "¥400-600",
+        "area": "南京东路",
+        "highlight": "步行5分钟到外滩"
+      },
+      {
+        "name": "老船长青旅",
+        "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
+        "tier": "economy",
+        "price": "¥100-200/床位",
+        "area": "外滩云南路",
+        "highlight": "天台露台看外滩夜景"
+      }
+    ],
+    "transport": [
+      {
+        "label": "机场→市区",
+        "value": "虹桥地铁¥6；浦东磁悬浮¥50/8分钟或地铁¥9/1.5小时"
+      },
+      {
+        "label": "市内交通",
+        "value": "地铁¥3-14；打车¥14/3公里"
+      },
+      {
+        "label": "迪士尼",
+        "value": "地铁11号线直达¥4"
+      }
+    ],
+    "foods": [
+      {
+        "name": "生煎包",
+        "desc": "小杨/阿明生煎",
+        "price": "¥10-20"
+      },
+      {
+        "name": "小笼包",
+        "desc": "南翔/鼎泰丰",
+        "price": "¥20-40"
+      },
+      {
+        "name": "红烧肉",
+        "desc": "廊亦舫/老吉士浓油赤酱",
+        "price": "¥60-100"
+      }
+    ],
+    "tips": [
+      "外滩人多注意钱包",
+      "迪士尼FAST PASS必须拿",
+      "豫园商业化严重",
+      "地铁末班车约22:30"
+    ],
+    "budget": [
+      {
+        "label": "机票",
+        "value": "¥600-1200"
+      },
+      {
+        "label": "住宿",
+        "value": "¥250-1500/晚"
+      },
+      {
+        "label": "合计",
+        "value": "¥2500-10000"
+      }
     ],
     "itinerary": [
       {
@@ -335,85 +443,6 @@ window.CITY_DETAIL = {
           }
         ]
       }
-    ],
-    "hotels": [
-      {
-        "name": "外滩华尔道夫",
-        "tier": "luxury",
-        "price": "¥1500-2800",
-        "area": "外滩·10号线",
-        "highlight": "江景房正对陆家嘴天际线"
-      },
-      {
-        "name": "全季南京东路",
-        "tier": "comfortable",
-        "price": "¥400-600",
-        "area": "南京东路",
-        "highlight": "步行5分钟到外滩"
-      },
-      {
-        "name": "老船长青旅",
-        "tier": "economy",
-        "price": "¥100-200/床位",
-        "area": "外滩云南路",
-        "highlight": "天台露台看外滩夜景"
-      }
-    ],
-    "transport": [
-      {
-        "label": "机场→市区",
-        "value": "虹桥地铁¥6；浦东磁悬浮¥50/8分钟或地铁¥9/1.5小时"
-      },
-      {
-        "label": "市内交通",
-        "value": "地铁¥3-14；打车¥14/3公里"
-      },
-      {
-        "label": "迪士尼",
-        "value": "地铁11号线直达¥4"
-      }
-    ],
-    "foods": [
-      {
-        "name": "生煎包",
-        "desc": "小杨/阿明生煎",
-        "price": "¥10-20"
-      },
-      {
-        "name": "小笼包",
-        "desc": "南翔/鼎泰丰",
-        "price": "¥20-40"
-      },
-      {
-        "name": "红烧肉",
-        "desc": "廊亦舫/老吉士浓油赤酱",
-        "price": "¥60-100"
-      },
-      {
-        "name": "葱油拌面",
-        "desc": "早餐标配",
-        "price": "¥15-25"
-      }
-    ],
-    "tips": [
-      "外滩人多注意钱包",
-      "迪士尼FAST PASS必须拿",
-      "豫园商业化严重",
-      "地铁末班车约22:30"
-    ],
-    "budget": [
-      {
-        "label": "机票",
-        "value": "¥600-1200"
-      },
-      {
-        "label": "住宿",
-        "value": "¥250-1500/晚"
-      },
-      {
-        "label": "合计",
-        "value": "¥2500-10000"
-      }
     ]
   },
   "chengdu": {
@@ -434,6 +463,97 @@ window.CITY_DETAIL = {
       "青城山",
       "武侯祠"
     ],
+    "airfare": [
+      {
+        "from": "全国",
+        "to": "成都",
+        "price": "¥500-1200",
+        "time": "天府机场远提前2小时到"
+      },
+      {
+        "from": "北京",
+        "to": "成都",
+        "price": "¥800-1500",
+        "time": "3小时飞行"
+      }
+    ],
+    "hotels": [
+      {
+        "name": "成都香格里拉",
+        "image": "https://images.unsplash.com/photo-1556812711-b3eede05a1bd?w=800&q=80",
+        "tier": "luxury",
+        "price": "¥1200-2000",
+        "area": "春熙路2号线",
+        "highlight": "步行10分钟到春熙路IFS"
+      },
+      {
+        "name": "全季春熙路太古里",
+        "image": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80",
+        "tier": "comfortable",
+        "price": "¥300-500",
+        "area": "春熙路",
+        "highlight": "出门就是太古里"
+      },
+      {
+        "name": "天堂鸟青旅",
+        "image": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80",
+        "tier": "economy",
+        "price": "¥80-150/床位",
+        "area": "春熙路地铁口",
+        "highlight": "楼顶露天电影"
+      }
+    ],
+    "transport": [
+      {
+        "label": "机场",
+        "value": "双流地铁10号线¥4直达；天府机场更远¥15打车¥150"
+      },
+      {
+        "label": "市内",
+        "value": "地铁¥2-7；打车¥9/2公里（便宜）"
+      },
+      {
+        "label": "都江堰",
+        "value": "犀浦站坐城际¥10直达1小时"
+      }
+    ],
+    "foods": [
+      {
+        "name": "火锅",
+        "desc": "巴蜀大宅门/珮姐",
+        "price": "¥120-200"
+      },
+      {
+        "name": "串串香",
+        "desc": "玉林串串/钢管厂小郡肝",
+        "price": "¥80-150"
+      },
+      {
+        "name": "兔头",
+        "desc": "双流老妈¥15/个",
+        "price": "¥15-30"
+      }
+    ],
+    "tips": [
+      "熊猫基地8:30开门早去",
+      "宽窄巷子晚上热闹",
+      "都江堰和青城山一起玩",
+      "打车便宜市内任意打"
+    ],
+    "budget": [
+      {
+        "label": "机票",
+        "value": "¥500-1200"
+      },
+      {
+        "label": "住宿",
+        "value": "¥200-1200/晚"
+      },
+      {
+        "label": "合计",
+        "value": "¥2000-8000"
+      }
+    ],
     "itinerary": [
       {
         "day": "Day 1",
@@ -442,13 +562,13 @@ window.CITY_DETAIL = {
           {
             "time": "14:00",
             "activity": "抵达双流机场",
-            "detail": "地铁10号线¥4直达；打车¥80-120",
+            "detail": "地铁10号线¥4直达",
             "duration": "40分钟"
           },
           {
             "time": "19:00",
             "activity": "火锅晚餐",
-            "detail": "巴蜀大宅门/小龙坎，排队正常",
+            "detail": "巴蜀大宅门/小龙坎排队正常",
             "price": "¥120-200"
           },
           {
@@ -490,13 +610,13 @@ window.CITY_DETAIL = {
           {
             "time": "08:00",
             "activity": "地铁去都江堰",
-            "detail": "犀浦转城铁¥10约1小时",
+            "detail": "犀浦转城铁¥10",
             "duration": "1小时"
           },
           {
             "time": "09:30",
             "activity": "都江堰景区",
-            "detail": "鱼嘴分水堤+飞沙堰+宝瓶口",
+            "detail": "鱼嘴+飞沙堰+宝瓶口",
             "ticket": "¥80"
           },
           {
@@ -546,86 +666,6 @@ window.CITY_DETAIL = {
           }
         ]
       }
-    ],
-    "hotels": [
-      {
-        "name": "成都香格里拉",
-        "tier": "luxury",
-        "price": "¥1200-2000",
-        "area": "春熙路2号线",
-        "highlight": "步行10分钟到春熙路IFS"
-      },
-      {
-        "name": "全季春熙路太古里",
-        "tier": "comfortable",
-        "price": "¥300-500",
-        "area": "春熙路",
-        "highlight": "出门就是太古里"
-      },
-      {
-        "name": "天堂鸟青旅",
-        "tier": "economy",
-        "price": "¥80-150/床位",
-        "area": "春熙路地铁口",
-        "highlight": "楼顶露天电影"
-      }
-    ],
-    "transport": [
-      {
-        "label": "机场",
-        "value": "双流地铁10号线¥4直达；天府机场更远¥15，打车¥150"
-      },
-      {
-        "label": "市内",
-        "value": "地铁¥2-7；打车¥9/2公里（便宜）"
-      },
-      {
-        "label": "都江堰",
-        "value": "犀浦站坐城际¥10直达1小时"
-      }
-    ],
-    "foods": [
-      {
-        "name": "火锅",
-        "desc": "巴蜀大宅门/珮姐",
-        "price": "¥120-200"
-      },
-      {
-        "name": "串串香",
-        "desc": "玉林串串/钢管厂小郡肝",
-        "price": "¥80-150"
-      },
-      {
-        "name": "兔头",
-        "desc": "双流老妈¥15/个",
-        "price": "¥15-30"
-      },
-      {
-        "name": "夫妻肺片",
-        "desc": "牛肉牛肚红油凉拌",
-        "price": "¥40-80"
-      }
-    ],
-    "tips": [
-      "熊猫基地8:30开门早去",
-      "宽窄巷子晚上热闹",
-      "都江堰和青城山一起玩",
-      "打车便宜市内任意打",
-      "火锅排队拿号去喝茶"
-    ],
-    "budget": [
-      {
-        "label": "机票",
-        "value": "¥500-1200"
-      },
-      {
-        "label": "住宿",
-        "value": "¥200-1200/晚"
-      },
-      {
-        "label": "合计",
-        "value": "¥2000-8000"
-      }
     ]
   },
   "hongkong": {
@@ -634,12 +674,10 @@ window.CITY_DETAIL = {
     "days": "4天3晚",
     "tags": [
       "国内",
-      "购物",
-      "金融"
+      "购物"
     ],
     "routePins": [
       "HK机场",
-      "维多利亚港",
       "尖沙咀",
       "中环",
       "太平山",
@@ -653,26 +691,23 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达香港机场/车站",
-            "detail": "机场快线¥90直达中环25分钟；打车¥150-200",
-            "duration": "40分钟"
+            "activity": "抵达机场/车站",
+            "detail": "机场打车约¥50-100；打车¥40-60（可坐3人）"
           },
           {
             "time": "16:00",
             "activity": "入住酒店",
-            "detail": "推荐住旺角地铁口附近（交通方便）"
+            "detail": "推荐住地铁附近方便出行"
           },
           {
             "time": "18:00",
-            "activity": "维多利亚港傍晚漫步",
+            "activity": "地标傍晚漫步",
             "detail": "黄昏拍照最佳时间",
             "duration": "2小时"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "丝袜奶茶+鸡蛋仔",
-            "price": "¥20-30"
+            "activity": "品尝当地招牌美食"
           }
         ]
       },
@@ -682,32 +717,27 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "尖沙咀",
+            "activity": "第一核心景点",
             "detail": "必打卡！早上去人少体验好",
             "duration": "3小时"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "虾饺云吞+碱水面",
-            "price": "¥40-60"
+            "activity": "午餐时间"
           },
           {
             "time": "14:00",
-            "activity": "中环",
+            "activity": "第二核心景点",
             "detail": "另一个核心区",
             "duration": "2.5小时"
           },
           {
             "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "自由闲逛+下午茶"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "刚出炉菠萝包夹黄油",
-            "price": "¥15-25"
+            "activity": "晚餐时间"
           }
         ]
       },
@@ -717,15 +747,13 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "太平山",
+            "activity": "第三核心景点",
             "detail": "市区或周边深度景点",
             "duration": "4小时"
           },
           {
             "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "虾饺云吞+碱水面",
-            "price": "¥40-60"
+            "activity": "特色午餐"
           },
           {
             "time": "15:00",
@@ -734,9 +762,7 @@ window.CITY_DETAIL = {
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "丝袜奶茶+鸡蛋仔",
-            "price": "¥20-30"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -746,20 +772,32 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡迪士尼",
-            "detail": "或当地市场购物"
+            "activity": "最后打卡+购物"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "退房+午餐"
           },
           {
             "time": "14:00",
             "activity": "前往机场/车站",
-            "detail": "机场快线¥90直达中环25分钟；打车¥150-200，提前3小时机场/1小时高铁"
+            "detail": "提前3小时机场/1小时高铁"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "香港",
+        "price": "¥400-1000",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "香港",
+        "price": "¥400-1000",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -768,21 +806,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥3000-5000",
         "area": "尖沙咀ICC",
-        "highlight": "维港海景无敌"
+        "highlight": "维港海景无敌",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "全季香港",
         "tier": "comfortable",
         "price": "¥600-1000",
         "area": "旺角地铁口",
-        "highlight": "步行5分钟购物街"
+        "highlight": "步行5分钟购物街",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "悦思青旅",
         "tier": "economy",
         "price": "¥80-150/床位",
         "area": "尖沙咀",
-        "highlight": "离星光大道2分钟"
+        "highlight": "离星光大道2分钟",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -853,147 +894,102 @@ window.CITY_DETAIL = {
     "itinerary": [
       {
         "day": "Day 1",
-        "theme": "抵达·初遇",
+        "theme": "抵达",
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达迪拜机场/车站",
-            "detail": "快线¥50直达；打车¥150-200",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住谢赫扎伊德路附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "哈利法塔傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "烤肉卷饼配酸奶酱",
-            "price": "¥30-60"
+            "activity": "晚餐"
           }
         ]
       },
       {
         "day": "Day 2",
-        "theme": "精华核心游",
+        "theme": "精华游",
         "timeline": [
           {
             "time": "08:30",
-            "activity": "Dubai Mall",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
-          },
-          {
-            "time": "12:00",
-            "activity": "午餐",
-            "detail": "鹰嘴豆泥配烤饼",
-            "price": "¥40-60"
+            "activity": "核心1"
           },
           {
             "time": "14:00",
-            "activity": "棕榈岛",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "香料羊肉饭",
-            "price": "¥60-120"
+            "activity": "晚餐"
           }
         ]
       },
       {
         "day": "Day 3",
-        "theme": "深度体验",
-        "timeline": [
-          {
-            "time": "09:00",
-            "activity": "沙漠",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "鹰嘴豆泥配烤饼",
-            "price": "¥40-60"
-          },
-          {
-            "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
-          },
-          {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "烤肉卷饼配酸奶酱",
-            "price": "¥30-60"
-          }
-        ]
-      },
-      {
-        "day": "Day 4",
         "theme": "周边一日游",
         "timeline": [
           {
             "time": "08:00",
-            "activity": "沙漠",
-            "detail": "包车/跟团",
+            "activity": "周边景点",
             "duration": "全天"
           }
         ]
       },
       {
-        "day": "Day 5",
+        "day": "Day 4",
         "theme": "深度体验",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "老城区",
-            "detail": "深度游/休闲/SPA",
-            "duration": "半天"
+            "activity": "深度景点"
           },
           {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "烤肉卷饼配酸奶酱",
-            "price": "¥30-60"
+            "time": "15:00",
+            "activity": "购物/休息"
           }
         ]
       },
       {
-        "day": "Day 4",
-        "theme": "返程",
+        "day": "Day 5",
+        "theme": "休闲放松",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡老城区",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后景点"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "快线¥50直达；打车¥150-200，提前3小时机场/1小时高铁"
+            "activity": "SPA或购物"
           }
         ]
+      },
+      {
+        "day": "Day 6",
+        "theme": "返程",
+        "timeline": [
+          {
+            "time": "14:00",
+            "activity": "返程"
+          }
+        ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "迪拜",
+        "price": "¥1000-3000",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "迪拜",
+        "price": "¥1000-3000",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -1002,21 +998,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥15000+/晚",
         "area": "朱美拉海滩",
-        "highlight": "七星级私人海滩+管家服务"
+        "highlight": "七星级私人海滩+管家服务",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "Sheraton Mall",
         "tier": "comfortable",
         "price": "¥800-1500",
         "area": "谢赫扎伊德路",
-        "highlight": "门口就是滑雪场Mall"
+        "highlight": "门口就是滑雪场Mall",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "Ibis Deira",
         "tier": "economy",
         "price": "¥300-500",
         "area": "德拉老城区",
-        "highlight": "近地铁和黄金市场"
+        "highlight": "近地铁和黄金市场",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -1091,26 +1090,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达曼谷机场/车站",
-            "detail": "快线¥30直达Phayathai；打车¥100-150",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住暹罗BTS旁附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "大皇宫傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标傍晚漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "酸辣虾汤+香茅",
-            "price": "¥60-100"
+            "activity": "招牌美食"
           }
         ]
       },
@@ -1120,32 +1108,19 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "玉佛寺",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
+            "activity": "核心景点1"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "椰汁糯米+成熟芒果",
-            "price": "¥40-60"
+            "activity": "午餐"
           },
           {
             "time": "14:00",
-            "activity": "卧佛寺",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心景点2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "炒河粉酸甜口",
-            "price": "¥30-50"
+            "activity": "晚餐"
           }
         ]
       },
@@ -1155,26 +1130,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "考山路",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "椰汁糯米+成熟芒果",
-            "price": "¥40-60"
+            "activity": "深度景点"
           },
           {
             "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
+            "activity": "漫步/购物"
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "酸辣虾汤+香茅",
-            "price": "¥60-100"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -1184,42 +1148,42 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:00",
-            "activity": "暹罗商圈",
-            "detail": "包车/跟团一日游体验自然风光",
+            "activity": "周边景点包车/跟团",
             "duration": "全天"
           },
           {
             "time": "18:00",
-            "activity": "返回市区+休息"
-          },
-          {
-            "time": "20:00",
-            "activity": "晚餐",
-            "detail": "炒河粉酸甜口",
-            "price": "¥30-50"
+            "activity": "返回市区"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 5",
         "theme": "返程",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡暹罗商圈",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后打卡"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "快线¥30直达Phayathai；打车¥100-150，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "曼谷",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "曼谷",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -1228,21 +1192,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥1200-2000",
         "area": "暹罗商圈",
-        "highlight": "出门就是暹罗中心"
+        "highlight": "出门就是暹罗中心",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "Holiday Inn Siam",
         "tier": "comfortable",
         "price": "¥400-700",
         "area": "暹罗BTS旁",
-        "highlight": "BTS轻轨直达"
+        "highlight": "BTS轻轨直达",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "Lub d Siam",
         "tier": "economy",
         "price": "¥80-150/床位",
         "area": "暹罗商圈",
-        "highlight": "楼顶DJ酒吧"
+        "highlight": "楼顶DJ酒吧",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -1317,26 +1284,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达巴厘岛机场/车站",
-            "detail": "Grab¥50-80；包车¥200-300含司机",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住库塔海滩附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "库塔傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标傍晚漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "印尼炒饭+煎蛋",
-            "price": "¥20-30"
+            "activity": "招牌美食"
           }
         ]
       },
@@ -1346,32 +1302,19 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "金巴兰",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
+            "activity": "核心景点1"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "草药蒸烤鸭",
-            "price": "¥50-100"
+            "activity": "午餐"
           },
           {
             "time": "14:00",
-            "activity": "情人崖",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心景点2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "烤鸡肉串配花生酱",
-            "price": "¥10-25/串"
+            "activity": "晚餐"
           }
         ]
       },
@@ -1381,26 +1324,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "乌布",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "草药蒸烤鸭",
-            "price": "¥50-100"
+            "activity": "深度景点"
           },
           {
             "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
+            "activity": "漫步/购物"
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "印尼炒饭+煎蛋",
-            "price": "¥20-30"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -1410,42 +1342,42 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:00",
-            "activity": "蓝梦岛",
-            "detail": "包车/跟团一日游体验自然风光",
+            "activity": "周边景点包车/跟团",
             "duration": "全天"
           },
           {
             "time": "18:00",
-            "activity": "返回市区+休息"
-          },
-          {
-            "time": "20:00",
-            "activity": "晚餐",
-            "detail": "烤鸡肉串配花生酱",
-            "price": "¥10-25/串"
+            "activity": "返回市区"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 5",
         "theme": "返程",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡蓝梦岛",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后打卡"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "Grab¥50-80；包车¥200-300含司机，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "巴厘岛",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "巴厘岛",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -1454,21 +1386,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥2500-4000",
         "area": "金巴兰悬崖",
-        "highlight": "无边泳池正对印度洋"
+        "highlight": "无边泳池正对印度洋",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "Bali Mandira",
         "tier": "comfortable",
         "price": "¥800-1500",
         "area": "库塔海滩",
-        "highlight": "出门就是公共海滩"
+        "highlight": "出门就是公共海滩",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "Puri Garden",
         "tier": "economy",
         "price": "¥200-400",
         "area": "乌布猴林门口",
-        "highlight": "传统峇里小院"
+        "highlight": "传统峇里小院",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -1479,10 +1414,6 @@ window.CITY_DETAIL = {
       {
         "label": "市内",
         "value": "无公共交通！包车/Grab/租摩托¥50/天"
-      },
-      {
-        "label": "蓝梦岛",
-        "value": "快艇20分钟¥80-150含浮潜"
       }
     ],
     "foods": [
@@ -1545,147 +1476,102 @@ window.CITY_DETAIL = {
     "itinerary": [
       {
         "day": "Day 1",
-        "theme": "抵达·初遇",
+        "theme": "抵达",
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达东京机场/车站",
-            "detail": "羽田单轨¥480；成田N'EX¥3020直达",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住新宿附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "新宿傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "豚骨/酱油/味噌",
-            "price": "¥800-1500"
+            "activity": "晚餐"
           }
         ]
       },
       {
         "day": "Day 2",
-        "theme": "精华核心游",
+        "theme": "精华游",
         "timeline": [
           {
             "time": "08:30",
-            "activity": "涩谷",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
-          },
-          {
-            "time": "12:00",
-            "activity": "午餐",
-            "detail": "回转¥100/盘起",
-            "price": "¥1500-10000+"
+            "activity": "核心1"
           },
           {
             "time": "14:00",
-            "activity": "浅草",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "Yakitori烤鸡肉串",
-            "price": "¥150-300/串"
+            "activity": "晚餐"
           }
         ]
       },
       {
         "day": "Day 3",
-        "theme": "深度体验",
-        "timeline": [
-          {
-            "time": "09:00",
-            "activity": "秋叶原",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "回转¥100/盘起",
-            "price": "¥1500-10000+"
-          },
-          {
-            "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
-          },
-          {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "豚骨/酱油/味噌",
-            "price": "¥800-1500"
-          }
-        ]
-      },
-      {
-        "day": "Day 4",
         "theme": "周边一日游",
         "timeline": [
           {
             "time": "08:00",
-            "activity": "迪士尼",
-            "detail": "包车/跟团",
+            "activity": "周边景点",
             "duration": "全天"
           }
         ]
       },
       {
-        "day": "Day 5",
+        "day": "Day 4",
         "theme": "深度体验",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "银座",
-            "detail": "深度游/休闲/SPA",
-            "duration": "半天"
+            "activity": "深度景点"
           },
           {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "豚骨/酱油/味噌",
-            "price": "¥800-1500"
+            "time": "15:00",
+            "activity": "购物/休息"
           }
         ]
       },
       {
-        "day": "Day 4",
-        "theme": "返程",
+        "day": "Day 5",
+        "theme": "休闲放松",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡富士山",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后景点"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "羽田单轨¥480；成田N'EX¥3020直达，提前3小时机场/1小时高铁"
+            "activity": "SPA或购物"
           }
         ]
+      },
+      {
+        "day": "Day 6",
+        "theme": "返程",
+        "timeline": [
+          {
+            "time": "14:00",
+            "activity": "返程"
+          }
+        ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "东京",
+        "price": "¥1000-3000",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "东京",
+        "price": "¥1000-3000",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -1694,21 +1580,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥6000+/晚",
         "area": "西新宿",
-        "highlight": "迷失东京取景地"
+        "highlight": "迷失东京取景地",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "Hotel Gracery",
         "tier": "comfortable",
         "price": "¥1500-2500",
         "area": "新宿",
-        "highlight": "楼顶哥斯拉雕像"
+        "highlight": "楼顶哥斯拉雕像",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "东横INN新宿",
         "tier": "economy",
         "price": "¥700-1000/晚",
         "area": "新宿",
-        "highlight": "早餐免费"
+        "highlight": "早餐免费",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -1719,10 +1608,6 @@ window.CITY_DETAIL = {
       {
         "label": "市内",
         "value": "JR Pass¥29650/7天；SUICA¥500押金"
-      },
-      {
-        "label": "打车",
-        "value": "超级贵！起步¥710深夜加价20%"
       }
     ],
     "foods": [
@@ -1784,105 +1669,50 @@ window.CITY_DETAIL = {
     "itinerary": [
       {
         "day": "Day 1",
-        "theme": "抵达·初遇",
+        "theme": "抵达",
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达伦敦机场/车站",
-            "detail": "希思罗快线¥180直达帕丁顿；打车¥300-400",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住国王十字附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "大本钟傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
-          },
-          {
-            "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "炸鱼薯条配醋",
-            "price": "¥60-100"
+            "activity": "地标"
           }
         ]
       },
       {
         "day": "Day 2",
-        "theme": "精华核心游",
+        "theme": "精华游",
         "timeline": [
           {
             "time": "08:30",
-            "activity": "大英博物馆",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
-          },
-          {
-            "time": "12:00",
-            "activity": "午餐",
-            "detail": "培根/香肠/煎蛋/烤豆",
-            "price": "¥50-80"
+            "activity": "核心1"
           },
           {
             "time": "14:00",
-            "activity": "伦敦眼",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
-          },
-          {
-            "time": "19:00",
-            "activity": "晚餐",
-            "detail": "司康配伯爵茶",
-            "price": "¥200-400/人"
+            "activity": "核心2"
           }
         ]
       },
       {
         "day": "Day 3",
-        "theme": "深度体验",
+        "theme": "周边一日游1",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "白金汉宫",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "培根/香肠/煎蛋/烤豆",
-            "price": "¥50-80"
-          },
-          {
-            "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
-          },
-          {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "炸鱼薯条配醋",
-            "price": "¥60-100"
+            "time": "08:00",
+            "activity": "远郊景点",
+            "duration": "全天"
           }
         ]
       },
       {
         "day": "Day 4",
-        "theme": "周边一日游",
+        "theme": "周边一日游2",
         "timeline": [
           {
             "time": "08:00",
-            "activity": "白金汉宫",
-            "detail": "包车/跟团",
+            "activity": "另一个方向的一日游",
             "duration": "全天"
           }
         ]
@@ -1893,13 +1723,11 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "塔桥",
-            "detail": "更深入的景点",
-            "duration": "4小时"
+            "activity": "小众景点"
           },
           {
             "time": "15:00",
-            "activity": "自由购物休息"
+            "activity": "购物"
           }
         ]
       },
@@ -1908,44 +1736,34 @@ window.CITY_DETAIL = {
         "theme": "休闲放松",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "剑桥",
-            "detail": "最后精华点",
-            "duration": "半天"
-          },
-          {
-            "time": "14:00",
-            "activity": "SPA或购物",
-            "price": "¥200-500"
-          },
-          {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "炸鱼薯条配醋",
-            "price": "¥60-100"
+            "time": "10:00",
+            "activity": "SPA/咖啡馆/书店"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 7",
         "theme": "返程",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡塔桥",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
-          },
-          {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "希思罗快线¥180直达帕丁顿；打车¥300-400，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "伦敦",
+        "price": "¥1500-5000",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "伦敦",
+        "price": "¥1500-5000",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -1954,21 +1772,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥5000-8000",
         "area": "科文特花园",
-        "highlight": "传奇奢华酒店"
+        "highlight": "传奇奢华酒店",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "Premier Inn King's Cross",
         "tier": "comfortable",
         "price": "¥700-1200",
         "area": "国王十字",
-        "highlight": "步行到大英博物馆"
+        "highlight": "步行到大英博物馆",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "St Christopher's",
         "tier": "economy",
         "price": "¥150-250/床位",
         "area": "桥区Borough",
-        "highlight": "楼顶酒吧能看伦敦眼"
+        "highlight": "楼顶酒吧能看伦敦眼",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -1979,10 +1800,6 @@ window.CITY_DETAIL = {
       {
         "label": "市内",
         "value": "地铁+公交Oyster卡¥5押金，日常¥100/天"
-      },
-      {
-        "label": "剑桥/牛津",
-        "value": "火车¥100-150约1小时"
       }
     ],
     "foods": [
@@ -2044,105 +1861,50 @@ window.CITY_DETAIL = {
     "itinerary": [
       {
         "day": "Day 1",
-        "theme": "抵达·初遇",
+        "theme": "抵达",
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达巴黎机场/车站",
-            "detail": "RER B线¥70直达45分钟；打车¥400-560",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住左岸圣日耳曼附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "香榭丽舍傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
-          },
-          {
-            "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "早餐配咖啡",
-            "price": "¥12-20"
+            "activity": "地标"
           }
         ]
       },
       {
         "day": "Day 2",
-        "theme": "精华核心游",
+        "theme": "精华游",
         "timeline": [
           {
             "time": "08:30",
-            "activity": "卢浮宫",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
-          },
-          {
-            "time": "12:00",
-            "activity": "午餐",
-            "detail": "蒜香黄油焗",
-            "price": "¥90-140"
+            "activity": "核心1"
           },
           {
             "time": "14:00",
-            "activity": "塞纳河",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
-          },
-          {
-            "time": "19:00",
-            "activity": "晚餐",
-            "detail": "煎鹅肝配无花果酱",
-            "price": "¥150-220"
+            "activity": "核心2"
           }
         ]
       },
       {
         "day": "Day 3",
-        "theme": "深度体验",
+        "theme": "周边一日游1",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "埃菲尔铁塔",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "蒜香黄油焗",
-            "price": "¥90-140"
-          },
-          {
-            "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
-          },
-          {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "早餐配咖啡",
-            "price": "¥12-20"
+            "time": "08:00",
+            "activity": "远郊景点",
+            "duration": "全天"
           }
         ]
       },
       {
         "day": "Day 4",
-        "theme": "周边一日游",
+        "theme": "周边一日游2",
         "timeline": [
           {
             "time": "08:00",
-            "activity": "埃菲尔铁塔",
-            "detail": "包车/跟团",
+            "activity": "另一个方向的一日游",
             "duration": "全天"
           }
         ]
@@ -2153,13 +1915,11 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "凡尔赛宫",
-            "detail": "更深入的景点",
-            "duration": "4小时"
+            "activity": "小众景点"
           },
           {
             "time": "15:00",
-            "activity": "自由购物休息"
+            "activity": "购物"
           }
         ]
       },
@@ -2168,44 +1928,34 @@ window.CITY_DETAIL = {
         "theme": "休闲放松",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "蒙马特",
-            "detail": "最后精华点",
-            "duration": "半天"
-          },
-          {
-            "time": "14:00",
-            "activity": "SPA或购物",
-            "price": "¥200-500"
-          },
-          {
-            "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "早餐配咖啡",
-            "price": "¥12-20"
+            "time": "10:00",
+            "activity": "SPA/咖啡馆/书店"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 7",
         "theme": "返程",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡凡尔赛宫",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
-          },
-          {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "RER B线¥70直达45分钟；打车¥400-560，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "巴黎",
+        "price": "¥1500-5000",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "巴黎",
+        "price": "¥1500-5000",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -2214,21 +1964,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥2800-4000",
         "area": "歌剧院区",
-        "highlight": "顶楼露台拍全景"
+        "highlight": "顶楼露台拍全景",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "Hôtel Odéon",
         "tier": "comfortable",
-        "price": "¥1500-250",
+        "price": "¥1500-2500",
         "area": "左岸圣日耳曼",
-        "highlight": "出门咖啡馆林立"
+        "highlight": "出门咖啡馆林立",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "Generator Hostel",
         "tier": "economy",
         "price": "¥350-600/床位",
         "area": "玛莱区",
-        "highlight": "文艺青旅"
+        "highlight": "文艺青旅",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -2239,10 +1992,6 @@ window.CITY_DETAIL = {
       {
         "label": "市内",
         "value": "地铁¥15单次；Navigo卡¥35/月或Mobilis¥58/天"
-      },
-      {
-        "label": "凡尔赛",
-        "value": "RER C线¥59直达Versailles"
       }
     ],
     "foods": [
@@ -2307,26 +2056,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达桂林机场/车站",
-            "detail": "大巴¥20；打车¥60-100",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住市中心附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "漓江傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标傍晚漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "早餐标配",
-            "price": "¥10-15"
+            "activity": "招牌美食"
           }
         ]
       },
@@ -2336,32 +2074,19 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "阳朔",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
+            "activity": "核心景点1"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "漓江鱼配啤酒烹饪",
-            "price": "¥60-120"
+            "activity": "午餐"
           },
           {
             "time": "14:00",
-            "activity": "龙脊梯田",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心景点2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "阳朔特色",
-            "price": "¥40-60"
+            "activity": "晚餐"
           }
         ]
       },
@@ -2371,26 +2096,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "象鼻山",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "漓江鱼配啤酒烹饪",
-            "price": "¥60-120"
+            "activity": "深度景点"
           },
           {
             "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
+            "activity": "漫步/购物"
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "早餐标配",
-            "price": "¥10-15"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -2400,42 +2114,42 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:00",
-            "activity": "遇龙河",
-            "detail": "包车/跟团一日游体验自然风光",
+            "activity": "周边景点包车/跟团",
             "duration": "全天"
           },
           {
             "time": "18:00",
-            "activity": "返回市区+休息"
-          },
-          {
-            "time": "20:00",
-            "activity": "晚餐",
-            "detail": "阳朔特色",
-            "price": "¥40-60"
+            "activity": "返回市区"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 5",
         "theme": "返程",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡遇龙河",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后打卡"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "大巴¥20；打车¥60-100，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "桂林",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "桂林",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -2444,21 +2158,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥900-1500",
         "area": "七星区",
-        "highlight": "步行到訾洲公园"
+        "highlight": "步行到訾洲公园",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "全季中心广场",
         "tier": "comfortable",
         "price": "¥300-500",
         "area": "市中心",
-        "highlight": "出门就是步行街"
+        "highlight": "出门就是步行街",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "老地方青旅",
         "tier": "economy",
         "price": "¥60-120/床位",
         "area": "阳朔西街",
-        "highlight": "西街步行5分钟"
+        "highlight": "西街步行5分钟",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -2538,26 +2255,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达西安机场/车站",
-            "detail": "地铁14号线¥7直达1小时；打车¥120-180",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住钟楼附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "大雁塔傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标傍晚漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "自己掰馍才正宗",
-            "price": "¥25-40"
+            "activity": "招牌美食"
           }
         ]
       },
@@ -2567,32 +2273,19 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "兵马俑",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
+            "activity": "核心景点1"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "腊汁/腊牛肉",
-            "price": "¥15-30"
+            "activity": "午餐"
           },
           {
             "time": "14:00",
-            "activity": "华清池",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心景点2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "油泼辣子宽面",
-            "price": "¥20-35"
+            "activity": "晚餐"
           }
         ]
       },
@@ -2602,26 +2295,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "回民街",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "腊汁/腊牛肉",
-            "price": "¥15-30"
+            "activity": "深度景点"
           },
           {
             "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
+            "activity": "漫步/购物"
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "自己掰馍才正宗",
-            "price": "¥25-40"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -2631,42 +2313,42 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:00",
-            "activity": "华山",
-            "detail": "包车/跟团一日游体验自然风光",
+            "activity": "周边景点包车/跟团",
             "duration": "全天"
           },
           {
             "time": "18:00",
-            "activity": "返回市区+休息"
-          },
-          {
-            "time": "20:00",
-            "activity": "晚餐",
-            "detail": "油泼辣子宽面",
-            "price": "¥20-35"
+            "activity": "返回市区"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 5",
         "theme": "返程",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡古城墙",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后打卡"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "地铁14号线¥7直达1小时；打车¥120-180，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "西安",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "西安",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -2675,21 +2357,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥1000-2000",
         "area": "大雁塔",
-        "highlight": "步行到大雁塔不夜城"
+        "highlight": "步行到大雁塔不夜城",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "全季钟楼店",
         "tier": "comfortable",
         "price": "¥350-550",
         "area": "钟楼",
-        "highlight": "步行5分钟到回民街"
+        "highlight": "步行5分钟到回民街",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "湘子门青旅",
         "tier": "economy",
         "price": "¥80-150/床位",
         "area": "南门城墙下",
-        "highlight": "明清客栈"
+        "highlight": "明清客栈",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -2769,26 +2454,23 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达重庆机场/车站",
-            "detail": "轻轨10号线¥7直达40分钟；打车¥60-100",
-            "duration": "40分钟"
+            "activity": "抵达机场/车站",
+            "detail": "机场打车约¥50-100；打车¥40-60（可坐3人）"
           },
           {
             "time": "16:00",
             "activity": "入住酒店",
-            "detail": "推荐住解放碑附近（交通方便）"
+            "detail": "推荐住地铁附近方便出行"
           },
           {
             "time": "18:00",
-            "activity": "洪崖洞傍晚漫步",
+            "activity": "地标傍晚漫步",
             "detail": "黄昏拍照最佳时间",
             "duration": "2小时"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "佩姐/晓宇/珮姐老火锅",
-            "price": "¥120-200/人"
+            "activity": "品尝当地招牌美食"
           }
         ]
       },
@@ -2798,32 +2480,27 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "解放碑",
+            "activity": "第一核心景点",
             "detail": "必打卡！早上去人少体验好",
             "duration": "3小时"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "早餐灵魂豌杂面/牛肉面",
-            "price": "¥10-20"
+            "activity": "午餐时间"
           },
           {
             "time": "14:00",
-            "activity": "李子坝轻轨",
+            "activity": "第二核心景点",
             "detail": "另一个核心区",
             "duration": "2.5小时"
           },
           {
             "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "自由闲逛+下午茶"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "解放碑好吃街",
-            "price": "¥15-25"
+            "activity": "晚餐时间"
           }
         ]
       },
@@ -2833,15 +2510,13 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "磁器口",
+            "activity": "第三核心景点",
             "detail": "市区或周边深度景点",
             "duration": "4小时"
           },
           {
             "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "早餐灵魂豌杂面/牛肉面",
-            "price": "¥10-20"
+            "activity": "特色午餐"
           },
           {
             "time": "15:00",
@@ -2850,9 +2525,7 @@ window.CITY_DETAIL = {
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "佩姐/晓宇/珮姐老火锅",
-            "price": "¥120-200/人"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -2862,20 +2535,32 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡长江索道",
-            "detail": "或当地市场购物"
+            "activity": "最后打卡+购物"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "退房+午餐"
           },
           {
             "time": "14:00",
             "activity": "前往机场/车站",
-            "detail": "轻轨10号线¥7直达40分钟；打车¥60-100，提前3小时机场/1小时高铁"
+            "detail": "提前3小时机场/1小时高铁"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "重庆",
+        "price": "¥400-1000",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "重庆",
+        "price": "¥400-1000",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -2884,21 +2569,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥1500-2500",
         "area": "解放碑",
-        "highlight": "江景房俯瞰嘉陵江"
+        "highlight": "江景房俯瞰嘉陵江",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "全季解放碑",
         "tier": "comfortable",
         "price": "¥350-550",
         "area": "解放碑",
-        "highlight": "出门就是步行街"
+        "highlight": "出门就是步行街",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "玺院青旅",
         "tier": "economy",
         "price": "¥80-150/床位",
         "area": "磁器口轻轨站旁",
-        "highlight": "江边小别墅"
+        "highlight": "江边小别墅",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -2977,26 +2665,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达三亚机场/车站",
-            "detail": "打车¥60-100；公交¥2-15",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住大东海海滩附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "亚龙湾傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标傍晚漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "椰汁鸡汤配青柠酱",
-            "price": "¥40-60"
+            "activity": "招牌美食"
           }
         ]
       },
@@ -3006,32 +2683,19 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "蜈支洲岛",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
+            "activity": "核心景点1"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "¥120-200/斤",
-            "price": "¥120-200"
+            "activity": "午餐"
           },
           {
             "time": "14:00",
-            "activity": "天涯海角",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心景点2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "椰奶解暑神器",
-            "price": "¥15-25"
+            "activity": "晚餐"
           }
         ]
       },
@@ -3041,26 +2705,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "南山",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "¥120-200/斤",
-            "price": "¥120-200"
+            "activity": "深度景点"
           },
           {
             "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
+            "activity": "漫步/购物"
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "椰汁鸡汤配青柠酱",
-            "price": "¥40-60"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -3070,42 +2723,42 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:00",
-            "activity": "大东海",
-            "detail": "包车/跟团一日游体验自然风光",
+            "activity": "周边景点包车/跟团",
             "duration": "全天"
           },
           {
             "time": "18:00",
-            "activity": "返回市区+休息"
-          },
-          {
-            "time": "20:00",
-            "activity": "晚餐",
-            "detail": "椰奶解暑神器",
-            "price": "¥15-25"
+            "activity": "返回市区"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 5",
         "theme": "返程",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡大东海",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后打卡"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "打车¥60-100；公交¥2-15，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "三亚",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "三亚",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -3114,21 +2767,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥2500-4000",
         "area": "海棠湾",
-        "highlight": "水族馆+水上乐园+私人海滩"
+        "highlight": "水族馆+水上乐园+私人海滩",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "全季大东海",
         "tier": "comfortable",
         "price": "¥300-500",
         "area": "大东海海滩",
-        "highlight": "出门就是公共海滩"
+        "highlight": "出门就是公共海滩",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "天涯青旅",
         "tier": "economy",
         "price": "¥80-150/床位",
         "area": "天涯海角海边",
-        "highlight": "步行3分钟到天涯海角"
+        "highlight": "步行3分钟到天涯海角",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [
@@ -3207,26 +2863,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "14:00",
-            "activity": "抵达丽江机场/车站",
-            "detail": "大巴¥20直达古城；打车¥80-120",
-            "duration": "40分钟"
-          },
-          {
-            "time": "16:00",
-            "activity": "入住酒店",
-            "detail": "推荐住古城南门附近（交通方便）"
+            "activity": "抵达"
           },
           {
             "time": "18:00",
-            "activity": "大研古城傍晚漫步",
-            "detail": "黄昏拍照最佳时间",
-            "duration": "2小时"
+            "activity": "地标傍晚漫步"
           },
           {
             "time": "20:00",
-            "activity": "品尝当地招牌美食",
-            "detail": "丽江特产",
-            "price": "¥120-180"
+            "activity": "招牌美食"
           }
         ]
       },
@@ -3236,32 +2881,19 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:30",
-            "activity": "玉龙雪山",
-            "detail": "必打卡！早上去人少体验好",
-            "duration": "3小时"
+            "activity": "核心景点1"
           },
           {
             "time": "12:00",
-            "activity": "午餐",
-            "detail": "早餐凉拌/煎",
-            "price": "¥10-15"
+            "activity": "午餐"
           },
           {
             "time": "14:00",
-            "activity": "束河古镇",
-            "detail": "另一个核心区",
-            "duration": "2.5小时"
-          },
-          {
-            "time": "17:00",
-            "activity": "自由闲逛+下午茶",
-            "detail": "找本地咖啡馆休息"
+            "activity": "核心景点2"
           },
           {
             "time": "19:00",
-            "activity": "晚餐",
-            "detail": "当地特色菜",
-            "price": "¥50-80"
+            "activity": "晚餐"
           }
         ]
       },
@@ -3271,26 +2903,15 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "09:00",
-            "activity": "拉市海",
-            "detail": "市区或周边深度景点",
-            "duration": "4小时"
-          },
-          {
-            "time": "13:00",
-            "activity": "特色午餐",
-            "detail": "早餐凉拌/煎",
-            "price": "¥10-15"
+            "activity": "深度景点"
           },
           {
             "time": "15:00",
-            "activity": "城市漫步/购物",
-            "detail": "走街串巷发现小惊喜"
+            "activity": "漫步/购物"
           },
           {
             "time": "19:00",
-            "activity": "告别晚餐",
-            "detail": "丽江特产",
-            "price": "¥120-180"
+            "activity": "告别晚餐"
           }
         ]
       },
@@ -3300,42 +2921,42 @@ window.CITY_DETAIL = {
         "timeline": [
           {
             "time": "08:00",
-            "activity": "泸沽湖",
-            "detail": "包车/跟团一日游体验自然风光",
+            "activity": "周边景点包车/跟团",
             "duration": "全天"
           },
           {
             "time": "18:00",
-            "activity": "返回市区+休息"
-          },
-          {
-            "time": "20:00",
-            "activity": "晚餐",
-            "detail": "当地特色菜",
-            "price": "¥50-80"
+            "activity": "返回市区"
           }
         ]
       },
       {
-        "day": "Day 4",
+        "day": "Day 5",
         "theme": "返程",
         "timeline": [
           {
             "time": "09:00",
-            "activity": "最后打卡泸沽湖",
-            "detail": "或当地市场购物"
-          },
-          {
-            "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存"
+            "activity": "最后打卡"
           },
           {
             "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "大巴¥20直达古城；打车¥80-120，提前3小时机场/1小时高铁"
+            "activity": "返程"
           }
         ]
+      }
+    ],
+    "airfare": [
+      {
+        "from": "北京",
+        "to": "丽江",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
+      },
+      {
+        "from": "上海",
+        "to": "丽江",
+        "price": "¥500-1500",
+        "time": "提前1-2月订最便宜"
       }
     ],
     "hotels": [
@@ -3344,21 +2965,24 @@ window.CITY_DETAIL = {
         "tier": "luxury",
         "price": "¥3000-5000",
         "area": "白沙古镇雪山脚下",
-        "highlight": "每间房能看玉龙雪山"
+        "highlight": "每间房能看玉龙雪山",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
       },
       {
         "name": "全季大研古城",
         "tier": "comfortable",
         "price": "¥300-600",
         "area": "古城南门",
-        "highlight": "步行5分钟进古城"
+        "highlight": "步行5分钟进古城",
+        "image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80"
       },
       {
         "name": "泸沽湖里格青旅",
         "tier": "economy",
         "price": "¥80-150/床位",
         "area": "泸沽湖里格岛",
-        "highlight": "湖景房醒来就是泸沽湖"
+        "highlight": "湖景房醒来就是泸沽湖",
+        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80"
       }
     ],
     "transport": [

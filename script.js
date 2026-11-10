@@ -924,10 +924,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.addEventListener('DOMContentLoaded', function() {
     const loopGrid = document.getElementById('loopGrid');
     if (loopGrid && window.LOOP_ROUTES) {
-        loopGrid.innerHTML = window.LOOP_ROUTES.map(loop => `
+        loopGrid.innerHTML = window.LOOP_ROUTES.map(loop => {
+            const bgStyle = loop.cover 
+                ? `background-image:url('${loop.cover}')` 
+                : 'background:linear-gradient(135deg,#ef4444,#f59e0b)';
+            const coverContent = loop.cover ? '' : (loop.coverEmoji || '🏔️');
+            return `
             <div class="loop-card" data-loop="${loop.id}">
-                <div class="loop-cover">
-                    ${loop.cover || '🏔️'}
+                <div class="loop-cover" style="${bgStyle};font-size:3rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:900">
+                    ${coverContent}
                     <div class="loop-tag">${loop.tag || '爆点'}</div>
                 </div>
                 <div class="loop-info">
@@ -944,7 +949,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
         
         loopGrid.querySelectorAll('.loop-card').forEach(card => {
             card.addEventListener('click', () => openLoopModal(card.dataset.loop));
