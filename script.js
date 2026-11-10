@@ -94,7 +94,7 @@ var _knownDict =  {
             "舟山": ["普陀山","朱家尖","嵊泗列岛"],
             "台州": ["神仙居","临海古城","方山"],
             "丽水": ["古堰画乡","云和梯田","仙都"],
-            "合肥": ["三河古镇","巢湖","李鸿章故居","大蜀山","包公园","渡江战役纪念馆","安徽省博物馆","包公祠","三河古镇杨振宁旧居","明教寺","合肥三国遗址公园","开福寺"],
+            "合肥": ["三河古镇","巢湖","李鸿章故居","大蜀山","包公园","渡江战役纪念馆","安徽省博物馆","包公祠","三河古镇杨振宁旧居","明教寺","合肥三国遗址公园","合肥开福寺"],
             "芜湖": ["方特欢乐世界","鸠兹古镇","芜湖古城"],
             "蚌埠": ["蚌埠龙子湖","张公山公园","双墩文化遗址"],
             "淮南": ["八公山","寿县古城","豆腐文化产业园"],
@@ -193,7 +193,7 @@ var _knownDict =  {
             "湘西土家族苗族自治州": ["凤凰古城","沱江","沈从文故居"],
             "广州": ["陈家祠","广州塔","上下九北京路","沙面","珠江夜游","越秀公园","白云山","莲花山","长隆野生动物世界","广州博物馆","黄花岗"],
             "韶关": ["丹霞山","南华寺","南岭森林公园"],
-            "深圳": ["深圳湾","世界之窗","欢乐谷","东部华侨城","锦绣中华","莲花山","大梅沙","马峦山","大鹏所城","观澜山水田园"],
+            "深圳": ["深圳湾","世界之窗","深圳欢乐谷","东部华侨城","锦绣中华","莲花山","大梅沙","马峦山","大鹏所城","观澜山水田园"],
             "珠海": ["情侣路","长隆海洋王国","外伶仃岛"],
             "汕头": ["南澳岛","老城骑楼","礐石风景区"],
             "佛山": ["祖庙","西樵山","岭南天地"],
@@ -1398,43 +1398,53 @@ function openProvinceModal(provinceKey) {
         </div>`;
     }).join('');
     
-    // 省份经典组合方案
-    const sampleOptions = [
-        { name: provData.name + '经典精华 3天2晚', price: '¥1,599', desc: '必玩核心景点组合',
-          includes: ['往返高铁', '三星级酒店', '景点门票', '旅行保险'] },
-        { name: provData.name + '深度游 5天4晚', price: '¥2,399', desc: '深度体验当地文化与美食',
-          includes: ['往返高铁', '四星级酒店', '景点门票', '特色美食', '旅行保险'] },
-    ];
-    const optionsHtml = sampleOptions.map((o,i) => `
-        <div class="itinerary-day option-item" style="border-left-color:var(--accent);cursor:pointer;padding:10px 14px;margin-bottom:8px;border-radius:8px;background:#fafafa" onclick="showToast('${provData.name}方案详情即将上线，敬请期待！')">
-            <div style="flex:1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-                <div style="flex:1;min-width:200px">
-                    <h4 style="margin:0 0 4px 0;font-size:0.95rem">${o.name}</h4>
-                    <p style="margin:0;font-size:0.8rem;color:#888">${o.desc}</p>
-                </div>
-                <div style="text-align:right;flex-shrink:0">
-                    <div style="color:var(--primary);font-weight:600;font-size:1rem">${o.price}</div>
-                    <div style="font-size:0.75rem;color:#888">查看详情 →</div>
-                </div>
-            </div>
-        </div>`).join('');
+    // === 省份经典组合方案（真实 itinerary，2026-11-10 开发）===
+    const esc = function(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    };
+    const routePins = provData.routePins || [];
+    const pinsHtml = routePins.map(function(p, i) {
+        return '<span class="route-pin"><span class="pin-num">' + (i + 1) + '</span>' + esc(p) + '</span>';
+    }).join('<span class="route-arrow">→</span>');
+    const routeHtml = pinsHtml ? '<div class="route-visual"><div class="route-visual-title"><i class="fas fa-map-marked-alt"></i> ' + esc(provData.name) + '经典环线</div><div class="route-pins">' + pinsHtml + '</div></div>' : '';
+
+    const provItin = provData.itinerary || [];
+    const itinHtml = provItin.map(function(day, di) {
+        const tl = (day.timeline || []).map(function(item) {
+            const meta = [];
+            if (item.duration) meta.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + esc(item.duration) + '</span>');
+            if (item.ticket) meta.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + esc(item.ticket) + '</span>');
+            if (item.price) meta.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + esc(item.price) + '</span>');
+            if (item.tip) meta.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + esc(item.tip) + '</span>');
+            return '<div class="timeline-item"><div class="time">' + esc(item.time || '') + '</div><div class="activity"><strong>' + esc(item.activity || '') + '</strong></div><div class="detail">' + esc(item.detail || '') + '</div>' + (meta.length ? '<div class="meta-row">' + meta.join('') + '</div>' : '') + '</div>';
+        }).join('');
+        return '<div class="itinerary-day"><h4><span class="day-tag">Day ' + (di + 1) + '</span>' + esc(day.theme || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
+    }).join('');
+    const planDays = provItin.length;
+    const planDaysText = planDays ? (planDays + '天' + (planDays - 1) + '晚') : (provData.days || '');
+    const optionsHtml = itinHtml
+        ? '<div style="background:#f8fafc;border-left:3px solid var(--primary);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:.85rem;color:#555"><i class="fas fa-route"></i> ' + esc(provData.name) + '经典环线 · ' + esc(planDaysText) + ' · 人均 ' + esc(provData.price || '') + '</div>' + itinHtml
+        : '<div class="itinerary-day option-item" style="cursor:pointer;padding:10px 14px;border-radius:8px;background:#fafafa" onclick="showToast(\'方案详情即将上线，敬请期待！\')"><h4 style="margin:0 0 4px 0;font-size:.95rem">' + esc(provData.name) + '经典精华</h4><p style="margin:0;font-size:.8rem;color:#888">必玩核心景点组合</p></div>';
     
     modalBody.innerHTML = `
         <div class="modal-body">
             <h2 style="margin-bottom:4px">${provData.name}</h2>
-            <div class="modal-subtitle" style="margin-bottom:12px">⭐ ${provData.rating} · ${provData.days} · ${provData.price}</div>
+            <div class="modal-subtitle" style="margin-bottom:12px">⭐ ${provData.rating} · ${planDaysText} · ${provData.price}</div>
             <div class="modal-section">
                 <h3><i class="fas fa-info-circle"></i> 省份简介</h3>
                 <p>${provData.desc}</p>
             </div>
             ${provMapHtml}
+            ${routeHtml ? `<div class="modal-section"><h3><i class="fas fa-map-marked-alt"></i> 推荐路线</h3>${routeHtml}</div>` : ''}
             <div class="modal-section">
                 <h3><i class="fas fa-city"></i> 下辖 ${(provData.cities||[]).length} 个地级市</h3>
                 <p style="font-size:0.85rem;color:#888;margin-bottom:12px">点击城市卡片进入详情（地图/行程/酒店/交通/美食全齐）</p>
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">${citiesHtml}</div>
             </div>
             <div class="modal-section">
-                <h3><i class="fas fa-list-alt"></i> 组合方案（多城玩更划算）</h3>
+                <h3><i class="fas fa-list-alt"></i> 组合方案 · ${planDaysText}</h3>
                 <div>${optionsHtml}</div>
             </div>
             <div class="modal-price-box">
