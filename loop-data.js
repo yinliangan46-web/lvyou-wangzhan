@@ -7402,9 +7402,22 @@ window.LOOP_ROUTES = [
             });
             useConvert = true;
         }
-        if (!mapPoints.length && data.coords && data.coords.length >= 2) {
-            mapPoints = [{ lng: data.coords[0], lat: data.coords[1], name: data.name, num: 1 }];
-            useConvert = false;
+        // === 修复：正确处理 data.coords 嵌套数组（新地级市 Photon 生成的）===
+        if (!mapPoints.length && data.coords && data.coords.length >= 1) {
+            const c0 = data.coords[0];
+            if (Array.isArray(c0) && c0.length >= 2) {
+                // 嵌套数组 [[lng,lat], [lng,lat], ...] → 遍历每个点
+                data.coords.forEach((c, i) => {
+                    if (c && c.length >= 2) {
+                        mapPoints.push({ lng: c[0], lat: c[1], name: pinNames[i] || ('第' + (i + 1) + '站'), num: i + 1 });
+                    }
+                });
+                useConvert = false;
+            } else if (typeof c0 === 'number' && data.coords.length >= 2) {
+                // 单点 [lng, lat]
+                mapPoints = [{ lng: data.coords[0], lat: data.coords[1], name: data.name, num: 1 }];
+                useConvert = false;
+            }
         }
         if (mapPoints.length) {
             const isC = (data.country || '') === '中国';
