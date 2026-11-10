@@ -7426,6 +7426,22 @@ window.LOOP_ROUTES = [
                     if (act.length >= 2 && !extracted.includes(act)) extracted.push(act);
                 });
             });
+            // 3. 补充硬编码 routePins 里的经典景点（取并集）
+            // itinerary 可能没列尽一个城市的所有经典景点（如北京 itinerary 没列八达岭/天坛/什刹海），
+            // 把硬编码里 itinerary 没覆盖的经典景点也加进来，机场/车站这种交通枢纽除外
+            if (data.routePins && data.routePins.length) {
+                var isTransportHub = function(s) {
+                    return /机场|北站|东站|南站|西站|火车站|高铁站|车站|HK机场/.test(s);
+                };
+                data.routePins.forEach(function(oldPin) {
+                    if (!oldPin) return;
+                    // 跳过交通枢纽
+                    if (isTransportHub(oldPin)) return;
+                    // 跳过 extracted 已有的（子串匹配）
+                    var already = extracted.some(function(e) { return e.indexOf(oldPin) >= 0 || oldPin.indexOf(e) >= 0; });
+                    if (!already) extracted.push(oldPin);
+                });
+            }
             // 至少要 2 个真实景点才覆盖（避免提取失败导致 routePins 变空）
             if (extracted.length >= 2) {
                 data.routePins = extracted;
