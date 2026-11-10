@@ -303,6 +303,32 @@ function handleSearch() {
         destMap.__allCitiesLoaded = true;
     }
 
+    // ══════ 自动注入：从 LOOP_ROUTES 补所有精选环线/套餐到搜索引擎 ══════
+    // 青甘大环线、独库大环线、川西稻城亚丁环线、日本本州环线等
+    if (window.LOOP_ROUTES && !destMap.__loopsLoaded) {
+        window.LOOP_ROUTES.forEach(function(loop) {
+            if (!loop || !loop.id || !loop.name) return;
+            if (!destMap[loop.name]) destMap[loop.name] = '__loop__' + loop.id;
+            // 标签也能搜到（如 "青甘"、"川西"、"独库"、"大环线"）
+            (loop.tags || []).forEach(function(tag) {
+                // 不常用标签不注入（只注入明确能搜到的）
+            });
+        });
+        destMap.__loopsLoaded = true;
+    }
+
+    // ══════ 检查环线/套餐（__loop__ 前缀）══════
+    for (const [key, value] of Object.entries(destMap)) {
+        if (value.startsWith('__loop__') && (key.includes(keyword) || keyword.includes(key))) {
+            var loopId = value.slice(8);
+            if (typeof openLoopModal === 'function') {
+                openLoopModal(loopId);
+                input.value = '';
+                return;
+            }
+        }
+    }
+
     // 检查省份（__ 前缀）
     for (const [key, value] of Object.entries(destMap)) {
         if (value.startsWith('__') && (key.includes(keyword) || keyword.includes(key))) {
