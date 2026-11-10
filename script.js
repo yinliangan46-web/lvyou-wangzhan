@@ -1062,6 +1062,70 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
         dd = window.destinationData[cityKey];
     }
 
+    // === 真实景点名表（内嵌，兜底用）===
+    var LM = {
+        // 省级别名 → 代表性景点
+        "hebei":["承德避暑山庄","山海关长城","西柏坡","赵州桥","野三坡"],
+        "shanxi":["五台山","云冈石窟","平遥古城","晋祠","悬空寺"],
+        "liaoning":["沈阳故宫","大连星海广场","千山","本溪水洞","红海滩"],
+        "jilin":["长白山天池","伪满皇宫","长春电影城","雾凇岛","净月潭"],
+        "heilongjiang":["哈尔滨冰雪大世界","中央大街","镜泊湖","五大连池","太阳岛"],
+        "jiangsu":["中山陵","拙政园","瘦西湖","灵山大佛","徐州汉文化"],
+        "zhejiang":["西湖","灵隐寺","千岛湖","乌镇","雁荡山"],
+        "anhui":["黄山","宏村","西递","九华山","天柱山"],
+        "fujian":["鼓浪屿","武夷山","三坊七巷","开元寺","太姥山"],
+        "jiangxi":["庐山","滕王阁","三清山","婺源","鄱阳湖"],
+        "shandong":["趵突泉","泰山","八大关","曲阜三孔","崂山"],
+        "henan":["少林寺","龙门石窟","清明上河园","殷墟","白马寺"],
+        "hubei":["黄鹤楼","东湖","武当山","三峡大坝","神农架"],
+        "hunan":["岳麓书院","橘子洲","张家界","凤凰古城","衡山"],
+        "guangdong":["陈家祠","世界之窗","丹霞山","开平碉楼","白云山"],
+        "hainan":["亚龙湾","天涯海角","呀诺达","蜈支洲岛","南山"],
+        "sichuan":["大熊猫基地","武侯祠","都江堰","九寨沟","峨眉山"],
+        "guizhou":["黄果树","荔波小七孔","西江苗寨","梵净山","织金洞"],
+        "yunnan":["丽江古城","玉龙雪山","洱海","苍山","石林"],
+        "shaanxi":["秦始皇兵马俑","华山","大雁塔","回民街","壶口瀑布"],
+        "gansu":["莫高窟","嘉峪关","鸣沙山月牙泉","张掖丹霞","麦积山"],
+        "qinghai":["青海湖","茶卡盐湖","塔尔寺","可可西里","鸟岛"],
+        "neimenggu":["呼伦贝尔草原","响沙湾","成吉思汗陵","额济纳胡杨林","阿尔山"],
+        "guangxi":["漓江","阳朔西街","龙脊梯田","德天瀑布","涠洲岛"],
+        "xizang":["布达拉宫","大昭寺","纳木错","珠穆朗玛","雅鲁藏布大峡谷"],
+        "ningxia":["沙坡头","西夏王陵","贺兰山","水洞沟","镇北堡影城"],
+        "xinjiang":["天山天池","喀纳斯湖","吐鲁番","那拉提草原","帕米尔高原"],
+        "taiwan":["阿里山","日月潭","台北101","垦丁","九份"],
+        "xianggang":["维多利亚港","迪士尼","太平山顶","星光大道","天星小轮"],
+        "aomen":["大三巴牌坊","澳门威尼斯人","官也街","澳门塔","妈阁庙"],
+    };
+    // 找这个城市/省份的真实景点名
+    function getCityLandmarks(cityKey, cityName, provinceKey) {
+        // 先精确匹配城市 key
+        var known = {
+            "suqian":["项王故里","骆马湖","三台山"],
+            "chizhou":["九华山","平天湖","杏花村"],
+            "chizhou_2":["平天湖","杏花村","九华山"],
+            "chuzhou":["琅琊山","醉翁亭","明中都"],
+            "xuancheng":["敬亭山","龙川胡氏宗祠","太极洞"],
+            "bozhou":["曹操运兵道","花戏楼","老子故里"],
+            "fuyang":["颍州西湖","管仲祠","八里河"],
+            "pingxiang":["武功山","孽龙洞","安源煤矿"],
+            "ruichang":["洪都森"],
+        };
+        if (known[cityKey]) return known[cityKey].slice(0, 3);
+        // 省份模板兜底
+        var tpl = LM[provinceKey] || LM[cityKey] || null;
+        if (tpl) return tpl.slice(0, 3);
+        return [cityName + '博物馆', cityName + '老街/古镇', cityName + '标志性景区'];
+    }
+    var provKey = '';
+    if (window.PROVINCES_ALL) {
+        for (var _pi = 0; _pi < window.PROVINCES_ALL.length; _pi++) {
+            if ((window.PROVINCES_ALL[_pi].cities || []).some(function(c){return c.key===cityKey;})) {
+                provKey = window.PROVINCES_ALL[_pi].key; break;
+            }
+        }
+    }
+    var _realPoi = getCityLandmarks(cityKey, cityName, provKey);
+
     // === 决定 routePins ===
     let routePins;
     if (provCity && provCity.routePins && provCity.routePins.length >= 2) {
@@ -1069,7 +1133,7 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
     } else if (dd && dd.routePins && dd.routePins.length >= 2) {
         routePins = dd.routePins;
     } else {
-        routePins = ['抵达' + cityName + '站', cityName + '市区入住', cityName + '核心景点游览', '特色美食街区', '返程'];
+        routePins = ['抵达' + cityName + '站（高铁/机场）', _realPoi[0], _realPoi[1], _realPoi[2], cityName + '夜市/夜景'];
     }
 
     // === 决定 coords（景点坐标数组）===
@@ -1123,30 +1187,30 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
             }]
         }));
     } else {
-        // === 兜底：高质量通用 itinerary（每个城市都是具体景点名，不是"核心景点"）===
+        // === 兜底：高质量 itinerary（用真实景点名 + 环线同标准 5 timeline）===
         itinerary = [{
             day: 'Day 1',
-            theme: cityName + '经典精华一日游（景点+美食+文化全涵盖）',
+            theme: cityName + '经典精华一日游 — ' + _realPoi.join(' / ') + ' 全覆盖',
             timeline: [
-                { time: '08:30', activity: routePins[0] || (cityName + '出发'),
-                  detail: '高铁/飞机抵达' + cityName + '，专车接站直达酒店办理入住，休整后开始游玩',
-                  duration: '1-2小时', price: '¥100-300 接站费', tip: '建议上午到，争取一整天游玩时间',
+                { time: '08:30', activity: '抵达' + cityName + '站（高铁/机场）',
+                  detail: '高铁/飞机抵达' + cityName + '，MYL专车接站直达市中心酒店办理入住，稍作休整后开启一整天行程',
+                  duration: '1-2小时', ticket: '', price: '¥100-300 接站费', tip: '建议上午抵达，可把全天时间留给游玩；旺季高铁票提前2周订',
                 },
-                { time: '10:30', activity: routePins[1] || (cityName + '标志性景点'),
-                  detail: '游览' + cityName + '最具代表性的核心景区，感受当地人文历史与自然风光',
-                  duration: '3-4小时', ticket: '¥50-150', price: '¥50-150', tip: '提前在网上订票更便宜，避开周末高峰',
+                { time: '10:30', activity: _realPoi[0] + '（重点游览）',
+                  detail: '这是' + cityName + '最具代表性的核心景区，感受当地标志性的人文历史与独特自然风光，必打卡！',
+                  duration: '3-4小时', ticket: '¥50-150', price: '¥50-150', tip: '提前在官方小程序订票更便宜，避开周末和节假日高峰',
                 },
-                { time: '14:30', activity: routePins[2] || (cityName + '文化体验'),
-                  detail: '逛' + cityName + '本地博物馆/历史街区/特色古镇，深度了解当地文化底蕴',
-                  duration: '2-3小时', ticket: '免费-¥60', price: '¥0-60', tip: '博物馆大多周一闭馆，建议避开',
+                { time: '14:30', activity: _realPoi[1] + '（文化体验）',
+                  detail: '深度体验' + cityName + '当地文化，逛博物馆/历史街区/特色古镇，了解这座城市的历史底蕴',
+                  duration: '2-3小时', ticket: '免费-¥80', price: '¥0-80', tip: '博物馆大多周一闭馆，建议避开；古镇老街拍照最好看',
                 },
-                { time: '17:30', activity: routePins[3] || (cityName + '美食探索'),
-                  detail: '品尝' + cityName + '当地招牌美食，找老字号/本地人推荐的餐厅不踩雷',
-                  duration: '1.5小时', price: '¥80-150', tip: '搜大众点评本地好评榜，别在景区门口吃',
+                { time: '17:30', activity: _realPoi[2] + ' + 当地特色美食',
+                  detail: '最后一个景点打卡后，前往本地人气餐厅品尝' + cityName + '招牌菜，找老字号/本地人推荐的不踩雷',
+                  duration: '2小时', ticket: '', price: '¥80-180/人', tip: '搜大众点评"本地好评榜"；别在景区门口吃，贵又不好吃',
                 },
-                { time: '19:30', activity: routePins[4] || (cityName + '夜景+自由活动'),
-                  detail: '欣赏' + cityName + '夜景，逛夜市/文创街，买点伴手礼',
-                  duration: '2小时', tip: '夜景通常比白天更美，记得带好相机',
+                { time: '19:30', activity: cityName + '夜市/夜景自由活动',
+                  detail: '吃饱喝足后逛' + cityName + '夜市/文创街，买点伴手礼带回家；时间充裕可看城市夜景',
+                  duration: '2小时', ticket: '', price: '¥50-150', tip: '夜景通常比白天更美！特产建议在正规连锁超市买，避免假货',
                 },
             ]
         }];
