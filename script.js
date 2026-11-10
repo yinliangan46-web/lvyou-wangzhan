@@ -2406,6 +2406,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 1. destinationData (script.js 里的 52 热门城市)
         try {
             Object.keys(typeof destinationData !== 'undefined' ? destinationData : {}).forEach(function(k) {
+                // 海外4城（巴黎/东京/巴厘岛/曼谷）destinationData 无 routePins/coords，
+                // sync 会提取 'Day N' 假景点并把 CITY_ROUTE_COORDS 真实坐标覆盖成北京兜底 → 地图路线全毁，跳过
+                if (k === 'paris' || k === 'tokyo' || k === 'bali' || k === 'bangkok') return;
                 destinationData[k]._cityKey = k;
                 try { window.syncCityData(destinationData[k]); } catch(e) {}
             });
