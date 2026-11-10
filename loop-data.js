@@ -7900,49 +7900,31 @@ window.LOOP_ROUTES = [
             // 修复：遍历所有 Day（除最后一天返程），用 routePins 景点均匀分配，完全重写 timeline
             if (data.itinerary && data.itinerary.length >= 2) {
                 var allLandmarks = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
-                // 真实景点池 = routePins 里的 + known dict 补充的（去机场/去模板词）
+                // ⭐ routePins 扩展 = known dict 优先 + 骨架补充（去重复 + 去机场/模板）
                 var allRealPins = allLandmarks.concat(data.routePins || []).filter(function(p) {
                     if (!p) return false;
                     if (isTransportHub(p)) return false;
                     if (/景点\d|周边|深度|自由|活动|返程|再见|最后打卡/.test(p)) return false;
                     return true;
                 });
-                // 去重（精确 + 子串）
-                var uniqPins = [];
-                allRealPins.forEach(function(p) {
-                    if (!uniqPins.some(function(x) { return x === p || x.indexOf(p) >= 0 || p.indexOf(x) >= 0; })) uniqPins.push(p);
+                // ⭐ 用 allRealPins 覆盖 routePins（保证 routePins 有所有景点，不只是骨架）
+                var seen = {};
+                var uniqPins = allRealPins.filter(function(p) {
+                    var k = p;
+                    for (var s in seen) {
+                        if (s.indexOf(k) >= 0 || k.indexOf(s) >= 0) return false;
+                    }
+                    seen[k] = true;
+                    return true;
                 });
-                
-                // ══════ 自动扩展天数：景点多就多几天 ══════
-                // 公式：每3个景点=1个游玩日；总Day=2(Day1抵达+返程) + 游玩日
-                var needPlayDays = Math.max(1, Math.ceil(uniqPins.length / 3));
-                var needTotalDays = Math.max(3, needPlayDays + 2); // Day1抵达 + 游玩日 + 最后返程
-                
-                // 先找返程 Day 的 index（theme 含返程/再见，或 timeline 含返程/机场/车站）
-                var _returnDayIdx = data.itinerary.length - 1;
-                for (var _ri = data.itinerary.length - 1; _ri >= 0; _ri--) {
-                    var _d = data.itinerary[_ri];
-                    var _tstr = (_d.theme || '') + '|' + (_d.timeline || []).map(function(t){return t.activity||'';}).join('|');
-                    if (/返程|再见|机场|车站|登机|值机|退房/.test(_tstr)) { _returnDayIdx = _ri; break; }
-                }
-                
-                if (data.itinerary.length < needTotalDays) {
-                    // 只在 _returnDayIdx 之前插入空 Day（保留返程 Day 永远在最后！）
-                    while (data.itinerary.length < needTotalDays) {
-                        data.itinerary.splice(_returnDayIdx, 0, { theme: '景点日', timeline: [] });
-                        _returnDayIdx++; // 插入后 index 后移
-                    }
-                } else if (data.itinerary.length > needTotalDays && needTotalDays >= 3) {
-                    // 天数过多 → 删除 _returnDayIdx 之前多余的 Day
-                    while (data.itinerary.length > needTotalDays && _returnDayIdx > 1) {
-                        data.itinerary.splice(_returnDayIdx - 1, 1);
-                        _returnDayIdx--;
-                    }
-                }
-                // ══════ 同步 card.days 字段（首页卡片显示的"几天几晚"） ══════
-                var _actualDays = data.itinerary.length;
-                data.days = _actualDays + '天' + (_actualDays - 1) + '晚';
-                
+                // 写回 data.routePins（去机场后的真实景点全集）
+                data.routePins = uniqPins;
+                // 重新建 coords 映射（给地图用）
+                var rebuiltCoords = {};
+                uniqPins.forEach(function(pin){
+                    rebuiltCoords[pin] = rebuiltCoords[pin] || window.REAL_POI_COORDS[pin];
+                });
+                // ══════ 自动扩展/缩减天数逻辑只有一套：在下面 7982 行，基于 remainingPins 精确计算 ══════
                 // 收集 Day1 已用景点（避免重复）
                 var usedPins = [];
                 (data.itinerary[0].timeline || []).forEach(function(tl) {
@@ -7962,24 +7944,66 @@ window.LOOP_ROUTES = [
                     return !usedPins.some(function(u) { return u === p || u.indexOf(p) >= 0 || p.indexOf(u) >= 0; });
                 });
                 
-                // 处理最后一天：如果是返程模板，标记出来不分配景点
+                // ⭐ 关键修复：动态反推需要多少天！景点多 → 自动加天数，景点少 → 自动缩
+                // 每天 2 个景点为基准（合理强度，不挤）
+                var needPlayDays = Math.max(1, Math.ceil(remainingPins.length / 2));
+                var needItineraryLen = needPlayDays + 2; // +Day0抵达 +DayN返程
+                
+                // 找返程Day位置
                 var lastDayIdx = data.itinerary.length - 1;
                 var isLastDayReturn = /返程|再见/.test((data.itinerary[lastDayIdx].theme || '').trim())
                     || (data.itinerary[lastDayIdx].timeline || []).some(function(tl) {
                         return /退房|前往机场|前往车站|值机|登机/.test((tl.activity || '').trim());
                     });
-                // ⭐ 关键修复：实际需要分配景点的天数 = 剩余景点数/2 +1（保证每个Day至少2个）
-                // 景点不够时自动缩减行程，不重复景点
+                // 如果最后一天不是返程 → 把 needItineraryLen 再减 1
+                if (!isLastDayReturn) needItineraryLen--;
+                
+                // ⭐ 自动扩展 itinerary：不够天数就在返程 Day 之前插空 Day
+                while (data.itinerary.length < needItineraryLen) {
+                    var returnDay = data.itinerary.length; // 默认末尾（没有返程Day）
+                    for (var zz = data.itinerary.length - 1; zz >= 0; zz--) {
+                        if (/返程|再见/.test((data.itinerary[zz].theme || ''))) { returnDay = zz; break; }
+                    }
+                    // 在返程 Day 之前插入空 Day
+                    var insertAt = returnDay;
+                    data.itinerary.splice(insertAt, 0, {
+                        theme: '',
+                        timeline: []
+                    });
+                }
+                
+                // ⭐ 扩展后扫掉中间的返程 Day（原来的返程 Day 被 splice 挤到中间了）
+                // 从倒数第 2 个往回扫，只要 theme/timeline 含返程关键词但不是末尾 → 删
+                for (var _sr = data.itinerary.length - 2; _sr >= 0; _sr--) {
+                    var _srd = data.itinerary[_sr];
+                    var _srt = (_srd.theme || '') + '|' + (_srd.timeline || []).map(function(t){return t.activity||'';}).join('|');
+                    if (/返程|再见|退房|前往机场|前往车站|登机|值机/.test(_srt)) {
+                        data.itinerary.splice(_sr, 1);
+                    }
+                }
+                // ⭐ 重新判断 isLastDayReturn（删完中间返程 Day 后，重新扫描最后一个 Day）
+                var lastDayIdx = data.itinerary.length - 1;
+                var isLastDayReturn = /返程|再见/.test((data.itinerary[lastDayIdx].theme || '').trim())
+                    || (data.itinerary[lastDayIdx].timeline || []).some(function(tl) {
+                        return /退房|前往机场|前往车站|值机|登机/.test((tl.activity || '').trim());
+                    });
+                
+                // 动态计算 actualDaysToFill（不超过剩余景点所需天数）
                 var actualDaysToFill = Math.min(
-                    (isLastDayReturn ? data.itinerary.length - 1 : data.itinerary.length),
+                    (function(){
+                        // 算游玩 Day 数：itinerary.length - Day0(抵达) - (isLastDayReturn?1:0)
+                        var n = data.itinerary.length - 1;
+                        if (isLastDayReturn) n--;
+                        return Math.max(1, n);
+                    })(),
                     Math.max(1, Math.ceil(remainingPins.length / 2))
                 );
                 // 如果返程Day在中间（省地级市兜底模板可能这样），也只分到前actualDaysToFill
                 var daysToFill = actualDaysToFill;
                 
-                // 均匀分配 remainingPins 到 Day2...DayN（每个 Day 2-3 个，不重复！）
+                // 均匀分配 remainingPins 到 Day1...Day{daysToFill}（每个 Day 2-3 个，不重复！）
                 var pinIdx = 0;
-                for (var di = 1; di < daysToFill; di++) {
+                for (var di = 1; di <= daysToFill; di++) {
                     var d = data.itinerary[di];
                     var remaining = remainingPins.length - pinIdx;
                     if (remaining <= 0) break; // ⭐ 景点用完了就停！不再重复
@@ -8086,21 +8110,17 @@ window.LOOP_ROUTES = [
                     ];
                 }
 
-                // ⭐ 最后：删掉多余Day，同步 card.days
-                // 返程Day位置
-                var lastI = data.itinerary.length - 1;
-                for (var zz = data.itinerary.length - 1; zz >= 0; zz--) {
-                    if (/返程|再见/.test((data.itinerary[zz].theme || ''))) { lastI = zz; break; }
-                }
-                // 要保留的最大Day索引：Day0 到 daysToFill(游玩Day数) 再加返程Day
-                // 如果返程Day在原始 itinerary 的 lastI 位置
-                // 我们只保留 Day0 (抵达), Day1..actualDaysToFill (游玩), Day lastI (返程)
-                // 其余全删掉
-                if (actualDaysToFill + 1 < lastI) {
-                    // 删掉 actualDaysToFill+1 到 lastI-1 之间的所有 Day
-                    var removeCount = lastI - actualDaysToFill - 1;
-                    for (var rr = 0; rr < removeCount; rr++) {
-                        data.itinerary.splice(actualDaysToFill + 1, 1);
+                // ⭐ 最后：删掉中间的空 Day，同步 card.days
+                // 从倒数第 2 个往前扫，Day0 保留，返程 Day 保留，中间空的全删
+                for (var _sc = data.itinerary.length - 2; _sc >= 1; _sc--) {
+                    var _scd = data.itinerary[_sc];
+                    var _scEmpty = !( (_scd.theme || '').trim() ) && (!_scd.timeline || _scd.timeline.length === 0);
+                    // 如果有 timeline 但全是模板词（没有真实景点）也算空
+                    var _scActs = (_scd.timeline || []).map(function(t){ return t.activity || ''; }).filter(function(a){
+                        return !/^(早餐|午餐|晚餐|酒店早餐|当地特色晚餐|起床|整理行李|退房|前往|值机|登机|自由活动)$/.test(a);
+                    });
+                    if (_scEmpty || (_scd.timeline && _scd.timeline.length > 0 && _scActs.length === 0)) {
+                        data.itinerary.splice(_sc, 1);
                     }
                 }
                 // 同步 card.days
