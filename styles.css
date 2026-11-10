@@ -2157,3 +2157,10 @@ textarea:focus-visible {
 
 /* 环线封面图（确保有背景） */
 .loop-card .loop-cover { background-size: cover !important; background-position: center !important; }
+
+/* ========== 酒店卡片可点击链接样式 ========== */
+a.hotel-card-link { display: block; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+a.hotel-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(37,99,235,0.15); }
+.hotel-card .booking-link { margin-top: 10px; padding: 6px 14px; background: linear-gradient(135deg, var(--primary), #6366f1); color: white; border-radius: 16px; font-size: 0.78rem; text-decoration: none; display: inline-block; font-weight: 600; transition: transform 0.15s; }
+.hotel-card .booking-link:hover { transform: scale(1.05); }
+.hotel-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }

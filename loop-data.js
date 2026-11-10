@@ -6,7 +6,7 @@ window.LOOP_ROUTES = [
     "cover": "https://images.unsplash.com/photo-1606112219146-f13f07505fa4?w=1200&q=80",
     "price": "¥4,200/人起",
     "rating": "★★★★★",
-    "tag": "🔥 爆点·爆款",
+    "tag": "爆点·爆款",
     "tags": [
       "国内",
       "自驾",
@@ -45,7 +45,104 @@ window.LOOP_ROUTES = [
       "门源花海"
     ],
     "description": "中国最著名的西北大环线！从西宁出发，穿越青海甘肃两省，途经青藏高原边缘的湖光山色、沙漠戈壁、千年石窟、彩色丹霞。15 天深度玩法，不仅走经典路线，还加了翡翠湖、雅丹魔鬼城、扁都口、祁连山草原等精华站点。7-8 月是旺季，油菜花盛开门源如金色地毯；9-10 月秋高气爽是摄影黄金期。",
-    [{"name": "西宁", "x": 77.3, "y": 47.6, "day": "Day 1"}, {"name": "青海湖", "x": 63.6, "y": 66.7, "day": "Day 2"}, {"name": "茶卡盐湖", "x": 50.0, "y": 81.0, "day": "Day 3"}, {"name": "都兰", "x": 40.9, "y": 100.0, "day": "Day 3"}, {"name": "乌兰", "x": 31.8, "y": 90.5, "day": "Day 4"}, {"name": "大柴旦", "x": 13.6, "y": 76.2, "day": "Day 5"}, {"name": "雅丹魔鬼城", "x": 0.0, "y": 57.1, "day": "Day 5"}, {"name": "玉门", "x": 36.4, "y": 19.0, "day": "Day 6"}, {"name": "嘉峪关", "x": 45.5, "y": 9.5, "day": "Day 7"}, {"name": "瓜州", "x": 18.2, "y": 0.0, "day": "Day 8"}, {"name": "敦煌", "x": 4.5, "y": 9.5, "day": "Day 9"}, {"name": "张掖", "x": 68.2, "y": 23.8, "day": "Day 12"}, {"name": "扁都口", "x": 86.4, "y": 33.3, "day": "Day 13"}, {"name": "祁连山", "x": 100.0, "y": 38.1, "day": "Day 13"}, {"name": "门源", "x": 90.9, "y": 52.4, "day": "Day 14"}, {"name": "西宁", "x": 77.3, "y": 47.6, "day": "Day 15"}],
+    "mapPoints": [
+      {
+        "name": "西宁",
+        "x": 77.3,
+        "y": 47.6,
+        "day": "Day 1"
+      },
+      {
+        "name": "青海湖",
+        "x": 63.6,
+        "y": 66.7,
+        "day": "Day 2"
+      },
+      {
+        "name": "茶卡盐湖",
+        "x": 50.0,
+        "y": 81.0,
+        "day": "Day 3"
+      },
+      {
+        "name": "都兰",
+        "x": 40.9,
+        "y": 100.0,
+        "day": "Day 3"
+      },
+      {
+        "name": "乌兰",
+        "x": 31.8,
+        "y": 90.5,
+        "day": "Day 4"
+      },
+      {
+        "name": "大柴旦",
+        "x": 13.6,
+        "y": 76.2,
+        "day": "Day 5"
+      },
+      {
+        "name": "雅丹魔鬼城",
+        "x": 0.0,
+        "y": 57.1,
+        "day": "Day 5"
+      },
+      {
+        "name": "玉门",
+        "x": 36.4,
+        "y": 19.0,
+        "day": "Day 6"
+      },
+      {
+        "name": "嘉峪关",
+        "x": 45.5,
+        "y": 9.5,
+        "day": "Day 7"
+      },
+      {
+        "name": "瓜州",
+        "x": 18.2,
+        "y": 0.0,
+        "day": "Day 8"
+      },
+      {
+        "name": "敦煌",
+        "x": 4.5,
+        "y": 9.5,
+        "day": "Day 9"
+      },
+      {
+        "name": "张掖",
+        "x": 68.2,
+        "y": 23.8,
+        "day": "Day 12"
+      },
+      {
+        "name": "扁都口",
+        "x": 86.4,
+        "y": 33.3,
+        "day": "Day 13"
+      },
+      {
+        "name": "祁连山",
+        "x": 100.0,
+        "y": 38.1,
+        "day": "Day 13"
+      },
+      {
+        "name": "门源",
+        "x": 90.9,
+        "y": 52.4,
+        "day": "Day 14"
+      },
+      {
+        "name": "西宁",
+        "x": 77.3,
+        "y": 47.6,
+        "day": "Day 15"
+      }
+    ],
     "itinerary": [
       {
         "day": "Day 1",
@@ -594,7 +691,8 @@ window.LOOP_ROUTES = [
         "tier": "luxury",
         "price": "¥600-900",
         "area": "城西区·万达广场旁",
-        "highlight": "西宁最好的五星级，含自助早餐"
+        "highlight": "西宁最好的五星级，含自助早餐",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E8%A5%BF%E5%AE%81%E6%96%B0%E5%8D%8E%E8%81%94%E7%B4%A2%E8%8F%B2%E7%89%B9%E5%A4%A7%E9%85%92%E5%BA%97&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "黑马河牧民家宾馆",
@@ -602,7 +700,8 @@ window.LOOP_ROUTES = [
         "tier": "comfort",
         "price": "¥400-700",
         "area": "黑马河乡·湖边",
-        "highlight": "步行 3 分钟到青海湖边看日出"
+        "highlight": "步行 3 分钟到青海湖边看日出",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E9%BB%91%E9%A9%AC%E6%B2%B3%E7%89%A7%E6%B0%91%E5%AE%B6%E5%AE%BE%E9%A6%86&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "大柴旦翡翠湖盐湖酒店",
@@ -610,7 +709,8 @@ window.LOOP_ROUTES = [
         "tier": "economy",
         "price": "¥300-500",
         "area": "大柴旦镇",
-        "highlight": "离翡翠湖 10 分钟车程"
+        "highlight": "离翡翠湖 10 分钟车程",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E5%A4%A7%E6%9F%B4%E6%97%A6%E7%BF%A1%E7%BF%A0%E6%B9%96%E7%9B%90%E6%B9%96%E9%85%92%E5%BA%97&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "敦煌丝绸驿酒店",
@@ -618,7 +718,8 @@ window.LOOP_ROUTES = [
         "tier": "comfort",
         "price": "¥400-700",
         "area": "敦煌市区",
-        "highlight": "有免费停车场，去鸣沙山打车 15 分钟"
+        "highlight": "有免费停车场，去鸣沙山打车 15 分钟",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E6%95%A6%E7%85%8C%E4%B8%9D%E7%BB%B8%E9%A9%BF%E9%85%92%E5%BA%97&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "张掖七彩丹霞景区民宿",
@@ -626,7 +727,8 @@ window.LOOP_ROUTES = [
         "tier": "economy",
         "price": "¥200-400",
         "area": "丹霞景区旁",
-        "highlight": "景区门口直接进，早上可看日出门票半价"
+        "highlight": "景区门口直接进，早上可看日出门票半价",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E5%BC%A0%E6%8E%96%E4%B8%83%E5%BD%A9%E4%B8%B9%E9%9C%9E%E6%99%AF%E5%8C%BA%E6%B0%91%E5%AE%BF&checkin=2025-06-01&checkout=2025-06-02"
       }
     ],
     "transport": [
@@ -722,7 +824,7 @@ window.LOOP_ROUTES = [
     "cover": "https://images.unsplash.com/photo-1528164344705-47542687000d?w=1200&q=80",
     "price": "¥5,500/人起",
     "rating": "★★★★★",
-    "tag": "🔥 网红·独库公路",
+    "tag": "网红·独库公路",
     "tags": [
       "国内",
       "自驾",
@@ -745,7 +847,68 @@ window.LOOP_ROUTES = [
     ],
     "totalKm": "约3,500公里",
     "bestTime": "每年 6-9 月（独库公路开放期）",
-    [{"name": "乌鲁木齐", "x": 100.0, "y": 0.0, "day": "Day 1"}, {"name": "独山子", "x": 77.8, "y": 16.0, "day": "Day 2"}, {"name": "独库公路北段", "x": 55.6, "y": 32.0, "day": "Day 3"}, {"name": "那拉提", "x": 22.2, "y": 52.0, "day": "Day 4"}, {"name": "赛里木湖", "x": 0.0, "y": 40.0, "day": "Day 5"}, {"name": "昭苏", "x": 27.8, "y": 68.0, "day": "Day 6"}, {"name": "喀拉峻", "x": 38.9, "y": 80.0, "day": "Day 7"}, {"name": "库车", "x": 61.1, "y": 100.0, "day": "Day 10"}, {"name": "吐鲁番", "x": 88.9, "y": 20.0, "day": "Day 12"}, {"name": "乌鲁木齐", "x": 100.0, "y": 0.0, "day": "Day 14"}],
+    "mapPoints": [
+      {
+        "name": "乌鲁木齐",
+        "x": 100.0,
+        "y": 0.0,
+        "day": "Day 1"
+      },
+      {
+        "name": "独山子",
+        "x": 77.8,
+        "y": 16.0,
+        "day": "Day 2"
+      },
+      {
+        "name": "独库公路北段",
+        "x": 55.6,
+        "y": 32.0,
+        "day": "Day 3"
+      },
+      {
+        "name": "那拉提",
+        "x": 22.2,
+        "y": 52.0,
+        "day": "Day 4"
+      },
+      {
+        "name": "赛里木湖",
+        "x": 0.0,
+        "y": 40.0,
+        "day": "Day 5"
+      },
+      {
+        "name": "昭苏",
+        "x": 27.8,
+        "y": 68.0,
+        "day": "Day 6"
+      },
+      {
+        "name": "喀拉峻",
+        "x": 38.9,
+        "y": 80.0,
+        "day": "Day 7"
+      },
+      {
+        "name": "库车",
+        "x": 61.1,
+        "y": 100.0,
+        "day": "Day 10"
+      },
+      {
+        "name": "吐鲁番",
+        "x": 88.9,
+        "y": 20.0,
+        "day": "Day 12"
+      },
+      {
+        "name": "乌鲁木齐",
+        "x": 100.0,
+        "y": 0.0,
+        "day": "Day 14"
+      }
+    ],
     "description": "每年只开放 4 个月的独库公路，中国最美自驾公路没有之一！从乌鲁木齐出发，穿越天山南北，途经那拉提空中草原、赛里木湖蓝眼泪、喀拉峻人体草原、昭苏油菜花、克孜尔千佛洞，全程 3500 公里，每一公里都是大片。",
     "itinerary": [
       {
@@ -942,7 +1105,8 @@ window.LOOP_ROUTES = [
         "tier": "luxury",
         "price": "¥500-800",
         "area": "友好路·2号线",
-        "highlight": "新疆最好的五星级"
+        "highlight": "新疆最好的五星级",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90%E5%B8%8C%E5%B0%94%E9%A1%BF&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "那拉提草原毡房",
@@ -950,7 +1114,8 @@ window.LOOP_ROUTES = [
         "tier": "comfort",
         "price": "¥300-500",
         "area": "那拉提景区旁",
-        "highlight": "体验哈萨克族毡房和奶茶"
+        "highlight": "体验哈萨克族毡房和奶茶",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E9%82%A3%E6%8B%89%E6%8F%90%E8%8D%89%E5%8E%9F%E6%AF%A1%E6%88%BF&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "赛里木湖民宿",
@@ -958,7 +1123,8 @@ window.LOOP_ROUTES = [
         "tier": "economy",
         "price": "¥250-400",
         "area": "赛里木湖湖边",
-        "highlight": "湖边看日出最棒"
+        "highlight": "湖边看日出最棒",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E8%B5%9B%E9%87%8C%E6%9C%A8%E6%B9%96%E6%B0%91%E5%AE%BF&checkin=2025-06-01&checkout=2025-06-02"
       }
     ],
     "transport": [
@@ -1024,7 +1190,7 @@ window.LOOP_ROUTES = [
     "cover": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1200&q=80",
     "price": "¥8,000/人起",
     "rating": "★★★★★",
-    "tag": "🔥 顶级·心灵之旅",
+    "tag": "顶级·心灵之旅",
     "tags": [
       "国内",
       "西藏",
@@ -1052,7 +1218,56 @@ window.LOOP_ROUTES = [
     ],
     "totalKm": "约4,800公里",
     "bestTime": "每年 5-9 月（旺季但安全）",
-    [{"name": "拉萨", "x": 91.3, "y": 33.3, "day": "Day 1"}, {"name": "日喀则", "x": 65.2, "y": 55.6, "day": "Day 3"}, {"name": "珠峰大本营", "x": 47.8, "y": 100.0, "day": "Day 4"}, {"name": "冈仁波齐", "x": 21.7, "y": 66.7, "day": "Day 7"}, {"name": "札达", "x": 8.7, "y": 22.2, "day": "Day 9"}, {"name": "狮泉河", "x": 0.0, "y": 0.0, "day": "Day 10"}, {"name": "纳木错", "x": 100.0, "y": 0.0, "day": "Day 13"}, {"name": "拉萨", "x": 91.3, "y": 33.3, "day": "Day 13"}],
+    "mapPoints": [
+      {
+        "name": "拉萨",
+        "x": 91.3,
+        "y": 33.3,
+        "day": "Day 1"
+      },
+      {
+        "name": "日喀则",
+        "x": 65.2,
+        "y": 55.6,
+        "day": "Day 3"
+      },
+      {
+        "name": "珠峰大本营",
+        "x": 47.8,
+        "y": 100.0,
+        "day": "Day 4"
+      },
+      {
+        "name": "冈仁波齐",
+        "x": 21.7,
+        "y": 66.7,
+        "day": "Day 7"
+      },
+      {
+        "name": "札达",
+        "x": 8.7,
+        "y": 22.2,
+        "day": "Day 9"
+      },
+      {
+        "name": "狮泉河",
+        "x": 0.0,
+        "y": 0.0,
+        "day": "Day 10"
+      },
+      {
+        "name": "纳木错",
+        "x": 100.0,
+        "y": 0.0,
+        "day": "Day 13"
+      },
+      {
+        "name": "拉萨",
+        "x": 91.3,
+        "y": 33.3,
+        "day": "Day 13"
+      }
+    ],
     "description": "中国海拔最高的环线！穿越平均海拔 4500 米的阿里无人区，抵达神山冈仁波齐脚下，看圣湖玛旁雍措，古格王朝遗址，普若岗日冰川。心灵净化之旅，出发前请做好身体准备。",
     "itinerary": [
       {
@@ -1240,7 +1455,8 @@ window.LOOP_ROUTES = [
         "tier": "luxury",
         "price": "¥1200-2000",
         "area": "八廓街·大昭寺旁",
-        "highlight": "五星酒店有藏式早餐和供氧房"
+        "highlight": "五星酒店有藏式早餐和供氧房",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E6%8B%89%E8%90%A8%E7%91%9E%E5%90%89%E5%BA%A6%E5%81%87%E9%85%92%E5%BA%97&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "珠峰大本营板房",
@@ -1248,7 +1464,8 @@ window.LOOP_ROUTES = [
         "tier": "economy",
         "price": "¥300/人含餐",
         "area": "珠峰脚下",
-        "highlight": "海拔 5200 米，条件艰苦但终身难忘"
+        "highlight": "海拔 5200 米，条件艰苦但终身难忘",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E7%8F%A0%E5%B3%B0%E5%A4%A7%E6%9C%AC%E8%90%A5%E6%9D%BF%E6%88%BF&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "狮泉河阿里花园酒店",
@@ -1256,7 +1473,8 @@ window.LOOP_ROUTES = [
         "tier": "comfort",
         "price": "¥500-800",
         "area": "狮泉河镇",
-        "highlight": "阿里地区最好的酒店有氧气"
+        "highlight": "阿里地区最好的酒店有氧气",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E7%8B%AE%E6%B3%89%E6%B2%B3%E9%98%BF%E9%87%8C%E8%8A%B1%E5%9B%AD%E9%85%92%E5%BA%97&checkin=2025-06-01&checkout=2025-06-02"
       }
     ],
     "transport": [
@@ -1319,7 +1537,7 @@ window.LOOP_ROUTES = [
     "cover": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
     "price": "¥3,500/人起",
     "rating": "★★★★★",
-    "tag": "🔥 网红·最后香格里拉",
+    "tag": "网红·最后香格里拉",
     "tags": [
       "国内",
       "川西",
@@ -1342,7 +1560,56 @@ window.LOOP_ROUTES = [
     ],
     "totalKm": "约2,600公里",
     "bestTime": "9-10 月（秋景最美）/ 5-6 月（花海）",
-    [{"name": "成都", "x": 100.0, "y": 15.4, "day": "Day 1"}, {"name": "新都桥", "x": 70.8, "y": 0.0, "day": "Day 1"}, {"name": "理塘", "x": 41.7, "y": 23.1, "day": "Day 2"}, {"name": "稻城", "x": 20.8, "y": 30.8, "day": "Day 3"}, {"name": "亚丁村", "x": 12.5, "y": 46.2, "day": "Day 3"}, {"name": "香格里拉", "x": 0.0, "y": 69.2, "day": "Day 5"}, {"name": "丽江", "x": 20.8, "y": 100.0, "day": "Day 6"}, {"name": "成都", "x": 100.0, "y": 15.4, "day": "Day 9"}],
+    "mapPoints": [
+      {
+        "name": "成都",
+        "x": 100.0,
+        "y": 15.4,
+        "day": "Day 1"
+      },
+      {
+        "name": "新都桥",
+        "x": 70.8,
+        "y": 0.0,
+        "day": "Day 1"
+      },
+      {
+        "name": "理塘",
+        "x": 41.7,
+        "y": 23.1,
+        "day": "Day 2"
+      },
+      {
+        "name": "稻城",
+        "x": 20.8,
+        "y": 30.8,
+        "day": "Day 3"
+      },
+      {
+        "name": "亚丁村",
+        "x": 12.5,
+        "y": 46.2,
+        "day": "Day 3"
+      },
+      {
+        "name": "香格里拉",
+        "x": 0.0,
+        "y": 69.2,
+        "day": "Day 5"
+      },
+      {
+        "name": "丽江",
+        "x": 20.8,
+        "y": 100.0,
+        "day": "Day 6"
+      },
+      {
+        "name": "成都",
+        "x": 100.0,
+        "y": 15.4,
+        "day": "Day 9"
+      }
+    ],
     "description": "从成都到香格里拉，穿越 4000 米海拔的川西高原，途经贡嘎山远眺、新都桥光影、理塘毛垭草原、稻城亚丁三神山——地球上最后一片净土。9 天深度玩法，不仅走短线冲牛奶海，还要走长线五色海。",
     "itinerary": [
       {
@@ -1590,7 +1857,8 @@ window.LOOP_ROUTES = [
         "tier": "comfort",
         "price": "¥400-700",
         "area": "稻城县",
-        "highlight": "县城最好连锁酒店，氧气走廊高反友好"
+        "highlight": "县城最好连锁酒店，氧气走廊高反友好",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E7%A8%BB%E5%9F%8E%E4%BA%9A%E4%B8%81%E6%99%BA%E9%80%89%E5%81%87%E6%97%A5&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "新都桥摄影主题民宿",
@@ -1598,7 +1866,8 @@ window.LOOP_ROUTES = [
         "tier": "economy",
         "price": "¥200-400",
         "area": "新都桥镇",
-        "highlight": "老板是摄影师，带拍日出机位"
+        "highlight": "老板是摄影师，带拍日出机位",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E6%96%B0%E9%83%BD%E6%A1%A5%E6%91%84%E5%BD%B1%E4%B8%BB%E9%A2%98%E6%B0%91%E5%AE%BF&checkin=2025-06-01&checkout=2025-06-02"
       },
       {
         "name": "泸沽湖里格半岛湖景房",
@@ -1606,7 +1875,8 @@ window.LOOP_ROUTES = [
         "tier": "luxury",
         "price": "¥500-800",
         "area": "泸沽湖里格岛",
-        "highlight": "推窗就是泸沽湖全景"
+        "highlight": "推窗就是泸沽湖全景",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?countryId=1&cityId=0&keyword=%E6%B3%B8%E6%B2%BD%E6%B9%96%E9%87%8C%E6%A0%BC%E5%8D%8A%E5%B2%9B%E6%B9%96%E6%99%AF%E6%88%BF&checkin=2025-06-01&checkout=2025-06-02"
       }
     ],
     "transport": [
@@ -1668,9 +1938,23 @@ window.LOOP_ROUTES = [
 window.renderLoopMap = function(data) {
     if (!data) return '';
     const safe = (v) => String(v == null ? '' : v);
-    // 构建高德搜索链接（用城市搜索关键词拼接）
-    const cityNames = (data.routePins || []).slice(0, 8).join('|');
-    // 使用通用地图嵌入 + 简易 SVG 节点覆盖层
+    // 真实城市高德坐标（经度,纬度）
+    const CITY_COORDS = {
+        "西宁":[101.78,36.62],"青海湖":[100.99,36.90],"茶卡盐湖":[99.05,36.70],
+        "都兰":[98.10,36.30],"乌兰":[98.48,36.92],"大柴旦":[95.31,37.85],
+        "雅丹魔鬼城":[93.00,40.50],"玉门":[97.02,40.28],"嘉峪关":[98.29,39.77],
+        "瓜州":[95.77,40.49],"敦煌":[94.66,40.14],"张掖":[100.45,38.93],
+        "扁都口":[100.95,38.20],"祁连山":[100.23,38.09],"门源":[101.62,37.36],
+        "乌鲁木齐":[87.62,43.79],"独山子":[84.87,44.33],"独库公路北段":[83.50,44.50],
+        "那拉提":[83.99,43.37],"赛里木湖":[81.10,44.70],"昭苏":[81.11,43.19],
+        "喀拉峻":[82.00,42.90],"库车":[83.00,41.72],"吐鲁番":[89.19,42.95],
+        "拉萨":[91.13,29.65],"日喀则":[88.88,29.25],"珠峰大本营":[86.85,28.15],
+        "冈仁波齐":[81.32,31.00],"札达":[79.69,32.34],"狮泉河":[80.10,32.50],
+        "纳木错":[90.17,30.70],"成都":[104.07,30.67],"新都桥":[101.52,30.05],
+        "理塘":[100.28,30.00],"稻城":[100.17,29.04],"亚丁村":[100.23,28.70],
+        "香格里拉":[99.71,27.83],"丽江":[100.23,26.87]
+    };
+    // SVG 节点覆盖层（用百分比坐标）
     const pins = (data.mapPoints || []);
     const nodes = pins.map(p => `
         <div class="map-pin" style="left:${p.x}%;top:${p.y}%" data-day="${safe(p.day)}" data-name="${safe(p.name)}">
@@ -1678,20 +1962,30 @@ window.renderLoopMap = function(data) {
             <div class="pin-label">${safe(p.name)}</div>
         </div>
     `).join('');
-    // 地图嵌入：使用高德搜索多地点的链接（让用户能跳转高德APP查看真实路线）
-    const mapUrl = `https://uri.amap.com/marker?position=${(data.mapPoints||[]).map(p=>`${(p.x/10).toFixed(1)},${(p.y/10).toFixed(1)}`).join('|')}&name=${encodeURIComponent(data.name||'')}&src=mylvyou&coordinate=gaode&callnative=1`;
+    // 真实高德坐标路径
+    const coordList = pins.map(p => {
+        const c = CITY_COORDS[p.name];
+        return c ? `${c[0]},${c[1]},${encodeURIComponent(p.name)}` : null;
+    }).filter(Boolean);
+    const markerList = pins.map(p => {
+        const c = CITY_COORDS[p.name];
+        return c ? `${c[0]},${c[1]}` : null;
+    }).filter(Boolean);
+    // 高德导航和标记链接
+    const navUrl = `https://uri.amap.com/navigation?${coordList.map(c=>'to='+c).join('&')}&mode=car&policy=1&src=mylvyou&coordinate=gaode&callnative=1`;
+    const markerUrl = `https://uri.amap.com/marker?position=${markerList.join('|')}&name=${encodeURIComponent(data.name||'')}&src=mylvyou&coordinate=gaode&callnative=1`;
     
     return `
         <div class="map-container">
-            <div class="map-title"><i class="fas fa-map-marked-alt"></i> 路线地图 · 点击节点查看行程 <a href="${mapUrl}" target="_blank" style="font-size:.75rem;color:#3b82f6;margin-left:8px">📱 在高德地图打开</a></div>
+            <div class="map-title"><i class="fas fa-map-marked-alt"></i> 路线地图 · 点击节点查看行程 <a href="${markerUrl}" target="_blank" style="font-size:.75rem;color:#3b82f6;margin-left:8px">📱 在高德地图打开</a></div>
             <div class="amap-wrapper">
                 <div class="amap-placeholder">
-                    <iframe class="amap-embed" src="https://uri.amap.com/navigation?to=${(data.mapPoints||[]).map(p=>`${(p.x/10).toFixed(1)},${(p.y/10).toFixed(1)},${encodeURIComponent(p.name)}`).join('&to=')}&mode=car&policy=1&src=mylvyou&coordinate=gaode&callnative=1" frameborder="0"></iframe>
+                    <iframe class="amap-embed" src="${navUrl}" frameborder="0" allowfullscreen></iframe>
                     <div class="svg-overlay" style="position:absolute;inset:0">
                         ${nodes}
                     </div>
                 </div>
-                <div class="map-tip">💡 点击上方节点跳转到对应 Day 行程 · 点击底部「在高德地图打开」查看真实路线导航</div>
+                <div class="map-tip">💡 真实高德导航地图 · 点击上方红色节点跳转到对应 Day 行程 · 点击链接查看完整路线规划</div>
             </div>
         </div>
     `;
@@ -1717,7 +2011,7 @@ window.renderLoopDetail = function(data) {
             </div>
         </div>` : `
         <div style="background:linear-gradient(135deg,#ef4444,#f59e0b);color:white;padding:20px;border-radius:var(--radius);margin-bottom:16px">
-            <div style="font-weight:800;font-size:1.2rem">🔥 ${safe(data.name)} · ${safe(data.days)}</div>
+            <div style="font-weight:800;font-size:1.2rem">${safe(data.name)} · ${safe(data.days)}</div>
             <div style="opacity:.85;font-size:.9rem;margin-top:4px">${safe(data.price || '')}｜${safe(data.totalKm || '')}</div>
         </div>`;
 
@@ -1742,10 +2036,10 @@ window.renderLoopDetail = function(data) {
         return `<div class="itinerary-day loop-day" data-day="Day ${dn}"><h4><span class="day-tag loop-tag">${safe(day.day)}</span>${safe(day.theme || '')}</h4><div class="day-timeline">${tl}</div></div>`;
     }).join('');
 
-    // 酒店（带图片）
+    // 酒店（带图片 + bookingUrl 可点击）
     const tierMap = { economy:'经济型', comfort:'舒适型', luxury:'奢华型' };
-    const hotels = (data.hotels || []).map(h => `
-        <div class="hotel-card with-image">
+    const hotels = (data.hotels || []).map(h => {
+        const card = `<div class="hotel-card with-image" ${h.bookingUrl ? `onclick="window.open('${safe(h.bookingUrl)}','_blank')" style="cursor:pointer"` : ''}>
             ${h.image ? `<div class="hotel-img"><img src="${safe(h.image)}" alt=""></div>` : ''}
             <div class="hotel-info">
                 <div class="hotel-top">
@@ -1755,8 +2049,11 @@ window.renderLoopDetail = function(data) {
                 <div class="hotel-price">${safe(h.price)}</div>
                 <div class="area"><i class="fas fa-map-marker-alt"></i> ${safe(h.area)}</div>
                 <div class="highlight">${safe(h.highlight)}</div>
+                ${h.bookingUrl ? `<div class="booking-link"><i class="fas fa-external-link-alt"></i> 点击预订 →</div>` : ''}
             </div>
-        </div>`).join('');
+        </div>`;
+        return h.bookingUrl ? `<a href="${safe(h.bookingUrl)}" target="_blank" class="hotel-card-link">${card}</a>` : card;
+    }).join('');
 
     const transport = (data.transport || []).map(t => `<div class="transport-item"><div class="label">${safe(t.label)}</div><div class="value">${safe(t.value)}</div></div>`).join('');
     const foods = (data.foods || []).map(f => `<li><strong>${safe(f.name)}</strong> — ${safe(f.desc)} <em style="color:var(--primary);font-weight:600">${safe(f.price)}</em></li>`).join('');
@@ -1810,8 +2107,8 @@ window.renderRichDetail = function(data) {
     }).join('');
 
     const tierMap = { economy:'经济型', comfort:'舒适型', luxury:'奢华型' };
-    const hotels = (data.hotels || []).map(h => `
-        <div class="hotel-card ${h.image ? 'with-image' : ''}">
+    const hotels = (data.hotels || []).map(h => {
+        const card = `<div class="hotel-card ${h.image ? 'with-image' : ''}">
             ${h.image ? `<div class="hotel-img"><img src="${safe(h.image)}" alt=""></div>` : ''}
             <div class="hotel-info">
                 <div class="hotel-top">
@@ -1821,8 +2118,11 @@ window.renderRichDetail = function(data) {
                 <div class="hotel-price">${safe(h.price)}</div>
                 <div class="area"><i class="fas fa-map-marker-alt"></i> ${safe(h.area)}</div>
                 <div class="highlight">${safe(h.highlight)}</div>
+                ${h.bookingUrl ? `<div class="booking-link"><i class="fas fa-external-link-alt"></i> 点击预订 →</div>` : ''}
             </div>
-        </div>`).join('');
+        </div>`;
+        return h.bookingUrl ? `<a href="${safe(h.bookingUrl)}" target="_blank" class="hotel-card-link">${card}</a>` : card;
+    }).join('');
 
     const transport = (data.transport || []).map(t => `<div class="transport-item"><div class="label">${safe(t.label)}</div><div class="value">${safe(t.value)}</div></div>`).join('');
     const foods = (data.foods || []).map(f => `<li><strong>${safe(f.name)}</strong> — ${safe(f.desc)} <em style="color:var(--primary);font-weight:600">${safe(f.price)}</em></li>`).join('');

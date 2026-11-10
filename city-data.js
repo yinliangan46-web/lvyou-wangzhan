@@ -2165,7 +2165,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "深度体验·富士山",
+        "theme": "富士山·五合目·忍野八海·河口湖温泉",
         "timeline": [
           {
             "time": "09:00",
@@ -2412,7 +2412,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "深度体验·塔桥",
+        "theme": "白金汉宫换岗仪式·海德公园漫步",
         "timeline": [
           {
             "time": "09:00",
@@ -2439,7 +2439,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 5",
-        "theme": "剑桥·休闲放松",
+        "theme": "剑桥大学·国王学院·康河撑船",
         "timeline": [
           {
             "time": "09:00",
@@ -2675,7 +2675,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "深度体验·老城区",
+        "theme": "黄金市场·香料市场·迪拜博物馆",
         "timeline": [
           {
             "time": "09:00",
@@ -7236,7 +7236,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "深度体验·深度文化景点",
+        "theme": "色拉寺辩经·哲蚌寺·罗布林卡",
         "timeline": [
           {
             "time": "09:00",
@@ -7263,7 +7263,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 5",
-        "theme": "休闲放松·休闲放松",
+        "theme": "八廓街转经·藏式下午茶",
         "timeline": [
           {
             "time": "09:00",
@@ -9458,7 +9458,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "深度体验·深度文化景点",
+        "theme": "自治区博物馆·水磨沟公园",
         "timeline": [
           {
             "time": "09:00",
@@ -11042,3 +11042,6 @@ window.CITY_DETAIL = {
     ]
   }
 };
+
+
+
