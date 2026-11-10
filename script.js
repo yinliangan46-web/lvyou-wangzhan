@@ -319,6 +319,7 @@ function handleSearch() {
 
     // ══════ 检查环线/套餐（__loop__ 前缀）══════
     for (const [key, value] of Object.entries(destMap)) {
+        if (typeof value !== 'string') continue;
         if (value.startsWith('__loop__') && (key.includes(keyword) || keyword.includes(key))) {
             var loopId = value.slice(8);
             if (typeof openLoopModal === 'function') {
@@ -329,9 +330,10 @@ function handleSearch() {
         }
     }
 
-    // 检查省份（__ 前缀）
+    // 检查省份（__ 前缀，但排除 __city__、__loop__、__prov__）
     for (const [key, value] of Object.entries(destMap)) {
-        if (value.startsWith('__') && (key.includes(keyword) || keyword.includes(key))) {
+        if (typeof value !== 'string') continue;
+        if (value.startsWith('__') && !value.startsWith('__city__') && !value.startsWith('__loop__') && !value.startsWith('__prov__') && (key.includes(keyword) || keyword.includes(key))) {
             openProvinceModal(value.slice(2));
             input.value = '';
             return;
@@ -340,6 +342,7 @@ function handleSearch() {
 
     // 检查省份（__prov__ 前缀）
     for (const [key, value] of Object.entries(destMap)) {
+        if (typeof value !== 'string') continue;
         if (value.startsWith('__prov__') && (key.includes(keyword) || keyword.includes(key))) {
             openProvinceModal(value.slice(8));
             input.value = '';
@@ -349,6 +352,7 @@ function handleSearch() {
 
     // ══════ 检查地级市（__city__ 前缀）══════
     for (const [key, value] of Object.entries(destMap)) {
+        if (typeof value !== 'string') continue;
         if (value.startsWith('__city__') && (key.includes(keyword) || keyword.includes(key))) {
             var cityName = value.slice(8);
             // 找到所属省
@@ -369,6 +373,7 @@ function handleSearch() {
 
     // 检查是否匹配目的地（城市/套餐）
     for (const [key, value] of Object.entries(destMap)) {
+        if (typeof value !== 'string') continue;
         if (key.includes(keyword) || keyword.includes(key)) {
             // 优先用动态生成器
             if (window.PROVINCES_ALL && window.ALL_CITY_COORDS && window.ALL_CITY_COORDS[value]) {
