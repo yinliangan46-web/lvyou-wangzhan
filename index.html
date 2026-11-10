@@ -46,6 +46,7 @@
                 <a href="#china">国内游</a>
                 <a href="#routes">线路方案</a>
                 <a href="#tours">精选套餐</a>
+                <a href="#provinces">省级旅游地</a>
                 <a href="#features">特色服务</a>
                 <a href="#visa-services"><i class="fas fa-passport"></i> 签证服务</a>
                 <a href="#contact">联系我们</a>
@@ -407,7 +408,140 @@
         </div>
     </section>
 
-    <!-- ========== 线路方案 ========== -->
+        <!-- ========== MYL 中国省级旅游地 ========== -->
+    <section class="section china" id="provinces" style="background:#fafafa">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">MYL 省级聚合</span>
+                <h2>MYL 中国省级旅游地</h2>
+                <p>点击省份进入，下钻到下辖所有地级市详情（地图/行程/酒店/交通/美食全齐）</p>
+            </div>
+            <div class="china-grid">
+                <div class="dest-card china-card" onclick="openProvinceModal('hebei')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="河北省" loading="lazy" /><span class="dest-price">¥2,399起</span></div>
+                    <div class="dest-info"><h3>河北省</h3><p>燕赵风骨·太行燕山</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('shanxi')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="山西省" loading="lazy" /><span class="dest-price">¥2,799起</span></div>
+                    <div class="dest-info"><h3>山西省</h3><p>晋商故里·古建大省</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 8-12天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('liaoning')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="辽宁省" loading="lazy" /><span class="dest-price">¥2,499起</span></div>
+                    <div class="dest-info"><h3>辽宁省</h3><p>辽海风光·盛京文化</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.4</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('jilin')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="吉林省" loading="lazy" /><span class="dest-price">¥1,999起</span></div>
+                    <div class="dest-info"><h3>吉林省</h3><p>北国春城·雪国秘境</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.3</span><span><i class="far fa-clock"></i> 5-8天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('heilongjiang')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="黑龙江省" loading="lazy" /><span class="dest-price">¥2,299起</span></div>
+                    <div class="dest-info"><h3>黑龙江省</h3><p>冰城夏都·冰雪大世界</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.4</span><span><i class="far fa-clock"></i> 6-9天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('jiangsu')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="江苏省" loading="lazy" /><span class="dest-price">¥2,599起</span></div>
+                    <div class="dest-info"><h3>江苏省</h3><p>鱼米之乡·江南水乡</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('zhejiang')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="浙江省" loading="lazy" /><span class="dest-price">¥2,799起</span></div>
+                    <div class="dest-info"><h3>浙江省</h3><p>人间天堂·浙江诗画</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.8</span><span><i class="far fa-clock"></i> 6-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('anhui')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" alt="安徽省" loading="lazy" /><span class="dest-price">¥2,299起</span></div>
+                    <div class="dest-info"><h3>安徽省</h3><p>黄山云海·徽派古韵</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 5-8天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('fujian')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="福建省" loading="lazy" /><span class="dest-price">¥2,699起</span></div>
+                    <div class="dest-info"><h3>福建省</h3><p>闽都古韵·海丝起点</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('jiangxi')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="江西省" loading="lazy" /><span class="dest-price">¥2,199起</span></div>
+                    <div class="dest-info"><h3>江西省</h3><p>红色摇篮·庐山瀑布</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.4</span><span><i class="far fa-clock"></i> 5-8天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('shandong')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="山东省" loading="lazy" /><span class="dest-price">¥2,399起</span></div>
+                    <div class="dest-info"><h3>山东省</h3><p>孔孟之乡·泉城风光</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('henan')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="河南省" loading="lazy" /><span class="dest-price">¥2,399起</span></div>
+                    <div class="dest-info"><h3>河南省</h3><p>中原大地·黄河文明</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('hubei')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="湖北省" loading="lazy" /><span class="dest-price">¥2,299起</span></div>
+                    <div class="dest-info"><h3>湖北省</h3><p>九省通衢·江城楚天</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 6-9天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('hunan')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="湖南省" loading="lazy" /><span class="dest-price">¥2,299起</span></div>
+                    <div class="dest-info"><h3>湖南省</h3><p>洞庭天下水·湘西风情</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 5-8天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('guangdong')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="广东省" loading="lazy" /><span class="dest-price">¥2,599起</span></div>
+                    <div class="dest-info"><h3>广东省</h3><p>岭南门户·改革前沿</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('hainan')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="海南省" loading="lazy" /><span class="dest-price">¥2,999起</span></div>
+                    <div class="dest-info"><h3>海南省</h3><p>椰风海韵·热带天堂</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 5-7天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('sichuan')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&q=80" alt="四川省" loading="lazy" /><span class="dest-price">¥2,599起</span></div>
+                    <div class="dest-info"><h3>四川省</h3><p>天府之国·熊猫故乡</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 7-12天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('guizhou')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="贵州省" loading="lazy" /><span class="dest-price">¥2,399起</span></div>
+                    <div class="dest-info"><h3>贵州省</h3><p>多彩贵州·山地公园</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 6-9天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('yunnan')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="云南省" loading="lazy" /><span class="dest-price">¥2,699起</span></div>
+                    <div class="dest-info"><h3>云南省</h3><p>彩云之南·四季如春</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 7-12天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('shaanxi')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="陕西省" loading="lazy" /><span class="dest-price">¥2,399起</span></div>
+                    <div class="dest-info"><h3>陕西省</h3><p>十三朝古都·黄土高原</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 6-9天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('gansu')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="甘肃省" loading="lazy" /><span class="dest-price">¥2,799起</span></div>
+                    <div class="dest-info"><h3>甘肃省</h3><p>丝路咽喉·大漠孤烟</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('qinghai')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="青海省" loading="lazy" /><span class="dest-price">¥2,999起</span></div>
+                    <div class="dest-info"><h3>青海省</h3><p>雪域高原·青海湖畔</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 6-9天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('neimenggu')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="内蒙古自治区" loading="lazy" /><span class="dest-price">¥2,599起</span></div>
+                    <div class="dest-info"><h3>内蒙古自治区</h3><p>草原风情·大漠孤烟</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 7-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('guangxi')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="广西壮族自治区" loading="lazy" /><span class="dest-price">¥2,499起</span></div>
+                    <div class="dest-info"><h3>广西壮族自治区</h3><p>桂林山水·壮美山歌</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 6-9天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('xizang')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="西藏自治区" loading="lazy" /><span class="dest-price">¥4,999起</span></div>
+                    <div class="dest-info"><h3>西藏自治区</h3><p>日光之城·心灵净土</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.9</span><span><i class="far fa-clock"></i> 7-12天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('ningxia')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="宁夏回族自治区" loading="lazy" /><span class="dest-price">¥1,899起</span></div>
+                    <div class="dest-info"><h3>宁夏回族自治区</h3><p>塞上江南·西夏王国</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.4</span><span><i class="far fa-clock"></i> 4-6天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('xinjiang')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&q=80" alt="新疆维吾尔自治区" loading="lazy" /><span class="dest-price">¥3,999起</span></div>
+                    <div class="dest-info"><h3>新疆维吾尔自治区</h3><p>西域风情·天山南北</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 8-15天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('taiwan')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="台湾省" loading="lazy" /><span class="dest-price">¥4,599起</span></div>
+                    <div class="dest-info"><h3>台湾省</h3><p>宝岛台湾·阿里日月</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 8-10天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('xianggang')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="香港特别行政区" loading="lazy" /><span class="dest-price">¥3,299起</span></div>
+                    <div class="dest-info"><h3>香港特别行政区</h3><p>东方之珠·购物天堂</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 3-5天</span></div></div>
+                </div>
+                <div class="dest-card china-card" onclick="openProvinceModal('aomen')">
+                    <div class="dest-img"><img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80" alt="澳门特别行政区" loading="lazy" /><span class="dest-price">¥2,799起</span></div>
+                    <div class="dest-info"><h3>澳门特别行政区</h3><p>海上花园·赌城风云</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 2-4天</span></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- ========== 线路方案 ========== -->
     <section class="section routes" id="routes">
         <div class="container">
             <div class="section-header">
@@ -967,6 +1101,6 @@
     <script src="city-data.js"></script>
     <script src="loop-data.js"></script>
     <script src="script.js?v=5"></script>
-    <script src="province-data.js"></script>
+    <script src="province-data-all.js"></script>
 </body>
 </html>
