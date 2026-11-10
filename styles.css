@@ -1966,3 +1966,64 @@ textarea:focus-visible {
 .option-item { transition: var(--transition); }
 .option-item:hover { background: var(--primary-light) !important; transform: translateX(4px); }
 .btn-back:hover { color: var(--primary-dark) !important; }
+
+/* ========== 爆点环线板块 ========== */
+.loops-section { padding: 80px 0; background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 50%, #fee2e2 100%); }
+.loops-section h2 { text-align: center; font-size: 2.2rem; font-weight: 900; margin-bottom: 16px; }
+.loops-section .section-desc { text-align: center; color: var(--text-light); margin-bottom: 40px; font-size: 1rem; }
+
+.loop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; }
+.loop-card {
+    background: white; border-radius: var(--radius); overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: var(--transition);
+    cursor: pointer; border: 1px solid rgba(239,68,68,0.1);
+}
+.loop-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(239,68,68,0.15); }
+.loop-cover {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #ef4444, #f59e0b); font-size: 5rem; color: white;
+    position: relative; overflow: hidden;
+}
+.loop-cover::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%);
+}
+.loop-tag {
+    position: absolute; top: 12px; left: 12px;
+    background: white; color: #ef4444; font-weight: 700; font-size: 0.75rem;
+    padding: 4px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.loop-info { padding: 20px; }
+.loop-info h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
+.loop-info .loop-meta { font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+.loop-info .loop-meta span::before { content: '•'; margin-right: 8px; color: var(--primary); }
+.loop-info .loop-desc { font-size: 0.88rem; color: var(--text-light); line-height: 1.6; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.loop-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px dashed var(--border); }
+.loop-footer .price { font-size: 1.3rem; font-weight: 800; color: #ef4444; }
+.loop-footer .price small { font-size: 0.8rem; color: var(--text-light); font-weight: 500; }
+.loop-footer .btn { background: linear-gradient(135deg, #ef4444, #f59e0b); color: white; padding: 8px 20px; font-size: 0.85rem; border-radius: 20px; font-weight: 600; }
+
+/* 环线弹窗 */
+.loop-day { border-left: 4px solid #ef4444 !important; }
+.loop-tag { background: linear-gradient(135deg, #ef4444, #f59e0b) !important; }
+.loop-route .route-visual { background: linear-gradient(135deg, #fef3c7 0%, #fee2e2 100%) !important; }
+
+/* ========== 城市分类筛选 ========== */
+.dest-filter { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+.dest-filter .filter-btn {
+    padding: 10px 22px; border-radius: 24px; font-size: 0.9rem; font-weight: 500;
+    background: var(--bg-alt); color: var(--text-light); border: none; cursor: pointer;
+    transition: var(--transition);
+}
+.dest-filter .filter-btn:hover { background: var(--primary-light); color: var(--primary); }
+.dest-filter .filter-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 16px rgba(37,99,235,0.3); }
+
+.dest-card.hidden { display: none; }
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .loop-grid { grid-template-columns: 1fr; }
+    .loops-section h2 { font-size: 1.6rem; }
+    .dest-filter { gap: 8px; }
+    .dest-filter .filter-btn { padding: 8px 16px; font-size: 0.82rem; }
+}

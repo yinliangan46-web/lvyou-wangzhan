@@ -919,3 +919,49 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// ========== 爆点环线渲染 ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const loopGrid = document.getElementById('loopGrid');
+    if (loopGrid && window.LOOP_ROUTES) {
+        loopGrid.innerHTML = window.LOOP_ROUTES.map(loop => `
+            <div class="loop-card" data-loop="${loop.id}">
+                <div class="loop-cover">
+                    ${loop.cover || '🏔️'}
+                    <div class="loop-tag">${loop.tag || '爆点'}</div>
+                </div>
+                <div class="loop-info">
+                    <h3>${loop.name}</h3>
+                    <div class="loop-meta">
+                        <span>${loop.days}</span>
+                        <span>${loop.rating || '★★★★★'}</span>
+                        <span>${loop.totalKm || ''}</span>
+                    </div>
+                    <div class="loop-desc">${loop.description || ''}</div>
+                    <div class="loop-footer">
+                        <div class="price">${loop.price || '¥2500起'}<small>/人</small></div>
+                        <div class="btn">查看详情 →</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        loopGrid.querySelectorAll('.loop-card').forEach(card => {
+            card.addEventListener('click', () => openLoopModal(card.dataset.loop));
+        });
+    }
+});
+
+// ========== 环线弹窗 ==========
+function openLoopModal(loopId) {
+    const loop = (window.LOOP_ROUTES || []).find(r => r.id === loopId);
+    if (!loop || !modalBody) return;
+    
+    modalBody.innerHTML = window.renderLoopDetail ? window.renderLoopDetail(loop) : '<p>加载中...</p>';
+    
+    destModal.classList.add('active');
+    document.body.classList.add('modal-open');
+    if (typeof getScrollbarWidth === 'function') {
+        document.body.style.paddingRight = getScrollbarWidth() + 'px';
+    }
+}
