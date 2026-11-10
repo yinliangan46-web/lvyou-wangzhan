@@ -1572,6 +1572,7 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
         var known = _knownDict
         // 把 known dict 挂到 window，让 loop-data.js 的 syncRoutePinsFromItinerary 能读到补景点
         window._knownLandmarks = known;
+        if (known[cityName]) return known[cityName].slice(0, 3);
         if (known[cityKey]) return known[cityKey].slice(0, 3);
         // 省份模板兜底（避免全部显示全省大热门）
         var provFallback = {
@@ -1842,6 +1843,8 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
 window.openProvinceCityModal = function(cityKey, cityName, provinceName) {
     const richData = window.generateCityRichData(cityKey, cityName, provinceName);
     richData._cityKey = cityKey;
+    // ⭐ 省级地级市也统一排序 Day、补齐全部景点、同步天数
+    try { if (window.syncCityData) window.syncCityData(richData); } catch(e) {}
     
     let itineraryHtml = '';
     if (window.renderRichDetail) {
@@ -2389,8 +2392,8 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var si = 0; si < spans.length; si++) {
             var hasClockIcon = spans[si].querySelector('i.far.fa-clock, i.fas.fa-clock, i.fa-clock');
             if (hasClockIcon) {
-                // 彻底替换这个 span 的内容：保留 icon + 新天数
-                spans[si].innerHTML = '<i class="far fa-clock"></i> ' + daysText;
+                // 彻底替换这个 span 的内容：保留 icon + 新的"几天几晚"
+                spans[si].innerHTML = '<i class="far fa-clock"></i> ' + data.days;
                 break;
             }
         }
