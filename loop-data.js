@@ -7394,7 +7394,7 @@ window.LOOP_ROUTES = [
         const pinNames = data.routePins || [];
         let mapPoints = [];
         let useConvert = false;
-        if (routeCoords.length) {
+        if (routeCoords.length >= 2) {  // 必须 >=2 个点才能画 polyline，跳过 Photon 生成的单点坐标
             routeCoords.forEach((c, i) => {
                 if (c && c.length >= 2) {
                     mapPoints.push({ lng: c[0], lat: c[1], name: pinNames[i] || ('第' + (i + 1) + '站'), num: i + 1 });
