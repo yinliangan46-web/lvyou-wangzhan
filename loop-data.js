@@ -7419,6 +7419,39 @@ window.LOOP_ROUTES = [
                 useConvert = false;
             }
         }
+        // === 坐标发散器：确保 mapPoints 至少有 2 个不同坐标点来画 polyline ===
+        // Photon 经常返回全重复的单点坐标（76 个城市受影响），必须发散
+        (function spreadMapPoints() {
+            if (!mapPoints.length) return;
+            // 去重
+            var unique = [];
+            mapPoints.forEach(function(p) {
+                if (!unique.find(function(u) { return u.lng === p.lng && u.lat === p.lat; })) unique.push(p);
+            });
+            if (unique.length >= 2) { mapPoints = unique; return; }
+            // 只有 1 个唯一点 → 围绕它发散出 5 个点
+            var center = unique[0];
+            var n = Math.max(pinNames.length, 5);
+            var baseDistKm = 2.5, stepDistKm = 1.5, angleStep = 360 / Math.max(n, 3);
+            var latRad = center.lat * Math.PI / 180;
+            var kmPerDegLat = 111.32;
+            var kmPerDegLng = 111.32 * Math.cos(latRad);
+            var spread = [center];
+            for (var idx = 1; spread.length < n; idx++) {
+                var angleDeg = (idx * angleStep) % 360;
+                var angleRad = angleDeg * Math.PI / 180;
+                var distKm = baseDistKm + (idx - 1) * stepDistKm;
+                var dLat = (distKm * Math.cos(angleRad)) / kmPerDegLat;
+                var dLng = (distKm * Math.sin(angleRad)) / kmPerDegLng;
+                spread.push({
+                    lng: +(center.lng + dLng).toFixed(4),
+                    lat: +(center.lat + dLat).toFixed(4),
+                    name: pinNames[idx] || ('第' + (idx + 1) + '站'),
+                    num: idx + 1
+                });
+            }
+            mapPoints = spread;
+        })();
         if (mapPoints.length) {
             const isC = (data.country || '') === '中国';
             cityMapHtml = window.realMapHtml({
