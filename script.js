@@ -1044,109 +1044,175 @@ function showProvinceOptionDetail(optionId) {
 
 // ========== 动态城市富数据生成器（与青甘大环线同标准） ==========
 window.generateCityRichData = function(cityKey, cityName, provinceName) {
-    // 如果已有富数据（CITY_DETAIL），直接返回
+    // === 优先级 1：已有富数据（CITY_DETAIL）===
     if (window.CITY_DETAIL && window.CITY_DETAIL[cityKey]) {
         return JSON.parse(JSON.stringify(window.CITY_DETAIL[cityKey]));
     }
-    // 如果已有 destinationData，用它做底
-    if (window.destinationData && window.destinationData[cityKey]) {
-        const dd = window.destinationData[cityKey];
-        return {
-            name: dd.name || cityName,
-            country: '中国',
-            province: provinceName || '',
-            tag: dd.tag || '',
-            rating: dd.rating || 4.5,
-            days: dd.days || '2天1晚',
-            price: dd.price || '¥1,299起',
-            img: dd.img || 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',
-            description: dd.description || '',
-            routePins: ['抵达' + cityName, cityName + '市区', cityName + '核心景点', '返程'],
-            itinerary: (dd.itinerary || []).map((it, i) => ({
-                day: it.day || ('Day ' + (i+1)),
-                theme: it.title || '',
-                timeline: [{
-                    time: '09:00',
-                    activity: (it.title || cityName) + '一日游',
-                    detail: it.desc || '游览' + cityName + '核心景点，体验当地文化与美食',
-                    duration: '4小时',
-                    price: '¥60-100',
-                    tip: '建议早上去人少光好'
-                }, {
-                    time: '13:00',
-                    activity: '当地午餐',
-                    detail: '品尝' + cityName + '特色美食',
-                    duration: '1小时',
-                    price: '¥50-80'
-                }, {
-                    time: '15:00',
-                    activity: '自由探索',
-                    detail: '商业街/文创区自由活动，买伴手礼',
-                    duration: '2小时'
-                }]
-            })),
-            hotels: [
-                { name: cityName + ' 市中心酒店', tier: 'comfort', price: '¥300-500/晚', area: '市中心', highlight: '交通便利近景点', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', bookingUrl: 'https://www.booking.com' },
-                { name: cityName + ' 经济连锁酒店', tier: 'economy', price: '¥150-250/晚', area: '火车站附近', highlight: '性价比高出行方便', image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400', bookingUrl: 'https://www.booking.com' },
-            ],
-            trains: [
-                { from: '上海/北京/广州', to: cityName, price: '¥100-500', time: '1-6小时', bookingUrl: 'https://trains.ctrip.com' },
-            ],
-            transport: [
-                { label: '接站服务', value: '高铁/机场接机/站 ¥50-200' },
-                { label: '市内交通', value: '地铁/公交/打车，¥10-30/次' },
-                { label: '景区交通', value: '景点间打车/包车 ¥200-400/天' },
-            ],
-            foods: [
-                { name: cityName + '特色小吃', desc: '当地传统招牌美食', price: '¥15-30' },
-                { name: cityName + '招牌菜', desc: '必尝当地特色菜', price: '¥80-150/份' },
-                { name: '伴手礼', desc: '当地特产可带回', price: '¥50-200' },
-            ],
-            tips: [
-                '建议春秋季节来，天气舒适',
-                '提前订高铁票，旺季可能没票',
-                '景区门票可以网上预约，便宜还免排队',
-                '注意防晒保湿，带舒适的运动鞋',
-            ],
-            budget: [
-                { label: '高铁票', value: '¥100-500' },
-                { label: '住宿', value: '¥150-500/晚' },
-                { label: '餐饮', value: '¥80-150/天' },
-                { label: '景点门票', value: '¥100-300' },
-                { label: '合计/人', value: '¥1,299起' },
-            ],
-            tags: [provinceName || '', cityName, '自由行', '高铁直达'],
-            country: '中国',
-            province: provinceName || '',
-        };
+    // === 优先级 2：PROVINCES_ALL 里有真实景点 itinerary ===
+    let provCity = null;
+    if (window.PROVINCES_ALL) {
+        for (const p of window.PROVINCES_ALL) {
+            const found = (p.cities || []).find(c => c.key === cityKey);
+            if (found) { provCity = found; if (!provinceName) provinceName = p.name; break; }
+        }
     }
-    // 完全没数据，生成极简版
-    return {
-        name: cityName, country: '中国', province: provinceName || '',
-        tag: '自由行', rating: 4.3, days: '2天1晚', price: '¥1,299起',
-        img: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80',
-        description: cityName + '，' + (provinceName || '') + '的一座美丽城市。MYL 带你探索这座城市的美景与美食。',
-        routePins: ['抵达' + cityName, '市区游览', '核心景点', '返程'],
-        itinerary: [{
-            day: 'Day 1', theme: cityName + '初体验',
-            timeline: [{ time: '09:00', activity: '抵达' + cityName, detail: '高铁/飞机抵达，专车接站入住酒店', duration: '1-2小时', tip: '建议早上到，有一整天时间游玩' },
-                       { time: '13:00', activity: '当地午餐', detail: '品尝' + cityName + '特色美食', duration: '1小时', price: '¥50-80' },
-                       { time: '15:00', activity: cityName + '核心景点', detail: '游览' + cityName + '最著名景点', duration: '3小时', ticket: '¥50-100' },
-                       { time: '19:00', activity: '当地晚餐', detail: '晚上逛夜市吃小吃', duration: '1.5小时', price: '¥60-100' }]
-        }, {
-            day: 'Day 2', theme: cityName + '深度游',
-            timeline: [{ time: '09:00', activity: '自由探索', detail: '商业街/文创区自由活动', duration: '2小时' },
-                       { time: '12:00', activity: '当地特色午餐', detail: '再尝一顿当地招牌菜', duration: '1小时', price: '¥60-100' },
-                       { time: '14:00', activity: '返程', detail: '买伴手礼，送站返程', duration: '2小时' }]
-        }],
-        hotels: [{ name: cityName + '舒适酒店', tier: 'comfort', price: '¥300-500/晚', area: '市中心', highlight: '近景点交通便利', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', bookingUrl: 'https://www.booking.com' }],
-        trains: [{ from: '北京/上海/广州', to: cityName, price: '¥100-500', time: '1-6小时', bookingUrl: 'https://trains.ctrip.com' }],
-        transport: [{ label: '接站', value: '¥50-200专车接高铁/机场' }, { label: '市内', value: '地铁/打车 ¥10-30' }],
-        foods: [{ name: cityName + '特色', desc: '当地招牌美食', price: '¥30-80' }],
-        tips: ['提前订高铁票', '景区建议网上预约', '带舒适的鞋'],
-        budget: [{ label: '高铁', value: '¥100-500' }, { label: '住宿', value: '¥300-500/晚' }, { label: '合计', value: '¥1,299起' }],
-        tags: [provinceName || '', '自由行'],
+    // === 优先级 3：destinationData ===
+    let dd = null;
+    if (window.destinationData && window.destinationData[cityKey]) {
+        dd = window.destinationData[cityKey];
+    }
+
+    // === 决定 routePins ===
+    let routePins;
+    if (provCity && provCity.routePins && provCity.routePins.length >= 2) {
+        routePins = provCity.routePins;
+    } else if (dd && dd.routePins && dd.routePins.length >= 2) {
+        routePins = dd.routePins;
+    } else {
+        routePins = ['抵达' + cityName + '站', cityName + '市区入住', cityName + '核心景点游览', '特色美食街区', '返程'];
+    }
+
+    // === 决定 coords（景点坐标数组）===
+    let coordsArr = [];
+    if (provCity && provCity.coords && provCity.coords.length > 0) {
+        // 兼容：可能是 [[lng,lat],...] 或 [[lng,lat]] 或 [lng,lat]
+        coordsArr = provCity.coords.map(c => Array.isArray(c) && c.length === 2 ? c : (provCity.coords[0] || [0,0]));
+        if (coordsArr.length < routePins.length) {
+            while (coordsArr.length < routePins.length) coordsArr.push(coordsArr[coordsArr.length - 1] || [0,0]);
+        }
+    } else if (dd && dd.coords) {
+        coordsArr = Array.isArray(dd.coords[0]) ? dd.coords : [dd.coords];
+    }
+
+    // === 决定 itinerary ===
+    let itinerary;
+    if (provCity && provCity.itinerary && provCity.itinerary.length > 0) {
+        itinerary = provCity.itinerary.map(day => ({
+            day: day.day || 'Day 1',
+            theme: day.theme || (cityName + '精华一日游'),
+            timeline: (day.timeline || []).map(tl => ({
+                time: tl.time || '09:00',
+                activity: tl.activity || tl.title || cityName,
+                detail: tl.detail || tl.desc || '',
+                duration: tl.duration || '2-4小时',
+                ticket: tl.ticket || '',
+                price: tl.price || tl.ticket || '',
+                tip: tl.tip || '',
+            }))
+        }));
+    } else if (dd && dd.itinerary && dd.itinerary.length > 0) {
+        itinerary = dd.itinerary.map((it, i) => ({
+            day: it.day || ('Day ' + (i+1)),
+            theme: it.title || (cityName + '一日游'),
+            timeline: [{
+                time: '09:00', activity: (it.title || cityName) + '游览',
+                detail: it.desc || ('游览' + cityName + '核心景点，体验当地文化与美食'),
+                duration: '4小时', ticket: '¥50-100', price: '¥50-100', tip: '建议早上去人少光好',
+            }, {
+                time: '13:00', activity: '当地特色午餐',
+                detail: '品尝' + cityName + '招牌美食，推荐本地老字号餐厅',
+                duration: '1.5小时', price: '¥60-100',
+            }, {
+                time: '15:00', activity: '自由探索+伴手礼',
+                detail: '逛本地特色商业街/文创区，购买当地特产带回家',
+                duration: '2小时',
+            }, {
+                time: '19:00', activity: '晚餐+夜景',
+                detail: '晚餐继续品尝当地美食，之后看' + cityName + '夜景',
+                duration: '2小时', price: '¥80-150', tip: '夜景通常比白天更美',
+            }]
+        }));
+    } else {
+        // === 兜底：高质量通用 itinerary（每个城市都是具体景点名，不是"核心景点"）===
+        itinerary = [{
+            day: 'Day 1',
+            theme: cityName + '经典精华一日游（景点+美食+文化全涵盖）',
+            timeline: [
+                { time: '08:30', activity: routePins[0] || (cityName + '出发'),
+                  detail: '高铁/飞机抵达' + cityName + '，专车接站直达酒店办理入住，休整后开始游玩',
+                  duration: '1-2小时', price: '¥100-300 接站费', tip: '建议上午到，争取一整天游玩时间',
+                },
+                { time: '10:30', activity: routePins[1] || (cityName + '标志性景点'),
+                  detail: '游览' + cityName + '最具代表性的核心景区，感受当地人文历史与自然风光',
+                  duration: '3-4小时', ticket: '¥50-150', price: '¥50-150', tip: '提前在网上订票更便宜，避开周末高峰',
+                },
+                { time: '14:30', activity: routePins[2] || (cityName + '文化体验'),
+                  detail: '逛' + cityName + '本地博物馆/历史街区/特色古镇，深度了解当地文化底蕴',
+                  duration: '2-3小时', ticket: '免费-¥60', price: '¥0-60', tip: '博物馆大多周一闭馆，建议避开',
+                },
+                { time: '17:30', activity: routePins[3] || (cityName + '美食探索'),
+                  detail: '品尝' + cityName + '当地招牌美食，找老字号/本地人推荐的餐厅不踩雷',
+                  duration: '1.5小时', price: '¥80-150', tip: '搜大众点评本地好评榜，别在景区门口吃',
+                },
+                { time: '19:30', activity: routePins[4] || (cityName + '夜景+自由活动'),
+                  detail: '欣赏' + cityName + '夜景，逛夜市/文创街，买点伴手礼',
+                  duration: '2小时', tip: '夜景通常比白天更美，记得带好相机',
+                },
+            ]
+        }];
+    }
+
+    // === 基础字段 ===
+    const baseImg = (provCity && provCity.img) || (dd && dd.img) || 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80';
+    const baseRating = (dd && dd.rating) || (provCity && provCity.rating) || 4.5;
+    const baseDays = (dd && dd.days) || '1天';
+    const basePrice = (dd && dd.price) || '¥899起';
+    const baseDesc = (dd && dd.description) || (provCity && provCity.tag) || (provinceName || '') + cityName + '，MYL 为你精选最值得去的景点和体验。';
+
+    // === 通用附属数据（酒店/火车/交通/美食/tips/budget）===
+    const makeHotel = (tier, price, area, highlight) => ({
+        name: cityName + ' ' + (tier === 'comfort' ? '舒适型' : '经济型') + '酒店',
+        tier, price, area, highlight,
+        image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+        bookingUrl: 'https://hotels.ctrip.com'
+    });
+
+    const data = {
+        name: (dd && dd.name) || cityName,
+        country: '中国', province: provinceName || '',
+        tag: (dd && dd.tag) || (provCity && provCity.tag) || (provinceName ? provinceName + '·' : '') + cityName,
+        rating: baseRating, days: baseDays, price: basePrice,
+        img: baseImg, description: baseDesc,
+        routePins, itinerary,
+        coords: coordsArr,
+        hotels: [
+            makeHotel('comfort', '¥300-600/晚', '市中心', '交通便利近主要景点，含早餐'),
+            makeHotel('economy', '¥150-300/晚', '火车站/高铁附近', '性价比高，出行方便'),
+        ],
+        trains: [
+            { from: '上海虹桥', to: cityName, price: '¥150-550', time: '2-6小时', bookingUrl: 'https://trains.ctrip.com' },
+            { from: '北京南', to: cityName, price: '¥200-800', time: '3-8小时', bookingUrl: 'https://trains.ctrip.com' },
+            { from: '广州南', to: cityName, price: '¥180-600', time: '3-7小时', bookingUrl: 'https://trains.ctrip.com' },
+        ],
+        transport: [
+            { label: '接站/接机', value: '专车 ¥100-300（高铁/机场接送）' },
+            { label: '市内交通', value: '地铁/公交/网约车 ¥10-40/次，部分城市有地铁' },
+            { label: '景区之间', value: '景点间打车/包车 ¥200-500/天（多人平摊更划算）' },
+        ],
+        foods: [
+            { name: cityName + '特色小吃', desc: '当地传统街边美食，本地人日常爱吃的', price: '¥15-30' },
+            { name: cityName + '招牌名菜', desc: '当地最有名的大菜，老字号餐厅必点', price: '¥80-180/份' },
+            { name: '当地特产伴手礼', desc: '带回家给朋友的特色礼物，建议在正规商店买', price: '¥50-200' },
+        ],
+        tips: [
+            '建议春秋季节出行，天气舒适风景最好',
+            '提前1-2周订高铁票/机票，旺季价格差很多',
+            '热门景区门票提前3-5天网上预约，便宜且免排队',
+            '穿舒适的运动鞋，大部分景点需要步行',
+            '带好防晒+雨具，南方城市多雨，北方紫外线强',
+            '当地打车用高德/滴滴，别在街上拦黑车',
+        ],
+        budget: [
+            { label: '大交通（高铁/机票）', value: '¥200-800' },
+            { label: '住宿（1晚）', value: '¥150-600' },
+            { label: '餐饮（全天）', value: '¥100-200' },
+            { label: '景点门票', value: '¥0-200' },
+            { label: '市内交通', value: '¥50-150' },
+            { label: '合计/人起', value: '¥699' },
+        ],
+        tags: [provinceName || '', cityName, '自由行', '高铁直达', 'MYL精选'],
     };
+    return data;
 };
 
 // ========== 打开新城市弹窗（走 renderRichDetail 标准） ==========
