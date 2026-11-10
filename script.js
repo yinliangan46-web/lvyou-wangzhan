@@ -534,6 +534,7 @@ function openModal(city) {
     let itineraryHtml, extraHtml = '';
 
     if (richData && window.renderRichDetail) {
+        richData._cityKey = city;
         itineraryHtml = window.renderRichDetail(richData);
     } else {
         // 回退到原有简单版本
@@ -573,6 +574,7 @@ function openModal(city) {
     destModal.classList.add('active');
     document.body.classList.add('modal-open');
     document.body.style.paddingRight = getScrollbarWidth() + 'px';
+    setTimeout(() => { if (window.initRealMaps) window.initRealMaps(); }, 60);
 }
 
 // 可选方案详情数据
@@ -759,11 +761,36 @@ function openTourModalBack(data, backType) {
     destModal.classList.add('active');
     document.body.classList.add('modal-open');
     document.body.style.paddingRight = getScrollbarWidth() + 'px';
+    setTimeout(() => { if (window.initRealMaps) window.initRealMaps(); }, 60);
 }
 
 
-// ========== buildTourMapHtml - 套餐路线示意图 ==========
+// ========== buildTourMapHtml - 套餐真实路线地图 ==========
 function buildTourMapHtml(data) {
+    if (!data || !window.realMapHtml) return '';
+    const coords = data.realCoords || [];
+    if (coords.length < 1) return '';
+    const isC = (data.country === '中国');
+    const names = (data.mapPoints || []).map(p => p.name || '');
+    const points = coords.map((c, i) => ({
+        lng: c[0], lat: c[1],
+        name: names[i] || ('第' + (i + 1) + '站'),
+        num: i + 1
+    }));
+    const totalKm = data.totalKm ? ' · 全程 ' + data.totalKm : '';
+    return window.realMapHtml({
+        points: points,
+        domestic: isC,
+        convert: false,
+        clickDay: false,
+        height: 400,
+        title: '🗺️ ' + (data.name || '') + ' 路线图 · 可缩放拖动' + totalKm,
+        linkText: isC ? '在高德查看完整路线' : '在谷歌地图查看完整路线'
+    });
+}
+
+// ========== buildTourMapHtmlLegacy - 旧版路线示意图 ==========
+function buildTourMapHtmlLegacy(data) {
     if (!data || !data.mapPoints || data.mapPoints.length < 2) return '';
     const isC = (data.country === '中国');
     const pins = data.mapPoints;
@@ -993,6 +1020,7 @@ function openTourModal(type) {
     destModal.classList.add('active');
     document.body.classList.add('modal-open');
     document.body.style.paddingRight = getScrollbarWidth() + 'px';
+    setTimeout(() => { if (window.initRealMaps) window.initRealMaps(); }, 60);
 }
 
 
@@ -1167,4 +1195,5 @@ function openLoopModal(loopId) {
     if (typeof getScrollbarWidth === 'function') {
         document.body.style.paddingRight = getScrollbarWidth() + 'px';
     }
+    setTimeout(() => { if (window.initRealMaps) window.initRealMaps(); }, 60);
 }

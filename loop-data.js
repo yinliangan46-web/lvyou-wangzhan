@@ -6347,7 +6347,204 @@ window.LOOP_ROUTES = [
     }
 
     // ========== renderLoopMap - 路书风格 SVG路线示意图 ==========
+    // ========== 真实交互地图（Leaflet + 高德/Esri 瓦片） ==========
+    // WGS84 → GCJ02（高德瓦片使用 GCJ02 坐标）
+    function wgs2gcj(lng, lat) {
+        const a = 6378245.0, ee = 0.00669342162296594323;
+        function tLat(x, y) {
+            let r = -100 + 2 * x + 3 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+            r += (20 * Math.sin(6 * x * Math.PI) + 20 * Math.sin(2 * x * Math.PI)) * 2 / 3;
+            r += (20 * Math.sin(y * Math.PI) + 40 * Math.sin(y / 3 * Math.PI)) * 2 / 3;
+            r += (160 * Math.sin(y / 12 * Math.PI) + 320 * Math.sin(y * Math.PI / 30)) * 2 / 3;
+            return r;
+        }
+        function tLng(x, y) {
+            let r = 300 + x + 2 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+            r += (20 * Math.sin(6 * x * Math.PI) + 20 * Math.sin(2 * x * Math.PI)) * 2 / 3;
+            r += (20 * Math.sin(x * Math.PI) + 40 * Math.sin(x / 3 * Math.PI)) * 2 / 3;
+            r += (150 * Math.sin(x / 12 * Math.PI) + 300 * Math.sin(x / 30 * Math.PI)) * 2 / 3;
+            return r;
+        }
+        let dLat = tLat(lng - 105, lat - 35);
+        let dLng = tLng(lng - 105, lat - 35);
+        const radLat = lat / 180 * Math.PI;
+        let magic = Math.sin(radLat);
+        magic = 1 - ee * magic * magic;
+        const sqrtMagic = Math.sqrt(magic);
+        dLat = (dLat * 180) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+        dLng = (dLng * 180) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+        return [lng + dLng, lat + dLat];
+    }
+
+    // 生成可直接看到线路的导航链接
+    window.buildRouteLink = function (points, domestic, convert) {
+        const pts = (points || []).filter(p => p && isFinite(p.lng) && isFinite(p.lat));
+        if (!pts.length) return '';
+        const conv = pts.map(p => {
+            if (domestic && convert) {
+                const g = wgs2gcj(p.lng, p.lat);
+                return { lng: g[0], lat: g[1], name: p.name || '' };
+            }
+            return p;
+        });
+        if (conv.length === 1) {
+            return domestic
+                ? `https://uri.amap.com/marker?position=${conv[0].lng},${conv[0].lat}&name=${encodeURIComponent(conv[0].name || '目的地')}&src=mylvyou&coordinate=gaode`
+                : `https://www.google.com/maps/search/?api=1&query=${conv[0].lat},${conv[0].lng}`;
+        }
+        if (domestic) {
+            const from = conv[0], to = conv[conv.length - 1];
+            const via = conv.slice(1, -1).slice(0, 16)
+                .map(p => `${p.lng},${p.lat},${encodeURIComponent(p.name || '')}`).join('|');
+            return 'https://uri.amap.com/navigation?from=' + from.lng + ',' + from.lat + ',' + encodeURIComponent(from.name || '起点')
+                + '&to=' + to.lng + ',' + to.lat + ',' + encodeURIComponent(to.name || '终点')
+                + (via ? '&via=' + via : '')
+                + '&mode=car&policy=1&src=mylvyou&coordinate=gaode&callnative=0';
+        }
+        const origin = conv[0].lat + ',' + conv[0].lng;
+        const dest = conv[conv.length - 1].lat + ',' + conv[conv.length - 1].lng;
+        const wp = conv.slice(1, -1).slice(0, 9).map(p => p.lat + ',' + p.lng).join('|');
+        return 'https://www.google.com/maps/dir/?api=1&origin=' + origin + '&destination=' + dest
+            + (wp ? '&waypoints=' + encodeURIComponent(wp) : '') + '&travelmode=driving';
+    };
+
+    let realMapSeq = 0;
+    window.__REAL_MAP_QUEUE = window.__REAL_MAP_QUEUE || [];
+
+    // 生成真实地图容器（modal 插入后调用 initRealMaps 初始化）
+    window.realMapHtml = function (cfg) {
+        const pts = (cfg.points || []).filter(p => p && isFinite(p.lng) && isFinite(p.lat));
+        if (!pts.length) return '';
+        const id = 'real-map-' + (++realMapSeq);
+        window.__REAL_MAP_QUEUE.push({
+            id: id, points: pts, domestic: !!cfg.domestic,
+            convert: !!cfg.convert, clickDay: !!cfg.clickDay
+        });
+        const link = cfg.link || window.buildRouteLink(pts, cfg.domestic, cfg.convert);
+        const linkText = cfg.linkText || (cfg.domestic ? '在高德查看完整路线' : '在谷歌地图查看完整路线');
+        const chips = pts.map((p, i) => {
+            const num = p.num || (i + 1);
+            const cls = i === 0 ? ' is-start' : (i === pts.length - 1 ? ' is-end' : '');
+            return `<span class="rm-chip${cls}"><b>${num}</b>${safe(p.name || '')}</span>`;
+        }).join('');
+        return `<div class="real-map-section">
+            <div class="real-map-head">
+                <span class="rm-title"><i class="fas fa-map-marked-alt"></i> ${cfg.title || '真实地图 · 可缩放拖动'}</span>
+                ${link ? `<a href="${safe(link)}" target="_blank" rel="noopener" class="map-open-link">🔗 ${linkText}</a>` : ''}
+            </div>
+            <div id="${id}" class="real-map" style="height:${cfg.height || 380}px"></div>
+            <div class="real-map-legend">${chips}</div>
+        </div>`;
+    };
+
+    // modal 内容写入 DOM 后调用：初始化所有真实地图
+    window.initRealMaps = function () {
+        const queue = window.__REAL_MAP_QUEUE || [];
+        window.__REAL_MAP_QUEUE = [];
+        if (!queue.length) return;
+        if (!window.L) {
+            queue.forEach(cfg => {
+                const el = document.getElementById(cfg.id);
+                if (el) el.innerHTML = '<div class="map-fallback"><i class="fas fa-map-marked-alt"></i><p>地图组件加载失败，请点击上方链接查看路线</p></div>';
+            });
+            return;
+        }
+        queue.forEach(cfg => {
+            const el = document.getElementById(cfg.id);
+            if (!el || el.__leafletReady) return;
+            el.__leafletReady = true;
+            const latlngs = cfg.points.map(p => {
+                let lng = p.lng, lat = p.lat;
+                if (cfg.domestic && cfg.convert) {
+                    const g = wgs2gcj(lng, lat);
+                    lng = g[0]; lat = g[1];
+                }
+                return [lat, lng];
+            });
+            const map = L.map(el, { scrollWheelZoom: true, zoomControl: true });
+            const tileUrl = cfg.domestic
+                ? 'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}'
+                : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+            const tileOpts = {
+                maxZoom: 18, minZoom: 3,
+                attribution: cfg.domestic ? '&copy; 高德地图' : 'Tiles &copy; Esri'
+            };
+            if (cfg.domestic) tileOpts.subdomains = ['1', '2', '3', '4'];
+            L.tileLayer(tileUrl, tileOpts).addTo(map);
+
+            if (latlngs.length >= 2) {
+                L.polyline(latlngs, { color: '#2563eb', weight: 4, opacity: 0.9, lineJoin: 'round' }).addTo(map);
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    const a = latlngs[i], b = latlngs[i + 1];
+                    const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+                    const angle = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+                    L.marker(mid, {
+                        interactive: false,
+                        icon: L.divIcon({
+                            className: 'rm-arrow-wrap',
+                            html: `<div class="rm-arrow" style="transform:rotate(${-angle}deg)"></div>`,
+                            iconSize: [14, 14], iconAnchor: [7, 7]
+                        })
+                    }).addTo(map);
+                }
+            }
+            cfg.points.forEach((p, i) => {
+                const cls = i === 0 ? ' is-start' : (i === cfg.points.length - 1 ? ' is-end' : '');
+                const marker = L.marker(latlngs[i], {
+                    icon: L.divIcon({
+                        className: 'rm-pin-wrap',
+                        html: `<div class="rm-pin${cls}">${p.num || (i + 1)}</div>`,
+                        iconSize: [30, 30], iconAnchor: [15, 15]
+                    }),
+                    title: p.name || ''
+                }).addTo(map);
+                if (p.name) marker.bindTooltip((p.day ? p.day + ' · ' : '') + p.name, { direction: 'top', offset: [0, -14] });
+                if (cfg.clickDay && p.day) {
+                    marker.on('click', function () {
+                        const target = document.querySelector(`.itinerary-day[data-day="${p.day}"]`);
+                        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                }
+            });
+            try {
+                if (latlngs.length === 1) map.setView(latlngs[0], 12);
+                else map.fitBounds(L.latLngBounds(latlngs), { padding: [36, 36], maxZoom: 14 });
+            } catch (e) {
+                map.setView(latlngs[0], 6);
+            }
+            setTimeout(() => map.invalidateSize(), 120);
+            setTimeout(() => map.invalidateSize(), 500);
+        });
+    };
+
     window.renderLoopMap = function(data) {
+        if (!data) return '';
+        const isC = isCN(data);
+        const coords = data.realCoords || [];
+        if (coords.length < 1) return '';
+        const mp = data.mapPoints || [];
+        const points = coords.map((c, i) => {
+            const p = mp[i] || {};
+            return {
+                lng: c[0], lat: c[1],
+                name: p.name || ('第' + (i + 1) + '站'),
+                day: p.day || '',
+                num: i + 1
+            };
+        });
+        const totalKm = data.totalKm ? ' · 全程 ' + data.totalKm : '';
+        return window.realMapHtml({
+            points: points,
+            domestic: isC,
+            convert: false,
+            clickDay: true,
+            height: 420,
+            title: '🗺️ ' + safe(data.name) + ' 路线图 · 可缩放拖动，点击节点跳转 Day' + totalKm,
+            linkText: isC ? '在高德查看完整路线' : '在谷歌地图查看完整路线'
+        });
+    };
+
+    window.renderLoopMapLegacy = function(data) {
         if (!data || !data.mapPoints || data.mapPoints.length < 2) return '';
         const isC = isCN(data);
         
@@ -6634,17 +6831,34 @@ window.LOOP_ROUTES = [
         
         // 地图（城市版）
         let cityMapHtml = '';
-        if (data.coords && data.coords.length >= 2) {
+        const cityKey = data._cityKey || data.name;
+        const routeCoords = (window.CITY_ROUTE_COORDS || {})[cityKey] || [];
+        const pinNames = data.routePins || [];
+        let mapPoints = [];
+        let useConvert = false;
+        if (routeCoords.length) {
+            routeCoords.forEach((c, i) => {
+                if (c && c.length >= 2) {
+                    mapPoints.push({ lng: c[0], lat: c[1], name: pinNames[i] || ('第' + (i + 1) + '站'), num: i + 1 });
+                }
+            });
+            useConvert = true;
+        }
+        if (!mapPoints.length && data.coords && data.coords.length >= 2) {
+            mapPoints = [{ lng: data.coords[0], lat: data.coords[1], name: data.name, num: 1 }];
+            useConvert = false;
+        }
+        if (mapPoints.length) {
             const isC = (data.country || '') === '中国';
-            const coord = data.coords;
-            const mapUrl = isC 
-                ? `https://uri.amap.com/marker?position=${coord[0]},${coord[1]}&name=${encodeURIComponent(data.name||'')}&src=mylvyou&coordinate=gaode`
-                : `https://maps.google.com/maps?q=${coord[1]},${coord[0]}&z=13`;
-            const mapName = isC ? '高德地图' : '谷歌地图';
-            cityMapHtml = `<div class="loop-map-section"><div class="loop-map-title"><i class="fas fa-map-marked-alt"></i> 🗺️ ${safe(data.name)} 地图 <a href="${mapUrl}" target="_blank" class="map-open-link">🔗 在${mapName}打开</a></div>
-                <div class="city-map-preview" style="background:${isC?'linear-gradient(135deg,#fef9e7,#a9dfbf)':'linear-gradient(135deg,#e3f2fd,#b2dfdb)'}">
-                ${(data.routePins || []).map((p,i)=>`<div class="city-map-pin" style="left:${8+i*85/Math.max(1,(data.routePins.length||1))}%;top:${20+(i%2)*40}%"><span class="pin-num">${i+1}</span><span class="pin-label">${safe(p)}</span></div>`).join('')}
-                </div></div>`;
+            cityMapHtml = window.realMapHtml({
+                points: mapPoints,
+                domestic: isC,
+                convert: isC && useConvert,
+                clickDay: false,
+                height: 380,
+                title: '🗺️ ' + safe(data.name) + ' 游玩路线 · 可缩放拖动',
+                linkText: isC ? '在高德查看完整路线' : '在谷歌地图查看完整路线'
+            });
         }
         
         // 行程

@@ -815,6 +815,144 @@ ul {
     color: var(--text-light);
 }
 
+/* ========== 真实交互地图 ========== */
+.real-map-section {
+    margin: 4px 0 22px;
+    background: #fff;
+    border: 1px solid #e8eef7;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.real-map-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.real-map-head .rm-title {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.real-map-head .rm-title i {
+    color: var(--primary);
+    margin-right: 4px;
+}
+
+.real-map-head .map-open-link {
+    margin-left: auto;
+}
+
+.real-map {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #eef2f7;
+    z-index: 0;
+}
+
+.real-map .leaflet-container {
+    font-family: inherit;
+}
+
+.real-map-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.rm-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: #f1f5f9;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    color: #475569;
+}
+
+.rm-chip b {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+}
+
+.rm-chip.is-start b {
+    background: #16a34a;
+}
+
+.rm-chip.is-end b {
+    background: #dc2626;
+}
+
+.rm-pin {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid #fff;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.35);
+}
+
+.rm-pin.is-start {
+    background: #16a34a;
+}
+
+.rm-pin.is-end {
+    background: #dc2626;
+}
+
+.rm-pin-wrap,
+.rm-arrow-wrap {
+    background: none !important;
+    border: none !important;
+}
+
+.rm-arrow {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 11px solid #2563eb;
+    opacity: 0.95;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+}
+
+.map-fallback {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+    .real-map {
+        height: 320px !important;
+    }
+}
+
 /* ========== 特色服务 CTA ========== */
 .feature-actions {
     display: flex;
