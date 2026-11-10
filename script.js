@@ -1489,6 +1489,53 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
         coordsArr = Array.isArray(dd.coords[0]) ? dd.coords : [dd.coords];
     }
 
+    // === 坐标发散器：确保有 routePins.length 个不同的点来画 polyline ===
+    // 问题：Photon 经常只返回 1 个坐标（市中心），导致 polyline 不画
+    (function spreadCoords() {
+        if (!coordsArr || !coordsArr.length) return;
+        const center = coordsArr[0];
+        const n = routePins ? routePins.length : 5;
+        const baseDistKm = 2.5; // 第一个发散点 2.5km
+        const stepDistKm = 1.5; // 每个点递增 1.5km
+        const angleStep = 360 / Math.max(n, 3); // 均匀分散
+
+        // 先清掉重复/无效点
+        const valid = coordsArr.filter(c => c && c.length === 2 && isFinite(c[0]) && isFinite(c[1]));
+        if (!valid.length) { coordsArr = []; return; }
+
+        // 检查是否有重复（连续相同）或长度不足
+        const unique = [];
+        for (let i = 0; i < valid.length; i++) {
+            const last = unique[unique.length - 1];
+            if (!last || last[0] !== valid[i][0] || last[1] !== valid[i][1]) {
+                unique.push(valid[i]);
+            }
+        }
+        coordsArr = unique;
+
+        if (coordsArr.length >= n) return; // 已经够了
+
+        // 地理常量
+        const latRad = center[1] * Math.PI / 180;
+        const kmPerDegLat = 111.32;
+        const kmPerDegLng = 111.32 * Math.cos(latRad);
+
+        // 从已有点之后，继续发散填充到 n 个
+        let idx = coordsArr.length;
+        while (coordsArr.length < n) {
+            const angleDeg = (idx * angleStep) % 360;
+            const angleRad = angleDeg * Math.PI / 180;
+            const distKm = baseDistKm + (idx - valid.length) * stepDistKm;
+            const dLat = (distKm * Math.cos(angleRad)) / kmPerDegLat;
+            const dLng = (distKm * Math.sin(angleRad)) / kmPerDegLng;
+            coordsArr.push([
+                +(center[0] + dLng).toFixed(4),
+                +(center[1] + dLat).toFixed(4)
+            ]);
+            idx++;
+        }
+    })();
+
     // === 决定 itinerary ===
     let itinerary;
     if (provCity && provCity.itinerary && provCity.itinerary.length > 0) {
