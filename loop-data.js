@@ -935,7 +935,7 @@ window.LOOP_ROUTES = [
     "id": "xinjiang-loop",
     "name": "新疆独库大环线",
     "days": "14天13晚",
-    "cover": "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=1600&q=80",
+    "cover": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1600&q=80",
     "price": "¥5,500/人起",
     "rating": "★★★★★",
     "tag": "网红·独库公路",
