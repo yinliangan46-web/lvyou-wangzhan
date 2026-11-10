@@ -7564,13 +7564,20 @@ window.LOOP_ROUTES = [
             var realCoords = window.REAL_POI_COORDS || {};
             var rebuiltCoords = [];
             result.forEach(function(pin) {
-                // 查找优先级 1：REAL_POI_COORDS 真实坐标（最准）
+                // 查找优先级 1：REAL_POI_COORDS[pin] 精确匹配（最准）
                 if (realCoords[pin]) { rebuiltCoords.push(realCoords[pin]); return; }
-                // 查找优先级 2：子串匹配 REAL_POI_COORDS（如"大熊猫繁育研究基地"="熊猫基地"）
+                // 查找优先级 1.5：REAL_POI_COORDS[cityKey + '·' + pin] 城市限定前缀
+                var cityPrefixed = realCoords[cityKey + '·' + pin];
+                if (cityPrefixed) { rebuiltCoords.push(cityPrefixed); return; }
+                // 查找优先级 2：子串匹配 REAL_POI_COORDS（带安全阈值防跨省撞车）
+                // 安全阈值：pin ≤ 3 字（故宫/中山/西湖/华山等通用词）禁止子串匹配！
+                // 否则"沈阳故宫"会子串命中"故宫"→北京坐标，"呼和浩特中山"命中"中山陵"→南京坐标
                 var foundReal = null;
-                Object.keys(realCoords).forEach(function(rk) {
-                    if (rk.indexOf(pin) >= 0 || pin.indexOf(rk) >= 0) { foundReal = realCoords[rk]; }
-                });
+                if (pin.length >= 4) {
+                    Object.keys(realCoords).forEach(function(rk) {
+                        if (rk.length >= 4 && (rk.indexOf(pin) >= 0 || pin.indexOf(rk) >= 0)) { foundReal = realCoords[rk]; }
+                    });
+                }
                 if (foundReal) { rebuiltCoords.push(foundReal); return; }
                 // 查找优先级 3：CITY_ROUTE_COORDS 原始索引（骨架保序对齐）
                 var origIdx = -1;
@@ -7605,8 +7612,35 @@ window.LOOP_ROUTES = [
                         +(lastKnown[1] + dLat).toFixed(4)
                     ];
                 } else {
-                    // 没有任何已知坐标，用市中心兜底
-                    rebuiltCoords[k] = [116.4, 39.9];
+                    // 兜底：从 data.coords 里挑最好的那个（不是 coords[0]！）
+                    // 问题根因：province-data-all.js 里有些城市 coords[0] 是 Photon 坏坐标
+                    // 比如中山 coords[0]=[114.129,30.3478]（纬度 30° 在湖北！）
+                    // 但 coords[1]/[2] 是对的 [22.6°/22.5°]
+                    // 修复：选 data.coords 里最接近 ALL_CITY_COORDS[cityKey] 城市中心的那个
+                    var cityCenter = window.ALL_CITY_COORDS && (window.ALL_CITY_COORDS[cityKey] || window.ALL_CITY_COORDS[data.name]) || null;
+                    var dataCoords = (data.coords && Array.isArray(data.coords) && data.coords.length) ? data.coords : null;
+                    var best = null;
+                    if (dataCoords && dataCoords.length) {
+                        dataCoords.forEach(function(c) {
+                            if (!c || c.length<2) return;
+                            if (!best) { best = c; return; } // 第一个有效点直接当基准
+                            if (cityCenter) {
+                                var dB = Math.hypot(best[0]-cityCenter[0], best[1]-cityCenter[1]);
+                                var dC = Math.hypot(c[0]-cityCenter[0], c[1]-cityCenter[1]);
+                                if (dC < dB) best = c;
+                            } else {
+                                // 没城市中心时，选纬度在 18°-54° 之间（中国境内）的
+                                if (c[1] >= 18 && c[1] <= 54) best = c;
+                            }
+                        });
+                    }
+                    if (best && best.length >= 2) {
+                        rebuiltCoords[k] = [best[0], best[1]];
+                    } else if (cityCenter && cityCenter.length >= 2) {
+                        rebuiltCoords[k] = [cityCenter[0], cityCenter[1]];
+                    } else {
+                        rebuiltCoords[k] = [116.4, 39.9]; // 最后兜底
+                    }
                 }
             }
             // 应用：替换 routePins + coords
