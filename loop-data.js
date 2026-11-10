@@ -7652,79 +7652,117 @@ window.LOOP_ROUTES = [
                 data.routePins = extracted;
             }
             
-            // ===== Day3/Day4 模板自动替换 =====
-            // 问题根源：city-data.js Day3/Day4 的 theme 全是模板（周边一日游/城市漫步/深度游览/返程）
-            // 活动全是模板（酒店早餐/景区深度游览/自由活动/返程）
-            // 修复：用 known dict 里的真实景点替换 theme + timeline
-            if (data.itinerary && data.itinerary.length >= 3) {
-                var landmarks = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
-                // 先找出所有真实景点（从已处理好的 routePins 里，且必须在 landmarks 里）
-                var realLandmarks = (data.routePins || []).filter(function(p) {
-                    // 必须在 known dict 里（白名单），过滤张家界这类跨省串味
-                    if (!landmarks.length) return true; // 没 known dict 就不过滤
-                    return landmarks.some(function(lm) { return lm === p || lm.indexOf(p) >= 0 || p.indexOf(lm) >= 0; });
+            // ===== itinerary timeline 全面重写（删模板、加真实景点）=====
+            // 核心问题：city-data.js Day3/Day4 全是模板
+            //  theme = [周边一日游·景山] / [深度游玩·周边一日游] / [返程·再见]
+            //  timeline = 酒店早餐→景区深度游览→景区内午餐→下午自由活动→晚餐→返回酒店休息
+            // 修复：遍历所有 Day（除最后一天返程），用 routePins 景点均匀分配，完全重写 timeline
+            if (data.itinerary && data.itinerary.length >= 2) {
+                var allLandmarks = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
+                // 真实景点池 = routePins 里的 + known dict 补充的（去机场/去模板词）
+                var allRealPins = (data.routePins || []).concat(allLandmarks).filter(function(p) {
+                    if (!p) return false;
+                    if (isTransportHub(p)) return false;
+                    if (/景点\d|周边|深度|自由|活动|返程|再见|最后打卡/.test(p)) return false;
+                    return true;
                 });
-                // 收集 Day1/Day2 已经安排过的景点（避免重复）
-                var used = [];
-                data.itinerary.slice(0, 2).forEach(function(d) {
-                    var t = (d.theme || '').replace(/第[一二三四五六七八九十\d]+天/g, '');
-                    t.split(/[·\-—,，、/]/).forEach(function(s) {
-                        s = s.trim();
-                        if (s && s.length >= 2) used.push(s);
-                    });
-                    (d.timeline || []).forEach(function(tl) {
-                        var a = (tl.activity || '').trim();
-                        if (a && a.length >= 2 && !/抵达|入住|早餐|午餐|晚餐/.test(a)) used.push(a);
-                    });
-                });
-                // 从 landmarks 里挑还没被用的，按顺序分给 Day3/Day4
-                var availableLandmarks = landmarks.filter(function(l) {
-                    return !used.some(function(u) { return u === l || u.indexOf(l) >= 0 || l.indexOf(u) >= 0; });
+                // 去重（精确 + 子串）
+                var uniqPins = [];
+                allRealPins.forEach(function(p) {
+                    if (!uniqPins.some(function(x) { return x === p || x.indexOf(p) >= 0 || p.indexOf(x) >= 0; })) uniqPins.push(p);
                 });
                 
-                // Day3：检查是否模板化，如果是就替换
-                var d3 = data.itinerary[2];
-                var d3IsTemplate = /周边一日游|深度游玩|自由活动|随心漫游|城市漫步|摄影打卡|特色体验|文化探索|返程|再见|深度文化|精华|返程|返程 · 再见|最后打卡/.test(d3.theme || '');
-                var d3Acts = (d3.timeline || []).map(function(tl) { return (tl.activity || '').trim(); }).join('|');
-                var d3HasTemplateAct = /深度游览|自由活动|返程|酒店早餐|退房|前往机场|值机|登机|周边一日游|自由活动|随心漫游/.test(d3Acts);
+                // 收集 Day1 已用景点（避免重复）
+                var usedPins = [];
+                (data.itinerary[0].timeline || []).forEach(function(tl) {
+                    var a = (tl.activity || '').trim();
+                    if (!a) return;
+                    if (/抵达|入住|酒店|早餐|午餐|晚餐|退房|返程|机场|车站|自由|休息/.test(a)) return;
+                    usedPins.push(a);
+                });
+                var day1Theme = (data.itinerary[0].theme || '').replace(/第[一二三四五六七八九十\d]+天/g, '');
+                day1Theme.split(/[·\-—,，、/]/).forEach(function(s) {
+                    s = s.trim();
+                    if (s && s.length >= 2) usedPins.push(s);
+                });
                 
-                if (d3IsTemplate || d3HasTemplateAct) {
-                    var p1 = availableLandmarks.shift() || landmarks[0] || '';
-                    var p2 = availableLandmarks.shift() || landmarks[1] || '';
-                    var p3 = availableLandmarks.shift() || landmarks[2] || '';
-                    if (p1 && p2) {
-                        d3.theme = p1 + '·' + p2;
-                        d3.timeline = [
-                            { time: '08:30', activity: p1, detail: '上午游览' + p1 + '，建议早点出发避开人流' },
+                // 剩余可分配的景点
+                var remainingPins = uniqPins.filter(function(p) {
+                    return !usedPins.some(function(u) { return u === p || u.indexOf(p) >= 0 || p.indexOf(u) >= 0; });
+                });
+                
+                // 处理最后一天：如果是返程模板，标记出来不分配景点
+                var lastDayIdx = data.itinerary.length - 1;
+                var isLastDayReturn = /返程|再见/.test((data.itinerary[lastDayIdx].theme || '').trim())
+                    || (data.itinerary[lastDayIdx].timeline || []).some(function(tl) {
+                        return /退房|前往机场|前往车站|值机|登机/.test((tl.activity || '').trim());
+                    });
+                var daysToFill = isLastDayReturn ? data.itinerary.length - 1 : data.itinerary.length;
+                
+                // 均匀分配 remainingPins 到 Day2...DayN（每个 Day 2-4 个景点）
+                var pinIdx = 0;
+                for (var di = 1; di < daysToFill; di++) {
+                    var d = data.itinerary[di];
+                    // 最后一个非返程 Day 多取几个（把剩余景点全塞进去）
+                    var isLast = (di === daysToFill - 1);
+                    var remaining = remainingPins.length - pinIdx;
+                    var totalDays = daysToFill - 1; // Day2...DayN 共几个
+                    var daysLeft = daysToFill - di; // 当前 Day 后面还有几个
+                    var takeCount;
+                    if (isLast) {
+                        takeCount = remaining; // 最后一个 Day 全取走（最多 4 个）
+                    } else {
+                        takeCount = Math.max(2, Math.ceil(remaining / daysLeft));
+                        takeCount = Math.min(takeCount, 3); // 普通 Day 最多 3 个
+                    }
+                    if (takeCount <= 0) takeCount = 2;
+                    takeCount = Math.min(takeCount, remaining);
+                    
+                    var dayPins = [];
+                    for (var t = 0; t < takeCount && pinIdx < remainingPins.length; t++) {
+                        dayPins.push(remainingPins[pinIdx++]);
+                    }
+                    // 如果 remainingPins 用完了，从 known dict 补
+                    if (dayPins.length < 2) {
+                        allLandmarks.forEach(function(lm) {
+                            if (dayPins.length >= 2) return;
+                            if (!dayPins.includes(lm)) dayPins.push(lm);
+                        });
+                    }
+                    
+                    if (dayPins.length >= 2) {
+                        // 重写 theme（用 · 分隔）
+                        d.theme = dayPins.join('·');
+                        // 完全重写 timeline（删掉所有模板词）
+                        d.timeline = [
+                            { time: '08:30', activity: dayPins[0], detail: '上午游览' + dayPins[0] },
                             { time: '12:00', activity: '午餐', detail: '附近特色餐厅' },
-                            { time: '14:00', activity: p2, detail: '下午前往' + p2 + '，预计游览2-3小时' },
-                            { time: '17:30', activity: p3, detail: '傍晚逛逛' + p3 + '，拍照最佳' }
-                        ].filter(function(x) { return x.activity; });
+                            { time: '14:00', activity: dayPins[1], detail: '下午游览' + dayPins[1] + '，预计2-3小时' }
+                        ];
+                        if (dayPins[2]) {
+                            d.timeline.push({ time: '17:30', activity: dayPins[2], detail: '傍晚逛逛' + dayPins[2] + '，拍照最佳' });
+                        }
+                        d.timeline.push({ time: '19:30', activity: '当地特色晚餐', detail: '尝尝地道美食' });
                     }
                 }
-                
-                // Day4（如果存在）：同样替换
-                if (data.itinerary.length >= 4) {
-                    var d4 = data.itinerary[3];
-                    var d4IsTemplate = /深度游玩|自由活动|随心漫游|城市漫步|摄影打卡|特色体验|文化探索|返程|再见|深度文化|精华|返程 · 再见|最后打卡/.test(d4.theme || '');
-                    var d4Acts = (d4.timeline || []).map(function(tl) { return (tl.activity || '').trim(); }).join('|');
-                    var d4HasTemplateAct = /深度游览|自由活动|返程|酒店早餐|退房|前往机场|值机|登机/.test(d4Acts);
-                    
-                    if ((d4IsTemplate || d4HasTemplateAct) && availableLandmarks.length >= 2) {
-                        var q1 = availableLandmarks.shift() || landmarks[3] || landmarks[0] || '';
-                        var q2 = availableLandmarks.shift() || landmarks[4] || landmarks[1] || '';
-                        if (q1 && q2 && !/返程|再见/.test(q1 + q2)) {
-                            d4.theme = q1 + '·' + q2;
-                            d4.timeline = [
-                                { time: '09:00', activity: q1, detail: '上午重点游览' + q1 },
+                // 如果最后一天不是返程但 timeline 还是模板，也重写
+                if (!isLastDayReturn && pinIdx < remainingPins.length) {
+                    var ld = data.itinerary[lastDayIdx];
+                    var lastPins = remainingPins.slice(pinIdx, pinIdx + 2);
+                    if (lastPins.length >= 1) {
+                        var actStr = (ld.timeline || []).map(function(t) { return t.activity || ''; }).join('|');
+                        var isTpl = /深度游览|自由活动|返程|酒店早餐|退房|前往机场|值机|登机|周边一日游|自由活动|随心漫游/.test(actStr);
+                        if (isTpl) {
+                            ld.theme = lastPins.join('·');
+                            ld.timeline = [
+                                { time: '09:00', activity: lastPins[0], detail: '最后一天重点游览' + lastPins[0] },
                                 { time: '12:30', activity: '午餐', detail: '当地特色午餐' },
-                                { time: '14:30', activity: q2, detail: '下午游览' + q2 },
+                                { time: '14:30', activity: lastPins[1] || '自由活动', detail: '下午自由安排' },
                                 { time: '18:00', activity: '当地特色晚餐', detail: '晚上尝尝地道美食' }
                             ];
                         }
                     }
                 }
-                // Day5+ 如果是返程模板（最后一天），不动它，那是用户要的返程安排
             }
         })();
 
