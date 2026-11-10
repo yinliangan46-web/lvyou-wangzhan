@@ -931,9 +931,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const coverContent = loop.cover ? '' : (loop.coverEmoji || '🏔️');
             return `
             <div class="loop-card" data-loop="${loop.id}">
-                <div class="loop-cover" style="${bgStyle};font-size:3rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:900">
+                <div class="loop-cover" style="${bgStyle};background-size:cover;background-position:center;">
+                    <div class="loop-cover-country-tag">${loop.countryTag || (loop.tags && loop.tags.includes('国内') ? '🇨🇳 国内' : '🌍 国外')}</div>
                     ${coverContent}
-                    <div class="loop-tag">${loop.tag || '爆点'}</div>
                 </div>
                 <div class="loop-info">
                     <h3>${loop.name}</h3>

@@ -23,13 +23,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "巴黎",
         "price": "¥4500-6500",
-        "time": "提前2-3月订最便宜"
+        "time": "提前2-3月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%B7%B4%E9%BB%8E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "巴黎",
         "price": "¥3500-5500",
-        "time": "海航直飞或经转"
+        "time": "海航直飞或经转",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%B7%B4%E9%BB%8E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -345,7 +349,12 @@ window.CITY_DETAIL = {
           }
         ]
       }
-    ]
+    ],
+    "coords": [
+      2.35,
+      48.86
+    ],
+    "trains": []
   },
   "beijing": {
     "name": "北京",
@@ -476,13 +485,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "北京",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%8C%97%E4%BA%AC",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "北京",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%8C%97%E4%BA%AC",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -566,6 +579,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      116.41,
+      39.9
+    ],
+    "trains": [
+      {
+        "from": "上海",
+        "to": "北京",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%8C%97%E4%BA%AC",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "北京",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%8C%97%E4%BA%AC",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "成都",
+        "to": "北京",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E6%88%90%E9%83%BD&aStation=%E5%8C%97%E4%BA%AC",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -674,13 +720,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "上海",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B8%8A%E6%B5%B7",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "上海",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B8%8A%E6%B5%B7",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -764,6 +814,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      121.47,
+      31.23
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "上海",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E4%B8%8A%E6%B5%B7",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "上海",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E4%B8%8A%E6%B5%B7",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "成都",
+        "to": "上海",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E6%88%90%E9%83%BD&aStation=%E4%B8%8A%E6%B5%B7",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -894,13 +977,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "成都",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%88%90%E9%83%BD",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "成都",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%88%90%E9%83%BD",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -984,6 +1071,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      104.07,
+      30.67
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "成都",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%88%90%E9%83%BD",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "成都",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%88%90%E9%83%BD",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "成都",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%88%90%E9%83%BD",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -1113,13 +1233,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "桂林",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%A1%82%E6%9E%97",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "桂林",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%A1%82%E6%9E%97",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -1203,6 +1327,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      110.29,
+      25.27
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "桂林",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%A1%82%E6%9E%97",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "桂林",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%A1%82%E6%9E%97",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "桂林",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%A1%82%E6%9E%97",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -1333,13 +1490,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "西安",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E8%A5%BF%E5%AE%89",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "西安",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E8%A5%BF%E5%AE%89",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -1423,6 +1584,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      108.94,
+      34.26
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "西安",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E8%A5%BF%E5%AE%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "西安",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E8%A5%BF%E5%AE%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "西安",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E8%A5%BF%E5%AE%89",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -1531,13 +1725,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "重庆",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%87%8D%E5%BA%86",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "重庆",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%87%8D%E5%BA%86",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -1621,6 +1819,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      106.55,
+      29.56
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "重庆",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%87%8D%E5%BA%86",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "重庆",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%87%8D%E5%BA%86",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "重庆",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%87%8D%E5%BA%86",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -1750,13 +1981,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "三亚",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B8%89%E4%BA%9A",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "三亚",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B8%89%E4%BA%9A",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -1840,6 +2075,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      109.51,
+      18.25
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "三亚",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E4%B8%89%E4%BA%9A",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "三亚",
+        "price": "¥125起",
+        "duration": "约5小时",
+        "time": "高铁🚅 最划算",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E4%B8%89%E4%BA%9A",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "三亚",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E4%B8%89%E4%BA%9A",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -1969,13 +2237,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "丽江",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B8%BD%E6%B1%9F",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "丽江",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B8%BD%E6%B1%9F",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -2059,6 +2331,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      100.23,
+      26.87
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "丽江",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E4%B8%BD%E6%B1%9F",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "丽江",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E4%B8%BD%E6%B1%9F",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "丽江",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E4%B8%BD%E6%B1%9F",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -2217,13 +2522,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "东京",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B8%9C%E4%BA%AC",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "东京",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B8%9C%E4%BA%AC",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -2308,7 +2617,12 @@ window.CITY_DETAIL = {
         "label": "合计",
         "value": "¥1500-6000"
       }
-    ]
+    ],
+    "coords": [
+      139.69,
+      35.69
+    ],
+    "trains": []
   },
   "london": {
     "name": "伦敦",
@@ -2481,13 +2795,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "伦敦",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%BC%A6%E6%95%A6",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "伦敦",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%BC%A6%E6%95%A6",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -2572,7 +2890,12 @@ window.CITY_DETAIL = {
         "label": "合计",
         "value": "¥1500-6000"
       }
-    ]
+    ],
+    "coords": [
+      -0.12,
+      51.51
+    ],
+    "trains": []
   },
   "dubai": {
     "name": "迪拜",
@@ -2727,13 +3050,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "迪拜",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E8%BF%AA%E6%8B%9C",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "迪拜",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E8%BF%AA%E6%8B%9C",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -2818,7 +3145,12 @@ window.CITY_DETAIL = {
         "label": "合计",
         "value": "¥1500-6000"
       }
-    ]
+    ],
+    "coords": [
+      55.27,
+      25.2
+    ],
+    "trains": []
   },
   "bangkok": {
     "name": "曼谷",
@@ -2946,13 +3278,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "曼谷",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%9B%BC%E8%B0%B7",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "曼谷",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%9B%BC%E8%B0%B7",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -3037,7 +3373,12 @@ window.CITY_DETAIL = {
         "label": "合计",
         "value": "¥1500-6000"
       }
-    ]
+    ],
+    "coords": [
+      100.5,
+      13.76
+    ],
+    "trains": []
   },
   "bali": {
     "name": "巴厘岛",
@@ -3165,13 +3506,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "巴厘岛",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%B7%B4%E5%8E%98%E5%B2%9B",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "巴厘岛",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%B7%B4%E5%8E%98%E5%B2%9B",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -3256,7 +3601,12 @@ window.CITY_DETAIL = {
         "label": "合计",
         "value": "¥1500-6000"
       }
-    ]
+    ],
+    "coords": [
+      115.19,
+      -8.34
+    ],
+    "trains": []
   },
   "hongkong": {
     "name": "香港",
@@ -3362,13 +3712,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "香港",
         "price": "¥400-1500",
-        "time": "提前1-2月订最便宜"
+        "time": "提前1-2月订最便宜",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%A6%99%E6%B8%AF",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "香港",
         "price": "¥400-1500",
-        "time": "推荐直飞或高铁"
+        "time": "推荐直飞或高铁",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%A6%99%E6%B8%AF",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -3452,6 +3806,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      114.17,
+      22.3
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "香港",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%A6%99%E6%B8%AF",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "香港",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%A6%99%E6%B8%AF",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "香港",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%A6%99%E6%B8%AF",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -3557,13 +3944,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "长春",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%95%BF%E6%98%A5",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "长春",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%95%BF%E6%98%A5",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -3647,6 +4038,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      125.32,
+      43.9
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "长春",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%95%BF%E6%98%A5",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "长春",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%95%BF%E6%98%A5",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "长春",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%95%BF%E6%98%A5",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -3753,13 +4177,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "长沙",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%95%BF%E6%B2%99",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "长沙",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%95%BF%E6%B2%99",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -3843,6 +4271,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      112.98,
+      28.19
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "长沙",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%95%BF%E6%B2%99",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "长沙",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%95%BF%E6%B2%99",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "长沙",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%95%BF%E6%B2%99",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -3949,13 +4410,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "大理",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%A4%A7%E7%90%86",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "大理",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%A4%A7%E7%90%86",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -4039,6 +4504,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      100.23,
+      25.59
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "大理",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%A4%A7%E7%90%86",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "大理",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%A4%A7%E7%90%86",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "大理",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%A4%A7%E7%90%86",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -4167,13 +4665,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "敦煌",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%95%A6%E7%85%8C",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "敦煌",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%95%A6%E7%85%8C",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -4257,6 +4759,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      94.66,
+      40.14
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "敦煌",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%95%A6%E7%85%8C",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "敦煌",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%95%A6%E7%85%8C",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "敦煌",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%95%A6%E7%85%8C",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -4363,13 +4898,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "福州",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E7%A6%8F%E5%B7%9E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "福州",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E7%A6%8F%E5%B7%9E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -4453,6 +4992,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      119.3,
+      26.08
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "福州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E7%A6%8F%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "福州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E7%A6%8F%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "福州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E7%A6%8F%E5%B7%9E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -4559,13 +5131,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "广州",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%B9%BF%E5%B7%9E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "广州",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%B9%BF%E5%B7%9E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -4649,6 +5225,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      113.26,
+      23.13
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "广州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%B9%BF%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "广州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%B9%BF%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "成都",
+        "to": "广州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E6%88%90%E9%83%BD&aStation=%E5%B9%BF%E5%B7%9E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -4777,13 +5386,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "贵阳",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E8%B4%B5%E9%98%B3",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "贵阳",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E8%B4%B5%E9%98%B3",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -4867,6 +5480,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      106.71,
+      26.57
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "贵阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E8%B4%B5%E9%98%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "贵阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E8%B4%B5%E9%98%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "贵阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E8%B4%B5%E9%98%B3",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -4995,13 +5641,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "海口",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%B5%B7%E5%8F%A3",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "海口",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%B5%B7%E5%8F%A3",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -5085,6 +5735,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      110.35,
+      20.02
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "海口",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%B5%B7%E5%8F%A3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "海口",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%B5%B7%E5%8F%A3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "海口",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%B5%B7%E5%8F%A3",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -5191,13 +5874,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "杭州",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%9D%AD%E5%B7%9E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "杭州",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%9D%AD%E5%B7%9E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -5281,6 +5968,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      120.15,
+      30.28
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "杭州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%9D%AD%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "杭州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%9D%AD%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "杭州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%9D%AD%E5%B7%9E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -5409,13 +6129,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "哈尔滨",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%93%88%E5%B0%94%E6%BB%A8",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "哈尔滨",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%93%88%E5%B0%94%E6%BB%A8",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -5499,6 +6223,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      126.53,
+      45.8
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "哈尔滨",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%93%88%E5%B0%94%E6%BB%A8",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "哈尔滨",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%93%88%E5%B0%94%E6%BB%A8",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "哈尔滨",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%93%88%E5%B0%94%E6%BB%A8",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -5605,13 +6362,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "合肥",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%90%88%E8%82%A5",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "合肥",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%90%88%E8%82%A5",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -5695,6 +6456,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      117.28,
+      31.86
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "合肥",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%90%88%E8%82%A5",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "合肥",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%90%88%E8%82%A5",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "合肥",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%90%88%E8%82%A5",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -5823,13 +6617,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "黄果树",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%BB%84%E6%9E%9C%E6%A0%91",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "黄果树",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%BB%84%E6%9E%9C%E6%A0%91",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -5913,6 +6711,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      105.68,
+      25.98
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "贵阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E8%B4%B5%E9%98%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "贵阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E8%B4%B5%E9%98%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "贵阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E8%B4%B5%E9%98%B3",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -6019,13 +6850,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "黄山",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%BB%84%E5%B1%B1",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "黄山",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%BB%84%E5%B1%B1",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -6109,6 +6944,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      118.17,
+      30.13
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "黄山",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%BB%84%E5%B1%B1",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "黄山",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%BB%84%E5%B1%B1",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "黄山",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%BB%84%E5%B1%B1",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -6215,13 +7083,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "呼和浩特",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%91%BC%E5%92%8C%E6%B5%A9%E7%89%B9",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "呼和浩特",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%91%BC%E5%92%8C%E6%B5%A9%E7%89%B9",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -6305,6 +7177,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      111.75,
+      40.84
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "呼和浩特",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%91%BC%E5%92%8C%E6%B5%A9%E7%89%B9",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "呼和浩特",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%91%BC%E5%92%8C%E6%B5%A9%E7%89%B9",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "呼和浩特",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%91%BC%E5%92%8C%E6%B5%A9%E7%89%B9",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -6411,13 +7316,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "济南",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%B5%8E%E5%8D%97",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "济南",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%B5%8E%E5%8D%97",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -6501,6 +7410,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      117.0,
+      36.65
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "济南",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%B5%8E%E5%8D%97",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "济南",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%B5%8E%E5%8D%97",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "济南",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%B5%8E%E5%8D%97",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -6629,13 +7571,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "九寨沟",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B9%9D%E5%AF%A8%E6%B2%9F",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "九寨沟",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B9%9D%E5%AF%A8%E6%B2%9F",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -6719,6 +7665,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      103.92,
+      33.26
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "成都",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%88%90%E9%83%BD",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "成都",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%88%90%E9%83%BD",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "成都",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%88%90%E9%83%BD",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -6847,13 +7826,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "昆明",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%98%86%E6%98%8E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "昆明",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%98%86%E6%98%8E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -6937,6 +7920,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      102.83,
+      25.02
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "昆明",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%98%86%E6%98%8E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "昆明",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%98%86%E6%98%8E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "昆明",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%98%86%E6%98%8E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -7043,13 +8059,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "兰州",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%85%B0%E5%B7%9E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "兰州",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%85%B0%E5%B7%9E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -7133,6 +8153,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      103.83,
+      36.06
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "兰州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%85%B0%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "兰州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%85%B0%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "兰州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%85%B0%E5%B7%9E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -7305,13 +8358,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "拉萨",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%8B%89%E8%90%A8",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "拉萨",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%8B%89%E8%90%A8",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -7395,6 +8452,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      91.13,
+      29.65
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "拉萨",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%8B%89%E8%90%A8",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "拉萨",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%8B%89%E8%90%A8",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "拉萨",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%8B%89%E8%90%A8",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -7501,13 +8591,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "乐山",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B9%90%E5%B1%B1",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "乐山",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B9%90%E5%B1%B1",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -7591,6 +8685,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      103.77,
+      29.55
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "乐山",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E4%B9%90%E5%B1%B1",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "乐山",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E4%B9%90%E5%B1%B1",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "乐山",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E4%B9%90%E5%B1%B1",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -7697,13 +8824,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "南昌",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%8D%97%E6%98%8C",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "南昌",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%8D%97%E6%98%8C",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -7787,6 +8918,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      115.89,
+      28.68
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "南昌",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%8D%97%E6%98%8C",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "南昌",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%8D%97%E6%98%8C",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "南昌",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%8D%97%E6%98%8C",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -7893,13 +9057,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "南京",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%8D%97%E4%BA%AC",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "南京",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%8D%97%E4%BA%AC",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -7983,6 +9151,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      118.79,
+      32.06
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "南京",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%8D%97%E4%BA%AC",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "南京",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%8D%97%E4%BA%AC",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "南京",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%8D%97%E4%BA%AC",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -8089,13 +9290,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "南宁",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%8D%97%E5%AE%81",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "南宁",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%8D%97%E5%AE%81",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -8179,6 +9384,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      108.37,
+      22.82
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "南宁",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%8D%97%E5%AE%81",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "南宁",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%8D%97%E5%AE%81",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "南宁",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%8D%97%E5%AE%81",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -8285,13 +9523,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "青岛",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%9D%92%E5%B2%9B",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "青岛",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%9D%92%E5%B2%9B",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -8375,6 +9617,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      120.38,
+      36.07
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "青岛",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%9D%92%E5%B2%9B",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "青岛",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%9D%92%E5%B2%9B",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "青岛",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%9D%92%E5%B2%9B",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -8481,13 +9756,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "沈阳",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%B2%88%E9%98%B3",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "沈阳",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%B2%88%E9%98%B3",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -8571,6 +9850,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      123.43,
+      41.81
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "沈阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%B2%88%E9%98%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "沈阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%B2%88%E9%98%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "沈阳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%B2%88%E9%98%B3",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -8677,13 +9989,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "深圳",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%B7%B1%E5%9C%B3",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "深圳",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%B7%B1%E5%9C%B3",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -8767,6 +10083,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      114.06,
+      22.55
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "深圳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%B7%B1%E5%9C%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "深圳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%B7%B1%E5%9C%B3",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "深圳",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%B7%B1%E5%9C%B3",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -8873,13 +10222,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "石家庄",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E7%9F%B3%E5%AE%B6%E5%BA%84",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "石家庄",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E7%9F%B3%E5%AE%B6%E5%BA%84",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -8963,6 +10316,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      114.51,
+      38.04
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "石家庄",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E7%9F%B3%E5%AE%B6%E5%BA%84",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "石家庄",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E7%9F%B3%E5%AE%B6%E5%BA%84",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "石家庄",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E7%9F%B3%E5%AE%B6%E5%BA%84",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -9069,13 +10455,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "苏州",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E8%8B%8F%E5%B7%9E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "苏州",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E8%8B%8F%E5%B7%9E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -9159,6 +10549,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      120.62,
+      31.3
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "苏州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E8%8B%8F%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "苏州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E8%8B%8F%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "苏州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E8%8B%8F%E5%B7%9E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -9265,13 +10688,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "太原",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%A4%AA%E5%8E%9F",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "太原",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%A4%AA%E5%8E%9F",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -9355,6 +10782,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      112.55,
+      37.87
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "太原",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%A4%AA%E5%8E%9F",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "太原",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%A4%AA%E5%8E%9F",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "太原",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%A4%AA%E5%8E%9F",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -9510,13 +10970,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "乌鲁木齐",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "乌鲁木齐",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -9600,6 +11064,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      87.62,
+      43.79
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "乌鲁木齐",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "乌鲁木齐",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "乌鲁木齐",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -9706,13 +11203,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "武汉",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E6%AD%A6%E6%B1%89",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "武汉",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E6%AD%A6%E6%B1%89",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -9796,6 +11297,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      114.31,
+      30.52
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "武汉",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%AD%A6%E6%B1%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "武汉",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%AD%A6%E6%B1%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "武汉",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%AD%A6%E6%B1%89",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -9902,13 +11436,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "厦门",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%8E%A6%E9%97%A8",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "厦门",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%8E%A6%E9%97%A8",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -9992,6 +11530,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      118.08,
+      24.48
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "厦门",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%8E%A6%E9%97%A8",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "厦门",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%8E%A6%E9%97%A8",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "厦门",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%8E%A6%E9%97%A8",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -10120,13 +11691,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "西宁",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E8%A5%BF%E5%AE%81",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "西宁",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E8%A5%BF%E5%AE%81",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -10210,6 +11785,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      101.78,
+      36.62
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "西宁",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E8%A5%BF%E5%AE%81",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "西宁",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E8%A5%BF%E5%AE%81",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "西宁",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E8%A5%BF%E5%AE%81",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -10338,13 +11946,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "西双版纳",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E8%A5%BF%E5%8F%8C%E7%89%88%E7%BA%B3",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "西双版纳",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E8%A5%BF%E5%8F%8C%E7%89%88%E7%BA%B3",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -10428,6 +12040,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      100.79,
+      22.0
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "昆明",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E6%98%86%E6%98%8E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "昆明",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E6%98%86%E6%98%8E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "昆明",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E6%98%86%E6%98%8E",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -10534,13 +12179,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "银川",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%93%B6%E5%B7%9D",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "银川",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%93%B6%E5%B7%9D",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -10624,6 +12273,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      106.23,
+      38.49
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "银川",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%93%B6%E5%B7%9D",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "银川",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%93%B6%E5%B7%9D",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "银川",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%93%B6%E5%B7%9D",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -10752,13 +12434,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "张家界",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E5%BC%A0%E5%AE%B6%E7%95%8C",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "张家界",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E5%BC%A0%E5%AE%B6%E7%95%8C",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -10842,6 +12528,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      110.46,
+      29.12
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "张家界",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%BC%A0%E5%AE%B6%E7%95%8C",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "张家界",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%BC%A0%E5%AE%B6%E7%95%8C",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "张家界",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E5%BC%A0%E5%AE%B6%E7%95%8C",
+        "platform": "携程/12306"
       }
     ]
   },
@@ -10948,13 +12667,17 @@ window.CITY_DETAIL = {
         "from": "北京",
         "to": "郑州",
         "price": "¥300-1200",
-        "time": "提前1月订"
+        "time": "提前1月订",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E5%8C%97%E4%BA%AC-%E9%83%91%E5%B7%9E",
+        "platform": "携程机票"
       },
       {
         "from": "上海",
         "to": "郑州",
         "price": "¥300-1200",
-        "time": "推荐高铁或直飞"
+        "time": "推荐高铁或直飞",
+        "bookingUrl": "https://flights.ctrip.com/online/list/oneway-%E4%B8%8A%E6%B5%B7-%E9%83%91%E5%B7%9E",
+        "platform": "携程机票"
       }
     ],
     "hotels": [
@@ -11038,6 +12761,39 @@ window.CITY_DETAIL = {
       {
         "label": "合计",
         "value": "¥1500-6000"
+      }
+    ],
+    "coords": [
+      113.66,
+      34.75
+    ],
+    "trains": [
+      {
+        "from": "北京",
+        "to": "郑州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E9%83%91%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "郑州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E9%83%91%E5%B7%9E",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "广州",
+        "to": "郑州",
+        "price": "¥800起",
+        "duration": "约30小时",
+        "time": "推荐卧铺过夜火车",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%B9%BF%E5%B7%9E&aStation=%E9%83%91%E5%B7%9E",
+        "platform": "携程/12306"
       }
     ]
   }
