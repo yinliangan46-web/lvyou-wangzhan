@@ -6346,23 +6346,38 @@ window.LOOP_ROUTES = [
         return !fc.includes((data.country || '') || tags.includes('国内'));
     }
 
-    // ========== renderLoopMap - SVG路线示意图 ==========
+    // ========== renderLoopMap - 路书风格 SVG路线示意图 ==========
     window.renderLoopMap = function(data) {
         if (!data || !data.mapPoints || data.mapPoints.length < 2) return '';
         const isC = isCN(data);
         
-        // SVG路径点（百分比坐标）
         const pins = data.mapPoints;
-        let polyPoints = pins.map(p => `${p.x},${p.y}`).join(' ');
-        // 闭环：如果首尾不是同一个城市，加回起点形成闭环
-        if (pins.length > 2 && pins[0].name !== pins[pins.length-1].name) {
-            polyPoints += ` ${pins[0].x},${pins[0].y}`;
+        const strokeColor = isC ? '#dc2626' : '#2563eb';
+        const textColor = isC ? '#7f1d1d' : '#1e3a8a';
+        
+        // 构建路径点（带方向箭头的分段）
+        const segCount = pins.length - 1;
+        // 计算每段中点用于放置里程标注
+        const segments = [];
+        for (let i = 0; i < segCount; i++) {
+            const a = pins[i], b = pins[i+1];
+            const mx = (a.x + b.x) / 2;
+            const my = (a.y + b.y) / 2;
+            // 方向角度
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            segments.push({ a, b, mx, my, angle, idx: i });
         }
+        
+        // SVG polyline points（闭环）
+        let polyPoints = pins.map(p => `${p.x},${p.y}`).join(' ');
+        const isLoop = pins.length > 2 && pins[0].name !== pins[pins.length-1].name;
+        if (isLoop) polyPoints += ` ${pins[0].x},${pins[0].y}`;
         
         // 颜色
         const bgGrad = isC 
-            ? 'linear-gradient(135deg,#fef9e7 0%,#fce4a4 40%,#a9dfbf 100%)'  // 国内：草原绿+金黄色
-            : 'linear-gradient(135deg,#e3f2fd 0%,#bbdefb 40%,#b2dfdb 100%)';  // 国外：海洋蓝
+            ? 'linear-gradient(135deg,#fef9e7 0%,#fce4a4 40%,#a9dfbf 100%)'
+            : 'linear-gradient(135deg,#e3f2fd 0%,#bbdefb 40%,#b2dfdb 100%)';
         
         // 真实地图跳转链接
         const coords = data.realCoords || [];
@@ -6370,43 +6385,114 @@ window.LOOP_ROUTES = [
         if (coords.length > 0 && isC) {
             mapUrl = `https://uri.amap.com/marker?position=${coords.map(c=>c[0]+','+c[1]).join('|')}&name=${encodeURIComponent(data.name||'')}&src=mylvyou&coordinate=gaode`;
         } else if (coords.length > 0) {
-            // Google Maps (lat,lng 格式)
             mapUrl = `https://maps.google.com/maps?q=${coords.map(c=>c[1]+','+c[0]).join('|')}&z=5`;
         }
         const mapName = isC ? '高德地图' : '谷歌地图';
         
-        // 节点HTML
+        // 总里程
+        const totalKm = data.totalKm || '';
+        // 估算每段里程（如果有totalKm）
+        const segLabels = segments.map((s,i) => {
+            if (totalKm) {
+                const dist = Math.sqrt(Math.pow(s.b.x - s.a.x, 2) + Math.pow(s.b.y - s.a.y, 2));
+                const totalDist = segments.reduce((acc, seg) => acc + Math.sqrt(Math.pow(seg.b.x - seg.a.x, 2) + Math.pow(seg.b.y - seg.a.y, 2)), 0);
+                const ratio = dist / totalDist;
+                const km = Math.round(parseFloat(totalKm) * ratio);
+                return km > 0 ? `${km}km` : '';
+            }
+            return `Day${i+1}`;
+        });
+        
+        // 节点HTML（含Day标签）
         const nodesHtml = pins.map((p,i) => `
             <div class="loop-svg-pin" style="left:${p.x}%;top:${p.y}%" data-day="${safe(p.day)}" data-name="${safe(p.name)}">
                 <div class="pin-number">${i+1}</div>
                 <div class="pin-label-text">${safe(p.name)}</div>
+                <div class="pin-day-label">${safe(p.day || ('Day ' + (i+1)))}</div>
             </div>
         `).join('');
+        
+        // 分段里程/天数标签
+        const segLabelsHtml = segments.map((s,i) => {
+            const label = segLabels[i];
+            // 稍微偏移避免遮挡路线
+            const offset = 3;
+            const perpAngle = s.angle + 90;
+            const rad = perpAngle * Math.PI / 180;
+            const ox = Math.cos(rad) * offset;
+            const oy = Math.sin(rad) * offset;
+            return `<div class="route-segment-label" style="left:calc(${s.mx}% + ${ox}px);top:calc(${s.my}% + ${oy}px)">${label}</div>`;
+        }).join('');
+        
+        // SVG片段：方向箭头标记 + 主路线（实线）+ 分段
+        const arrowMarkers = segments.map((s,i) => {
+            const markerId = `arrow-${i}-${Date.now()}`;
+            const bx = s.b.x, by = s.b.y;
+            const ax = s.a.x, ay = s.a.y;
+            // 在b点方向上的小箭头
+            return `<marker id="${markerId}" markerWidth="3" markerHeight="3" refX="1" refY="1.5" orient="auto"><path d="M0,0 L3,1.5 L0,3 Z" fill="${strokeColor}" opacity="0.9"/></marker>`;
+        }).join('');
+        
+        // 每条线段独立画（加箭头），只给最后一段加箭头避免混乱
+        const lineSegs = segments.map((s,i) => {
+            // 箭头位置稍微往回移一点（避免覆盖节点）
+            const t = 0.88;
+            const ex = s.a.x + (s.b.x - s.a.x) * t;
+            const ey = s.a.y + (s.b.y - s.a.y) * t;
+            return `<line x1="${s.a.x}" y1="${s.a.y}" x2="${ex}" y2="${ey}" stroke="${strokeColor}" stroke-width="0.55" stroke-linecap="round" opacity="0.85"/><line x1="${ex}" y1="${ey}" x2="${s.b.x}" y2="${s.b.y}" stroke="${strokeColor}" stroke-width="0.55" stroke-linecap="round" opacity="0.85" marker-end="url(#arrow-end)"/>`;
+        }).join('');
+        
+        // 闭环最后一段箭头
+        let closingArrow = '';
+        if (isLoop) {
+            const lastA = pins[pins.length-1];
+            const lastB = pins[0];
+            const t = 0.88;
+            const ex = lastA.x + (lastB.x - lastA.x) * t;
+            const ey = lastA.y + (lastB.y - lastA.y) * t;
+            closingArrow = `<line x1="${lastA.x}" y1="${lastA.y}" x2="${ex}" y2="${ey}" stroke="${strokeColor}" stroke-width="0.55" stroke-linecap="round" opacity="0.85"/><line x1="${ex}" y1="${ey}" x2="${lastB.x}" y2="${lastB.y}" stroke="${strokeColor}" stroke-width="0.55" stroke-linecap="round" opacity="0.85" marker-end="url(#arrow-end)"/>`;
+        }
         
         return `
         <div class="loop-map-section">
             <div class="loop-map-title">
                 <i class="fas fa-map-marked-alt" style="color:var(--primary)"></i>
                 路线示意图 · 点击节点跳转 Day 行程
+                ${totalKm ? `<span style="font-size:.8rem;color:var(--primary);font-weight:700">🛣️ 全程${totalKm}</span>` : ''}
                 <span class="map-badge" style="background:${isC?'#ef4444':'#3b82f6'}">${isC?'🇨🇳 国内':'🌍 国外'}</span>
                 ${mapUrl ? `<a href="${mapUrl}" target="_blank" class="map-open-link" style="margin-left:auto">🔗 在${mapName}打开</a>` : ''}
             </div>
             <div class="loop-map-svg-wrap" style="background:${bgGrad}">
                 <svg class="loop-map-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <!-- 区域背景装饰点 -->
-                    ${pins.map((p,i) => `<circle cx="${p.x}" cy="${p.y}" r="0.8" fill="${isC?'#dc2626':'#2563eb'}" stroke="white" stroke-width="0.3"/>`).join('')}
-                    <!-- 路线 -->
-                    <polyline points="${polyPoints}" fill="none" stroke="${isC?'#dc2626':'#2563eb'}" stroke-width="0.6" stroke-dasharray="1.2,0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-                    <!-- 城市节点（数字） -->
-                    ${pins.map((p,i) => `<circle cx="${p.x}" cy="${p.y}" r="1.2" fill="${isC?'#dc2626':'#2563eb'}" stroke="white" stroke-width="0.4"/>`).join('')}
-                    ${pins.map((p,i) => `<text x="${p.x}" y="${p.y - 2}" text-anchor="middle" font-size="2" fill="${isC?'#7f1d1d':'#1e3a8a'}" font-weight="700">${i+1}</text>`).join('')}
+                    <defs>
+                        <marker id="arrow-end" markerWidth="4" markerHeight="4" refX="1" refY="2" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L4,2 L0,4 Z" fill="${strokeColor}" opacity="0.95"/>
+                        </marker>
+                        <marker id="arrow-start" markerWidth="3" markerHeight="3" refX="3" refY="1.5" orient="auto" markerUnits="strokeWidth">
+                            <path d="M3,0 L0,1.5 L3,3 Z" fill="${strokeColor}" opacity="0.7"/>
+                        </marker>
+                    </defs>
+                    <!-- 背景装饰 -->
+                    ${pins.map((p,i) => `<circle cx="${p.x}" cy="${p.y}" r="0.6" fill="${strokeColor}" opacity="0.2"/>`).join('')}
+                    <!-- 主路线（带方向箭头） -->
+                    ${lineSegs}
+                    ${closingArrow}
+                    <!-- 起点标记（绿色） -->
+                    <circle cx="${pins[0].x}" cy="${pins[0].y}" r="1.8" fill="#22c55e" stroke="white" stroke-width="0.5"/>
+                    <text x="${pins[0].x}" y="${pins[0].y + 3.5}" text-anchor="middle" font-size="1.8" fill="#166534" font-weight="800">起</text>
+                    <!-- 终点标记（红色） -->
+                    ${!isLoop ? `<circle cx="${pins[pins.length-1].x}" cy="${pins[pins.length-1].y}" r="1.8" fill="${strokeColor}" stroke="white" stroke-width="0.5"/>` : ''}
+                    ${!isLoop ? `<text x="${pins[pins.length-1].x}" y="${pins[pins.length-1].y + 3.5}" text-anchor="middle" font-size="1.8" fill="${textColor}" font-weight="800">终</text>` : ''}
+                    <!-- 数字标记 -->
+                    ${pins.map((p,i) => `<text x="${p.x}" y="${p.y - 2.5}" text-anchor="middle" font-size="2.2" fill="${textColor}" font-weight="800">${i+1}</text>`).join('')}
                 </svg>
                 <div class="loop-map-nodes">
                     ${nodesHtml}
+                    ${segLabelsHtml}
                 </div>
             </div>
             <div class="loop-map-tip">
-                💡 提示：点击地图上的编号圆点可以跳转到对应的 Day 行程详情 · 右上角链接可以在真实的${mapName}上查看完整路线
+                💡 提示：点击编号圆点可跳转到对应 Day 的行程 · 带数字标签为分段里程或天数 · 绿色=起点
             </div>
         </div>`;
     };

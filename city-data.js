@@ -460,22 +460,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "颐和园·圆明园·鸟巢",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "前门附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -695,22 +764,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "陆家嘴·上海中心·外滩夜游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "外滩附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -952,22 +1090,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "大熊猫繁育研究基地·宽窄巷子",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "锦里附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -1208,22 +1415,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "漓江精华游·阳朔西街",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "漓江附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -1465,22 +1741,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "华清池·兵马俑·回民街",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "大雁塔附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -1700,22 +2045,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "武隆天坑·磁器口古镇",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "洪崖洞附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -1956,22 +2370,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "亚龙湾·蜈支洲岛",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "亚龙湾附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -2212,22 +2695,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "玉龙雪山·蓝月谷",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "大研古城附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -2497,22 +3049,92 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 5",
-        "theme": "返程",
+        "theme": "迪士尼乐园·台场",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "新宿附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为最后一天打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "经典景区游览",
+            "detail": "前往必打卡景点，拍照留念",
+            "duration": "4小时",
+            "ticket": "¥100-500",
+            "tip": "遵守当地文化习俗"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "当地特色午餐",
+            "detail": "在景区附近吃地道美食",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "购物时间",
+            "detail": "在免税店或特产店购买伴手礼",
+            "duration": "3小时",
+            "tip": "注意退税政策"
+          },
+          {
+            "time": "17:00",
+            "activity": "告别晚宴",
+            "detail": "吃一顿最特别的当地料理",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店",
+            "detail": "整理行李，早点休息",
+            "duration": "自由时间",
+            "tip": "国际航班建议提前4小时"
+          }
+        ]
+      },
+      {
+        "day": "Day 6",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:00",
+            "activity": "起床·整理行李",
+            "detail": "最后检查护照、签证、机票，行李重量",
+            "duration": "1小时",
+            "tip": "提前查好登机时间"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房·出发",
+            "detail": "办理退房，提前预约送机服务",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往国际机场",
+            "detail": "国际航班建议提前4小时到机场",
+            "duration": "1-2小时",
+            "tip": "早高峰注意堵车"
+          },
+          {
+            "time": "11:30",
+            "activity": "值机·退税·过海关",
+            "detail": "办理登机牌、购物退税、过海关安检",
+            "duration": "2-3小时",
+            "tip": "注意退税截止时间"
+          },
+          {
+            "time": "14:30+",
+            "activity": "登机·出发",
+            "detail": "在机场免税店最后扫货，登机返程",
+            "duration": "飞行中"
           }
         ]
       }
@@ -2770,22 +3392,92 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 6",
-        "theme": "返程",
+        "theme": "温莎城堡·巨石阵",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "大本钟附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为最后一天打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "经典景区游览",
+            "detail": "前往必打卡景点，拍照留念",
+            "duration": "4小时",
+            "ticket": "¥100-500",
+            "tip": "遵守当地文化习俗"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "当地特色午餐",
+            "detail": "在景区附近吃地道美食",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "购物时间",
+            "detail": "在免税店或特产店购买伴手礼",
+            "duration": "3小时",
+            "tip": "注意退税政策"
+          },
+          {
+            "time": "17:00",
+            "activity": "告别晚宴",
+            "detail": "吃一顿最特别的当地料理",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店",
+            "detail": "整理行李，早点休息",
+            "duration": "自由时间",
+            "tip": "国际航班建议提前4小时"
+          }
+        ]
+      },
+      {
+        "day": "Day 7",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:00",
+            "activity": "起床·整理行李",
+            "detail": "最后检查护照、签证、机票，行李重量",
+            "duration": "1小时",
+            "tip": "提前查好登机时间"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房·出发",
+            "detail": "办理退房，提前预约送机服务",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往国际机场",
+            "detail": "国际航班建议提前4小时到机场",
+            "duration": "1-2小时",
+            "tip": "早高峰注意堵车"
+          },
+          {
+            "time": "11:30",
+            "activity": "值机·退税·过海关",
+            "detail": "办理登机牌、购物退税、过海关安检",
+            "duration": "2-3小时",
+            "tip": "注意退税截止时间"
+          },
+          {
+            "time": "14:30+",
+            "activity": "登机·出发",
+            "detail": "在机场免税店最后扫货，登机返程",
+            "duration": "飞行中"
           }
         ]
       }
@@ -3025,22 +3717,92 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 5",
-        "theme": "返程",
+        "theme": "哈利法塔·迪拜Mall疯狂购物",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "哈利法塔附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为最后一天打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "经典景区游览",
+            "detail": "前往必打卡景点，拍照留念",
+            "duration": "4小时",
+            "ticket": "¥100-500",
+            "tip": "遵守当地文化习俗"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "当地特色午餐",
+            "detail": "在景区附近吃地道美食",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "购物时间",
+            "detail": "在免税店或特产店购买伴手礼",
+            "duration": "3小时",
+            "tip": "注意退税政策"
+          },
+          {
+            "time": "17:00",
+            "activity": "告别晚宴",
+            "detail": "吃一顿最特别的当地料理",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店",
+            "detail": "整理行李，早点休息",
+            "duration": "自由时间",
+            "tip": "国际航班建议提前4小时"
+          }
+        ]
+      },
+      {
+        "day": "Day 6",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:00",
+            "activity": "起床·整理行李",
+            "detail": "最后检查护照、签证、机票，行李重量",
+            "duration": "1小时",
+            "tip": "提前查好登机时间"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房·出发",
+            "detail": "办理退房，提前预约送机服务",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往国际机场",
+            "detail": "国际航班建议提前4小时到机场",
+            "duration": "1-2小时",
+            "tip": "早高峰注意堵车"
+          },
+          {
+            "time": "11:30",
+            "activity": "值机·退税·过海关",
+            "detail": "办理登机牌、购物退税、过海关安检",
+            "duration": "2-3小时",
+            "tip": "注意退税截止时间"
+          },
+          {
+            "time": "14:30+",
+            "activity": "登机·出发",
+            "detail": "在机场免税店最后扫货，登机返程",
+            "duration": "飞行中"
           }
         ]
       }
@@ -3253,22 +4015,92 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "大皇宫·四面佛·夜市",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "大皇宫附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为最后一天打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "经典景区游览",
+            "detail": "前往必打卡景点，拍照留念",
+            "duration": "4小时",
+            "ticket": "¥100-500",
+            "tip": "遵守当地文化习俗"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "当地特色午餐",
+            "detail": "在景区附近吃地道美食",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "购物时间",
+            "detail": "在免税店或特产店购买伴手礼",
+            "duration": "3小时",
+            "tip": "注意退税政策"
+          },
+          {
+            "time": "17:00",
+            "activity": "告别晚宴",
+            "detail": "吃一顿最特别的当地料理",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店",
+            "detail": "整理行李，早点休息",
+            "duration": "自由时间",
+            "tip": "国际航班建议提前4小时"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:00",
+            "activity": "起床·整理行李",
+            "detail": "最后检查护照、签证、机票，行李重量",
+            "duration": "1小时",
+            "tip": "提前查好登机时间"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房·出发",
+            "detail": "办理退房，提前预约送机服务",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往国际机场",
+            "detail": "国际航班建议提前4小时到机场",
+            "duration": "1-2小时",
+            "tip": "早高峰注意堵车"
+          },
+          {
+            "time": "11:30",
+            "activity": "值机·退税·过海关",
+            "detail": "办理登机牌、购物退税、过海关安检",
+            "duration": "2-3小时",
+            "tip": "注意退税截止时间"
+          },
+          {
+            "time": "14:30+",
+            "activity": "登机·出发",
+            "detail": "在机场免税店最后扫货，登机返程",
+            "duration": "飞行中"
           }
         ]
       }
@@ -3481,22 +4313,92 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "乌布梯田·海神庙日落",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "库塔附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为最后一天打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "经典景区游览",
+            "detail": "前往必打卡景点，拍照留念",
+            "duration": "4小时",
+            "ticket": "¥100-500",
+            "tip": "遵守当地文化习俗"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "当地特色午餐",
+            "detail": "在景区附近吃地道美食",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "购物时间",
+            "detail": "在免税店或特产店购买伴手礼",
+            "duration": "3小时",
+            "tip": "注意退税政策"
+          },
+          {
+            "time": "17:00",
+            "activity": "告别晚宴",
+            "detail": "吃一顿最特别的当地料理",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店",
+            "detail": "整理行李，早点休息",
+            "duration": "自由时间",
+            "tip": "国际航班建议提前4小时"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:00",
+            "activity": "起床·整理行李",
+            "detail": "最后检查护照、签证、机票，行李重量",
+            "duration": "1小时",
+            "tip": "提前查好登机时间"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房·出发",
+            "detail": "办理退房，提前预约送机服务",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往国际机场",
+            "detail": "国际航班建议提前4小时到机场",
+            "duration": "1-2小时",
+            "tip": "早高峰注意堵车"
+          },
+          {
+            "time": "11:30",
+            "activity": "值机·退税·过海关",
+            "detail": "办理登机牌、购物退税、过海关安检",
+            "duration": "2-3小时",
+            "tip": "注意退税截止时间"
+          },
+          {
+            "time": "14:30+",
+            "activity": "登机·出发",
+            "detail": "在机场免税店最后扫货，登机返程",
+            "duration": "飞行中"
           }
         ]
       }
@@ -3687,22 +4589,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "自由活动·随心漫游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "尖沙咀附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -3919,22 +4890,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "城市漫步·摄影打卡",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "伪满皇宫附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -4152,22 +5192,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "张家界森林公园·天门山",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "橘子洲附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -4385,22 +5494,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "苍山·双廊古镇",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "大理古城附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -4640,22 +5818,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "莫高窟·雅丹魔鬼城",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "莫高窟附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -4873,22 +6120,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "城市漫步·摄影打卡",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "三坊七巷附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -5106,22 +6422,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "特色体验·文化探索",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "珠江附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -5361,22 +6746,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "黄果树瀑布·千户苗寨",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "甲秀楼附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -5616,22 +7070,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "自由活动·随心漫游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "骑楼老街附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -5849,22 +7372,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "西溪湿地·宋城千古情",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "西湖附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -6104,22 +7696,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "雪乡·冰雪大世界",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "中央大街附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -6337,22 +7998,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "深度游玩·周边一日游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "李鸿章故居附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -6592,22 +8322,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "自由活动·随心漫游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "黄果树瀑布附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -6825,22 +8624,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "黄山日出·宏村",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "黄山附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -7058,22 +8926,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "特色体验·文化探索",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "成吉思汗陵附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -7291,22 +9228,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "深度游玩·周边一日游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "大明湖附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -7413,7 +9419,7 @@ window.CITY_DETAIL = {
       }
     ],
     "coords": [
-      117.0,
+      117,
       36.65
     ],
     "trains": [
@@ -7546,22 +9552,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "九寨沟深度游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "九寨沟附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -7801,22 +9876,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "石林风景区·九乡溶洞",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "滇池附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -8034,22 +10178,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "特色体验·文化探索",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "黄河母亲附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -8333,22 +10546,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 6",
-        "theme": "返程",
+        "theme": "纳木错·羊卓雍措",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "布达拉宫附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 7",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -8566,22 +10848,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "自由活动·随心漫游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "乐山大佛附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -9032,22 +11383,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "城市漫步·摄影打卡",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "中山陵附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -9265,22 +11685,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "特色体验·文化探索",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "青秀山附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -9498,22 +11987,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "深度游玩·周边一日游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "栈桥附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -9731,22 +12289,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "自由活动·随心漫游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "沈阳故宫附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -9964,22 +12591,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "城市漫步·摄影打卡",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "深圳湾附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -10430,22 +13126,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "拙政园·周庄古镇",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "拙政园附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -10663,22 +13428,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "深度游玩·周边一日游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "晋祠附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -10945,22 +13779,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 5",
-        "theme": "返程",
+        "theme": "天山天池·喀纳斯",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "红山公园附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 6",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -11178,22 +14081,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "城市漫步·摄影打卡",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "黄鹤楼附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -11411,22 +14383,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "鼓浪屿·火山岛",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "鼓浪屿附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -11666,22 +14707,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "青海湖·茶卡盐湖",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "塔尔寺附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -11921,22 +15031,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "野象谷·望天树",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "野象谷附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -12044,7 +15223,7 @@ window.CITY_DETAIL = {
     ],
     "coords": [
       100.79,
-      22.0
+      22
     ],
     "trains": [
       {
@@ -12154,22 +15333,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "城市漫步·摄影打卡",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "西夏王陵附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -12409,22 +15657,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 4",
-        "theme": "返程",
+        "theme": "天门山·玻璃栈道",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "张家界国家森林公园附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -12642,22 +15959,91 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "返程",
+        "theme": "深度游玩·周边一日游",
         "timeline": [
           {
-            "time": "09:00",
-            "activity": "最后打卡+购物",
-            "detail": "少林寺附近或当地市场买伴手礼"
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "饱吃一顿为一天的游玩打好基础",
+            "duration": "1小时"
+          },
+          {
+            "time": "09:30",
+            "activity": "景区深度游览",
+            "detail": "前往核心景区，避开人流高峰",
+            "duration": "4小时",
+            "ticket": "¥100-300",
+            "tip": "建议提前线上购票"
           },
           {
             "time": "12:00",
-            "activity": "退房+午餐",
-            "detail": "行李寄存后再逛一轮"
+            "activity": "景区内午餐",
+            "detail": "在景区附近吃当地特色",
+            "duration": "1小时"
           },
           {
-            "time": "14:00",
-            "activity": "前往机场/车站",
-            "detail": "提前3小时机场/1小时高铁"
+            "time": "13:30",
+            "activity": "下午自由活动",
+            "detail": "周边商圈逛街、拍照、自由体验",
+            "duration": "3小时"
+          },
+          {
+            "time": "17:00",
+            "activity": "晚餐",
+            "detail": "最后一次品尝当地特色美食",
+            "duration": "1.5小时"
+          },
+          {
+            "time": "19:00",
+            "activity": "返回酒店休息",
+            "detail": "收拾行李，准备明天返程",
+            "duration": "自由时间",
+            "tip": "早睡早起"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "返程 · 再见",
+        "timeline": [
+          {
+            "time": "07:30",
+            "activity": "起床·整理行李",
+            "detail": "最后检查行李，不要遗漏贵重物品",
+            "duration": "30分钟",
+            "tip": "护照/证件随身带"
+          },
+          {
+            "time": "08:00",
+            "activity": "酒店早餐",
+            "detail": "如果赶早航班/高铁可以请酒店打包",
+            "duration": "30分钟"
+          },
+          {
+            "time": "09:00",
+            "activity": "退房",
+            "detail": "办理退房手续，行李寄存或带走",
+            "duration": "15分钟"
+          },
+          {
+            "time": "09:30",
+            "activity": "前往机场/火车站",
+            "detail": "打车/地铁/机场大巴，提前3小时到机场/1小时到高铁站",
+            "duration": "1-3小时",
+            "tip": "早高峰注意路况"
+          },
+          {
+            "time": "12:00-14:00",
+            "activity": "值机·安检",
+            "detail": "办理登机牌，过安检，到候机/候车厅休息",
+            "duration": "1-2小时",
+            "tip": "液体物品托运"
+          },
+          {
+            "time": "14:00+",
+            "activity": "登机·出发",
+            "detail": "在候机厅可以逛逛免税店或纪念品店",
+            "duration": "飞行中"
           }
         ]
       }
@@ -12798,6 +16184,3 @@ window.CITY_DETAIL = {
     ]
   }
 };
-
-
-
