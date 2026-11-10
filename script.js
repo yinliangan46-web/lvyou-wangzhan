@@ -1,10 +1,74 @@
-// ========== 导航栏滚动效果 ==========
+// ========== 工具函数 ==========
+// 节流函数 - 限制高频事件触发频率
+function throttle(fn, delay = 16) {
+    let lastCall = 0;
+    let lastResult;
+    return function (...args) {
+        const now = Date.now();
+        if (now - lastCall >= delay) {
+            lastCall = now;
+            lastResult = fn.apply(this, args);
+        }
+        return lastResult;
+    };
+}
+
+// 缓动函数 - 让数字动画更平滑
+function easeOutQuad(t) {
+    return t * (2 - t);
+}
+
+// 计算滚动条宽度 - 防止弹窗打开时页面跳动
+function getScrollbarWidth() {
+    return window.innerWidth - document.documentElement.clientWidth;
+}
+
+// Toast 提示 - 替代原生 alert
+function showToast(message, duration = 2500) {
+    let toast = document.getElementById('appToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'appToast';
+        Object.assign(toast.style, {
+            position: 'fixed',
+            top: '80px',
+            left: '50%',
+            transform: 'translateX(-50%) translateY(-20px)',
+            background: '#0f172a',
+            color: 'white',
+            padding: '12px 28px',
+            borderRadius: '50px',
+            fontSize: '0.95rem',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+            zIndex: '9999',
+            opacity: '0',
+            transition: 'opacity 0.3s, transform 0.3s',
+            pointerEvents: 'none',
+            maxWidth: '90vw',
+            textAlign: 'center'
+        });
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    }, duration);
+}
+
+// ========== 导航栏滚动效果（合并为单一节流监听器）==========
 const header = document.getElementById('header');
 const backToTop = document.getElementById('backToTop');
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('#nav a');
 
-window.addEventListener('scroll', () => {
+const handleScroll = throttle(() => {
     const scrollY = window.scrollY;
 
+    // 导航栏和回到顶部
     if (scrollY > 80) {
         header.classList.add('scrolled');
     } else {
@@ -16,8 +80,23 @@ window.addEventListener('scroll', () => {
     } else {
         backToTop.classList.remove('visible');
     }
-});
 
+    // 导航高亮
+    const offset = scrollY + 120;
+    let currentId = '';
+    sections.forEach(section => {
+        if (offset >= section.offsetTop && offset < section.offsetTop + section.offsetHeight) {
+            currentId = section.getAttribute('id');
+        }
+    });
+    navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${currentId}`);
+    });
+}, 16);
+
+window.addEventListener('scroll', handleScroll, { passive: true });
+
+// 回到顶部
 backToTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
@@ -26,107 +105,79 @@ backToTop.addEventListener('click', () => {
 const menuToggle = document.getElementById('menuToggle');
 const nav = document.getElementById('nav');
 const overlay = document.getElementById('overlay');
-const navLinks = nav.querySelectorAll('a');
 
 function toggleMenu() {
     nav.classList.toggle('active');
     overlay.classList.toggle('active');
-    document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+    if (nav.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = getScrollbarWidth() + 'px';
+    } else {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
 }
 
 menuToggle.addEventListener('click', toggleMenu);
 overlay.addEventListener('click', toggleMenu);
-
 navLinks.forEach(link => {
     link.addEventListener('click', toggleMenu);
 });
 
-// ========== 导航高亮 ==========
-const sections = document.querySelectorAll('section[id]');
-
-function updateActiveNav() {
-    const scrollY = window.scrollY + 120;
-
-    sections.forEach(section => {
-        const top = section.offsetTop;
-        const height = section.offsetHeight;
-        const id = section.getAttribute('id');
-
-        if (scrollY >= top && scrollY < top + height) {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${id}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    });
-}
-
-window.addEventListener('scroll', updateActiveNav);
-
-// ========== 计数动画 ==========
+// ========== 计数动画（平滑缓动）==========
 function animateCounters() {
     const counters = document.querySelectorAll('.stat-number');
-
     counters.forEach(counter => {
         const target = parseInt(counter.getAttribute('data-target'));
-        const increment = Math.ceil(target / 60);
-        let current = 0;
+        const duration = 2000;
+        const startTime = performance.now();
 
-        const update = () => {
-            current += increment;
-            if (current < target) {
-                counter.textContent = current.toLocaleString();
+        function update(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = easeOutQuad(progress);
+            const current = Math.round(target * eased);
+            counter.textContent = current.toLocaleString();
+            if (progress < 1) {
                 requestAnimationFrame(update);
-            } else {
-                counter.textContent = target.toLocaleString();
             }
-        };
-
-        update();
+        }
+        requestAnimationFrame(update);
     });
 }
 
-// ========== Intersection Observer ==========
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px',
-};
+// ========== Intersection Observer（卡片入场动画）==========
+const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
 
-// 卡片动画
-const observer = new IntersectionObserver((entries) => {
+// 目的地卡片
+const destObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
         if (entry.isIntersecting) {
             const delay = parseInt(entry.target.getAttribute('data-delay')) || 0;
             setTimeout(() => {
                 entry.target.classList.add('visible');
             }, delay);
-            observer.unobserve(entry.target);
+            destObserver.unobserve(entry.target);
         }
     });
 }, observerOptions);
+document.querySelectorAll('.dest-card').forEach(card => destObserver.observe(card));
 
-document.querySelectorAll('.dest-card').forEach(card => {
-    observer.observe(card);
-});
-
-// 统计动画触发
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            animateCounters();
-            statsObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
+// 统计数字
 const statsSection = document.querySelector('.stats-section');
 if (statsSection) {
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
     statsObserver.observe(statsSection);
 }
 
-// 特色卡片入场
+// 特色卡片
 const featureObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -136,7 +187,6 @@ const featureObserver = new IntersectionObserver((entries) => {
         }
     });
 }, observerOptions);
-
 document.querySelectorAll('.feature-card').forEach(card => {
     card.style.opacity = '0';
     card.style.transform = 'translateY(30px)';
@@ -144,7 +194,7 @@ document.querySelectorAll('.feature-card').forEach(card => {
     featureObserver.observe(card);
 });
 
-// 套餐卡片入场
+// 套餐卡片
 const tourObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -156,7 +206,6 @@ const tourObserver = new IntersectionObserver((entries) => {
         }
     });
 }, observerOptions);
-
 document.querySelectorAll('.tour-card').forEach(card => {
     card.style.opacity = '0';
     card.style.transform = 'translateY(30px)';
@@ -249,7 +298,7 @@ function handleSearch() {
         }
     }
 
-    alert('未找到 "' + keyword + '" 相关内容。试试搜索城市名：巴黎、东京、北京、上海、南京、成都、西安等');
+    showToast('未找到相关内容，试试搜索：巴黎、东京、北京、上海 等');
 }
 
 // 回车搜索
@@ -619,6 +668,7 @@ function openModal(city) {
 
     destModal.classList.add('active');
     document.body.classList.add('modal-open');
+    document.body.style.paddingRight = getScrollbarWidth() + 'px';
 }
 
 // 可选方案详情数据
@@ -759,7 +809,7 @@ function openTourModal(type) {
     `).join('');
 
     const optionsHtml = data.options.map((opt, idx) => `
-        <div class="itinerary-day option-item" style="border-left-color:var(--accent);cursor:pointer" onclick="${opt.id ? `showOptionDetail('${opt.id}')` : `alert('该方案详情即将上线，请咨询客服')`}">
+        <div class="itinerary-day option-item" style="border-left-color:var(--accent);cursor:pointer" onclick="${opt.id ? `showOptionDetail('${opt.id}')` : `showToast('该方案详情即将上线，请咨询客服')`}">
             <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
                 <div>
                     <h4 style="color:var(--text)">${opt.name}</h4>
@@ -805,11 +855,13 @@ function openTourModal(type) {
 
     destModal.classList.add('active');
     document.body.classList.add('modal-open');
+    document.body.style.paddingRight = getScrollbarWidth() + 'px';
 }
 
 function closeModal() {
     destModal.classList.remove('active');
     document.body.classList.remove('modal-open');
+    document.body.style.paddingRight = '';
 }
 
 // ESC 键关闭弹窗

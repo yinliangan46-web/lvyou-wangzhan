@@ -1558,3 +1558,104 @@ body.modal-open {
         border-radius: 0;
     }
 }
+
+/* ========== 弹窗打开时防止页面跳动 ========== */
+body.modal-open {
+    overflow: hidden;
+    padding-right: var(--scrollbar-width, 0px);
+}
+
+/* ========== 优化动画性能 - GPU 加速 ========== */
+.hero-bg {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.hero-content h1,
+.hero-content p,
+.search-box,
+.hero-stats {
+    will-change: transform, opacity;
+}
+
+.dest-card,
+.tour-card,
+.feature-card {
+    will-change: transform, box-shadow;
+    transform: translateZ(0);
+}
+
+.dest-img img,
+.route-img img {
+    will-change: transform;
+}
+
+.modal-content {
+    will-change: transform, opacity;
+}
+
+/* ========== 尊重用户减少动画偏好 ========== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .hero-bg {
+        animation: none !important;
+    }
+
+    .hero-content h1,
+    .hero-content p,
+    .search-box,
+    .hero-stats {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .dest-card,
+    .tour-card,
+    .feature-card {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* ========== 图片加载占位优化 ========== */
+img[loading="lazy"] {
+    background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+    background-size: 200% 100%;
+}
+
+/* ========== 焦点可见性优化（无障碍） ========== */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ========== 触摸设备优化 ========== */
+@media (hover: none) {
+    .dest-card:hover,
+    .tour-card:hover,
+    .feature-card:hover {
+        transform: none;
+    }
+
+    .dest-card:active {
+        transform: scale(0.98);
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+}
