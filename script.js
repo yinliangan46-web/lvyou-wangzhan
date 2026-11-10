@@ -1467,6 +1467,8 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
             "迪庆": ["香格里拉", "普达措", "梅里雪山"],
 
         };
+        // 把 known dict 挂到 window，让 loop-data.js 的 syncRoutePinsFromItinerary 能读到补景点
+        window._knownLandmarks = known;
         if (known[cityKey]) return known[cityKey].slice(0, 3);
         // 省份模板兜底（避免全部显示全省大热门）
         var provFallback = {
