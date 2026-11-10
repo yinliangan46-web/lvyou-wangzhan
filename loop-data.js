@@ -7535,7 +7535,18 @@ window.LOOP_ROUTES = [
             });
             // 第 3 步：骨架 + itinerary-only 新景点（去重补末尾）
             var result = backbone.slice();
+            // 白名单：骨架原始景点 ∪ known dict 本地景点
+            var whitelist = backbone.slice(); // 骨架里的全允许
+            // 先把 known dict 也加进白名单，过滤张家界这类跨省串味
+            var cityLandmarks = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
+            cityLandmarks.forEach(function(lm) { if (lm && !whitelist.includes(lm)) whitelist.push(lm); });
+            
             extracted.forEach(function(ep) {
+                // 先过滤：不在白名单里的跨省景点直接丢弃
+                if (whitelist.length) {
+                    var inWhitelist = whitelist.some(function(w) { return w === ep || w.indexOf(ep) >= 0 || ep.indexOf(w) >= 0; });
+                    if (!inWhitelist) return; // 张家界 → 白名单过滤掉！
+                }
                 var already = result.some(function(r) { return r === ep || r.indexOf(ep) >= 0 || ep.indexOf(r) >= 0; });
                 if (!already) result.push(ep);
             });
@@ -7598,14 +7609,88 @@ window.LOOP_ROUTES = [
                     rebuiltCoords[k] = [116.4, 39.9];
                 }
             }
-            // 应用
+            // 应用：替换 routePins + coords
             if (result.length >= 2) {
                 data.routePins = result;
-                if (srcCoords.length || rebuiltCoords.some(function(c){ return c; })) {
-                    window.CITY_ROUTE_COORDS[cityKey] = rebuiltCoords;
-                }
+                // coords 已经过三层查找 + 发散填充，全部对齐
+                window.CITY_ROUTE_COORDS[cityKey] = rebuiltCoords;
             } else if (extracted.length >= 2) {
                 data.routePins = extracted;
+            }
+            
+            // ===== Day3/Day4 模板自动替换 =====
+            // 问题根源：city-data.js Day3/Day4 的 theme 全是模板（周边一日游/城市漫步/深度游览/返程）
+            // 活动全是模板（酒店早餐/景区深度游览/自由活动/返程）
+            // 修复：用 known dict 里的真实景点替换 theme + timeline
+            if (data.itinerary && data.itinerary.length >= 3) {
+                var landmarks = (window._knownLandmarks && (window._knownLandmarks[data.name] || window._knownLandmarks[cityKey])) || [];
+                // 先找出所有真实景点（从已处理好的 routePins 里，且必须在 landmarks 里）
+                var realLandmarks = (data.routePins || []).filter(function(p) {
+                    // 必须在 known dict 里（白名单），过滤张家界这类跨省串味
+                    if (!landmarks.length) return true; // 没 known dict 就不过滤
+                    return landmarks.some(function(lm) { return lm === p || lm.indexOf(p) >= 0 || p.indexOf(lm) >= 0; });
+                });
+                // 收集 Day1/Day2 已经安排过的景点（避免重复）
+                var used = [];
+                data.itinerary.slice(0, 2).forEach(function(d) {
+                    var t = (d.theme || '').replace(/第[一二三四五六七八九十\d]+天/g, '');
+                    t.split(/[·\-—,，、/]/).forEach(function(s) {
+                        s = s.trim();
+                        if (s && s.length >= 2) used.push(s);
+                    });
+                    (d.timeline || []).forEach(function(tl) {
+                        var a = (tl.activity || '').trim();
+                        if (a && a.length >= 2 && !/抵达|入住|早餐|午餐|晚餐/.test(a)) used.push(a);
+                    });
+                });
+                // 从 landmarks 里挑还没被用的，按顺序分给 Day3/Day4
+                var availableLandmarks = landmarks.filter(function(l) {
+                    return !used.some(function(u) { return u === l || u.indexOf(l) >= 0 || l.indexOf(u) >= 0; });
+                });
+                
+                // Day3：检查是否模板化，如果是就替换
+                var d3 = data.itinerary[2];
+                var d3IsTemplate = /周边一日游|深度游玩|自由活动|随心漫游|城市漫步|摄影打卡|特色体验|文化探索|返程|再见|深度文化|精华|返程|返程 · 再见|最后打卡/.test(d3.theme || '');
+                var d3Acts = (d3.timeline || []).map(function(tl) { return (tl.activity || '').trim(); }).join('|');
+                var d3HasTemplateAct = /深度游览|自由活动|返程|酒店早餐|退房|前往机场|值机|登机|周边一日游|自由活动|随心漫游/.test(d3Acts);
+                
+                if (d3IsTemplate || d3HasTemplateAct) {
+                    var p1 = availableLandmarks.shift() || landmarks[0] || '';
+                    var p2 = availableLandmarks.shift() || landmarks[1] || '';
+                    var p3 = availableLandmarks.shift() || landmarks[2] || '';
+                    if (p1 && p2) {
+                        d3.theme = p1 + '·' + p2;
+                        d3.timeline = [
+                            { time: '08:30', activity: p1, detail: '上午游览' + p1 + '，建议早点出发避开人流' },
+                            { time: '12:00', activity: '午餐', detail: '附近特色餐厅' },
+                            { time: '14:00', activity: p2, detail: '下午前往' + p2 + '，预计游览2-3小时' },
+                            { time: '17:30', activity: p3, detail: '傍晚逛逛' + p3 + '，拍照最佳' }
+                        ].filter(function(x) { return x.activity; });
+                    }
+                }
+                
+                // Day4（如果存在）：同样替换
+                if (data.itinerary.length >= 4) {
+                    var d4 = data.itinerary[3];
+                    var d4IsTemplate = /深度游玩|自由活动|随心漫游|城市漫步|摄影打卡|特色体验|文化探索|返程|再见|深度文化|精华|返程 · 再见|最后打卡/.test(d4.theme || '');
+                    var d4Acts = (d4.timeline || []).map(function(tl) { return (tl.activity || '').trim(); }).join('|');
+                    var d4HasTemplateAct = /深度游览|自由活动|返程|酒店早餐|退房|前往机场|值机|登机/.test(d4Acts);
+                    
+                    if ((d4IsTemplate || d4HasTemplateAct) && availableLandmarks.length >= 2) {
+                        var q1 = availableLandmarks.shift() || landmarks[3] || landmarks[0] || '';
+                        var q2 = availableLandmarks.shift() || landmarks[4] || landmarks[1] || '';
+                        if (q1 && q2 && !/返程|再见/.test(q1 + q2)) {
+                            d4.theme = q1 + '·' + q2;
+                            d4.timeline = [
+                                { time: '09:00', activity: q1, detail: '上午重点游览' + q1 },
+                                { time: '12:30', activity: '午餐', detail: '当地特色午餐' },
+                                { time: '14:30', activity: q2, detail: '下午游览' + q2 },
+                                { time: '18:00', activity: '当地特色晚餐', detail: '晚上尝尝地道美食' }
+                            ];
+                        }
+                    }
+                }
+                // Day5+ 如果是返程模板（最后一天），不动它，那是用户要的返程安排
             }
         })();
 
