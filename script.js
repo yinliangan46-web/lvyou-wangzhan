@@ -1369,13 +1369,19 @@ function openProvinceModal(provinceKey) {
     const provData = (window.PROVINCES_ALL || []).find(p => p.key === provinceKey);
     if (!provData) { showToast('该省份数据加载中'); return; }
     
+    // 城市中心取法：coords 统一为 [[lng,lat]]（嵌套单元素），兼容旧扁平/多候选形状
+    const _cc = function(c) {
+        if (!c || !c.coords || !c.coords.length) return null;
+        const last = Array.isArray(c.coords[0]) ? c.coords[c.coords.length - 1] : c.coords;
+        return (last && isFinite(last[0]) && isFinite(last[1])) ? last : null;
+    };
     // 省份地图（省内城市坐标 polyline）
     let provMapHtml = '';
-    const cityCoords = (provData.cities || []).filter(c => c.coords);
+    const cityCoords = (provData.cities || []).map(c => ({ name: c.name, co: _cc(c) })).filter(x => x.co);
     if (cityCoords.length >= 2 && window.realMapHtml) {
-        const points = cityCoords.map(c => ({
-            lng: c.coords[0], lat: c.coords[1],
-            name: c.name, num: cityCoords.indexOf(c) + 1
+        const points = cityCoords.map((x, i) => ({
+            lng: x.co[0], lat: x.co[1],
+            name: x.name, num: i + 1
         }));
         provMapHtml = window.realMapHtml({
             points: points,
@@ -1390,7 +1396,7 @@ function openProvinceModal(provinceKey) {
     
     // 城市 grid（有坐标的都能点进详情）
     const citiesHtml = (provData.cities || []).map(c => {
-        const coordOk = c.coords && c.coords[0] && c.coords[0] != 0;
+        const coordOk = !!_cc(c);
         return `
         <div class="dest-card china-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer">
             <div class="dest-info" style="padding:10px 14px">
@@ -1433,31 +1439,32 @@ function openProvinceModal(provinceKey) {
         return '<div class="itinerary-day"><h4><span class="day-tag">Day ' + (di + 1) + '</span>' + esc(day.theme || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
     }).join('');
     const planDays = provItin.length;
-    // === 组合方案专属：路线顺序地图（按行程城市顺序连线）===
+    // === 组合方案专属：路线顺序地图（按每日 theme 解析站点，依 Day 顺序连线）===
     let routeMapHtml = '';
     if (provItin.length && window.realMapHtml) {
         const allCC = window.ALL_CITY_COORDS || {};
-        const seq = [];
+        const RC = window.REAL_POI_COORDS || {};
+        const rpts = [];
         provItin.forEach(function(day) {
-            const nm = String((day.theme || '').split('·')[0] || '').trim();
-            if (!nm || /抵达|返程|再见/.test(nm)) return;
-            if (seq.indexOf(nm) !== -1) return;
-            let co = null;
-            const cc = (provData.cities || []).find(function(c) { return c.name === nm || nm.indexOf(c.name) === 0 || c.name.indexOf(nm) === 0; });
-            if (cc && cc.coords && cc.coords[0]) co = cc.coords;
-            else if (allCC[nm]) co = allCC[nm];
-            else { const k2 = Object.keys(allCC).find(function(k) { return k.indexOf(nm) === 0 || nm.indexOf(k) === 0; }); if (k2) co = allCC[k2]; }
-            if (co) seq.push(nm);
+            const theme = String(day.theme || '');
+            if (/抵达|返程|再见/.test(theme)) return;
+            const tokens = theme.split(/[·,，、→\s]+/).map(function(s){return s.trim();}).filter(Boolean);
+            let co = null, nm = null;
+            for (let ti = 0; ti < tokens.length; ti++) {
+                const tk = tokens[ti];
+                const cc = (provData.cities || []).find(function(c) { return c.name === tk || tk.indexOf(c.name) === 0 || c.name.indexOf(tk) === 0; });
+                if (cc) { co = _cc(cc); nm = cc.name; }
+                if (!co && allCC[tk]) { co = allCC[tk]; nm = tk; }
+                if (!co && RC[tk]) { co = RC[tk]; nm = tk; }
+                if (co) break;
+            }
+            if (co && !rpts.some(function(p){ return p.name === nm; })) {
+                rpts.push({ lng: co[0], lat: co[1], name: nm, num: rpts.length + 1 });
+            }
         });
-        const pts = seq.map(function(nm, i) {
-            let co = null;
-            const cc = (provData.cities || []).find(function(c) { return c.name === nm; });
-            if (cc && cc.coords) co = cc.coords; else co = (window.ALL_CITY_COORDS || {})[nm];
-            return co ? { lng: co[0], lat: co[1], name: nm, num: i + 1 } : null;
-        }).filter(Boolean);
-        if (pts.length >= 2) {
+        if (rpts.length >= 2) {
             routeMapHtml = window.realMapHtml({
-                points: pts, domestic: true, convert: false, clickDay: false, height: 300,
+                points: rpts, domestic: true, convert: false, clickDay: false, height: 300,
                 title: '🗺️ ' + provData.name + '组合方案路线 · 按 Day 顺序连线',
                 linkText: '在高德查看完整路线'
             });
