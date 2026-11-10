@@ -7957,7 +7957,7 @@ window.LOOP_ROUTES = [
                     if (s && s.length >= 2) usedPins.push(s);
                 });
                 
-                // 剩余可分配的景点
+                // 剩余可分配的景点（绝对不能重复！）
                 var remainingPins = uniqPins.filter(function(p) {
                     return !usedPins.some(function(u) { return u === p || u.indexOf(p) >= 0 || p.indexOf(u) >= 0; });
                 });
@@ -7968,19 +7968,25 @@ window.LOOP_ROUTES = [
                     || (data.itinerary[lastDayIdx].timeline || []).some(function(tl) {
                         return /退房|前往机场|前往车站|值机|登机/.test((tl.activity || '').trim());
                     });
-                var daysToFill = isLastDayReturn ? data.itinerary.length - 1 : data.itinerary.length;
+                // ⭐ 关键修复：实际需要分配景点的天数 = 剩余景点数/2 +1（保证每个Day至少2个）
+                // 景点不够时自动缩减行程，不重复景点
+                var actualDaysToFill = Math.min(
+                    (isLastDayReturn ? data.itinerary.length - 1 : data.itinerary.length),
+                    Math.max(1, Math.ceil(remainingPins.length / 2))
+                );
+                // 如果返程Day在中间（省地级市兜底模板可能这样），也只分到前actualDaysToFill
+                var daysToFill = actualDaysToFill;
                 
-                // 均匀分配 remainingPins 到 Day2...DayN（每个 Day 2-3 个，最后一天最多 3 个）
+                // 均匀分配 remainingPins 到 Day2...DayN（每个 Day 2-3 个，不重复！）
                 var pinIdx = 0;
                 for (var di = 1; di < daysToFill; di++) {
                     var d = data.itinerary[di];
                     var remaining = remainingPins.length - pinIdx;
-                    var daysLeft = daysToFill - di; // 当前 Day 后面还有几个 Day（含自己）
-                    // 取几个：均匀分配，最后一个非返程 Day 也最多 3 个
+                    if (remaining <= 0) break; // ⭐ 景点用完了就停！不再重复
+                    var daysLeft = daysToFill - di;
                     var takeCount = Math.max(2, Math.ceil(remaining / daysLeft));
-                    takeCount = Math.min(takeCount, 3); // 每个 Day 最多 3 个
+                    takeCount = Math.min(takeCount, 3);
                     takeCount = Math.min(takeCount, remaining);
-                    if (takeCount <= 0) takeCount = 2;
                     
                     var dayPins = [];
                     for (var t = 0; t < takeCount && pinIdx < remainingPins.length; t++) {
@@ -8078,6 +8084,29 @@ window.LOOP_ROUTES = [
                           detail: '在候机厅可以逛逛免税店或纪念品店',
                           duration: '1-3小时', price: '¥0', ticket: '', tip: '起飞后记得关机或开飞行模式' }
                     ];
+                }
+
+                // ⭐ 最后：删掉多余Day，同步 card.days
+                // 返程Day位置
+                var lastI = data.itinerary.length - 1;
+                for (var zz = data.itinerary.length - 1; zz >= 0; zz--) {
+                    if (/返程|再见/.test((data.itinerary[zz].theme || ''))) { lastI = zz; break; }
+                }
+                // 要保留的最大Day索引：Day0 到 daysToFill(游玩Day数) 再加返程Day
+                // 如果返程Day在原始 itinerary 的 lastI 位置
+                // 我们只保留 Day0 (抵达), Day1..actualDaysToFill (游玩), Day lastI (返程)
+                // 其余全删掉
+                if (actualDaysToFill + 1 < lastI) {
+                    // 删掉 actualDaysToFill+1 到 lastI-1 之间的所有 Day
+                    var removeCount = lastI - actualDaysToFill - 1;
+                    for (var rr = 0; rr < removeCount; rr++) {
+                        data.itinerary.splice(actualDaysToFill + 1, 1);
+                    }
+                }
+                // 同步 card.days
+                if (data.days) {
+                    var mDays = data.itinerary.length;
+                    data.days = mDays + '天' + (mDays - 1) + '晚';
                 }
             }
         })();
