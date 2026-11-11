@@ -1097,10 +1097,15 @@
             var link = b.hotelCity ? ' <a href="https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(b.hotelCity) + '" target="_blank" rel="noopener" style="color:#2563eb;font-size:.76rem;text-decoration:none">携程查房价 →</a>' : '';
             if (b.type === 'poi') {
                 var kw = encodeURIComponent(b.title);
-                link += ' <a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" ' +
-                    'style="display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:#eef4ff;color:#2563eb;font-size:.72rem;text-decoration:none">携程购票</a>' +
-                    ' <a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" ' +
-                    'style="display:inline-block;margin-left:4px;padding:1px 7px;border-radius:9px;background:#fff0f6;color:#fe2c55;font-size:.72rem;text-decoration:none">抖音看票</a>';
+                if (needReserve(b.title) && window._wechatReserveBtn) {
+                    /* 需预约：只给微信小程序入口，不再给携程/抖音 */
+                    link += ' ' + window._wechatReserveBtn(b.title);
+                } else {
+                    link += ' <a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" ' +
+                        'style="display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:#eef4ff;color:#2563eb;font-size:.72rem;text-decoration:none">携程购票</a>' +
+                        ' <a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" ' +
+                        'style="display:inline-block;margin-left:4px;padding:1px 7px;border-radius:9px;background:#fff0f6;color:#fe2c55;font-size:.72rem;text-decoration:none">抖音看票</a>';
+                }
             }
             return '<div class="pl-tl-item' + cls + '"><div class="pl-tl-time">' + esc(b.time) + '</div>' +
                 '<div class="pl-tl-body"><div class="pl-tl-title"><i class="fas ' + ico + ' pl-tl-ico"></i>' + esc(b.title) + link + '</div>' +
@@ -1135,16 +1140,16 @@
 
         var ticketRows = pois.map(function (b) {
             var kw = encodeURIComponent(b.title);
+            var wx = window._wechatReserveBtn ? window._wechatReserveBtn(b.title) : '';
+            /* 需预约的只给微信入口，不再给携程/抖音 */
             var free = ticketOf(b.title) <= 0 && !needReserve(b.title);
-            var buy = free ? '' :
+            var buy = (free || wx) ? '' :
                 '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener">携程票</a>' +
                 '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener">抖音票</a>';
             return '<div class="pl-ex-row"><span class="pl-ex-name">' + esc(b.title) +
                 (ticketOf(b.title) > 0 ? '<em class="pl-ex-fee">¥' + ticketOf(b.title) + '</em>' : '<em class="pl-ex-free">免费</em>') +
                 (needReserve(b.title) ? '<em class="pl-ex-tag">需预约</em>' : '') + '</span>' +
-                buy +
-                (window._wechatReserveBtn ? window._wechatReserveBtn(b.title) : '') +
-                '</div>';
+                buy + wx + '</div>';
         }).join('');
 
         var reserveTips = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });

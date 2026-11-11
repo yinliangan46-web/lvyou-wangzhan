@@ -7426,15 +7426,16 @@ window.LOOP_ROUTES = [
         var n = String(name || '').replace(/\s+/g, ' ').trim();
         if (n.length < 2) return '';
         var wx = _wechatBtn(n);
-        if (!_isPaidSpot(n, tic, prc)) {
-            return wx ? '<div class="ticket-links" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' + wx + '</div>' : '';
+        if (wx) {
+            /* 需预约：只给微信小程序入口，不再给携程/抖音 */
+            return '<div class="ticket-links" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' + wx + '</div>';
         }
+        if (!_isPaidSpot(n, tic, prc)) return '';
         var kw = encodeURIComponent(n);
         var st = 'display:inline-flex;align-items:center;gap:4px;font-size:.74rem;text-decoration:none;border-radius:999px;padding:2px 10px;border:1px solid';
         return '<div class="ticket-links" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' +
             '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" style="' + st + ' #bfdbfe;color:#1d4ed8;background:#eff6ff">携程购票</a>' +
             '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" style="' + st + ' #fbcfe8;color:#be185d;background:#fdf2f8">抖音看票</a>' +
-            _wechatBtn(n) +
             '</div>';
     }
     window._ticketLinks = _ticketLinksHtml;
