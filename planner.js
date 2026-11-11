@@ -30,6 +30,9 @@
         builtin: { label: '内置规划引擎（无需配置，推荐）', endpoint: '', model: '' },
         doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615' },
         deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat' },
+        kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k' },
+        glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash' },
+        ollama: { label: '本地 Ollama 开源大模型（无需 Key）', endpoint: 'http://localhost:11434/v1/chat/completions', model: 'qwen2.5:7b' },
         custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
     };
 
@@ -1943,7 +1946,7 @@
                 .slice(0, 12).map(function (i) { return i.name; });
         });
         return [
-            '你是 MYL 旅行网站的 AI 行程助手，也是资深旅行规划师，中文回答。你什么旅行问题都能答：目的地推荐、签证、季节、交通、美食、预算、路线优化等。',
+            '你是一个通用 AI 助手，也是 MYL 旅行网站的资深旅行规划师，中文回答。用户什么问题都能问你：旅行/签证/交通/美食/预算/路线/住宿/攻略，也可以是编程/生活/学习/娱乐/闲聊/知识问答/翻译/写作等任何话题。',
             '当前行程 JSON：' + JSON.stringify(compact || {}),
             '偏好：住宿=' + (state.hotelTier || 'comfort') + '，城际偏好=' + (state.transport || 'auto') + '，人均预算=' + (state.budget || '不限'),
             '可加入的候选景点（按城市）：' + JSON.stringify(candidates),
@@ -1991,9 +1994,18 @@
         }).then(function (j) {
             var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
             content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+            // 先尝试找 JSON 对象
             var start = content.indexOf('{'), end = content.lastIndexOf('}');
-            var obj = JSON.parse(content.slice(start, end + 1));
-            return obj;
+            if (start >= 0 && end > start) {
+                try {
+                    var obj = JSON.parse(content.slice(start, end + 1));
+                    // 有 reply 字段 → 标准 JSON 格式
+                    if (obj.reply !== undefined) return obj;
+                    // 没有 reply → 当作纯文本 reply 处理
+                } catch (e) { /* JSON 解析失败，走纯文本 */ }
+            }
+            // 纯文本回复：包装成 { reply: ... }
+            return { reply: content };
         });
     }
 
@@ -2447,12 +2459,15 @@
             '    <div class="pl-agent-input"><textarea id="plAgentInput" rows="1" placeholder="想怎么改？例如：帮我生成川西环线"></textarea><button id="plAgentSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button></div>',
             '    <div class="pl-ai-panel" id="plAiPanel">',
             '      <h4>接入大模型</h4>',
-            '      <p class="hint">站点已内置 AI 代理：管理员在 Vercel 环境变量配置 DEEPSEEK_API_KEY 或 ARK_API_KEY 后，所有访客无需填 Key 即可使用豆包 / DeepSeek。也可以填自己的 Key（只存本机浏览器）。</p>',
+            '      <p class="hint">内置规划引擎适合简单改行程；接入大模型（豆包/DeepSeek/Kimi/GLM/Ollama）可以<b>什么问题都能答</b>，旅行、生活、编程、知识问答都行。Key 只存本机浏览器，不发服务器。Ollama 是完全本地的开源大模型（Qwen/Llama），无需 Key。</p>',
             '      <div class="pl-ai-field"><label>服务商</label><select id="plAiProvider">',
             '        <option value="site">站点 AI（豆包 / DeepSeek，无需填 Key）</option>',
-            '        <option value="builtin">内置规划引擎（无需配置）</option>',
+            '        <option value="builtin">内置规划引擎（适合简单改行程）</option>',
+            '        <option value="ollama">本地 Ollama 开源大模型（无需 Key，需启动服务）</option>',
             '        <option value="doubao">豆包 · 火山方舟（自己的 Key）</option>',
             '        <option value="deepseek">DeepSeek（自己的 Key）</option>',
+            '        <option value="kimi">Kimi · 月之暗面（自己的 Key）</option>',
+            '        <option value="glm">智谱 GLM（自己的 Key）</option>',
             '        <option value="custom">自定义 OpenAI 兼容接口 / 代理</option>',
             '      </select></div>',
             '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="https://ark.cn-beijing.volces.com/api/v3/chat/completions"></div>',
