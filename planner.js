@@ -1381,7 +1381,8 @@
         var list = citiesOfProvince(full);
         var rich = list.filter(function (c) { return CATALOG[c] && !CATALOG[c].generic && CATALOG[c].items.length >= 3; });
         rich.sort(function (a, b) { return CATALOG[b].items.length - CATALOG[a].items.length; });
-        return rich.concat(list.filter(function (c) { return rich.indexOf(c) < 0; }));
+        // 只要有真实景点数据的城市，就只用它们（避免把「六安/亳州」这种只有 1 个兜底景点的城市排进行程）
+        return rich.length ? rich : list;
     }
     function cnNum(s) {
         if (!s) return 0;
