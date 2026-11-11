@@ -1246,6 +1246,7 @@
 
     /* ==================== 生成 / 重新生成 ==================== */
     function regenerate() {
+        if (!state.cities.length && !state.loop) { toast('先选一个城市，再生成行程'); return; }
         state.plan = buildPlan();
         renderResult();
         saveLocal();
@@ -2584,10 +2585,22 @@
             if (b) sendAgent(b.getAttribute('data-chip'));
         });
 
-        // 接入设置
+        // 接入设置（只有站长设备能改：首次点齿轮需输入管理口令，口令正确后本机记住）
+        var ADMIN_CODE = 'myl2026';
+        var LS_ADMIN = 'myl_admin_ok';
+        var isAdminDevice = function () {
+            try { return localStorage.getItem(LS_ADMIN) === '1'; } catch (e) { return false; }
+        };
         var gear = $('plAgentSettings');
         var panel = $('plAiPanel');
         if (gear && panel) gear.addEventListener('click', function () {
+            if (!isAdminDevice()) {
+                var code = window.prompt('模型设置仅站长可改，请输入管理口令：');
+                if (code === null) return;
+                if (String(code).trim() !== ADMIN_CODE) { toast('口令不正确，无法修改模型设置'); return; }
+                try { localStorage.setItem(LS_ADMIN, '1'); } catch (e) { }
+                toast('已解锁模型设置（仅本设备有效）');
+            }
             if (window.innerWidth <= 640) {
                 var ag = document.querySelector('.pl-agent');
                 if (ag) { ag.classList.add('pl-agent-open'); document.body.classList.add('pl-agent-expanded'); }
@@ -2810,10 +2823,14 @@
             var ky = $('plAiKey'); if (ky) ky.value = state.aiCfg.key || '';
         }
 
-        // 恢复上次 / 首次示例
+        // 恢复上次 / 首次进入不预设行程，让用户自己选城市
         var restored = loadLocal();
-        if (!restored) loadDemo(true);
-        else {
+        if (!restored) {
+            state.cities = [];
+            state.picks = {};
+            state.plan = null;
+            renderAll();
+        } else {
             renderAll();
             if (state.cities.length) {
                 state.plan = buildPlan();
