@@ -28,7 +28,7 @@
     var AI_PRESETS = {
         site: { label: '站点 AI（已接入豆包 / DeepSeek，无需填 Key）', endpoint: '/api/chat', model: 'auto' },
         builtin: { label: '内置规划引擎（无需配置，推荐）', endpoint: '', model: '' },
-        doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615', needsCORSProxy: true },
+        doubao: { label: '豆包 · 火山方舟（直连，填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-2-1-lite-260915' },
         deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat', needsCORSProxy: true },
         kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k', needsCORSProxy: true },
         glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash', needsCORSProxy: true },
@@ -37,13 +37,14 @@
         custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
     };
 
-    // 站点默认 AI：已部署的 Cloudflare Worker 代理 + 豆包模型（可在 ⚙️ 里改）
-    // 注意：API Key 不能写在前端源码里（公开仓库会被盗刷），由 Worker 服务端环境变量持有；本机也可在 ⚙️ 里临时填
+    // 站点默认 AI：直连火山方舟（该接口支持浏览器 CORS，国内网络可直连，不需要 Worker 代理）
+    // API Key 不入库（公开仓库会泄露）：用户在本机 ⚙️ 填一次即可，只存 localStorage
+    var ARK_ENDPOINT = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+    var ARK_MODEL = 'doubao-seed-2-1-lite-260915';
     var DEFAULT_AI_CFG = {
-        provider: 'proxy',
-        endpoint: 'https://myl-ai-proxy.yinliangan46.workers.dev',
-        model: 'doubao-seed-1-6-250615',
-        target: 'https://ark.cn-beijing.volces.com/api/v3',
+        provider: 'doubao',
+        endpoint: ARK_ENDPOINT,
+        model: ARK_MODEL,
         key: ''
     };
 
@@ -1220,13 +1221,13 @@
         } catch (e) {
             state.aiCfg = def;
         }
-        // 旧配置迁移：Ollama 本地地址在手机/公网上永远连不通，自动切到站点云端 AI
-        if (state.aiCfg && state.aiCfg.provider === 'ollama') state.aiCfg = def;
-        if (state.aiCfg && state.aiCfg.provider === 'proxy') {
-            if (!state.aiCfg.endpoint) state.aiCfg.endpoint = DEFAULT_AI_CFG.endpoint;
-            if (!state.aiCfg.target) state.aiCfg.target = DEFAULT_AI_CFG.target;
-            if (!state.aiCfg.key) state.aiCfg.key = DEFAULT_AI_CFG.key;
-            if (!state.aiCfg.model) state.aiCfg.model = DEFAULT_AI_CFG.model;
+        // 旧配置迁移：Ollama(localhost) / Worker(workers.dev) 在手机上都连不通，自动切到火山方舟直连
+        if (state.aiCfg && (state.aiCfg.provider === 'ollama' || state.aiCfg.provider === 'proxy')) {
+            state.aiCfg = { provider: 'doubao', endpoint: ARK_ENDPOINT, model: ARK_MODEL, key: state.aiCfg.key || '' };
+        }
+        if (state.aiCfg && state.aiCfg.provider === 'doubao') {
+            if (!state.aiCfg.endpoint || state.aiCfg.endpoint.indexOf('workers.dev') >= 0) state.aiCfg.endpoint = ARK_ENDPOINT;
+            if (!state.aiCfg.model || state.aiCfg.model === 'doubao-seed-1-6-250615') state.aiCfg.model = ARK_MODEL;
         }
         if (!raw) probeSiteAI();
     }
@@ -1734,10 +1735,9 @@
         if (!actions.length) {
             // 问候语 → 友好引导
             if (/^(你好|您好|hi|hello|嗨|在吗|嗯|ok|好的|谢谢|多谢|早|晚安)/i.test(text)) {
-                return { reply: '你好呀 👋 我是 AI 行程助手。现在没接大模型（浏览器跨域限制），我能用内置引擎帮你：<br>' +
-                    '· 说「给我生成青甘大环线」「川西环线」→ 一键出完整行程<br>' +
-                    '· 选完城市后问「预算 5000」「住好点」「加一天」→ 调细节<br>' +
-                    '· 想让我什么都能答 → ⚙️ 接入 Ollama（本地跑 Qwen）或豆包/DeepSeek（填 Key）', actions: actions };
+                return { reply: '你好呀 👋 我是 AI 行程助手。现在还差一步：在下方「接入大模型」里把豆包 Key 粘进去并保存，我就能回答任何问题（行程、生活、知识都行）。<br>' +
+                    '· 还没填 Key 时，我也能用内置引擎帮你规划：说「给我生成青甘大环线」「川西环线」→ 一键出完整行程<br>' +
+                    '· 选完城市后问「预算 5000」「住好点」「加一天」→ 调细节', actions: actions };
             }
             // 通用"XX 环线/路线"请求 → 自动识别省名/城市名做串联
             if (/环线|路线|线路|行程|攻略/.test(text)) {
@@ -2097,10 +2097,14 @@
         return Promise.race([fetchPromise, timeoutPromise]).then(function (r) {
             if (!r.ok) {
                 return r.text().then(function (t) {
-                    var msg = 'HTTP ' + r.status;
-                    try { msg = (JSON.parse(t).error || msg); } catch (e2) {}
+                    var msg = 'HTTP ' + r.status, apiCode = '';
+                    try {
+                        var ej = JSON.parse(t);
+                        if (ej && ej.error) { apiCode = ej.error.code || ''; msg = ej.error.message || apiCode || msg; }
+                    } catch (e2) {}
                     var err = new Error(msg);
                     err.code = 'HTTP_' + r.status;
+                    err.apiCode = apiCode;
                     throw err;
                 });
             }
@@ -2128,6 +2132,7 @@
             err.isCORS = !!isCORS;
             err.isTimeout = !!isTimeout;
             err.provider = cfg.provider;
+            err.model = model;
             err.endpoint = endpoint;
             throw err;
         });
@@ -2190,6 +2195,11 @@
                     }
                 } else if (e.isTimeout) {
                     hint = '请求超时（60s），大模型可能在忙。可以换个模型或稍后再试。';
+                } else if (e.apiCode === 'ModelNotOpen') {
+                    hint = '豆包账号还没开通模型 <code>' + esc(e.model || '') + '</code>：打开火山方舟控制台 →「开通管理」→ 找到该模型点「开通」（有免费额度），然后重试。<br>' +
+                        '<a href="https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement" target="_blank" rel="noopener">→ 去开通</a>';
+                } else if (e.apiCode === 'InvalidEndpointOrModel.NotFound') {
+                    hint = '模型 ID 不存在或没有权限：在控制台「开通管理」复制可用模型 ID，填到 ⚙️ 的「模型」栏。';
                 } else if (e.code === 'HTTP_401' || e.code === 'HTTP_403') {
                     hint = e.provider === 'proxy'
                         ? 'Worker 端还没有可用 Key：Cloudflare → 你的 Worker → Settings → Variables → 添加密钥 <code>ARK_API_KEY</code>；或在 ⚙️ 里填 Key（只存本机）。'
@@ -2213,6 +2223,11 @@
                 var changed = applyActions(fb.actions);
                 var out = fb.reply || '已按你的要求更新行程。';
                 if (changed) out += '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changed) + '</div>';
+                // 云端 AI 未填 Key 时，提示一步即通
+                var _c = state.aiCfg || {};
+                if (_c.provider && _c.provider !== 'builtin' && !_c.key && _c.provider !== 'site' && _c.provider !== 'proxy') {
+                    out += '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">想让我什么都能答：在下方「接入大模型」粘贴豆包 Key → 保存（只存你手机，不会上传）。</div>';
+                }
                 pushMsg('ai', out, null, fb.cards);
                 state.busy = false;
             }, 320);
@@ -2443,6 +2458,13 @@
                 var ag = document.querySelector('.pl-agent');
                 if (ag) { ag.classList.add('pl-agent-open'); document.body.classList.add('pl-agent-expanded'); }
             }
+            // 打开时把当前配置回填到表单，避免看到空字段
+            var cur = state.aiCfg || {};
+            var pv = AI_PRESETS[cur.provider] || AI_PRESETS.doubao;
+            if (provSel && cur.provider) provSel.value = cur.provider;
+            if ($('plAiEndpoint')) $('plAiEndpoint').value = cur.endpoint || pv.endpoint || '';
+            if ($('plAiModel')) $('plAiModel').value = cur.model || pv.model || '';
+            if ($('plAiKey')) $('plAiKey').value = cur.key || '';
             panel.classList.toggle('open');
         });
 
@@ -2577,7 +2599,8 @@
             el.textContent = state.siteAiReady ? '站点 AI · 豆包 / DeepSeek 已接入' : '站点 AI · 待管理员配置 Key';
         } else if (cfg.provider && cfg.provider !== 'builtin') {
             var label = (AI_PRESETS[cfg.provider] || {}).label || cfg.provider;
-            el.textContent = label + (cfg.model ? ' · ' + cfg.model : '') + ' 已接入';
+            var ready = cfg.key || cfg.provider === 'site' || cfg.provider === 'proxy' || cfg.provider === 'ollama';
+            el.textContent = label + (cfg.model ? ' · ' + cfg.model : '') + (ready ? ' 已接入' : ' · 待填 Key');
         } else {
             el.textContent = '内置规划引擎 · 实时可用';
         }
@@ -2618,21 +2641,21 @@
             '    <div class="pl-agent-input"><textarea id="plAgentInput" rows="1" placeholder="想怎么改？例如：帮我生成川西环线"></textarea><button id="plAgentSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button></div>',
             '    <div class="pl-ai-panel" id="plAiPanel">',
             '      <h4>接入大模型</h4>',
-            '      <p class="hint">内置规划引擎适合简单改行程；接入大模型（豆包/DeepSeek/Kimi/GLM/Ollama）可以<b>什么问题都能答</b>，旅行、生活、编程、知识问答都行。Key 只存本机浏览器，不发服务器。Ollama 是完全本地的开源大模型（Qwen/Llama），无需 Key。</p>',
+            '      <p class="hint">接入大模型后可以<b>什么问题都能答</b>（旅行、生活、知识、写作都行）。Key 只存在你自己的浏览器，不上传服务器。<br>豆包直连可用（国内网络），只需填一次 Key。</p>',
             '      <div class="pl-ai-field"><label>服务商</label><select id="plAiProvider">',
-            '        <option value="site">站点 AI（豆包 / DeepSeek，无需填 Key）</option>',
+            '        <option value="doubao">豆包 · 火山方舟（直连，推荐）</option>',
             '        <option value="builtin">内置规划引擎（适合简单改行程）</option>',
-            '        <option value="proxy">Cloudflare Worker 代理（推荐部署一次）</option>',
+            '        <option value="site">站点 AI（需管理员配置）</option>',
+            '        <option value="proxy">Cloudflare Worker 代理（workers.dev 国内可能被墙）</option>',
             '        <option value="ollama">本地 Ollama 开源大模型（无需 Key，电脑上跑）</option>',
-            '        <option value="doubao">豆包 · 火山方舟（自己的 Key + 需代理）</option>',
-            '        <option value="deepseek">DeepSeek（自己的 Key + 需代理）</option>',
-            '        <option value="kimi">Kimi · 月之暗面（自己的 Key + 需代理）</option>',
-            '        <option value="glm">智谱 GLM（自己的 Key + 需代理）</option>',
+            '        <option value="deepseek">DeepSeek（自己的 Key，需代理）</option>',
+            '        <option value="kimi">Kimi · 月之暗面（自己的 Key，需代理）</option>',
+            '        <option value="glm">智谱 GLM（自己的 Key，需代理）</option>',
             '        <option value="custom">自定义 OpenAI 兼容接口 / 代理</option>',
             '      </select></div>',
-            '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="Cloudflare Worker：https://xxx.workers.dev  或 豆包/DeepSeek 完整 URL"></div>',
-            '      <div class="pl-ai-field"><label>模型 / 推理接入点 ID</label><input id="plAiModel" type="text" placeholder="豆包: doubao-seed-1-6-250615 或 完整 target URL 如 https://api.deepseek.com/api/v0"></div>',
-            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="Worker 端已配 ARK_API_KEY 可留空；否则粘贴豆包 Key（只存本机）" autocomplete="off"></div>',
+            '      <div class="pl-ai-field"><label>接口地址</label><input id="plAiEndpoint" type="text" placeholder="豆包：https://ark.cn-beijing.volces.com/api/v3/chat/completions"></div>',
+            '      <div class="pl-ai-field"><label>模型 ID</label><input id="plAiModel" type="text" placeholder="豆包：doubao-seed-2-1-lite-260915"></div>',
+            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="粘贴火山方舟 API Key（ark- 开头），只存本机" autocomplete="off"></div>',
             '      <div class="pl-ai-btns"><button class="pl-btn-primary" id="plAiSave">保存</button><button class="pl-btn-ghost" id="plAiClear">清除</button></div>',
             '    </div>',
             '  </aside>',
