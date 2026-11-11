@@ -1124,12 +1124,13 @@
                 (needReserve(b.title) ? '<em class="pl-ex-tag">需预约</em>' : '') + '</span>' +
                 '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener">携程票</a>' +
                 '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener">抖音票</a>' +
+                (window._wechatReserveBtn ? window._wechatReserveBtn(b.title) : '') +
                 '</div>';
         }).join('');
 
         var reserveTips = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });
         var ticketNote = reserveTips.length
-            ? '<div class="pl-ex-note">⚠ ' + esc(reserveTips.slice(0, 3).join('、')) + ' 需实名预约，建议出行前 1-3 天在景区公众号或携程预约时段。</div>'
+            ? '<div class="pl-ex-note">⚠ ' + esc(reserveTips.slice(0, 3).join('、')) + ' 需实名预约，建议出行前 1-3 天在景区微信小程序或携程预约时段。</div>'
             : '<div class="pl-ex-note">热门景区旺季可能限流，建议出发前在携程或景区公众号确认余票。</div>';
 
         var cityKw = encodeURIComponent(d.city);

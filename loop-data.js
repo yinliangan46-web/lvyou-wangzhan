@@ -7307,6 +7307,70 @@ window.LOOP_ROUTES = [
     }
 
     // ========== 环线详情弹窗 ==========
+    /* === 需预约景区的微信小程序入口 === */
+    var WECHAT_MINI_MAP = {
+        '故宫': '故宫博物院', '国家博物馆': '中国国家博物馆', '莫高窟': '莫高窟参观预约网',
+        '布达拉宫': '布达拉宫票务预订系统', '兵马俑': '秦始皇帝陵博物院', '秦始皇': '秦始皇帝陵博物院',
+        '九寨沟': '九寨沟', '泰山': '泰山景区', '黄山': '黄山旅游官方平台', '张家界': '张家界智慧旅游',
+        '迪士尼': '上海迪士尼度假区', '环球影城': '北京环球度假区', '长白山': '长白山',
+        '敦煌': '敦煌研究院', '龙门石窟': '龙门石窟', '云冈石窟': '云冈石窟',
+        '乐山大佛': '乐山大佛景区', '都江堰': '青城山都江堰', '峨眉山': '峨眉山景区',
+        '华山': '华山景区', '普陀山': '普陀山', '灵隐寺': '灵隐寺', '拙政园': '苏州园林旅游',
+        '上海博物馆': '上海博物馆', '陕西历史博物馆': '陕西历史博物馆', '南京博物院': '南京博物院',
+        '湖北省博物馆': '湖北省博物馆', '苏州博物馆': '苏州博物馆', '三星堆': '三星堆博物馆'
+    };
+    var RESERVE_KW = ['故宫', '莫高窟', '布达拉宫', '九寨沟', '兵马俑', '秦始皇', '泰山', '黄山',
+        '张家界', '迪士尼', '环球影城', '长白山', '敦煌', '龙门石窟', '云冈石窟', '乐山大佛',
+        '都江堰', '峨眉山', '华山', '普陀山', '灵隐寺', '拙政园', '上海博物馆', '国家博物馆',
+        '陕西历史博物馆', '南京博物院', '湖北省博物馆', '苏州博物馆', '三星堆'];
+
+    function _miniName(name) {
+        var n = String(name || '');
+        for (var k in WECHAT_MINI_MAP) { if (n.indexOf(k) >= 0) return WECHAT_MINI_MAP[k]; }
+        return '';
+    }
+    function _needReserve(name) {
+        var n = String(name || '');
+        for (var i = 0; i < RESERVE_KW.length; i++) { if (n.indexOf(RESERVE_KW[i]) >= 0) return true; }
+        return false;
+    }
+    function _toast(msg) {
+        var d = document.createElement('div');
+        d.textContent = msg;
+        d.style.cssText = 'position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:99999;max-width:86vw;' +
+            'background:rgba(17,24,39,.94);color:#fff;font-size:.82rem;line-height:1.5;padding:10px 16px;border-radius:12px;' +
+            'box-shadow:0 8px 24px rgba(0,0,0,.25);text-align:center;white-space:pre-line';
+        document.body.appendChild(d);
+        setTimeout(function () { d.style.transition = 'opacity .3s'; d.style.opacity = '0'; }, 2200);
+        setTimeout(function () { d.remove(); }, 2600);
+    }
+    window.mylWechatReserve = function (name, mini) {
+        var target = mini || name;
+        var tip = '请打开微信 → 搜索小程序「' + target + '」→ 在线预约';
+        function ok() { _toast('已复制「' + target + '」\n' + tip); }
+        function fallback() {
+            try {
+                var ta = document.createElement('textarea');
+                ta.value = target;
+                document.body.appendChild(ta); ta.select();
+                document.execCommand('copy'); ta.remove();
+                ok();
+            } catch (e) { _toast(tip); }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(target).then(ok, fallback);
+        } else { fallback(); }
+    };
+    function _wechatBtn(name) {
+        var n = String(name || '').replace(/'/g, '');
+        if (!_needReserve(n)) return '';
+        var mini = _miniName(n);
+        var st = 'display:inline-flex;align-items:center;gap:4px;font-size:.74rem;text-decoration:none;border-radius:999px;' +
+            'padding:2px 10px;border:1px solid #bbf7d0;color:#15803d;background:#f0fdf4;cursor:pointer';
+        return '<a class="ticket-links-wx" style="' + st + '" onclick="window.mylWechatReserve(\'' + n + '\',\'' + mini.replace(/'/g, '') + '\')">微信预约</a>';
+    }
+    window._wechatReserveBtn = _wechatBtn;
+
     /* === 付费景点购票入口：携程 / 抖音 ===
        触发条件：ticket/price 中出现价格数字，或景点名命中收费类关键词 */
     function _isPaidSpot(name, tic, prc) {
@@ -7317,12 +7381,17 @@ window.LOOP_ROUTES = [
     }
     function _ticketLinksHtml(name, tic, prc) {
         var n = String(name || '').replace(/\s+/g, ' ').trim();
-        if (n.length < 2 || !_isPaidSpot(n, tic, prc)) return '';
+        if (n.length < 2) return '';
+        var wx = _wechatBtn(n);
+        if (!_isPaidSpot(n, tic, prc)) {
+            return wx ? '<div class="ticket-links" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' + wx + '</div>' : '';
+        }
         var kw = encodeURIComponent(n);
         var st = 'display:inline-flex;align-items:center;gap:4px;font-size:.74rem;text-decoration:none;border-radius:999px;padding:2px 10px;border:1px solid';
         return '<div class="ticket-links" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' +
             '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" style="' + st + ' #bfdbfe;color:#1d4ed8;background:#eff6ff">携程购票</a>' +
             '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" style="' + st + ' #fbcfe8;color:#be185d;background:#fdf2f8">抖音看票</a>' +
+            _wechatBtn(n) +
             '</div>';
     }
     window._ticketLinks = _ticketLinksHtml;
