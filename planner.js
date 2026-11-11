@@ -28,11 +28,12 @@
     var AI_PRESETS = {
         site: { label: '站点 AI（已接入豆包 / DeepSeek，无需填 Key）', endpoint: '/api/chat', model: 'auto' },
         builtin: { label: '内置规划引擎（无需配置，推荐）', endpoint: '', model: '' },
-        doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615' },
-        deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat' },
-        kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k' },
-        glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash' },
-        ollama: { label: '本地 Ollama 开源大模型（无需 Key）', endpoint: 'http://localhost:11434/v1/chat/completions', model: 'qwen2.5:7b' },
+        doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615', needsCORSProxy: true },
+        deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat', needsCORSProxy: true },
+        kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k', needsCORSProxy: true },
+        glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash', needsCORSProxy: true },
+        ollama: { label: '本地 Ollama 开源大模型（无需 Key）', endpoint: 'http://localhost:11434/v1/chat/completions', model: 'qwen2.5:7b', needsCORSProxy: true },
+        proxy: { label: '我的 Cloudflare Worker 代理（部署一次长期用）', endpoint: '', model: '', isProxy: true },
         custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
     };
 
@@ -2025,13 +2026,28 @@
     function callAI(userText) {
         var cfg = state.aiCfg || {};
         var preset = AI_PRESETS[cfg.provider] || {};
-        var endpoint = cfg.endpoint || preset.endpoint;
         var model = cfg.model || preset.model;
-        if (!endpoint) throw new Error('未填写接口地址');
+        var isProxy = preset.isProxy;
+        // proxy 模式：endpoint 就是 Worker URL（不带路径），自动拼默认后端
+        var endpoint;
+        if (isProxy) {
+            endpoint = (cfg.endpoint || '').replace(/\/+$/, '');
+            if (!endpoint) throw new Error('请先在 ⚙️ 里填 Cloudflare Worker 地址（部署一次后长期用）');
+            // 默认转发豆包，用户可通过 model 字段指定 target（如 https://api.deepseek.com/api/v0）
+            var target = cfg.model || preset.target || 'https://ark.cn-beijing.volces.com/api/v3';
+            endpoint = endpoint + '/api/v3/chat/completions?target=' + encodeURIComponent(target);
+            // model 用豆包默认
+            model = cfg.model && cfg.model.indexOf('http') !== 0 ? cfg.model : 'doubao-seed-1-6-250615';
+        } else {
+            endpoint = cfg.endpoint || preset.endpoint;
+            if (!endpoint) throw new Error('未填写接口地址');
+        }
         var isSite = cfg.provider === 'site' || endpoint === '/api/chat';
-        var isOllama = cfg.provider === 'ollama' || (endpoint && endpoint.indexOf('ollama') >= 0);
+        var isOllama = cfg.provider === 'ollama' || (endpoint && endpoint.indexOf('ollama') >= 0) || isProxy;
         var headers = { 'Content-Type': 'application/json' };
+        // proxy 模式：如果用户填了 key 就带上（转发给后端），没填就不带
         if (!isSite && !isOllama && cfg.key) headers['Authorization'] = 'Bearer ' + cfg.key;
+        if (isProxy && cfg.key) headers['Authorization'] = 'Bearer ' + cfg.key;
 
         // 用 Promise.race 加 60s 超时
         var fetchPromise = fetch(endpoint, {
@@ -2574,15 +2590,16 @@
             '      <div class="pl-ai-field"><label>服务商</label><select id="plAiProvider">',
             '        <option value="site">站点 AI（豆包 / DeepSeek，无需填 Key）</option>',
             '        <option value="builtin">内置规划引擎（适合简单改行程）</option>',
-            '        <option value="ollama">本地 Ollama 开源大模型（无需 Key，需启动服务）</option>',
-            '        <option value="doubao">豆包 · 火山方舟（自己的 Key）</option>',
-            '        <option value="deepseek">DeepSeek（自己的 Key）</option>',
-            '        <option value="kimi">Kimi · 月之暗面（自己的 Key）</option>',
-            '        <option value="glm">智谱 GLM（自己的 Key）</option>',
+            '        <option value="proxy">Cloudflare Worker 代理（推荐部署一次）</option>',
+            '        <option value="ollama">本地 Ollama 开源大模型（无需 Key，电脑上跑）</option>',
+            '        <option value="doubao">豆包 · 火山方舟（自己的 Key + 需代理）</option>',
+            '        <option value="deepseek">DeepSeek（自己的 Key + 需代理）</option>',
+            '        <option value="kimi">Kimi · 月之暗面（自己的 Key + 需代理）</option>',
+            '        <option value="glm">智谱 GLM（自己的 Key + 需代理）</option>',
             '        <option value="custom">自定义 OpenAI 兼容接口 / 代理</option>',
             '      </select></div>',
-            '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="https://ark.cn-beijing.volces.com/api/v3/chat/completions"></div>',
-            '      <div class="pl-ai-field"><label>模型 / 推理接入点 ID</label><input id="plAiModel" type="text" placeholder="doubao-seed-1-6-250615"></div>',
+            '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="Cloudflare Worker：https://xxx.workers.dev  或 豆包/DeepSeek 完整 URL"></div>',
+            '      <div class="pl-ai-field"><label>模型 / 推理接入点 ID</label><input id="plAiModel" type="text" placeholder="豆包: doubao-seed-1-6-250615 或 完整 target URL 如 https://api.deepseek.com/api/v0"></div>',
             '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="只存本机 localStorage" autocomplete="off"></div>',
             '      <div class="pl-ai-btns"><button class="pl-btn-primary" id="plAiSave">保存</button><button class="pl-btn-ghost" id="plAiClear">清除</button></div>',
             '    </div>',

@@ -1,0 +1,15 @@
+name = "myl-ai-proxy"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Cloudflare Worker 免费 tier 足够个人用（50万请求/天，10ms CPU/请求）
+# 部署：
+#   1. Cloudflare Dashboard → Workers & Pages → Create application → Create Worker
+#   2. 粘 worker.js 内容 → Save & Deploy
+#   3. 得到一个类似 https://myl-ai-proxy.xxx.workers.dev 的 URL
+#   4. 在 MYL 网站 AI 助手 → ⚙️ → endpoint 填这个 URL + /api/v3/chat/completions
+#      或者选「自定义代理」把完整 endpoint 粘进去
+#
+# 默认代理豆包火山方舟：target 参数可指定其他后端
+# ?target=https://api.deepseek.com/api/v0 就能转发 DeepSeek
+# ?target=https://api.moonshot.cn/v1 就能转发 Kimi
