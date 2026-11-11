@@ -26,6 +26,7 @@
     <link rel="preload" href="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" as="image" fetchpriority="high" />
 
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="planner.css?v=20261111" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet" />
@@ -44,9 +45,10 @@
                 <a href="#loops" class="nav-mobile-only">爆点环线</a>
                 <a href="#destinations">出境游</a>
                 <a href="#china">国内游</a>
+                <a href="#provinces">省级旅游地</a>
+                <a href="#plannerApp"><i class="fas fa-robot"></i> AI 定制</a>
                 <a href="#routes">线路方案</a>
                 <a href="#tours">精选套餐</a>
-                <a href="#provinces">省级旅游地</a>
                 <a href="#features">特色服务</a>
                 <a href="#visa-services"><i class="fas fa-passport"></i> 签证服务</a>
                 <a href="#contact">联系我们</a>
@@ -594,6 +596,9 @@
         </div>
     </section>
 
+    <!-- ========== MYL AI 行程定制 ========== -->
+    <div id="plannerApp"></div>
+
     <!-- ========== 旅游套餐 ========== -->
     <section class="section tours" id="tours">
         <div class="container">
@@ -1076,11 +1081,12 @@
         </div>
     </div>
 
-    <script src="vendor/leaflet/leaflet.js?v=20261110m"></script>
-    <script src="map-coords.js?v=20261110m"></script>
-    <script src="city-data.js?v=20261110m"></script>
-    <script src="loop-data.js?v=20261110m"></script>
-    <script src="script.js?v=20261110m"></script>
-    <script src="province-data-all.js?v=20261110m"></script>
+    <script src="vendor/leaflet/leaflet.js?v=20261111"></script>
+    <script src="map-coords.js?v=20261111"></script>
+    <script src="city-data.js?v=20261111"></script>
+    <script src="loop-data.js?v=20261111"></script>
+    <script src="planner.js?v=20261111"></script>
+    <script src="script.js?v=20261111"></script>
+    <script src="province-data-all.js?v=20261111"></script>
 </body>
 </html>

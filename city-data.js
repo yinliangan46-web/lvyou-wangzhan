@@ -16182,5 +16182,215 @@ window.CITY_DETAIL = {
         "platform": "携程/12306"
       }
     ]
+  },
+  "luan": {
+    "name": "六安",
+    "country": "中国·安徽",
+    "days": "4天3晚",
+    "tags": ["国内", "安徽", "大别山", "生态", "红色"],
+    "routePins": ["六安古城墙", "月亮岛", "天堂寨", "万佛湖", "大别山主峰白马尖", "霍山石斛谷", "燕子河大峡谷"],
+    "airfare": [],
+    "hotels": [
+      {
+        "name": "六安曙光铂尊酒店",
+        "tier": "luxury",
+        "price": "¥550-750/晚",
+        "area": "金安区·市中心",
+        "highlight": "商务五星，近月亮岛，健身房泳池齐全",
+        "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?city=47&checkin=2026-11-15&checkout=2026-11-16&keyword=%E5%85%AD%E5%AE%89%E6%9B%99%E5%85%89%E9%93%82%E5%B0%8A"
+      },
+      {
+        "name": "六安维也纳国际酒店",
+        "tier": "comfortable",
+        "price": "¥260-360/晚",
+        "area": "裕安区·火车站商圈",
+        "highlight": "近高铁六安站，维也纳标准配置",
+        "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?city=47&checkin=2026-11-15&checkout=2026-11-16&keyword=%E7%BB%B4%E4%B9%9F%E7%BA%B3"
+      },
+      {
+        "name": "天堂寨度假山庄",
+        "tier": "comfortable",
+        "price": "¥320-420/晚",
+        "area": "金寨县·天堂寨景区内",
+        "highlight": "紧邻景区入口，推窗见山，空气极佳",
+        "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?city=47&checkin=2026-11-15&checkout=2026-11-16&keyword=%E5%A4%A9%E5%A0%82%E5%AF%A8"
+      },
+      {
+        "name": "万佛湖环湖民宿",
+        "tier": "economy",
+        "price": "¥180-260/晚",
+        "area": "舒城县·万佛湖边",
+        "highlight": "湖景房+农家菜，体验慢生活",
+        "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
+        "bookingUrl": "https://hotels.ctrip.com/hotels/list?city=47&checkin=2026-11-15&checkout=2026-11-16&keyword=%E4%B8%87%E4%BD%9B%E6%B9%96"
+      }
+    ],
+    "transport": [
+      {
+        "label": "进出六安",
+        "value": "合肥新桥机场→六安高铁专线（¥60/人·1.5小时）；合肥南站→六安站高铁（最快30分钟·¥57）；上海/南京均有直达高铁"
+      },
+      {
+        "label": "市区交通",
+        "value": "滴滴/出租车起步¥8；公交¥1；月亮岛有步行桥连通淠河两岸"
+      },
+      {
+        "label": "大别山景区",
+        "value": "六安→天堂寨约200km·大巴2.5小时·¥45；建议包车¥400-600/天更方便"
+      },
+      {
+        "label": "万佛湖",
+        "value": "六安→舒城万佛湖约80km·大巴1.5小时·¥20"
+      }
+    ],
+    "foods": [
+      {
+        "name": "皖西大白鹅",
+        "desc": "六安招牌名菜，鹅肉紧实鲜嫩，配生姜炖煲汤最鲜",
+        "price": "¥80-160/份",
+        "bookingUrl": "https://food.ctrip.com/foodlist?cityId=47&keyword=%E5%A4%A7%E7%99%BD%E9%B9%85"
+      },
+      {
+        "name": "金寨吊锅",
+        "desc": "大别山特色，吊锅炖土鸡/腊肉/笋干，配锅巴饭一绝",
+        "price": "¥150-220/锅",
+        "bookingUrl": "https://food.ctrip.com/foodlist?cityId=47&keyword=%E5%90%8A%E9%94%85"
+      },
+      {
+        "name": "蒿子粑粑",
+        "desc": "清明前后白蒿+米粉做的传统小吃，蒸/煎都香",
+        "price": "¥3-8/个"
+      },
+      {
+        "name": "六安锅贴",
+        "desc": "六安人早餐标配，皮薄馅大，底部金黄酥脆",
+        "price": "¥1-2/个"
+      },
+      {
+        "name": "万佛湖鱼头汤",
+        "desc": "用万佛湖野生花鲢鱼头炖汤，奶白色汤汁鲜甜",
+        "price": "¥60-120/份"
+      },
+      {
+        "name": "六安瓜片茶",
+        "desc": "中国十大名茶，明清贡茶，形似瓜子片，清香回甘",
+        "price": "¥120-600/斤",
+        "bookingUrl": "https://www.ctrip.com/"
+      }
+    ],
+    "tips": [
+      "天堂寨海拔1729米，早晚温差10°C以上，务必带厚外套",
+      "山区天气多变，5-7月雨季常见，建议随身携带雨具",
+      "登山务必穿防滑运动鞋，部分路段坡度大",
+      "六安瓜片和霍山石斛是本地特产，买茶叶认准'六安瓜片'地理标志",
+      "天堂寨门票¥108，索道往返¥130（建议买，省体力）",
+      "万佛湖门票含船票¥65，环湖徒步约15公里需4-5小时"
+    ],
+    "budget": [
+      {"label": "高铁/交通", "value": "¥60-300"},
+      {"label": "住宿", "value": "¥200-600/晚×3"},
+      {"label": "餐饮", "value": "¥80-150/天"},
+      {"label": "景点门票", "value": "约¥300"},
+      {"label": "合计/人", "value": "¥1,200-2,500"}
+    ],
+    "flights": [],
+    "trains": [
+      {
+        "from": "合肥",
+        "to": "六安",
+        "price": "¥57起",
+        "time": "最快30分钟",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%90%88%E8%82%A5&aStation=%E5%85%AD%E5%AE%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "上海",
+        "to": "六安",
+        "price": "¥199起",
+        "time": "最快2小时",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E4%B8%8A%E6%B5%B7&aStation=%E5%85%AD%E5%AE%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "南京",
+        "to": "六安",
+        "price": "¥148起",
+        "time": "最快1.5小时",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8D%97%E4%BA%AC&aStation=%E5%85%AD%E5%AE%89",
+        "platform": "携程/12306"
+      },
+      {
+        "from": "北京",
+        "to": "六安",
+        "price": "¥450起",
+        "time": "最快4小时",
+        "bookingUrl": "https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=%E5%8C%97%E4%BA%AC&aStation=%E5%85%AD%E5%AE%89",
+        "platform": "携程/12306"
+      }
+    ],
+    "itinerary": [
+      {
+        "day": "Day 1",
+        "theme": "抵达六安·古城墙·月亮岛夜景",
+        "timeline": [
+          {"time": "10:00", "activity": "抵达六安站", "detail": "高铁到站，打车/接站到酒店"},
+          {"time": "11:00", "activity": "入住酒店", "detail": "推荐住市中心曙光铂尊，放下行李"},
+          {"time": "14:00", "activity": "六安古城墙", "detail": "始建于北宋，现存800余米，免费游览"},
+          {"time": "16:00", "activity": "淠史杭水利工程展示馆", "detail": "了解新中国最大灌区的建设历史"},
+          {"time": "18:30", "activity": "月亮岛夜游", "detail": "淠河上的小岛，傍晚白鹭飞翔，夜景漂亮"},
+          {"time": "20:00", "activity": "皖西大白鹅晚餐", "detail": "市区老字号餐厅品六安招牌菜"}
+        ]
+      },
+      {
+        "day": "Day 2",
+        "theme": "天堂寨大峡谷·瀑布群",
+        "timeline": [
+          {"time": "07:00", "activity": "出发天堂寨", "detail": "包车/大巴约2.5小时抵达"},
+          {"time": "10:00", "activity": "白马大峡谷", "detail": "白马潭漂流+峡谷徒步，水清澈见底", "ticket": "¥60"},
+          {"time": "13:00", "activity": "景区午餐", "detail": "天堂寨吊锅土菜"},
+          {"time": "14:30", "activity": "瀑布群景区", "detail": "一号到九号瀑布串连，落差达80米壮观", "ticket": "¥108"},
+          {"time": "17:00", "activity": "玻璃栈道", "detail": "悬崖上的空中走廊，胆大者必玩", "ticket": "¥30"},
+          {"time": "18:30", "activity": "入住天堂寨山庄", "detail": "景区内酒店，晚上听虫鸣"}
+        ]
+      },
+      {
+        "day": "Day 3",
+        "theme": "天堂寨主峰·万佛湖",
+        "timeline": [
+          {"time": "06:30", "activity": "登天堂寨主峰", "detail": "华东最后一片原始森林，云海日出极美"},
+          {"time": "09:00", "activity": "下山·早餐", "detail": "坐索道下山省体力"},
+          {"time": "10:30", "activity": "前往万佛湖", "detail": "大巴约1.5小时抵达舒城万佛湖"},
+          {"time": "12:00", "activity": "万佛湖午餐", "detail": "吃万佛湖野生鱼头汤"},
+          {"time": "14:00", "activity": "万佛湖游船", "detail": "乘游船登岛，看湖中72座岛屿星罗棋布", "ticket": "¥65含船"},
+          {"time": "17:30", "activity": "返回六安市区", "detail": "大巴约1.5小时"},
+          {"time": "19:00", "activity": "告别晚餐", "detail": "品六安瓜片茶+六安特色小吃"}
+        ]
+      },
+      {
+        "day": "Day 4",
+        "theme": "霍山石斛谷·燕子河大峡谷·返程",
+        "timeline": [
+          {"time": "08:00", "activity": "霍山石斛种植基地", "detail": "参观名贵中药材，了解仿野生种植技术", "ticket": "免费"},
+          {"time": "10:30", "activity": "燕子河大峡谷", "detail": "华东独有的高山峡谷，看天坑", "ticket": "¥60"},
+          {"time": "13:00", "activity": "景区午餐", "detail": "金寨吊锅+蒿子粑粑"},
+          {"time": "15:00", "activity": "返回六安市区", "detail": "路上买伴手礼（六安瓜片/石斛/大白鹅）"},
+          {"time": "17:00", "activity": "六安站返程", "detail": "高铁送站，结束行程"}
+        ]
+      }
+    ],
+    "pois": [
+      {"name": "六安古城墙", "coords": [116.5142, 31.7383], "type": "历史", "desc": "北宋始建，现存800余米，免费"},
+      {"name": "月亮岛", "coords": [116.5060, 31.7430], "type": "休闲", "desc": "淠河小岛，傍晚白鹭飞翔，夜景好"},
+      {"name": "天堂寨", "coords": [115.8036, 31.1751], "type": "自然", "desc": "华东最后一片原始森林，主峰1729米，门票¥108"},
+      {"name": "万佛湖", "coords": [116.7612, 31.3016], "type": "湖泊", "desc": "安徽千岛湖，72岛屿，门票+船票¥65"},
+      {"name": "大别山主峰白马尖", "coords": [116.1360, 31.0930], "type": "登山", "desc": "大别山主峰1774米，云海日出"},
+      {"name": "霍山石斛谷", "coords": [116.2802, 31.2738], "type": "文化", "desc": "名贵中药材种植基地，可参观品鉴"},
+      {"name": "燕子河大峡谷", "coords": [115.8820, 31.1560], "type": "自然", "desc": "华东独有的高山峡谷，天坑奇观，门票¥60"},
+      {"name": "白马大峡谷", "coords": [115.8100, 31.1720], "type": "漂流", "desc": "白马潭漂流+峡谷徒步，水极清"},
+      {"name": "淠史杭展示馆", "coords": [116.5180, 31.7350], "type": "文化", "desc": "新中国最大灌区建设历史，免费"}
+    ]
   }
 };
