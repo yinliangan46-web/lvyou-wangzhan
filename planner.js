@@ -407,7 +407,7 @@
                 var extra = CITY_EXTRA_COORDS[city + '·' + name];
                 var c = R[city + '·' + name] || R[name] || extra;
                 if (c && (!isFinite(c[0]) || !isFinite(c[1]))) c = null;
-                if (c && distKm(c, center) > 400) c = null;
+                if (c && distKm(c, center) > 600) c = null;   // 超过 600km 视为脏数据；敦煌/羌塘等远景点保留
                 if (!c) c = approxCoord(name, center, idx);   // 没有精确坐标：按城市范围近似，保证可搜索可排线
                 seen[name] = 1;
                 items.push({
