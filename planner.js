@@ -1009,6 +1009,7 @@
             { subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 3, attribution: '&copy; 高德地图' }).addTo(map);
 
         var bounds = [], globalNo = 0, legend = [];
+        var prevPt = null;
         plan.daysList.forEach(function (d, di) {
             var color = DAY_COLORS[di % DAY_COLORS.length];
             var pts = [];
@@ -1016,9 +1017,16 @@
                 var g = wgs2gcj(p.lng, p.lat);
                 pts.push([g[1], g[0]]);
             });
+            // 跨天衔接：把上一天最后一个点和今天第一个点连起来（虚线），保证整条路线连续
+            if (prevPt && pts.length) {
+                L.polyline([prevPt, pts[0]], {
+                    color: color, weight: 3, opacity: .7, dashArray: '7 8', lineJoin: 'round'
+                }).addTo(map);
+            }
             if (pts.length > 1) {
                 L.polyline(pts, { color: color, weight: 4, opacity: .88, lineJoin: 'round' }).addTo(map);
             }
+            if (pts.length) prevPt = pts[pts.length - 1];
             d.pois.forEach(function (p, i) {
                 globalNo++;
                 var ll = pts[i];

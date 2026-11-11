@@ -1694,7 +1694,10 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
     } else if (dd && dd.routePins && dd.routePins.length >= 2) {
         routePins = dd.routePins;
     } else {
-        routePins = ['抵达' + cityName + '站（高铁/机场）', _realPoi[0], _realPoi[1], _realPoi[2], cityName + '夜市/夜景'];
+        // 只用真实景点名，不再拼「XX夜市/夜景」这类虚构地点
+        var _lmList = (_knownDict[cityName] || _knownDict[cityKey] || []).slice(0, 4);
+        if (!_lmList.length) _lmList = _realPoi.filter(Boolean);
+        routePins = ['抵达' + cityName + '站（高铁/机场）'].concat(_lmList);
     }
 
     // === 决定 coords（景点坐标数组）===
@@ -1709,51 +1712,48 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
         coordsArr = Array.isArray(dd.coords[0]) ? dd.coords : [dd.coords];
     }
 
-    // === 坐标发散器：确保有 routePins.length 个不同的点来画 polyline ===
-    // 问题：Photon 经常只返回 1 个坐标（市中心），导致 polyline 不画
-    (function spreadCoords() {
-        if (!coordsArr || !coordsArr.length) return;
-        const center = coordsArr[0];
-        const n = routePins ? routePins.length : 5;
-        const baseDistKm = 2.5; // 第一个发散点 2.5km
-        const stepDistKm = 1.5; // 每个点递增 1.5km
-        const angleStep = 360 / Math.max(n, 3); // 均匀分散
+    // === 坐标：优先真实景点坐标；缺失的才按市中心就近发散（保证能画线）===
+    (function resolveCoords() {
+        if (!routePins || !routePins.length) return;
+        const _R = window.REAL_POI_COORDS || {};
+        const _CC = window.ALL_CITY_COORDS || {};
+        const center = (coordsArr[0] && isFinite(coordsArr[0][0])) ? coordsArr[0]
+            : (_CC[cityName] || null);
+        if (!center) { coordsArr = []; return; }
 
-        // 先清掉重复/无效点
-        const valid = coordsArr.filter(c => c && c.length === 2 && isFinite(c[0]) && isFinite(c[1]));
-        if (!valid.length) { coordsArr = []; return; }
+        const kmOf = function (a, b) {
+            const Rr = 6371;
+            const dl = (b[1] - a[1]) * Math.PI / 180, dg = (b[0] - a[0]) * Math.PI / 180;
+            const l1 = a[1] * Math.PI / 180, l2 = b[1] * Math.PI / 180;
+            const h = Math.sin(dl / 2) ** 2 + Math.cos(l1) * Math.cos(l2) * Math.sin(dg / 2) ** 2;
+            return 2 * Rr * Math.asin(Math.sqrt(h));
+        };
 
-        // 检查是否有重复（连续相同）或长度不足
-        const unique = [];
-        for (let i = 0; i < valid.length; i++) {
-            const last = unique[unique.length - 1];
-            if (!last || last[0] !== valid[i][0] || last[1] !== valid[i][1]) {
-                unique.push(valid[i]);
-            }
+        const existing = (coordsArr || []).filter(c => c && isFinite(c[0]) && isFinite(c[1]));
+        const allSame = existing.length > 1 && existing.every(c => kmOf(c, existing[0]) < 0.3);
+        // 已有坐标数量足够且确实分散（如境外城市的精确途经点）时沿用
+        if (existing.length >= routePins.length && !allSame) {
+            coordsArr = existing.slice(0, routePins.length);
+            return;
         }
-        coordsArr = unique;
 
-        if (coordsArr.length >= n) return; // 已经够了
-
-        // 地理常量
-        const latRad = center[1] * Math.PI / 180;
         const kmPerDegLat = 111.32;
-        const kmPerDegLng = 111.32 * Math.cos(latRad);
-
-        // 从已有点之后，继续发散填充到 n 个
-        let idx = coordsArr.length;
-        while (coordsArr.length < n) {
-            const angleDeg = (idx * angleStep) % 360;
-            const angleRad = angleDeg * Math.PI / 180;
-            const distKm = baseDistKm + (idx - valid.length) * stepDistKm;
-            const dLat = (distKm * Math.cos(angleRad)) / kmPerDegLat;
-            const dLng = (distKm * Math.sin(angleRad)) / kmPerDegLng;
-            coordsArr.push([
-                +(center[0] + dLng).toFixed(4),
-                +(center[1] + dLat).toFixed(4)
-            ]);
-            idx++;
-        }
+        const kmPerDegLng = 111.32 * Math.cos(center[1] * Math.PI / 180);
+        let fill = 0;
+        coordsArr = routePins.map(function (pin, i) {
+            if (i === 0) return [center[0], center[1]];
+            const c = _R[cityName + '·' + pin] || _R[pin];
+            if (c && isFinite(c[0]) && isFinite(c[1]) && kmOf(c, center) <= 400) {
+                return [c[0], c[1]];
+            }
+            const ang = ((fill * 137.5) % 360) * Math.PI / 180;
+            const dist = 6 + (fill % 4) * 3;
+            fill++;
+            return [
+                +(center[0] + dist * Math.cos(ang) / kmPerDegLng).toFixed(4),
+                +(center[1] + dist * Math.sin(ang) / kmPerDegLat).toFixed(4)
+            ];
+        });
     })();
 
     // === 决定 itinerary ===
