@@ -7954,6 +7954,10 @@ window.LOOP_ROUTES = [
     window.syncCityData = function(data) {
     if (!data) return;
 if (!data.itinerary || !data.itinerary.length) return;
+            // 境外城市（伦敦/巴黎/东京/纽约…）：city-data 里的 routePins/coords 是人工精编的真实坐标，
+            // 这里重算会走「中国境内」兜底逻辑（找不到坐标就填 116.4,39.9 北京），
+            // 导致伦敦景点全跑到北京，直接跳过同步。
+            if (data.country && !/中国|China/i.test(data.country)) return;
             var isTransportHub = function(s) {
                 return /机场|北站|东站|南站|西站|火车站|高铁站|车站|HK机场/.test(s);
             };

@@ -2446,6 +2446,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             Object.keys(window.CITY_DETAIL || {}).forEach(function(k) {
                 var d = window.CITY_DETAIL[k];
+                // 境外城市跳过同步：重算会把真实坐标替换成北京兜底
+                if (d && d.country && !/中国|China/i.test(d.country)) return;
                 if (d && d.itinerary && d.itinerary.length >= 2) {
                     d._cityKey = k;
                     try { window.syncCityData(d); } catch(e) {}

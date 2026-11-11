@@ -1005,8 +1005,20 @@
         if (state.map) { try { state.map.remove(); } catch (e) { } state.map = null; }
         var map = L.map(el, { scrollWheelZoom: false, zoomControl: true });
         state.map = map;
-        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-            { subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 3, attribution: '&copy; 高德地图' }).addTo(map);
+        // 行程包含境外城市时高德底图无境外细节（会是一片空白），改用 OSM 全球底图
+        var hasAbroad = false;
+        plan.daysList.forEach(function (d) {
+            (d.pois || []).forEach(function (p) {
+                if (p.lng < 72 || p.lng > 137.9 || p.lat < 0.5 || p.lat > 55.5) hasAbroad = true;
+            });
+        });
+        if (hasAbroad) {
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                { maxZoom: 19, minZoom: 2, attribution: '&copy; OpenStreetMap' }).addTo(map);
+        } else {
+            L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+                { subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 3, attribution: '&copy; 高德地图' }).addTo(map);
+        }
 
         var bounds = [], globalNo = 0, legend = [];
         var prevPt = null;
@@ -1497,38 +1509,94 @@
             return { reply: reply, actions: actions };
         }
 
-        /* ---- 指定两地：航班 / 高铁查询 ---- */
-        if (/(怎么去|怎么到|坐什么|查.*(航班|机票|高铁|动车|车票|票))|((航班|机票|高铁|动车|火车).*(多少钱|价格|几小时))/.test(text)) {
-            var cs2 = cityListInText(text);
-            var from = cs2[0] || state.cities[0];
-            var to = cs2[1] || (cs2.length ? null : state.cities[1]);
+        /* ---- 指定两地：航班 / 高铁 / 酒店 / 美食（国内外通用） ---- */
+        var _cs2 = cityListInText(text);
+        var _routeAsk = _cs2.length >= 2 || /(从|由).{1,12}(到|去|飞|前往)/.test(text);
+        if (_routeAsk && !/(哪个|还是|比较|值得|好玩|推荐哪个)/.test(text)) {
+            var from = _cs2[0] || state.cities[0];
+            var to = _cs2[1] || (state.cities.length > 1 ? state.cities[1] : null);
             if (!from || !to) {
-                return { reply: '告诉我「从哪到哪」，比如「杭州到敦煌怎么去」，我给你高铁/航班的时长、价格和订票入口。', actions: actions };
+                return { reply: '告诉我「从哪到哪」，比如「从长沙到伦敦」，我给你航班、酒店和当地美食。', actions: actions };
             }
+            if (from === to) return { reply: '出发地和目的地一样啦，换一个目的地试试。', actions: actions };
+
             var leg = intercity(from, to);
-            var flyH = leg.km / 700 + 2.2, trainH = leg.km / 230 + 0.6;
-            var flyC = Math.round(leg.km * 0.55 + 180), trainC = Math.round(leg.km * 0.46 + 15);
-            var flyLink = 'https://flights.ctrip.com/online/list/oneway-' + encodeURIComponent(from) + '-' + encodeURIComponent(to);
-            var trainLink = 'https://trains.ctrip.com/TrainBooking/SearchTrain.aspx?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
-            reply = '<b>' + esc(from) + ' → ' + esc(to) + '</b>，约 ' + num(leg.km) + ' km：<br>' +
-                '· ✈️ 飞机：约 ' + flyH.toFixed(1) + ' 小时（含往返机场），参考 ¥' + num(flyC) + ' · ' +
+            var _first = function (c) { var it = CATALOG[c] && CATALOG[c].items && CATALOG[c].items[0]; return it || null; };
+            var _inCN = function (c) { var it = _first(c); return !it || (it.lng > 72 && it.lng < 138 && it.lat > 17 && it.lat < 54.5); };
+            var isCN = _inCN(from) && _inCN(to);
+            var IATA = {
+                '北京': 'BJS', '上海': 'SHA', '广州': 'CAN', '深圳': 'SZX', '成都': 'CTU', '杭州': 'HGH', '南京': 'NKG', '武汉': 'WUH',
+                '西安': 'XIY', '重庆': 'CKG', '青岛': 'TAO', '厦门': 'XMN', '昆明': 'KMG', '天津': 'TSN', '郑州': 'CGO', '沈阳': 'SHE',
+                '大连': 'DLC', '哈尔滨': 'HRB', '济南': 'TNA', '乌鲁木齐': 'URC', '长沙': 'CSX', '福州': 'FOC', '南宁': 'NNG',
+                '伦敦': 'LON', '巴黎': 'PAR', '东京': 'TYO', '纽约': 'NYC', '迪拜': 'DXB', '曼谷': 'BKK', '新加坡': 'SIN', '首尔': 'SEL',
+                '洛杉矶': 'LAX', '旧金山': 'SFO', '悉尼': 'SYD', '罗马': 'ROM', '巴塞罗那': 'BCN', '阿姆斯特丹': 'AMS',
+                '法兰克福': 'FRA', '莫斯科': 'MOW', '伊斯坦布尔': 'IST', '香港': 'HKG', '台北': 'TPE', '巴厘岛': 'DPS'
+            };
+            var _code = function (c) { return IATA[c] || null; };
+            var flyLink = (_code(from) && _code(to))
+                ? 'https://flights.ctrip.com/online/list/oneway-' + _code(from).toLowerCase() + '-' + _code(to).toLowerCase()
+                : 'https://flights.ctrip.com/online/channel/international';
+            var hotelLink = 'https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(to);
+            var foodLink = 'https://you.ctrip.com/searchsite/food/?query=' + encodeURIComponent(to);
+
+            // 目的地资料（酒店/美食/提示）
+            var det = null;
+            try {
+                Object.keys(window.CITY_DETAIL || {}).forEach(function (k) {
+                    var d = window.CITY_DETAIL[k];
+                    if (d && d.name === to) det = d;
+                });
+            } catch (e) { }
+            var foods = (det && det.foods || []).slice(0, 3);
+            var foodTxt = foods.length
+                ? foods.map(function (f) { return esc(f.name) + (f.price ? '（' + esc(f.price) + '）' : ''); }).join('、')
+                : '当地招牌菜、特色小吃和夜市';
+            var hotelTxt = det && det.hotels && det.hotels.length
+                ? det.hotels.slice(0, 2).map(function (h) { return esc(h.name || h); }).join('、')
+                : (isCN ? '市中心连锁酒店 ¥300-600/晚' : '市中心 4 星 ¥700-1500/晚');
+
+            if (isCN) {
+                var flyH = leg.km / 700 + 2.2, trainH = leg.km / 230 + 0.6;
+                var flyC = Math.round(leg.km * 0.55 + 180), trainC = Math.round(leg.km * 0.46 + 15);
+                var trainLink = 'https://trains.ctrip.com/TrainBooking/SearchTrain.aspx?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
+                reply = '<b>' + esc(from) + ' → ' + esc(to) + '</b>，约 ' + num(leg.km) + ' km：<br>' +
+                    '· ✈️ 飞机：约 ' + flyH.toFixed(1) + ' 小时（含往返机场），参考 ¥' + num(flyC) + ' · ' +
+                    '<a href="' + flyLink + '" target="_blank" rel="noopener">携程查航班 →</a><br>' +
+                    '· 🚄 高铁：约 ' + trainH.toFixed(1) + ' 小时，参考 ¥' + num(trainC) + ' · ' +
+                    '<a href="' + trainLink + '" target="_blank" rel="noopener">携程查高铁 →</a><br>' +
+                    '· 🏨 酒店：' + hotelTxt + ' · <a href="' + hotelLink + '" target="_blank" rel="noopener">携程查酒店 →</a><br>' +
+                    '· 🍜 美食：' + foodTxt + ' · <a href="' + foodLink + '" target="_blank" rel="noopener">携程找餐厅 →</a><br>' +
+                    (leg.km > 900 ? '距离较远，建议飞机，能省 4 小时以上。' : '距离不远，高铁更省心，市区到市区不用提前值机。');
+                return {
+                    reply: reply, actions: actions,
+                    cards: [
+                        { type: 'flight', title: from + ' → ' + to + ' · 飞机', meta: '约 ' + flyH.toFixed(1) + ' 小时（含往返机场）· 每日多班', price: '¥' + num(flyC) + ' 起', link: flyLink, linkText: '携程查航班', apply: 'flight' },
+                        { type: 'train', title: from + ' → ' + to + ' · 高铁', meta: '约 ' + trainH.toFixed(1) + ' 小时 · 建议选上午班次', price: '¥' + num(trainC) + ' 起', link: trainLink, linkText: '携程查高铁', apply: 'train' },
+                        { type: 'hotel', title: to + ' · 酒店', meta: hotelTxt, price: isCN ? '¥300 起/晚' : '¥700 起/晚', link: hotelLink, linkText: '携程查酒店' },
+                        { type: 'food', title: to + ' · 必吃美食', meta: foodTxt, price: '人均 ¥50-150', link: foodLink, linkText: '携程找餐厅' }
+                    ]
+                };
+            }
+
+            // 跨国/境外：只有航班，另配酒店与美食（用直线距离估算，避免陆路系数放大）
+            var _ca = CATALOG[from] && CATALOG[from].center;
+            var _cb = CATALOG[to] && CATALOG[to].center;
+            var gcKm = (_ca && _cb) ? Math.round(distKm(_ca, _cb)) : Math.round(leg.km / 1.28);
+            var flyH2 = gcKm / 850 + 2.0;
+            var flyC2 = Math.round(Math.max(2600, gcKm * 0.5) / 100) * 100;
+            var tips = det && det.tips && det.tips.length ? esc(det.tips[0]) : '需护照+签证，建议提前 1-2 个月订票';
+            reply = '<b>' + esc(from) + ' → ' + esc(to) + '</b>，约 ' + num(gcKm) + ' km（直线），跨国行程：<br>' +
+                '· ✈️ 航班：直飞/中转约 ' + flyH2.toFixed(1) + ' 小时，参考 ¥' + num(flyC2) + ' · ' +
                 '<a href="' + flyLink + '" target="_blank" rel="noopener">携程查航班 →</a><br>' +
-                '· 🚄 高铁：约 ' + trainH.toFixed(1) + ' 小时，参考 ¥' + num(trainC) + ' · ' +
-                '<a href="' + trainLink + '" target="_blank" rel="noopener">携程查高铁 →</a><br>' +
-                (leg.km > 900 ? '距离较远，建议飞机，能省 4 小时以上。' : '距离不远，高铁更省心，市区到市区不用提前值机。');
+                '· 🏨 酒店：' + hotelTxt + ' · <a href="' + hotelLink + '" target="_blank" rel="noopener">携程查酒店 →</a><br>' +
+                '· 🍜 美食：' + foodTxt + ' · <a href="' + foodLink + '" target="_blank" rel="noopener">携程找餐厅 →</a><br>' +
+                '· 📌 ' + tips + '。';
             return {
                 reply: reply, actions: actions,
                 cards: [
-                    {
-                        type: 'flight', title: from + ' → ' + to + ' · 飞机',
-                        meta: '约 ' + flyH.toFixed(1) + ' 小时（含往返机场）· 每日多班',
-                        price: '¥' + num(flyC) + ' 起', link: flyLink, linkText: '携程查航班', apply: 'flight'
-                    },
-                    {
-                        type: 'train', title: from + ' → ' + to + ' · 高铁',
-                        meta: '约 ' + trainH.toFixed(1) + ' 小时 · 建议选上午班次',
-                        price: '¥' + num(trainC) + ' 起', link: trainLink, linkText: '携程查高铁', apply: 'train'
-                    }
+                    { type: 'flight', title: from + ' → ' + to + ' · 国际航班', meta: '约 ' + flyH2.toFixed(1) + ' 小时 · 直飞或一次中转', price: '¥' + num(flyC2) + ' 起', link: flyLink, linkText: '携程查航班' },
+                    { type: 'hotel', title: to + ' · 酒店', meta: hotelTxt, price: '¥700 起/晚', link: hotelLink, linkText: '携程查酒店' },
+                    { type: 'food', title: to + ' · 必吃美食', meta: foodTxt, price: '人均 ¥80-200', link: foodLink, linkText: '携程找餐厅' }
                 ]
             };
         }
