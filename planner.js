@@ -33,7 +33,7 @@
         kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k', needsCORSProxy: true },
         glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash', needsCORSProxy: true },
         ollama: { label: '本地 Ollama 开源大模型（无需 Key）', endpoint: 'http://localhost:11434/v1/chat/completions', model: 'qwen2.5:7b', needsCORSProxy: true },
-        proxy: { label: '站点云端 AI（Worker 代理 · 豆包，开箱即用）', endpoint: '', model: '', isProxy: true, target: 'https://ark.cn-beijing.volces.com/api/v3' },
+        proxy: { label: '站点云端 AI（Worker 代理 · 豆包）', endpoint: '', model: '', isProxy: true, target: 'https://ark.cn-beijing.volces.com/api/v3' },
         custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
     };
 
@@ -2632,7 +2632,7 @@
             '      </select></div>',
             '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="Cloudflare Worker：https://xxx.workers.dev  或 豆包/DeepSeek 完整 URL"></div>',
             '      <div class="pl-ai-field"><label>模型 / 推理接入点 ID</label><input id="plAiModel" type="text" placeholder="豆包: doubao-seed-1-6-250615 或 完整 target URL 如 https://api.deepseek.com/api/v0"></div>',
-            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="只存本机 localStorage" autocomplete="off"></div>',
+            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="Worker 端已配 ARK_API_KEY 可留空；否则粘贴豆包 Key（只存本机）" autocomplete="off"></div>',
             '      <div class="pl-ai-btns"><button class="pl-btn-primary" id="plAiSave">保存</button><button class="pl-btn-ghost" id="plAiClear">清除</button></div>',
             '    </div>',
             '  </aside>',
