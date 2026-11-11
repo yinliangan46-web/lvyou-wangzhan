@@ -1340,6 +1340,63 @@
         return names;
     }
 
+    /* ---------- 一日游 / N 日游 意图解析 ---------- */
+    var CN_NUM = { '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+    var PROV_TOP = {
+        '安徽': ['黄山', '徽州', '九华山', '天柱山'], '浙江': ['杭州', '乌镇', '雁荡山', '普陀山'],
+        '江苏': ['南京', '苏州', '无锡', '镇江'], '广东': ['广州', '深圳', '珠海', '肇庆'],
+        '四川': ['成都', '九寨沟', '都江堰', '稻城'], '云南': ['昆明', '大理', '丽江', '香格里拉'],
+        '贵州': ['贵阳', '黄果树', '西江千户苗寨', '梵净山'], '山东': ['济南', '青岛', '泰安', '曲阜'],
+        '河南': ['郑州', '洛阳', '开封', '少林寺'], '河北': ['石家庄', '保定', '承德', '秦皇岛'],
+        '山西': ['太原', '平遥', '大同', '壶口瀑布'], '陕西': ['西安', '华山', '延安', '咸阳'],
+        '甘肃': ['兰州', '敦煌', '张掖', '嘉峪关'], '青海': ['西宁', '青海湖', '茶卡盐湖', '祁连山'],
+        '新疆': ['乌鲁木齐', '喀纳斯', '赛里木湖', '独库公路'], '西藏': ['拉萨', '林芝', '纳木错', '日喀则'],
+        '内蒙古': ['呼和浩特', '呼伦贝尔', '响沙湾', '成吉思汗陵'], '黑龙江': ['哈尔滨', '雪乡', '五大连池', '漠河'],
+        '吉林': ['长春', '长白山', '雾凇岛', '吉林'], '辽宁': ['沈阳', '大连', '鞍山', '丹东'],
+        '湖南': ['长沙', '张家界', '凤凰古城', '衡山'], '湖北': ['武汉', '恩施', '神农架', '武当山'],
+        '江西': ['南昌', '庐山', '婺源', '三清山'], '福建': ['福州', '厦门', '武夷山', '泉州'],
+        '广西': ['桂林', '阳朔', '龙脊梯田', '北海'], '海南': ['海口', '三亚', '蜈支洲岛', '五指山'],
+        '宁夏': ['银川', '贺兰山', '水洞沟', '中卫']
+    };
+    function cnNum(s) {
+        if (!s) return 0;
+        if (/^\d+$/.test(s)) return parseInt(s, 10);
+        if (s.length === 1) return CN_NUM[s] || 0;
+        if (s.charAt(0) === '十') return 10 + (CN_NUM[s.charAt(1)] || 0);
+        if (s.charAt(1) === '十') return (CN_NUM[s.charAt(0)] || 1) * 10 + (CN_NUM[s.charAt(2)] || 0);
+        return CN_NUM[s.charAt(0)] || 0;
+    }
+    // 识别「一日游 / 三日游 / 北京玩 5 天 / 安徽 4 日游」这类"从零生成行程"的请求
+    function parseTripRequest(text) {
+        // 排除"改行程"类指令（加一天、减一天、第三天太赶…）
+        if (/(加|多|少|减|延长|缩短|太赶|太累|改成|换成|第\s*[一二两三四五六七八九十\d]+\s*天)/.test(text)) return null;
+        var days = 0;
+        var m = text.match(/([0-9]{1,2}|[一二两三四五六七八九十]{1,3})\s*(?:日游|日\s*[0-9一二两三四五六七八九十]*\s*夜)/);
+        if (m) days = cnNum(m[1]);
+        if (!days) {
+            var hasVerb = /(帮我|给我|生成|规划|安排|做个|来条|来一个|去|玩|怎么玩|想要|打算|准备)/.test(text);
+            var hasPlace = cityListInText(text).length > 0 ||
+                Object.keys(PROV_TOP).some(function (p) { return text.indexOf(p) >= 0; });
+            if (hasVerb || hasPlace) {
+                m = text.match(/([0-9]{1,2}|[一二两三四五六七八九十]{1,3})\s*天/);
+                if (m) days = cnNum(m[1]);
+            }
+        }
+        if (!days && /一日游|一天游/.test(text)) days = 1;
+        if (!days || days < 1 || days > 20) return null;
+
+        var cities = cityListInText(text).slice(0, 4);
+        if (!cities.length) {
+            var hitProv = Object.keys(PROV_TOP).filter(function (p) { return text.indexOf(p) >= 0; })[0];
+            if (hitProv) cities = PROV_TOP[hitProv].filter(function (c) { return !!CATALOG[c]; }).slice(0, 4);
+        }
+        if (!cities.length) cities = state.cities.slice(0, 4);
+        // 天数不够分给每座城时，砍掉多余城市，保证每城至少 1 天
+        if (cities.length > days) cities = cities.slice(0, days);
+        if (!cities.length) return { days: days, cities: [], needCity: true };
+        return { days: days, cities: cities };
+    }
+
     function localReply(raw) {
         var text = String(raw || '').trim();
         var actions = [], reply = '';
@@ -1365,6 +1422,25 @@
         if (/(清空|重新开始|全部删掉|重来)/.test(text)) {
             actions.push({ type: 'clear' });
             return { reply: '好的，已清空，我们重新开始。先告诉我这次想去哪几座城市？', actions: actions };
+        }
+
+        /* ---- 一日游 / N 日游：一键生成，并在结果区地图上画出路线 ---- */
+        var tripReq = parseTripRequest(text);
+        if (tripReq && tripReq.needCity) {
+            return {
+                reply: '好，给你排 <b>' + tripReq.days + ' 天</b>行程——告诉我去哪座城市或哪个省？<br>' +
+                    '例如「杭州一日游」「安徽 4 日游」「成都玩 3 天」「云南 5 天」。',
+                actions: actions
+            };
+        }
+        if (tripReq) {
+            actions.push({ type: 'planTrip', cities: tripReq.cities, days: tripReq.days });
+            return {
+                reply: '给你排好 <b>' + tripReq.days + ' 天</b>行程：<b>' + esc(tripReq.cities.join(' → ')) + '</b>，' +
+                    '每天安排了顺路的景点，下方行程卡里<b>地图已按顺序画出路线</b>。<br>' +
+                    '接着还能让我「住好点」「第三天别太赶」「预算 5000」「推荐美食」「查高铁」。',
+                actions: actions
+            };
         }
 
         /* ---- 环线一键生成 ---- */
@@ -1808,7 +1884,7 @@
         var notes = [];
         var exitLoopTypes = {
             addCity: 1, removeCity: 1, addPoi: 1, removePoi: 1, replacePoi: 1, setDays: 1,
-            startCity: 1, movePoiTo: 1, addByPref: 1, dropPaid: 1, refreshPois: 1, clear: 1
+            startCity: 1, movePoiTo: 1, addByPref: 1, dropPaid: 1, refreshPois: 1, clear: 1, planTrip: 1
         };
         actions.forEach(function (a) {
             if (!a || !a.type) return;
@@ -1823,6 +1899,28 @@
                         state.days = lp.itinerary.length;
                         notes.push('已生成「' + lp.name + '」' + lp.itinerary.length + ' 天环线');
                     }
+                    break;
+                }
+                case 'planTrip': {
+                    var tCs = (a.cities || []).filter(function (c) { return !!CATALOG[c]; }).slice(0, 4);
+                    if (!tCs.length) { notes.push('没识别到可规划的城市'); break; }
+                    var tDays = Math.max(1, parseInt(a.days, 10) || 1);
+                    if (tCs.length > tDays) tCs = tCs.slice(0, tDays);
+                    state.loop = null;
+                    state.cities = tCs;
+                    state.picks = {};
+                    // 天数按城市均分，剩下的给前面的城市；每城按天数挑景点（每天约 2-3 个）
+                    var perBase = Math.floor(tDays / tCs.length), perExtra = tDays % tCs.length;
+                    var cap = state.pace === 'relaxed' ? 2 : (state.pace === 'packed' ? 4 : 3);
+                    tCs.forEach(function (c, i) {
+                        var d = perBase + (i < perExtra ? 1 : 0);
+                        if (d < 1) d = 1;
+                        var totalPoi = CATALOG[c].items.length;
+                        var want = Math.min(totalPoi, Math.max(2, d * cap));
+                        state.picks[c] = autoPickCity(c, want);
+                    });
+                    state.days = tDays;
+                    notes.push('已生成 ' + tCs.join(' → ') + ' · ' + tDays + ' 天行程');
                     break;
                 }
                 case 'addCity':
@@ -2010,6 +2108,17 @@
             }
             renderAll();
             if (state.plan) saveLocal();
+            // 新生成行程（一日游/多日游）后，把结果卡片滚到视野内，让地图直接可见
+            var askedTrip = false;
+            actions.forEach(function (a) { if (a && a.type === 'planTrip') askedTrip = true; });
+            if (askedTrip && state.plan) {
+                setTimeout(function () {
+                    var rc = $('plResultCard');
+                    if (!rc) return;
+                    try { rc.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                    catch (e3) { rc.scrollIntoView(); }
+                }, 150);
+            }
         }
         return notes.join('；');
     }
@@ -2042,7 +2151,7 @@
             '现成环线：' + (window.LOOP_ROUTES || []).map(function (l) { return l.id + '=' + l.name; }).join('；'),
             '用户可能只是提问（不必改行程），也可能要求生成/修改行程。请只输出一个 JSON 对象，不要 markdown 代码块。格式：',
             '{"reply":"给用户看的中文回复，可用<br>换行","actions":[],"cards":[{"type":"flight|train|hotel|food","title":"标题","meta":"说明","price":"¥xxx","link":"https://...","linkText":"携程查价"}]}',
-            'actions 可选：addCity{city}、removeCity{city}、addPoi{city,poi}、removePoi{city,poi}、replacePoi{city,poi}、setDays{days}、setPace{pace:relaxed|normal|packed}、setHotelTier{tier:budget|comfort|luxury}、setTransport{value:auto|train|flight}、setBudget{amount}、startCity{city}、movePoiTo{city,poi,day}、addByPref{pref:nature|history|food|family|photo}、dropPaid、refreshPois、loadLoop{id}、clear。',
+            'actions 可选：planTrip{cities:[城市1,城市2],days:天数}（用户说"N日游/玩N天"时用于从零生成行程，会自动挑景点并在地图出路线）、addCity{city}、removeCity{city}、addPoi{city,poi}、removePoi{city,poi}、replacePoi{city,poi}、setDays{days}、setPace{pace:relaxed|normal|packed}、setHotelTier{tier:budget|comfort|luxury}、setTransport{value:auto|train|flight}、setBudget{amount}、startCity{city}、movePoiTo{city,poi,day}、addByPref{pref:nature|history|food|family|photo}、dropPaid、refreshPois、loadLoop{id}、clear。',
             '需要用户可以点选航班/高铁/酒店/美食时，用 cards 返回 2-6 张卡，链接使用携程搜索页。',
             '约束：城市最多 4 座；改行程时尽量只使用候选景点或可选城市中的名字；纯知识问答可直接回答，不要硬塞 action。回复要具体、像真人规划师。'
         ].join('\n');
