@@ -282,8 +282,8 @@
             picks[c] = (state.picks[c] || []).filter(function (n) {
                 return CATALOG[c].items.some(function (i) { return i.name === n; });
             });
-            if (picks[c].length < 2) {
-                // 至少补两个经典景点，保证行程可用
+            if (!picks[c].length) {
+                // 只选了城市没选景点时，补两个经典景点保证能出图
                 var sorted = CATALOG[c].items.slice().sort(function (a, b) {
                     return (prefScore(b) * 10 - b.idx) - (prefScore(a) * 10 - a.idx);
                 });
@@ -1233,6 +1233,45 @@
             });
         }
 
+        // 景点搜索（跨城市，选中即上图）
+        var poiInput = $('plPoiInput');
+        var poiSug = $('plPoiSuggest');
+        if (poiInput && poiSug) {
+            var refreshPoi = function () {
+                var q = poiInput.value.trim();
+                if (!q) { poiSug.classList.remove('open'); return; }
+                var hits = searchPois(q);
+                poiSug.innerHTML = hits.length ? hits.map(function (h) {
+                    return '<div class="pl-suggest-item" data-addpoi="' + esc(h.it.name) + '" data-city="' + esc(h.it.city) + '">' +
+                        '<i class="fas fa-map-pin" style="color:#f59e0b"></i><b style="font-weight:600">' + esc(h.it.name) + '</b>' +
+                        '<small>' + esc(h.it.city) + (h.on ? ' · 已选' : '') + '</small></div>';
+                }).join('') : '<div class="pl-suggest-empty">没找到这个景点，换个关键词试试（如"西湖""莫高窟"）</div>';
+                poiSug.classList.add('open');
+            };
+            poiInput.addEventListener('input', refreshPoi);
+            poiInput.addEventListener('focus', refreshPoi);
+            poiInput.addEventListener('keydown', function (e) {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                var first = poiSug.querySelector('[data-addpoi]');
+                if (first) {
+                    addPoiToPlan(first.getAttribute('data-city'), first.getAttribute('data-addpoi'));
+                    poiInput.value = '';
+                    poiSug.classList.remove('open');
+                }
+            });
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.pl-poi-search')) poiSug.classList.remove('open');
+            });
+            poiSug.addEventListener('click', function (e) {
+                var it = e.target.closest('[data-addpoi]');
+                if (!it) return;
+                addPoiToPlan(it.getAttribute('data-city'), it.getAttribute('data-addpoi'));
+                poiInput.value = '';
+                poiSug.classList.remove('open');
+            });
+        }
+
         // 热门城市
         var hot = $('plHot');
         if (hot) hot.addEventListener('click', function (e) {
@@ -1248,8 +1287,8 @@
             var c = b.getAttribute('data-rmcity');
             state.cities = state.cities.filter(function (x) { return x !== c; });
             delete state.picks[c];
-            state.plan = buildPlan();
             renderAll();
+            syncPlan();
             saveLocal();
         });
 
@@ -1292,6 +1331,7 @@
                 if (idx >= 0) state.picks[city].splice(idx, 1);
                 else state.picks[city].push(poi);
                 renderPoiZone();
+                syncPlan();
                 saveLocal();
                 return;
             }
@@ -1302,6 +1342,7 @@
                 if (!cat) return;
                 state.picks[c] = (state.prefs.length ? autoPickCity(c, 4) : cat.items.slice(0, 4).map(function (i) { return i.name; }));
                 renderPoiZone();
+                syncPlan();
                 saveLocal();
             }
         });
@@ -1394,6 +1435,63 @@
         toast('已加入 ' + city + '，默认挑了 ' + state.picks[city].join('、'));
     }
 
+    /* ---------- 跨城景点搜索：搜到即上图 ---------- */
+    var POI_INDEX = null;
+    function poiIndex() {
+        if (POI_INDEX) return POI_INDEX;
+        POI_INDEX = [];
+        Object.keys(CATALOG).forEach(function (c) {
+            CATALOG[c].items.forEach(function (it) {
+                POI_INDEX.push({ city: c, name: it.name, prov: provShort(c) });
+            });
+        });
+        return POI_INDEX;
+    }
+    function searchPois(q) {
+        q = String(q || '').trim();
+        if (!q) return [];
+        var res = [];
+        poiIndex().forEach(function (it) {
+            var sc = -1;
+            if (it.name === q) sc = 0;
+            else if (it.name.indexOf(q) === 0) sc = 1;
+            else if (it.city === q) sc = 2;
+            else if (it.name.indexOf(q) >= 0) sc = 3;
+            else if (it.city.indexOf(q) >= 0) sc = 4;
+            else if (it.prov.indexOf(q) >= 0) sc = 5;
+            if (sc < 0) return;
+            res.push({
+                it: it, sc: sc,
+                on: (state.picks[it.city] || []).indexOf(it.name) >= 0
+            });
+        });
+        res.sort(function (a, b) { return a.sc - b.sc || a.it.name.length - b.it.name.length; });
+        return res.slice(0, 14);
+    }
+    function syncPlan() {
+        var total = 0;
+        state.cities.forEach(function (c) { total += (state.picks[c] || []).length; });
+        state.plan = (state.cities.length && total) ? buildPlan() : null;
+        renderResult();
+    }
+    function addPoiToPlan(city, poi) {
+        if (!CATALOG[city]) return;
+        if (state.cities.indexOf(city) < 0) {
+            if (state.cities.length >= 4) { toast('最多同时安排 4 座城市，先移除一个再搜'); return; }
+            state.cities.push(city);
+            state.picks[city] = [];
+            if (state.days < state.cities.length) state.days = state.cities.length;
+        }
+        var arr = state.picks[city] || (state.picks[city] = []);
+        if (arr.indexOf(poi) >= 0) { toast(poi + ' 已经在行程里了'); return; }
+        arr.push(poi);
+        renderPoiZone();
+        renderCityZone();
+        syncPlan();
+        saveLocal();
+        toast('已加入「' + poi + '」· ' + city + '，地图已更新');
+    }
+
     function updateAgentStatus() {
         var el = $('plAgentStatus');
         if (!el) return;
@@ -1426,7 +1524,8 @@
             '      </div>',
             '    </div>',
             '    <div class="pl-card">',
-            '      <div class="pl-card-head"><span class="pl-step">2</span><div><h3>勾选想去的景点</h3><p>点右侧 + 加入行程，AI 会自动按地理位置排顺路</p></div><div class="pl-poi-actions"><span class="pl-poi-count" id="plPoiCount">已选 0 个景点</span></div></div>',
+            '      <div class="pl-card-head"><span class="pl-step">2</span><div><h3>挑景点 · 生成线路</h3><p>直接搜景点就行（跨城市也可以），选中即上图；也可在下面按城市勾</p></div><div class="pl-poi-actions"><span class="pl-poi-count" id="plPoiCount">已选 0 个景点</span></div></div>',
+            '      <div class="pl-city-search pl-poi-search"><i class="fas fa-magnifying-glass"></i><input id="plPoiInput" type="text" placeholder="搜景点，如：西湖、莫高窟、迪士尼、兵马俑…" autocomplete="off"><div class="pl-suggest" id="plPoiSuggest"></div></div>',
             '      <div class="pl-poi-groups" id="plPoiGroups"></div>',
             '      <div class="pl-cta"><button class="pl-btn-primary" id="plGenerate">✨ 生成我的行程</button><button class="pl-btn-ghost" id="plDemo">看示例</button></div>',
             '    </div>',

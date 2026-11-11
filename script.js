@@ -1364,6 +1364,13 @@ function showOptionDetail(optionId) {
 // Helper: open tour modal with custom data and back link
 
 
+// 占位符（-、—、无、暂无 等）一律视为空，避免渲染成空胶囊
+function _metaText(v) {
+    var s = String(v == null ? '' : v).trim();
+    if (/^(-{1,3}|—+|–+|\/|无|暂无|n\/a|null|undefined)$/i.test(s)) return '';
+    return s;
+}
+
 // ========== 省份弹窗（重写版：带省内城市地图 + 富城市 grid） ==========
 function openProvinceModal(provinceKey) {
     const provData = (window.PROVINCES_ALL || []).find(p => p.key === provinceKey);
@@ -1398,10 +1405,9 @@ function openProvinceModal(provinceKey) {
     const citiesHtml = (provData.cities || []).map(c => {
         const coordOk = !!_cc(c);
         return `
-        <div class="dest-card china-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer">
+        <div class="dest-card china-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer" title="${coordOk ? '查看详情' : '坐标加载中'}">
             <div class="dest-info" style="padding:10px 14px">
                 <h3 style="font-size:0.95rem;margin:0 0 2px 0">${c.name}</h3>
-                <p style="margin:0;font-size:0.75rem;color:${coordOk?'#888':'#ccc'}">${coordOk?'📍 有坐标 · 可进详情':'📍 有坐标 · 可进详情'}</p>
             </div>
         </div>`;
     }).join('');
@@ -1423,10 +1429,10 @@ function openProvinceModal(provinceKey) {
         const tl = (day.timeline || []).map(function(item) {
             // 胶囊：空白内容一律不渲染；price 与 ticket 相同只保留一个；值自带¥则不再加图标
             const meta = [];
-            const dur = String(item.duration || '').trim();
-            const tic = (item.ticket || '').trim ? String(item.ticket || '').trim() : '';
-            const prc = String(item.price || '').trim();
-            const tip = String(item.tip || '').trim();
+            const dur = _metaText(item.duration);
+            const tic = _metaText(item.ticket);
+            const prc = _metaText(item.price);
+            const tip = _metaText(item.tip);
             if (dur) meta.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + esc(dur) + '</span>');
             if (tic) meta.push('<span class="meta-tag ticket">' + (/^[¥￥]/.test(tic) ? '' : '<i class="fas fa-ticket-alt"></i> ') + esc(tic) + '</span>');
             if (prc && prc !== tic) meta.push('<span class="meta-tag">' + (/^[¥￥]/.test(prc) ? '' : '<i class="fas fa-yen-sign"></i> ') + esc(prc) + '</span>');
@@ -1975,7 +1981,7 @@ function openTourModalBack(data, backType) {
     const itinHtml = itineraryData.map(day => {
         const tl = (day.timeline || []).map(item => {
             const m = [];
-            const _dur=String(item.duration||'').trim(),_tic=String(item.ticket||'').trim(),_prc=String(item.price||'').trim(),_tip=String(item.tip||'').trim();
+            const _dur=_metaText(item.duration),_tic=_metaText(item.ticket),_prc=_metaText(item.price),_tip=_metaText(item.tip);
             if (_dur) m.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + _dur + '</span>');
             if (_tic) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + _tic + '</span>');
             if (_prc && _prc!==_tic) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + _prc + '</span>');
@@ -2181,7 +2187,7 @@ function openTourModal(type) {
     const itinHtml = itineraryData.map(day => {
         const tl = (day.timeline || []).map(item => {
             const m = [];
-            const _dur=String(item.duration||'').trim(),_tic=String(item.ticket||'').trim(),_prc=String(item.price||'').trim(),_tip=String(item.tip||'').trim();
+            const _dur=_metaText(item.duration),_tic=_metaText(item.ticket),_prc=_metaText(item.price),_tip=_metaText(item.tip);
             if (_dur) m.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + _dur + '</span>');
             if (_tic) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + _tic + '</span>');
             if (_prc && _prc!==_tic) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + _prc + '</span>');
