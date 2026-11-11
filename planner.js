@@ -286,6 +286,98 @@
         '凉皮': '米皮配醋辣，夏天必吃'
     };
 
+    /* 各城市代表美食，用于每日「吃」板块 */
+    var CITY_FOOD = {
+        '北京': ['北京烤鸭', '炸酱面', '卤煮火烧', '豆汁焦圈'],
+        '上海': ['生煎', '小笼包', '排骨年糕', '葱油面'],
+        '天津': ['煎饼果子', '锅巴菜', '大麻花'],
+        '重庆': ['重庆火锅', '小面', '毛血旺', '酸辣粉'],
+        '哈尔滨': ['红肠', '锅包肉', '杀猪菜', '马迭尔冰棍'],
+        '长春': ['猪肉炖粉条', '雪衣豆沙', '朝鲜族冷面'],
+        '沈阳': ['老边饺子', '鸡架', '李连贵熏肉大饼'],
+        '大连': ['海鲜焖子', '铁板鱿鱼', '海菜包子'],
+        '呼和浩特': ['烧麦', '手把肉', '奶茶', '烤羊腿'],
+        '石家庄': ['金凤扒鸡', '驴肉火烧', '缸炉烧饼'],
+        '太原': ['刀削面', '过油肉', '莜面栲栳栳'],
+        '济南': ['把子肉', '甜沫', '九转大肠', '油旋'],
+        '青岛': ['辣炒蛤蜊', '鲅鱼水饺', '原浆啤酒'],
+        '郑州': ['烩面', '胡辣汤', '蒸饺'],
+        '西安': ['肉夹馍', '羊肉泡馍', 'biangbiang面', '凉皮'],
+        '兰州': ['牛肉面', '酿皮', '灰豆子'],
+        '西宁': ['手抓羊肉', '尕面片', '酸奶'],
+        '银川': ['手抓羊肉', '羊杂碎', '蒿子面'],
+        '乌鲁木齐': ['大盘鸡', '烤包子', '手抓饭'],
+        '拉萨': ['藏面', '甜茶', '牦牛肉', '糌粑'],
+        '成都': ['火锅', '担担面', '钟水饺', '钵钵鸡'],
+        '昆明': ['过桥米线', '汽锅鸡', '烧饵块'],
+        '贵阳': ['肠旺面', '丝娃娃', '酸汤鱼'],
+        '南宁': ['老友粉', '卷筒粉', '柠檬鸭'],
+        '桂林': ['桂林米粉', '啤酒鱼', '恭城油茶'],
+        '海口': ['海南粉', '清补凉', '椰子鸡'],
+        '三亚': ['文昌鸡', '椰子饭', '和乐蟹'],
+        '广州': ['早茶', '肠粉', '烧鹅', '艇仔粥'],
+        '深圳': ['光明乳鸽', '沙井蚝', '肠粉'],
+        '珠海': ['横琴蚝', '斗门重壳蟹', '海鲜粥'],
+        '厦门': ['沙茶面', '土笋冻', '海蛎煎'],
+        '福州': ['鱼丸', '锅边糊', '荔枝肉'],
+        '南昌': ['瓦罐汤', '拌粉', '藜蒿炒腊肉'],
+        '长沙': ['臭豆腐', '糖油粑粑', '口味虾'],
+        '武汉': ['热干面', '豆皮', '鸭脖'],
+        '合肥': ['庐州烤鸭', '包公鱼', '小龙虾'],
+        '黄山': ['毛豆腐', '臭鳜鱼', '徽州挞馃'],
+        '南京': ['盐水鸭', '鸭血粉丝汤', '汤包', '皮肚面'],
+        '苏州': ['松鼠桂鱼', '奥灶面', '蟹壳黄'],
+        '无锡': ['酱排骨', '小笼包', '玉兰饼'],
+        '常州': ['银丝面', '天目湖鱼头', '大麻糕'],
+        '扬州': ['扬州早茶', '蟹粉狮子头', '烫干丝'],
+        '徐州': ['地锅鸡', '把子肉', '烙馍'],
+        '杭州': ['西湖醋鱼', '龙井虾仁', '东坡肉', '葱包桧'],
+        '宁波': ['汤圆', '黄鱼面', '红膏炝蟹'],
+        '温州': ['鱼丸', '灯盏糕', '糯米饭'],
+        '绍兴': ['黄酒', '霉干菜扣肉', '茴香豆'],
+        '嘉兴': ['粽子', '南湖菱', '糟蛋'],
+        '湖州': ['千张包子', '太湖蟹', '安吉白茶'],
+        '舟山': ['海鲜面', '沈家门海鲜', '呛蟹'],
+        '金华': ['金华火腿', '酥饼', '东河肉饼'],
+        '台州': ['食饼筒', '姜汤面', '三门青蟹'],
+        '丽水': ['缙云烧饼', '敲肉羹', '山粉饺'],
+        '衢州': ['三头一掌', '麻饼', '龙游发糕'],
+        '泉州': ['面线糊', '土笋冻', '牛肉羹'],
+        '洛阳': ['水席', '浆面条', '不翻汤'],
+        '开封': ['灌汤包', '鲤鱼焙面', '羊肉炕馍'],
+        '大同': ['刀削面', '羊杂', '浑源凉粉'],
+        '晋中': ['平遥牛肉', '莜面栲栳栳', '碗托'],
+        '敦煌': ['驴肉黄面', '胡杨焖饼', '杏皮水'],
+        '张掖': ['搓鱼子', '羊肉粉汤', '炒炮'],
+        '嘉峪关': ['烤羊肉', '糊锅', '粉皮'],
+        '喀什': ['烤全羊', '抓饭', '馕'],
+        '伊宁': ['烤包子', '手抓饭', '马肠子'],
+        '大理': ['乳扇', '喜洲粑粑', '酸辣鱼'],
+        '丽江': ['腊排骨火锅', '鸡豆凉粉', '纳西烤鱼'],
+        '香格里拉': ['牦牛火锅', '酥油茶', '青稞饼'],
+        '遵义': ['羊肉粉', '豆花面', '折耳根炒腊肉'],
+        '唐山': ['麻糖', '棋子烧饼', '万里香烧鸡'],
+        '承德': ['鲜花玫瑰饼', '碗坨', '羊汤'],
+        '秦皇岛': ['四条包子', '皮皮虾', '回记绿豆糕']
+    };
+
+    /* 需要实名/提前预约的热门景区（命中即提示） */
+    var RESERVE_POIS = ['故宫', '莫高窟', '布达拉宫', '九寨沟', '兵马俑', '秦始皇', '泰山', '黄山',
+        '张家界', '迪士尼', '环球影城', '长白山', '敦煌', '龙门石窟', '云冈石窟', '乐山大佛',
+        '都江堰', '峨眉山', '华山', '普陀山', '灵隐寺', '拙政园', '上海博物馆', '国家博物馆',
+        '陕西历史博物馆', '南京博物院', '湖北省博物馆', '苏州博物馆', '三星堆'];
+
+    function cityFoods(city) {
+        return CITY_FOOD[city] || ['本地老字号小吃', '当地招牌菜', '夜市小吃街'];
+    }
+
+    function needReserve(name) {
+        for (var i = 0; i < RESERVE_POIS.length; i++) {
+            if (name.indexOf(RESERVE_POIS[i]) >= 0) return true;
+        }
+        return false;
+    }
+
     function buildCatalog() {
         var src = window._knownDict || {};
         var known = {};
@@ -1011,13 +1103,59 @@
                 '<a href="' + url + '" target="_blank" rel="noopener">携程订票 →</a></div>';
         }
 
+        var extraHtml = dayExtraHtml(d);
+
         return '<div class="pl-day">' +
             '<div class="pl-day-head"><span class="pl-day-badge" style="background:' + color + '">Day ' + d.dayNo + '</span>' +
             '<span class="pl-day-city">' + esc(d.city) + '</span>' +
             '<span class="pl-day-theme">' + esc(d.theme) + '</span>' +
             '<span class="pl-day-meta"><span><i class="fas fa-route"></i> ' + d.km + ' km</span>' +
             '<span><i class="fas fa-ticket"></i> ¥' + d.ticket + '</span></span></div>' +
-            legHtml + '<div class="pl-timeline">' + blocks + '</div></div>';
+            legHtml + '<div class="pl-timeline">' + blocks + '</div>' + extraHtml + '</div>';
+    }
+
+    /* 每日配套：门票预约 / 当地美食 / 道路交通 */
+    function dayExtraHtml(d) {
+        var pois = (d.blocks || []).filter(function (b) { return b.type === 'poi'; });
+
+        var ticketRows = pois.map(function (b) {
+            var kw = encodeURIComponent(b.title);
+            return '<div class="pl-ex-row"><span class="pl-ex-name">' + esc(b.title) +
+                (needReserve(b.title) ? '<em class="pl-ex-tag">需预约</em>' : '') + '</span>' +
+                '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener">携程票</a>' +
+                '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener">抖音票</a>' +
+                '</div>';
+        }).join('');
+
+        var reserveTips = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });
+        var ticketNote = reserveTips.length
+            ? '<div class="pl-ex-note">⚠ ' + esc(reserveTips.slice(0, 3).join('、')) + ' 需实名预约，建议出行前 1-3 天在景区公众号或携程预约时段。</div>'
+            : '<div class="pl-ex-note">热门景区旺季可能限流，建议出发前在携程或景区公众号确认余票。</div>';
+
+        var cityKw = encodeURIComponent(d.city);
+        var foodChips = cityFoods(d.city).map(function (f) {
+            return '<a class="pl-ex-chip" href="https://www.dianping.com/search/keyword/0/0_' + encodeURIComponent(d.city + f) +
+                '" target="_blank" rel="noopener">' + esc(f) + '</a>';
+        }).join('');
+
+        var km = d.km || 0;
+        var taxi = Math.round(km * 2.4 + 12);
+        var roadText = '市内移动约 ' + km + ' km，打车约 ¥' + taxi + '；景区之间建议网约车或景区直通车。' +
+            (d.cityChange ? '城际段见上方「' + esc(d.cityChange.from) + ' → ' + esc(d.cityChange.to) + '」，建议提前 1-3 天订票。' : '') +
+            '节假日高峰请预留 30-60 分钟堵车时间。';
+
+        return '<div class="pl-extra">' +
+            '<div class="pl-ex-col"><div class="pl-ex-h"><i class="fas fa-ticket"></i> 门票 · 预约</div>' +
+            (ticketRows || '<div class="pl-ex-note">今日以免费景点为主，无需购票。</div>') + ticketNote + '</div>' +
+            '<div class="pl-ex-col"><div class="pl-ex-h"><i class="fas fa-utensils"></i> 当地美食</div>' +
+            '<div class="pl-ex-chips">' + foodChips + '</div>' +
+            '<div class="pl-ex-note">点菜名看附近餐厅：<a href="https://www.dianping.com/search/keyword/0/0_' + cityKw +
+            encodeURIComponent('美食') + '" target="_blank" rel="noopener">大众点评</a> · ' +
+            '<a href="https://www.douyin.com/search/' + cityKw + encodeURIComponent(' 美食 探店') +
+            '" target="_blank" rel="noopener">抖音探店</a></div></div>' +
+            '<div class="pl-ex-col"><div class="pl-ex-h"><i class="fas fa-car"></i> 道路交通</div>' +
+            '<div class="pl-ex-note" style="margin-top:2px">' + roadText + '</div></div>' +
+            '</div>';
     }
 
     /* ==================== 地图 ==================== */
@@ -1134,6 +1272,12 @@
             d.blocks.forEach(function (b) {
                 lines.push('  ' + b.time + '  ' + b.title + (b.desc ? '（' + b.desc + '）' : ''));
             });
+            var pois = d.blocks.filter(function (b) { return b.type === 'poi'; });
+            var needR = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });
+            if (pois.length) lines.push('  门票：' + pois.map(function (b) { return b.title; }).join('、') + '（携程/抖音可查票）');
+            if (needR.length) lines.push('  预约：' + needR.join('、') + ' 需实名预约，提前 1-3 天在景区公众号或携程预约');
+            lines.push('  美食：' + cityFoods(d.city).join('、'));
+            lines.push('  交通：市内约 ' + d.km + ' km，打车约 ¥' + Math.round((d.km || 0) * 2.4 + 12));
             lines.push('');
         });
         lines.push('费用估算（人均）：住宿 ¥' + num(Math.round(plan.totals.hotels / plan.people)) +
@@ -2569,7 +2713,8 @@
             var card = $('plResultCard');
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
             pushMsg('ai', '行程已生成：<b>' + esc(state.plan.title || (state.plan.cities.join(' → ') + ' · ' + state.plan.days + ' 天')) +
-                '</b>。想改哪里直接跟我说，比如「第三天太赶了」「住好点」「加一天」「推荐美食」。');
+                '</b>。每天的「门票·预约 / 当地美食 / 道路交通」都放在行程卡里了，景点旁点「携程票 / 抖音票」可直接查票。' +
+                '想改哪里直接跟我说，比如「第三天太赶了」「住好点」「加一天」「推荐美食」。');
         });
 
         // 助手
