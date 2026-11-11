@@ -33,8 +33,18 @@
         kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k', needsCORSProxy: true },
         glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash', needsCORSProxy: true },
         ollama: { label: '本地 Ollama 开源大模型（无需 Key）', endpoint: 'http://localhost:11434/v1/chat/completions', model: 'qwen2.5:7b', needsCORSProxy: true },
-        proxy: { label: '我的 Cloudflare Worker 代理（部署一次长期用）', endpoint: '', model: '', isProxy: true },
+        proxy: { label: '站点云端 AI（Worker 代理 · 豆包，开箱即用）', endpoint: '', model: '', isProxy: true, target: 'https://ark.cn-beijing.volces.com/api/v3' },
         custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
+    };
+
+    // 站点默认 AI：已部署的 Cloudflare Worker 代理 + 豆包模型（可在 ⚙️ 里改）
+    // 注意：API Key 不能写在前端源码里（公开仓库会被盗刷），由 Worker 服务端环境变量持有；本机也可在 ⚙️ 里临时填
+    var DEFAULT_AI_CFG = {
+        provider: 'proxy',
+        endpoint: 'https://myl-ai-proxy.yinliangan46.workers.dev',
+        model: 'doubao-seed-1-6-250615',
+        target: 'https://ark.cn-beijing.volces.com/api/v3',
+        key: ''
     };
 
     var TIER1 = ['北京', '上海', '广州', '深圳'];
@@ -1197,11 +1207,26 @@
     }
     function loadAiCfg() {
         var raw = null;
+        var def = {
+            provider: DEFAULT_AI_CFG.provider,
+            endpoint: DEFAULT_AI_CFG.endpoint,
+            model: DEFAULT_AI_CFG.model,
+            target: DEFAULT_AI_CFG.target,
+            key: DEFAULT_AI_CFG.key
+        };
         try {
             raw = localStorage.getItem(LS_AI);
-            state.aiCfg = raw ? JSON.parse(raw) : { provider: 'builtin', endpoint: '', model: '', key: '' };
+            state.aiCfg = raw ? JSON.parse(raw) : def;
         } catch (e) {
-            state.aiCfg = { provider: 'builtin', endpoint: '', model: '', key: '' };
+            state.aiCfg = def;
+        }
+        // 旧配置迁移：Ollama 本地地址在手机/公网上永远连不通，自动切到站点云端 AI
+        if (state.aiCfg && state.aiCfg.provider === 'ollama') state.aiCfg = def;
+        if (state.aiCfg && state.aiCfg.provider === 'proxy') {
+            if (!state.aiCfg.endpoint) state.aiCfg.endpoint = DEFAULT_AI_CFG.endpoint;
+            if (!state.aiCfg.target) state.aiCfg.target = DEFAULT_AI_CFG.target;
+            if (!state.aiCfg.key) state.aiCfg.key = DEFAULT_AI_CFG.key;
+            if (!state.aiCfg.model) state.aiCfg.model = DEFAULT_AI_CFG.model;
         }
         if (!raw) probeSiteAI();
     }
@@ -2031,13 +2056,13 @@
         // proxy 模式：endpoint 就是 Worker URL（不带路径），自动拼默认后端
         var endpoint;
         if (isProxy) {
-            endpoint = (cfg.endpoint || '').replace(/\/+$/, '');
+            endpoint = (cfg.endpoint || DEFAULT_AI_CFG.endpoint || '').replace(/\/+$/, '');
             if (!endpoint) throw new Error('请先在 ⚙️ 里填 Cloudflare Worker 地址（部署一次后长期用）');
-            // 默认转发豆包，用户可通过 model 字段指定 target（如 https://api.deepseek.com/api/v0）
-            var target = cfg.model || preset.target || 'https://ark.cn-beijing.volces.com/api/v3';
-            endpoint = endpoint + '/api/v3/chat/completions?target=' + encodeURIComponent(target);
-            // model 用豆包默认
-            model = cfg.model && cfg.model.indexOf('http') !== 0 ? cfg.model : 'doubao-seed-1-6-250615';
+            // 转发目标：cfg.target → 预设 target → 豆包
+            var target = (cfg.target || preset.target || 'https://ark.cn-beijing.volces.com/api/v3').replace(/\/+$/, '');
+            // Worker 内部逻辑：去掉路径的 /api 前缀后拼到 target 后面
+            endpoint = endpoint + '/api/chat/completions?target=' + encodeURIComponent(target);
+            model = model || 'doubao-seed-1-6-250615';
         } else {
             endpoint = cfg.endpoint || preset.endpoint;
             if (!endpoint) throw new Error('未填写接口地址');
@@ -2120,8 +2145,8 @@
 
         var cfg = state.aiCfg || {};
         var preset = AI_PRESETS[cfg.provider] || {};
-        var endpoint = cfg.endpoint || preset.endpoint;
-        var needsKey = cfg.provider !== 'site' && cfg.provider !== 'ollama';
+        var endpoint = cfg.endpoint || preset.endpoint || (cfg.provider === 'proxy' ? DEFAULT_AI_CFG.endpoint : '');
+        var needsKey = cfg.provider !== 'site' && cfg.provider !== 'ollama' && cfg.provider !== 'proxy';
         var hasKey = cfg.key || !needsKey;
         var useAi = cfg.provider && cfg.provider !== 'builtin' &&
             hasKey && !!endpoint;
@@ -2154,6 +2179,9 @@
                             '⚠ 手机上无法用 Ollama（手机 localhost ≠ 电脑），请用豆包/DeepSeek 云端 API';
                     } else if (e.provider === 'site') {
                         hint = '站点代理暂不可用。改用 Ollama（需本地启动）或豆包/DeepSeek 填自己的 Key。';
+                    } else if (e.provider === 'proxy') {
+                        hint = '连不上 Worker（<code>*.workers.dev</code> 在国内常被 DNS 污染 / 屏蔽）。<br>' +
+                            '<b>处理</b>：① 换 Wi-Fi / 手机流量再试；② 强烈建议在 Cloudflare 给 Worker 绑定自己的域名（Workers → Settings → Domains & Routes → Add custom domain），之后在 ⚙️ 把接口地址换成该域名。';
                     } else {
                         hint = '云端 AI API 不支持浏览器跨域直连。<br>' +
                             '<b>简单方案</b>：用 Ollama 本地模型（需启动并设置 <code>OLLAMA_ORIGINS="*"</code>）<br>' +
@@ -2163,9 +2191,13 @@
                 } else if (e.isTimeout) {
                     hint = '请求超时（60s），大模型可能在忙。可以换个模型或稍后再试。';
                 } else if (e.code === 'HTTP_401' || e.code === 'HTTP_403') {
-                    hint = 'API Key 无效或权限不足。请在 ⚙️ 设置里检查 Key 是否正确粘贴。';
+                    hint = e.provider === 'proxy'
+                        ? 'Worker 端还没有可用 Key：Cloudflare → 你的 Worker → Settings → Variables → 添加密钥 <code>ARK_API_KEY</code>；或在 ⚙️ 里填 Key（只存本机）。'
+                        : 'API Key 无效或权限不足。请在 ⚙️ 设置里检查 Key 是否正确粘贴。';
                 } else if (e.code === 'HTTP_404') {
-                    hint = '接口地址或模型名不对。检查 endpoint 和 model 字段。';
+                    hint = e.provider === 'proxy'
+                        ? '模型名不对：豆包一般是 <code>doubao-seed-1-6-250615</code>，或在火山方舟控制台用你的推理接入点 ID（ep-xxx）。'
+                        : '接口地址或模型名不对。检查 endpoint 和 model 字段。';
                 } else {
                     hint = '调用失败：' + esc(e.message || '') + '。检查接口地址和 Key 是否正确。';
                 }

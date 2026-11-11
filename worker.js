@@ -3,7 +3,8 @@
 // 或者：npm i -g wrangler && wrangler login && wrangler deploy
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
+    env = env || {};
     // CORS 头
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
@@ -46,11 +47,12 @@ export default {
       // 去掉 provider 字段（豆包不认）
       delete body.provider;
 
-      // 从 Authorization 头取 API Key
+      // 从 Authorization 头取 API Key；前端没带时用 Worker 环境变量里的 Key（推荐，前端零暴露）
       const authHeader = request.headers.get('Authorization') || '';
+      const serverKey = env.ARK_API_KEY || env.API_KEY || '';
       const fetchHeaders = {
         'Content-Type': 'application/json',
-        ...(authHeader ? { Authorization: authHeader } : {}),
+        ...(authHeader ? { Authorization: authHeader } : (serverKey ? { Authorization: 'Bearer ' + serverKey } : {})),
       };
 
       // 拼接完整目标 URL
