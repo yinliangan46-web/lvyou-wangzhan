@@ -1342,22 +1342,47 @@
 
     /* ---------- 一日游 / N 日游 意图解析 ---------- */
     var CN_NUM = { '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
-    var PROV_TOP = {
-        '安徽': ['黄山', '徽州', '九华山', '天柱山'], '浙江': ['杭州', '乌镇', '雁荡山', '普陀山'],
-        '江苏': ['南京', '苏州', '无锡', '镇江'], '广东': ['广州', '深圳', '珠海', '肇庆'],
-        '四川': ['成都', '九寨沟', '都江堰', '稻城'], '云南': ['昆明', '大理', '丽江', '香格里拉'],
-        '贵州': ['贵阳', '黄果树', '西江千户苗寨', '梵净山'], '山东': ['济南', '青岛', '泰安', '曲阜'],
-        '河南': ['郑州', '洛阳', '开封', '少林寺'], '河北': ['石家庄', '保定', '承德', '秦皇岛'],
-        '山西': ['太原', '平遥', '大同', '壶口瀑布'], '陕西': ['西安', '华山', '延安', '咸阳'],
-        '甘肃': ['兰州', '敦煌', '张掖', '嘉峪关'], '青海': ['西宁', '青海湖', '茶卡盐湖', '祁连山'],
-        '新疆': ['乌鲁木齐', '喀纳斯', '赛里木湖', '独库公路'], '西藏': ['拉萨', '林芝', '纳木错', '日喀则'],
-        '内蒙古': ['呼和浩特', '呼伦贝尔', '响沙湾', '成吉思汗陵'], '黑龙江': ['哈尔滨', '雪乡', '五大连池', '漠河'],
-        '吉林': ['长春', '长白山', '雾凇岛', '吉林'], '辽宁': ['沈阳', '大连', '鞍山', '丹东'],
-        '湖南': ['长沙', '张家界', '凤凰古城', '衡山'], '湖北': ['武汉', '恩施', '神农架', '武当山'],
-        '江西': ['南昌', '庐山', '婺源', '三清山'], '福建': ['福州', '厦门', '武夷山', '泉州'],
-        '广西': ['桂林', '阳朔', '龙脊梯田', '北海'], '海南': ['海口', '三亚', '蜈支洲岛', '五指山'],
-        '宁夏': ['银川', '贺兰山', '水洞沟', '中卫']
+    // 从全国省市库里找句子里提到的省
+    function provinceInText(text) {
+        var names = {};
+        Object.keys(CITY_PROV).forEach(function (c) { if (CITY_PROV[c]) names[CITY_PROV[c]] = 1; });
+        var hit = null;
+        Object.keys(names).forEach(function (full) {
+            var short = full.replace(/省$|市$|壮族自治区|回族自治区|维吾尔自治区|自治区|特别行政区/g, '');
+            if (short && text.indexOf(short) >= 0) hit = full;
+        });
+        return hit;
+    }
+    // 少数知名城市/景区不在省级地级市清单里，手工补上省份归属
+    var PROV_EXTRA = {
+        '大理': '云南省', '西双版纳': '云南省', '敦煌': '甘肃省',
+        '黄果树': '贵州省', '九寨沟': '四川省',
+        '北京': '北京市', '上海': '上海市', '重庆': '重庆市'
     };
+    // 该省的城市，优先"有真实景点数据"的，其次地级市兜底
+    function citiesOfProvince(full) {
+        var p = (window.PROVINCES_ALL || []).filter(function (x) { return x.name === full; })[0];
+        var out = [];
+        if (p) {
+            (p.cities || []).forEach(function (pc) {
+                var n = pc.name || '';
+                var hit = Object.keys(CATALOG).filter(function (c) {
+                    return c === n || (CITY_PROV[c] === full && n.indexOf(c) === 0);
+                })[0];
+                if (hit && out.indexOf(hit) < 0) out.push(hit);
+            });
+        }
+        Object.keys(PROV_EXTRA).forEach(function (c) {
+            if (PROV_EXTRA[c] === full && CATALOG[c] && out.indexOf(c) < 0) out.push(c);
+        });
+        return out;
+    }
+    function provTopCities(full) {
+        var list = citiesOfProvince(full);
+        var rich = list.filter(function (c) { return CATALOG[c] && !CATALOG[c].generic && CATALOG[c].items.length >= 3; });
+        rich.sort(function (a, b) { return CATALOG[b].items.length - CATALOG[a].items.length; });
+        return rich.concat(list.filter(function (c) { return rich.indexOf(c) < 0; }));
+    }
     function cnNum(s) {
         if (!s) return 0;
         if (/^\d+$/.test(s)) return parseInt(s, 10);
@@ -1375,8 +1400,7 @@
         if (m) days = cnNum(m[1]);
         if (!days) {
             var hasVerb = /(帮我|给我|生成|规划|安排|做个|来条|来一个|去|玩|怎么玩|想要|打算|准备)/.test(text);
-            var hasPlace = cityListInText(text).length > 0 ||
-                Object.keys(PROV_TOP).some(function (p) { return text.indexOf(p) >= 0; });
+            var hasPlace = cityListInText(text).length > 0 || !!provinceInText(text);
             if (hasVerb || hasPlace) {
                 m = text.match(/([0-9]{1,2}|[一二两三四五六七八九十]{1,3})\s*天/);
                 if (m) days = cnNum(m[1]);
@@ -1387,8 +1411,8 @@
 
         var cities = cityListInText(text).slice(0, 4);
         if (!cities.length) {
-            var hitProv = Object.keys(PROV_TOP).filter(function (p) { return text.indexOf(p) >= 0; })[0];
-            if (hitProv) cities = PROV_TOP[hitProv].filter(function (c) { return !!CATALOG[c]; }).slice(0, 4);
+            var fullProv = provinceInText(text);
+            if (fullProv) cities = provTopCities(fullProv).slice(0, 4);
         }
         if (!cities.length) cities = state.cities.slice(0, 4);
         // 天数不够分给每座城时，砍掉多余城市，保证每城至少 1 天
