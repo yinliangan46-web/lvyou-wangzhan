@@ -396,6 +396,15 @@
 }
 .pl-ex-note { font-size: .72rem; color: #64748b; line-height: 1.55; margin-top: 5px; }
 .pl-ex-note a { color: #2563eb; text-decoration: none; }
+.pl-ex-fee, .pl-ex-free {
+    font-style: normal;
+    font-size: .64rem;
+    border-radius: 6px;
+    padding: 0 4px;
+    margin-left: 5px;
+}
+.pl-ex-fee { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
+.pl-ex-free { color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; }
 .pl-ex-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .pl-ex-chip {
     font-size: .74rem;

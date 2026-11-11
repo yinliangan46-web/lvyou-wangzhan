@@ -56,6 +56,7 @@
     /* 门票估算（按名称子串匹配，取最长命中） */
     var TICKETS = {
         '故宫': 60, '八达岭长城': 40, '颐和园': 30, '天坛': 15, '圆明园': 10, '鸟巢': 50,
+        '总统府': 40, '明孝陵': 70, '牛首山': 98, '大报恩寺': 90,
         '秦始皇兵马俑': 120, '兵马俑': 120, '大雁塔': 50, '华清池': 120, '华山': 160,
         '鼓浪屿': 35, '拙政园': 80, '虎丘': 60, '周庄': 100, '乌镇': 150, '西塘': 100, '南浔': 100,
         '灵山大佛': 210, '黄山': 190, '千岛湖': 130, '西溪湿地': 80, '宋城': 300, '雷峰塔': 40,
@@ -79,8 +80,15 @@
         '上下九', '北京路', '户部巷', '太平老街', '橘子洲', '大理古城', '丽江古城', '阳朔西街',
         '栈桥', '八大关', '五四广场', '东关街', '观前街', '平江路', '老门东', '曾厝垵',
         '南锣鼓巷', '翠湖', '大鹏所城', '车公庙', '鼓楼', '昙华林', '武大樱花园', '南普陀寺',
-        '白堤', '苏堤', '中山陵', '夫子庙', '总统府', '玄武湖', '雨花台', '老门东', '金鸡湖',
-        '同里古镇', '山塘街', '西湖文化广场', '黄浦江', '南京路', '王府井', '三里屯', '南长街'];
+        '白堤', '苏堤', '中山陵', '夫子庙', '玄武湖', '雨花台', '老门东', '金鸡湖',
+        '同里古镇', '山塘街', '西湖文化广场', '黄浦江', '南京路', '王府井', '三里屯', '南长街',
+        /* 免费开放的博物馆/纪念馆（多数需预约但不收门票） */
+        '南京博物院', '上海博物馆', '国家博物馆', '中国国家博物馆', '陕西历史博物馆', '湖北省博物馆',
+        '苏州博物馆', '首都博物馆', '湖南博物院', '河南博物院', '浙江省博物馆', '广东省博物馆',
+        '四川博物院', '三峡博物馆', '天津博物馆', '河北博物院', '山西博物院', '辽宁省博物馆',
+        '安徽省博物院', '安徽博物院', '福建博物院', '江西省博物馆', '贵州省博物馆', '云南省博物馆',
+        '甘肃省博物馆', '青海省博物馆', '宁夏博物馆', '新疆博物馆', '西藏博物馆', '中国美术馆',
+        '南京大屠杀', '侵华日军', '南京长江大桥', '天安门广场', '五四广场', '奥林匹克公园'];
 
     /* ==================== 小工具 ==================== */
     function esc(s) {
@@ -576,15 +584,16 @@
     }
 
     function ticketOf(name) {
+        var n = String(name || '');
+        for (var i = 0; i < FREE_POI.length; i++) {
+            if (n.indexOf(FREE_POI[i]) >= 0) return 0;
+        }
+        /* 博物馆/博物院/纪念馆/公园/街区类默认免费开放 */
+        if (/博物馆|博物院|纪念馆|美术馆|公园|广场|步行街|老街|古街|小吃街|夜市|码头|观景台$/.test(n)) return 0;
         var best = -1, price = 60;
         Object.keys(TICKETS).forEach(function (k) {
-            if (name.indexOf(k) >= 0 && k.length > best) { best = k.length; price = TICKETS[k]; }
+            if (n.indexOf(k) >= 0 && k.length > best) { best = k.length; price = TICKETS[k]; }
         });
-        if (best < 0) {
-            for (var i = 0; i < FREE_POI.length; i++) {
-                if (name.indexOf(FREE_POI[i]) >= 0) { price = 0; break; }
-            }
-        }
         return price;
     }
 
@@ -1120,10 +1129,14 @@
 
         var ticketRows = pois.map(function (b) {
             var kw = encodeURIComponent(b.title);
-            return '<div class="pl-ex-row"><span class="pl-ex-name">' + esc(b.title) +
-                (needReserve(b.title) ? '<em class="pl-ex-tag">需预约</em>' : '') + '</span>' +
+            var free = ticketOf(b.title) <= 0 && !needReserve(b.title);
+            var buy = free ? '' :
                 '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener">携程票</a>' +
-                '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener">抖音票</a>' +
+                '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener">抖音票</a>';
+            return '<div class="pl-ex-row"><span class="pl-ex-name">' + esc(b.title) +
+                (ticketOf(b.title) > 0 ? '<em class="pl-ex-fee">¥' + ticketOf(b.title) + '</em>' : '<em class="pl-ex-free">免费</em>') +
+                (needReserve(b.title) ? '<em class="pl-ex-tag">需预约</em>' : '') + '</span>' +
+                buy +
                 (window._wechatReserveBtn ? window._wechatReserveBtn(b.title) : '') +
                 '</div>';
         }).join('');
