@@ -1442,7 +1442,7 @@ function openProvinceModal(provinceKey) {
             const act = String(item.activity || '').trim();
             const det = String(item.detail || '').trim();
             if (!act && !det) return '';
-            return '<div class="timeline-item"><div class="time">' + esc(item.time || '') + '</div><div class="activity"><strong>' + esc(act) + '</strong></div><div class="detail">' + esc(det) + '</div>' + (meta.length ? '<div class="meta-row">' + meta.join('') + '</div>' : '') + '</div>';
+            return '<div class="timeline-item"><div class="time">' + esc(item.time || '') + '</div><div class="activity"><strong>' + esc(act) + '</strong></div><div class="detail">' + esc(det) + '</div>' + (meta.length ? '<div class="meta-row">' + meta.join('') + '</div>' : '') + (window._ticketLinks ? window._ticketLinks(act, tic, prc) : '') + '</div>';
         }).join('');
         return '<div class="itinerary-day"><h4><span class="day-tag">Day ' + (di + 1) + '</span>' + esc(day.theme || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
     }).join('');
@@ -1988,7 +1988,7 @@ function openTourModalBack(data, backType) {
             if (_tic) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + _tic + '</span>');
             if (_prc && _prc!==_tic) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + _prc + '</span>');
             if (_tip) m.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + _tip + '</span>');
-            return '<div class="timeline-item"><div class="time">' + (item.time || '') + '</div><div class="activity"><strong>' + (item.activity || '') + '</strong></div><div class="detail">' + (item.detail || '') + '</div>' + (m.length ? '<div class="meta-row">' + m.join('') + '</div>' : '') + '</div>';
+            return '<div class="timeline-item"><div class="time">' + (item.time || '') + '</div><div class="activity"><strong>' + (item.activity || '') + '</strong></div><div class="detail">' + (item.detail || '') + '</div>' + (m.length ? '<div class="meta-row">' + m.join('') + '</div>' : '') + (window._ticketLinks ? window._ticketLinks(item.activity, _tic, _prc) : '') + '</div>';
         }).join('');
         return '<div class="itinerary-day loop-day" data-day="' + (day.day || '') + '"><h4><span class="day-tag">' + (day.day || '') + '</span>' + (day.theme || day.title || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
     }).join('');
@@ -2194,7 +2194,7 @@ function openTourModal(type) {
             if (_tic) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + _tic + '</span>');
             if (_prc && _prc!==_tic) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + _prc + '</span>');
             if (_tip) m.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + _tip + '</span>');
-            return '<div class="timeline-item"><div class="time">' + (item.time || '') + '</div><div class="activity"><strong>' + (item.activity || '') + '</strong></div><div class="detail">' + (item.detail || '') + '</div>' + (m.length ? '<div class="meta-row">' + m.join('') + '</div>' : '') + '</div>';
+            return '<div class="timeline-item"><div class="time">' + (item.time || '') + '</div><div class="activity"><strong>' + (item.activity || '') + '</strong></div><div class="detail">' + (item.detail || '') + '</div>' + (m.length ? '<div class="meta-row">' + m.join('') + '</div>' : '') + (window._ticketLinks ? window._ticketLinks(item.activity, _tic, _prc) : '') + '</div>';
         }).join('');
         return '<div class="itinerary-day loop-day" data-day="' + (day.day || '') + '"><h4><span class="day-tag">' + (day.day || '') + '</span>' + (day.theme || day.title || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
     }).join('');

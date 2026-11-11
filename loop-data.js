@@ -7307,6 +7307,26 @@ window.LOOP_ROUTES = [
     }
 
     // ========== 环线详情弹窗 ==========
+    /* === 付费景点购票入口：携程 / 抖音 ===
+       触发条件：ticket/price 中出现价格数字，或景点名命中收费类关键词 */
+    function _isPaidSpot(name, tic, prc) {
+        var t = String(tic || '') + ' ' + String(prc || '');
+        if (/免费|免票|0\s*元|无需门票/.test(t)) return false;
+        if (/[¥￥]\s*\d/.test(t) || /\d+\s*元/.test(t)) return true;
+        return /景区|风景区|乐园|博物馆|博物院|纪念馆|索道|游船|温泉|演出|千古情|迪士尼|环球影城|玻璃桥|水族馆|动物园|府$|陵|寺|塔|宫|古镇|古街|老街|园|山|湖|馆|谷|洞|城墙|楼|桥|门$/.test(String(name || ''));
+    }
+    function _ticketLinksHtml(name, tic, prc) {
+        var n = String(name || '').replace(/\s+/g, ' ').trim();
+        if (n.length < 2 || !_isPaidSpot(n, tic, prc)) return '';
+        var kw = encodeURIComponent(n);
+        var st = 'display:inline-flex;align-items:center;gap:4px;font-size:.74rem;text-decoration:none;border-radius:999px;padding:2px 10px;border:1px solid';
+        return '<div class="ticket-links" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' +
+            '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" style="' + st + ' #bfdbfe;color:#1d4ed8;background:#eff6ff">携程购票</a>' +
+            '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" style="' + st + ' #fbcfe8;color:#be185d;background:#fdf2f8">抖音看票</a>' +
+            '</div>';
+    }
+    window._ticketLinks = _ticketLinksHtml;
+
     window.renderLoopDetail = function(data) {
         if (!data) return '';
         
@@ -7343,7 +7363,7 @@ window.LOOP_ROUTES = [
                 if (_tic) m.push(`<span class="meta-tag ticket">${/^[¥￥]/.test(_tic)?'':'<i class="fas fa-ticket-alt"></i> '}${safe(_tic)}</span>`);
                 if (_prc && _prc!==_tic) m.push(`<span class="meta-tag">${/^[¥￥]/.test(_prc)?'':'<i class="fas fa-yen-sign"></i> '}${safe(_prc)}</span>`);
                 if (_tip) m.push(`<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ${safe(_tip)}</span>`);
-                return `<div class="timeline-item"><div class="time">${safe(item.time)}</div><div class="activity"><strong>${safe(item.activity)}</strong></div><div class="detail">${safe(item.detail)}</div>${m.length?`<div class="meta-row">${m.join('')}</div>`:''}</div>`;
+                return `<div class="timeline-item"><div class="time">${safe(item.time)}</div><div class="activity"><strong>${safe(item.activity)}</strong></div><div class="detail">${safe(item.detail)}</div>${m.length?`<div class="meta-row">${m.join('')}</div>`:''}${_ticketLinksHtml(item.activity, _tic, _prc)}</div>`;
             }).join('');
             return `<div class="itinerary-day loop-day" data-day="${safe(day.day)}"><h4><span class="day-tag">${safe(day.day)}</span>${safe(day.theme || '')}</h4><div class="day-timeline">${tl}</div></div>`;
         }).join('');
@@ -8513,7 +8533,7 @@ window.renderRichDetail = function(data) {
                 if (_tic) m.push(`<span class="meta-tag ticket">${/^[¥￥]/.test(_tic)?'':'<i class="fas fa-ticket-alt"></i> '}${safe(_tic)}</span>`);
                 if (_prc && _prc!==_tic) m.push(`<span class="meta-tag">${/^[¥￥]/.test(_prc)?'':'<i class="fas fa-yen-sign"></i> '}${safe(_prc)}</span>`);
                 if (_tip) m.push(`<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ${safe(_tip)}</span>`);
-                return `<div class="timeline-item"><div class="time">${safe(item.time)}</div><div class="activity"><strong>${safe(item.activity)}</strong></div><div class="detail">${safe(item.detail)}</div>${m.length?`<div class="meta-row">${m.join('')}</div>`:''}</div>`;
+                return `<div class="timeline-item"><div class="time">${safe(item.time)}</div><div class="activity"><strong>${safe(item.activity)}</strong></div><div class="detail">${safe(item.detail)}</div>${m.length?`<div class="meta-row">${m.join('')}</div>`:''}${_ticketLinksHtml(item.activity, _tic, _prc)}</div>`;
             }).join('');
             return `<div class="itinerary-day"><h4><span class="day-tag">${safe(day.day)}</span>${safe(day.theme || '')}</h4><div class="day-timeline">${tl}</div></div>`;
         }).join('');
