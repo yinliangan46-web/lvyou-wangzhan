@@ -988,6 +988,13 @@
             var ico = b.type === 'meal' ? 'fa-utensils' : (b.type === 'hotel' ? 'fa-hotel' : (b.type === 'free' ? 'fa-mug-hot' : 'fa-location-dot'));
             var cls = b.type === 'meal' ? ' is-meal' : (b.type === 'hotel' ? ' is-hotel' : '');
             var link = b.hotelCity ? ' <a href="https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(b.hotelCity) + '" target="_blank" rel="noopener" style="color:#2563eb;font-size:.76rem;text-decoration:none">携程查房价 →</a>' : '';
+            if (b.type === 'poi') {
+                var kw = encodeURIComponent(b.title);
+                link += ' <a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" ' +
+                    'style="display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:#eef4ff;color:#2563eb;font-size:.72rem;text-decoration:none">携程购票</a>' +
+                    ' <a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" ' +
+                    'style="display:inline-block;margin-left:4px;padding:1px 7px;border-radius:9px;background:#fff0f6;color:#fe2c55;font-size:.72rem;text-decoration:none">抖音看票</a>';
+            }
             return '<div class="pl-tl-item' + cls + '"><div class="pl-tl-time">' + esc(b.time) + '</div>' +
                 '<div class="pl-tl-body"><div class="pl-tl-title"><i class="fas ' + ico + ' pl-tl-ico"></i>' + esc(b.title) + link + '</div>' +
                 (b.desc ? '<div class="pl-tl-desc">' + esc(b.desc) + '</div>' : '') + '</div></div>';
@@ -1273,6 +1280,15 @@
         }).join('') + '</div>';
     }
 
+    function tripDraftHtml(d) {
+        if (!d) return '';
+        var cs = (d.cities || []).join('|');
+        var dy = parseInt(d.days, 10) || 1;
+        return '<div style="margin-top:9px;display:flex;gap:8px;flex-wrap:wrap">' +
+            '<button class="pl-btn-primary pl-trip-confirm" data-cities="' + esc(cs) + '" data-days="' + dy + '">✅ 确认生成行程</button>' +
+            '<button class="pl-btn-ghost pl-trip-cancel">先不生成</button></div>';
+    }
+
     function renderMsgs() {
         var body = $('plAgentBody');
         if (!body) return;
@@ -1280,7 +1296,7 @@
             if (m.role === 'user') {
                 return '<div class="pl-msg user"><div class="bubble">' + esc(m.text) + '</div></div>';
             }
-            return '<div class="pl-msg' + (m.typing ? ' typing' : '') + '"><div class="who">AI</div><div class="bubble">' + m.text + cardsHtml(m.cards) + '</div></div>';
+            return '<div class="pl-msg' + (m.typing ? ' typing' : '') + '"><div class="who">AI</div><div class="bubble">' + m.text + cardsHtml(m.cards) + tripDraftHtml(m.extra) + '</div></div>';
         }).join('');
         body.scrollTop = body.scrollHeight;
     }
@@ -1460,12 +1476,11 @@
             };
         }
         if (tripReq) {
-            actions.push({ type: 'planTrip', cities: tripReq.cities, days: tripReq.days });
             return {
-                reply: '给你排好 <b>' + tripReq.days + ' 天</b>行程：<b>' + esc(tripReq.cities.join(' → ')) + '</b>，' +
-                    '每天安排了顺路的景点，下方行程卡里<b>地图已按顺序画出路线</b>。<br>' +
-                    '接着还能让我「住好点」「第三天别太赶」「预算 5000」「推荐美食」「查高铁」。',
-                actions: actions
+                reply: '行程草稿已排好：<b>' + esc(tripReq.cities.join(' → ')) + ' · ' + tripReq.days + ' 天</b><br>' +
+                    '点下面的<b>「确认生成行程」</b>，我就在上方排出完整时间线，并在地图上按顺序画出路线。',
+                actions: actions,
+                tripDraft: tripReq
             };
         }
 
@@ -2301,10 +2316,15 @@
                 state.msgs.pop();
                 var reply = (res && res.reply) ? sanitizeAi(res.reply) : '';
                 var acts = Array.isArray(res && res.actions) ? res.actions.slice(0, 8) : [];
-                var changedAi = applyActions(acts);
+                var draftAi = null, actsRest = [];
+                acts.forEach(function (a) {
+                    if (a && a.type === 'planTrip') draftAi = { cities: a.cities || [], days: a.days || 1 };
+                    else actsRest.push(a);
+                });
+                var changedAi = applyActions(actsRest);
                 var aiCards = Array.isArray(res && res.cards) ? res.cards.slice(0, 8) : null;
                 if (!reply) reply = '已按你的要求更新行程。';
-                pushMsg('ai', reply + (changedAi ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards);
+                pushMsg('ai', reply + (changedAi ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), draftAi, aiCards);
             } catch (e) {
                 state.msgs.pop();
                 var fb = localReply(text);
@@ -2347,7 +2367,7 @@
                     hint = '调用失败：' + esc(e.message || '') + '。检查接口地址和 Key 是否正确。';
                 }
                 var hintHtml = hint ? '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">' + hint + '</div>' : '';
-                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hintHtml, null, fb.cards);
+                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hintHtml, fb.tripDraft || null, fb.cards);
             } finally {
                 state.busy = false;
             }
@@ -2363,7 +2383,7 @@
                 if (_c.provider && _c.provider !== 'builtin' && !_c.key && _c.provider !== 'site' && _c.provider !== 'proxy') {
                     out += '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">想让我什么都能答：在下方「接入大模型」粘贴豆包 Key → 保存（只存你手机，不会上传）。</div>';
                 }
-                pushMsg('ai', out, null, fb.cards);
+                pushMsg('ai', out, fb.tripDraft || null, fb.cards);
                 state.busy = false;
             }, 320);
         }
@@ -2557,6 +2577,29 @@
         var input = $('plAgentInput');
         var agBody = $('plAgentBody');
         if (agBody) agBody.addEventListener('click', function (e) {
+            var tripBtn = e.target.closest('.pl-trip-confirm');
+            if (tripBtn) {
+                var cs = (tripBtn.getAttribute('data-cities') || '').split('|').filter(Boolean);
+                var dy = parseInt(tripBtn.getAttribute('data-days'), 10) || 1;
+                applyActions([{ type: 'planTrip', cities: cs, days: dy }]);
+                state.plan = buildPlan();
+                renderResult();
+                saveLocal();
+                tripBtn.disabled = true;
+                tripBtn.textContent = '✅ 已生成，看上方行程';
+                toast('行程已生成，地图上已画出路线');
+                setTimeout(function () {
+                    var rc = $('plResultCard');
+                    if (rc) { try { rc.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (err) { rc.scrollIntoView(); } }
+                }, 120);
+                return;
+            }
+            var cancelBtn = e.target.closest('.pl-trip-cancel');
+            if (cancelBtn) {
+                var wrap = cancelBtn.parentNode;
+                if (wrap) wrap.innerHTML = '<span style="font-size:.76rem;color:#94a3b8">已取消，想生成时再说一次就好</span>';
+                return;
+            }
             var pickBtn = e.target.closest('[data-cardapply]');
             if (!pickBtn) return;
             var v = pickBtn.getAttribute('data-cardapply');
