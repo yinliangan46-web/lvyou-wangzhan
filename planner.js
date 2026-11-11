@@ -1706,8 +1706,70 @@
         }
 
         if (!actions.length) {
+            // 问候语 → 友好引导
+            if (/^(你好|您好|hi|hello|嗨|在吗|嗯|ok|好的|谢谢|多谢|早|晚安)/i.test(text)) {
+                return { reply: '你好呀 👋 我是 AI 行程助手。现在没接大模型（浏览器跨域限制），我能用内置引擎帮你：<br>' +
+                    '· 说「给我生成青甘大环线」「川西环线」→ 一键出完整行程<br>' +
+                    '· 选完城市后问「预算 5000」「住好点」「加一天」→ 调细节<br>' +
+                    '· 想让我什么都能答 → ⚙️ 接入 Ollama（本地跑 Qwen）或豆包/DeepSeek（填 Key）', actions: actions };
+            }
+            // 通用"XX 环线/路线"请求 → 自动识别省名/城市名做串联
+            if (/环线|路线|线路|行程|攻略/.test(text)) {
+                // 尝试从文本里提取省份或城市名
+                var provNames = ['安徽','浙江','江苏','广东','四川','云南','贵州','山东','河南','河北','山西','陕西','甘肃','青海','新疆','西藏','内蒙古','黑龙江','吉林','辽宁','湖南','湖北','江西','福建','广西','海南','宁夏','重庆','北京','上海','天津','香港','澳门','台湾'];
+                var hitProv = provNames.find(function (p) { return text.indexOf(p) >= 0; });
+                var cityNames = Object.keys(CATALOG);
+                var hitCities = cityNames.filter(function (c) { return text.indexOf(c) >= 0; }).slice(0, 4);
+                if (hitProv || hitCities.length) {
+                    var citiesPlan = hitCities.length ? hitCities.join('、') : hitProv + '主要城市';
+                    actions.push({ type: 'clear' });
+                    hitCities.forEach(function (c) { actions.push({ type: 'addCity', city: c }); });
+                    // 如果只识别到省没识别到具体城市，默认选几个知名的
+                    if (!hitCities.length && hitProv) {
+                        var provTop = {
+                            '安徽': ['黄山','徽州','九华山','天柱山'],
+                            '浙江': ['杭州','乌镇','雁荡山','普陀山'],
+                            '江苏': ['南京','苏州','无锡','镇江'],
+                            '广东': ['广州','深圳','珠海','肇庆'],
+                            '四川': ['成都','九寨沟','都江堰','稻城'],
+                            '云南': ['昆明','大理','丽江','香格里拉'],
+                            '贵州': ['贵阳','黄果树','西江千户苗寨','梵净山'],
+                            '山东': ['济南','青岛','泰安','曲阜'],
+                            '河南': ['郑州','洛阳','开封','少林寺'],
+                            '河北': ['石家庄','保定','承德','秦皇岛'],
+                            '山西': ['太原','平遥','大同','壶口瀑布'],
+                            '陕西': ['西安','华山','延安','咸阳'],
+                            '甘肃': ['兰州','敦煌','张掖','嘉峪关'],
+                            '青海': ['西宁','青海湖','茶卡盐湖','祁连山'],
+                            '新疆': ['乌鲁木齐','喀纳斯','赛里木湖','独库公路'],
+                            '西藏': ['拉萨','林芝','纳木错','日喀则'],
+                            '内蒙古': ['呼和浩特','呼伦贝尔','响沙湾','成吉思汗陵'],
+                            '黑龙江': ['哈尔滨','雪乡','五大连池','漠河'],
+                            '吉林': ['长春','长白山','雾凇岛','吉林'],
+                            '辽宁': ['沈阳','大连','鞍山','丹东'],
+                            '湖南': ['长沙','张家界','凤凰古城','衡山'],
+                            '湖北': ['武汉','恩施','神农架','武当山'],
+                            '江西': ['南昌','庐山','婺源','三清山'],
+                            '福建': ['福州','厦门','武夷山','泉州'],
+                            '广西': ['桂林','阳朔','龙脊梯田','北海'],
+                            '海南': ['海口','三亚','蜈支洲岛','五指山'],
+                            '宁夏': ['银川','贺兰山','水洞沟','中卫']
+                        };
+                        var defaults = provTop[hitProv] || [];
+                        defaults.forEach(function (c) { actions.push({ type: 'addCity', city: c }); });
+                        citiesPlan = defaults.length ? defaults.join('、') : hitProv;
+                    }
+                    actions.push({ type: 'setDays', days: Math.max(6, (hitCities.length || defaults.length) * 1.5 | 0) });
+                    return { reply: '好的，给你规划<b>' + esc(citiesPlan) + '</b>这条线，地图上已排好路线。接着可以说「预算多少」「住好点」「加一天」来调整。', actions: actions };
+                }
+            }
+            // 任何其他输入 → 给点有建设性的引导，不说"没理解"
+            var sampleCities = ['杭州','成都','西安','三亚','大理'];
             return {
-                reply: '我暂时没理解这句。可以这样说：<br>· 「加上{景点名}」· 「去掉{景点名}」<br>· 「第三天太赶了」· 「加一天」<br>· 「推荐酒店」· 「预算多少」',
+                reply: '明白，不过我需要多点线索来帮你 😊 试试这样说：<br>' +
+                    '· 「给我生成川西环线」 「青甘大环线」<br>' +
+                    '· 「杭州+苏州 3 天怎么玩」 「' + sampleCities[Math.floor(Math.random()*sampleCities.length)] + '有什么好玩」<br>' +
+                    '· 「预算 6000 去云南」 「查从北京到成都的机票」',
                 actions: actions
             };
         }
@@ -1970,10 +2032,13 @@
         var isOllama = cfg.provider === 'ollama' || (endpoint && endpoint.indexOf('ollama') >= 0);
         var headers = { 'Content-Type': 'application/json' };
         if (!isSite && !isOllama && cfg.key) headers['Authorization'] = 'Bearer ' + cfg.key;
-        return fetch(endpoint, {
+
+        // 用 Promise.race 加 60s 超时
+        var fetchPromise = fetch(endpoint, {
             method: 'POST',
             headers: headers,
             credentials: 'same-origin',
+            mode: isSite ? 'cors' : 'cors',
             body: JSON.stringify({
                 model: model,
                 provider: isSite ? 'auto' : undefined,
@@ -1983,12 +2048,19 @@
                     { role: 'user', content: userText }
                 ]
             })
-        }).then(function (r) {
+        });
+        var timeoutPromise = new Promise(function (_, reject) {
+            setTimeout(function () { reject(new Error('TIMEOUT')); }, 60000);
+        });
+
+        return Promise.race([fetchPromise, timeoutPromise]).then(function (r) {
             if (!r.ok) {
                 return r.text().then(function (t) {
                     var msg = 'HTTP ' + r.status;
                     try { msg = (JSON.parse(t).error || msg); } catch (e2) {}
-                    throw new Error(msg);
+                    var err = new Error(msg);
+                    err.code = 'HTTP_' + r.status;
+                    throw err;
                 });
             }
             return r.json();
@@ -2007,6 +2079,16 @@
             }
             // 纯文本回复：包装成 { reply: ... }
             return { reply: content };
+        }).catch(function (e) {
+            // 错误分类：让上层能给出针对性引导
+            var isCORS = e && (e.name === 'TypeError' || e.message === 'Failed to fetch' || e.message.indexOf('NetworkError') >= 0);
+            var isTimeout = e && e.message === 'TIMEOUT';
+            var err = e instanceof Error ? e : new Error(String(e));
+            err.isCORS = !!isCORS;
+            err.isTimeout = !!isTimeout;
+            err.provider = cfg.provider;
+            err.endpoint = endpoint;
+            throw err;
         });
     }
 
@@ -2046,8 +2128,33 @@
                 state.msgs.pop();
                 var fb = localReply(text);
                 var ch = applyActions(fb.actions);
-                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') +
-                    '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">接口调用失败（' + esc(e.message) + '，可能是浏览器跨域限制），已改用内置引擎处理。</div>', null, fb.cards);
+                var hint = '';
+                if (e.isCORS) {
+                    if (e.provider === 'ollama') {
+                        hint = '浏览器无法直接访问 localhost（跨域+CORS限制）。<br>' +
+                            '<b>解决方法</b>：在电脑启动 Ollama 时设置 CORS：<br>' +
+                            'Mac/Linux: <code>OLLAMA_ORIGINS="*" ollama serve</code><br>' +
+                            'Windows: <code>$env:OLLAMA_ORIGINS="*"; ollama serve</code><br>' +
+                            '⚠ 手机上无法用 Ollama（手机 localhost ≠ 电脑），请用豆包/DeepSeek 云端 API';
+                    } else if (e.provider === 'site') {
+                        hint = '站点代理暂不可用。改用 Ollama（需本地启动）或豆包/DeepSeek 填自己的 Key。';
+                    } else {
+                        hint = '云端 AI API 不支持浏览器跨域直连。<br>' +
+                            '<b>简单方案</b>：用 Ollama 本地模型（需启动并设置 <code>OLLAMA_ORIGINS="*"</code>）<br>' +
+                            '<b>正规方案</b>：搭个免费 Cloudflare Worker 转发请求（2分钟部署），选「自定义代理」填 Worker URL<br>' +
+                            '<b>临时方案</b>：换个 API endpoint 试试，有些镜像站允许跨域';
+                    }
+                } else if (e.isTimeout) {
+                    hint = '请求超时（60s），大模型可能在忙。可以换个模型或稍后再试。';
+                } else if (e.code === 'HTTP_401' || e.code === 'HTTP_403') {
+                    hint = 'API Key 无效或权限不足。请在 ⚙️ 设置里检查 Key 是否正确粘贴。';
+                } else if (e.code === 'HTTP_404') {
+                    hint = '接口地址或模型名不对。检查 endpoint 和 model 字段。';
+                } else {
+                    hint = '调用失败：' + esc(e.message || '') + '。检查接口地址和 Key 是否正确。';
+                }
+                var hintHtml = hint ? '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">' + hint + '</div>' : '';
+                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hintHtml, null, fb.cards);
             } finally {
                 state.busy = false;
             }
