@@ -1160,7 +1160,8 @@
                 (c.meta ? '<div class="pl-card-meta">' + esc(c.meta) + '</div>' : '') + '</div>';
             var price = c.price ? '<div class="pl-card-price">' + esc(c.price) + '</div>' : '';
             var btn = c.link ? '<a class="pl-card-btn" href="' + esc(c.link) + '" target="_blank" rel="noopener">' + esc(c.linkText || '去携程看看') + ' →</a>' : '';
-            return '<div class="pl-card">' + head + price + btn + '</div>';
+            var pick = c.apply ? '<button class="pl-card-pick" data-cardapply="' + esc(c.apply) + '">设为优先</button>' : '';
+            return '<div class="pl-card">' + head + price + pick + btn + '</div>';
         }).join('') + '</div>';
     }
 
@@ -1432,12 +1433,12 @@
                     {
                         type: 'flight', title: from + ' → ' + to + ' · 飞机',
                         meta: '约 ' + flyH.toFixed(1) + ' 小时（含往返机场）· 每日多班',
-                        price: '¥' + num(flyC) + ' 起', link: flyLink, linkText: '携程查航班'
+                        price: '¥' + num(flyC) + ' 起', link: flyLink, linkText: '携程查航班', apply: 'flight'
                     },
                     {
                         type: 'train', title: from + ' → ' + to + ' · 高铁',
                         meta: '约 ' + trainH.toFixed(1) + ' 小时 · 建议选上午班次',
-                        price: '¥' + num(trainC) + ' 起', link: trainLink, linkText: '携程查高铁'
+                        price: '¥' + num(trainC) + ' 起', link: trainLink, linkText: '携程查高铁', apply: 'train'
                     }
                 ]
             };
@@ -2061,6 +2062,15 @@
         // 助手
         var send = $('plAgentSend');
         var input = $('plAgentInput');
+        var agBody = $('plAgentBody');
+        if (agBody) agBody.addEventListener('click', function (e) {
+            var pickBtn = e.target.closest('[data-cardapply]');
+            if (!pickBtn) return;
+            var v = pickBtn.getAttribute('data-cardapply');
+            var n = applyActions([{ type: 'setTransport', value: v }]);
+            pushMsg('ai', '已把城际交通设为<b>' + (v === 'train' ? '优先高铁' : '优先飞机') + '</b>，行程时长和花费已重算。' +
+                (n ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">' + esc(n) + '</div>' : ''));
+        });
         if (send) send.addEventListener('click', function () { sendAgent(input ? input.value : ''); });
         if (input) {
             input.addEventListener('keydown', function (e) {

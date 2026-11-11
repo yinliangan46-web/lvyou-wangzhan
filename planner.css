@@ -589,6 +589,13 @@
     white-space: nowrap;
 }
 .pl-card-btn:hover { background: #dbeafe; }
+.pl-card-pick {
+    border: 0; background: #2563eb; color: #fff;
+    padding: 6px 9px; border-radius: 8px;
+    font-size: .72rem; font-weight: 700; cursor: pointer;
+    white-space: nowrap;
+}
+.pl-card-pick:hover { background: #1d4ed8; }
 
 /* 环线提示条 */
 .pl-loop-banner {
@@ -626,7 +633,7 @@
     .pl-agent-input button { height: 42px; }
 }
 @media (max-width: 640px) {
-    .pl-shell { gap: 12px; }
+    .pl-shell { gap: 12px; padding-bottom: 78px; }
     .pl-agent {
         position: fixed;
         left: 0; right: 0; bottom: 0; top: auto;
