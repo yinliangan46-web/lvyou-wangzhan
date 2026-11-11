@@ -7330,7 +7330,7 @@ window.LOOP_ROUTES = [
         const mapHtml = window.renderLoopMap ? window.renderLoopMap(data) : '';
         
         // 亮点
-        const hlHtml = (data.coverages || []).map(c => 
+        const hlHtml = (data.coverages || []).filter(c => String(c||'').trim()).map(c => 
             `<span class="loop-hl" style="padding:4px 12px;background:#fef3c7;color:#b45309;border-radius:12px;font-size:.8rem;margin-right:6px">${safe(c)}</span>`
         ).join('');
         
@@ -7358,7 +7358,7 @@ window.LOOP_ROUTES = [
         const budget = (data.budget || []).map(b => `<div class="budget-item"><div class="label">${safe(b.label)}</div><div class="value">${safe(b.value)}</div></div>`).join('');
         
         // 标签
-        const tagHtml = (data.tags || []).map(t => `<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">${safe(t)}</span>`).join('');
+        const tagHtml = (data.tags || []).filter(t => String(t||'').trim()).map(t => `<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">${safe(t)}</span>`).join('');
         
         setTimeout(() => { if (window.bindLoopMap) window.bindLoopMap(); }, 50);
         
@@ -7421,7 +7421,7 @@ window.LOOP_ROUTES = [
         '塔尔寺': [101.772, 36.496], '青海湖': [100.15, 36.7], '茶卡盐湖': [99.1, 36.78],
         '沙湖': [106.786, 38.739], '西夏王陵': [106.296, 38.441], '镇北堡西部影城': [106.042, 38.534],
         '中山桥': [103.823, 36.062], '黄河母亲': [103.837, 36.04], '黄河石林': [104.33, 36.15],
-        '滇池': [102.78, 25.82], '石林': [103.321, 24.766], '翠湖': [102.702, 25.042],
+        '滇池': [102.655, 24.965], '石林': [103.321, 24.766], '翠湖': [102.702, 25.042],
         '民族村': [102.794, 25], '九乡溶洞': [103.37, 25], '九寨沟': [103.918, 33.26],
         '黄龙': [103.98, 32.76], '牟尼沟': [103.99, 32.3], '甲蕃古城': [103.92, 33.26],
         '喀纳斯': [87.01, 49.11], '天山天池': [88.02, 43.88], '红山公园': [87.616, 43.825],
@@ -7593,7 +7593,10 @@ window.LOOP_ROUTES = [
         '金鞭溪': [110.47, 29.35], '宝峰湖': [110.54, 29.34], '天门山玻璃栈道': [110.48, 29.05],
         '土家风情园': [110.48, 29.12], '甲秀楼': [106.713, 26.568], '花溪公园': [106.68, 26.42],
         '黔灵山': [106.67, 26.62], '荔波小七孔': [107.91, 25.41], '天河潭': [106.52, 26.35],
-        '磁器口古镇': [106.41, 29.58], '白帝城': [108.35, 31.03], '渣滓洞': [106.38, 29.56],
+        '磁器口古镇': [106.41, 29.58], '白帝城': [109.5707, 31.0437], '渣滓洞': [106.38, 29.56],
+        '上海·世博园': [121.4896, 31.1856], '广州·莲花山': [113.4925, 22.9847],
+        '朱家角': [121.0506, 31.1079], '武康路': [121.4374, 31.2097], '静安寺': [121.4454, 31.2286],
+        '观澜山水田园': [114.0647, 22.7056],
         '鹅岭公园': [106.53, 29.55], '朝天门': [106.58, 29.57], '白公馆': [106.38, 29.56],
         '五花海': [103.92, 33.19], '珍珠滩': [103.92, 33.2], '五彩池': [103.92, 33.21],
         '诺日朗瀑布': [103.92, 33.23], '长海': [103.92, 33.24], '镜海': [103.92, 33.22],
@@ -7707,7 +7710,7 @@ window.LOOP_ROUTES = [
         '螺髻山': [102.38, 27.57], '百花湖': [106.45, 26.63], '娄山关': [106.84, 27.75],
         '荔波大小七孔': [107.91, 25.41], '万峰林': [104.91, 25.05], '马岭河峡谷': [104.98, 25.16],
         '罗平油菜花': [103.96, 24.88], '九龙瀑布': [104.03, 25.03], '抚仙湖': [102.84, 24.58],
-        '禄充风景区': [102.82, 24.55], '观音峡': [100.25, 25.81], '茶马古道': [100.25, 25.81],
+        '禄充风景区': [102.82, 24.55], '观音峡': [100.264, 26.815], '茶马古道': [100.25, 25.81],
         '丽江古城': [100.234, 26.872], '西双版纳热带植物园': [101.27, 21.93], '傣族村寨': [100.8, 22],
         '告庄西双景': [100.8, 22.01], '香格里拉': [99.71, 27.82], '大山包': [103.28, 27.24],
         '豆沙关': [104.16, 27.18], '勐梭龙潭': [100.97, 22.83], '菜阳河森林公园': [100.97, 22.83],
@@ -8163,10 +8166,26 @@ if (!data.itinerary || !data.itinerary.length) return;
                 });
                 // 写回 data.routePins（去机场后的真实景点全集）
                 data.routePins = uniqPins;
-                // 重新建 coords 映射（给地图用）
-                var rebuiltCoords = {};
-                uniqPins.forEach(function(pin){
-                    rebuiltCoords[pin] = rebuiltCoords[pin] || window.REAL_POI_COORDS[pin];
+                // ⭐ 关键修复：CITY_ROUTE_COORDS 必须按最终 routePins 顺序重对齐！
+                // 8115 行写入的坐标数组是按 result（骨架）顺序的，而 routePins 已被 uniqPins
+                //（known dict 优先）覆盖，两者顺序不同 → 渲染按 index 配对就会张冠李戴
+                // （上海"南京路"拿到迪士尼坐标、深圳"大梅沙"拿到莲花山坐标，全城错位）
+                var _prevCoordsArr = window.CITY_ROUTE_COORDS[cityKey] || [];
+                var _pinCoordMap = {};
+                result.forEach(function(p, i) {
+                    if (_prevCoordsArr[i] && typeof _prevCoordsArr[i][0] === 'number') _pinCoordMap[p] = _prevCoordsArr[i];
+                });
+                var _cnName2 = data.name || '';
+                var _ccFallback = (window.ALL_CITY_COORDS && (window.ALL_CITY_COORDS[cityKey] || window.ALL_CITY_COORDS[_cnName2])) || null;
+                window.CITY_ROUTE_COORDS[cityKey] = uniqPins.map(function(p) {
+                    if (_pinCoordMap[p]) return _pinCoordMap[p];
+                    // result 里没有的（known dict 新增景点）→ 实时三层查找
+                    var hit = (_cnName2 && window.REAL_POI_COORDS[_cnName2 + '·' + p])
+                        || window.REAL_POI_COORDS[cityKey + '·' + p]
+                        || window.REAL_POI_COORDS[p];
+                    if (hit) return hit;
+                    if (_ccFallback) return [_ccFallback[0], _ccFallback[1]];
+                    return [116.4, 39.9];
                 });
                 // ══════ 自动扩展/缩减天数逻辑只有一套：在下面 7982 行，基于 remainingPins 精确计算 ══════
                 // 收集 Day1 已用景点（避免重复）
@@ -8489,7 +8508,7 @@ window.renderRichDetail = function(data) {
         const foods = (data.foods || []).map(f => `<li><strong>${safe(f.name)}</strong> — ${safe(f.desc)} <em style="color:var(--primary);font-weight:600">${safe(f.price)}</em></li>`).join('');
         const tips = (data.tips || []).map(t => `<li>${safe(t)}</li>`).join('');
         const budget = (data.budget || []).map(b => `<div class="budget-item"><div class="label">${safe(b.label)}</div><div class="value">${safe(b.value)}</div></div>`).join('');
-        const tagHtml = (data.tags || []).map(t => `<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">${safe(t)}</span>`).join('');
+        const tagHtml = (data.tags || []).filter(t => String(t||'').trim()).map(t => `<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">${safe(t)}</span>`).join('');
         
         return `
             ${routeHtml}

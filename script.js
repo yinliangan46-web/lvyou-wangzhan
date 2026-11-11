@@ -1472,10 +1472,29 @@ function openProvinceModal(provinceKey) {
     }
     // === 城际交通 / 酒店 / 美食 ===
     const transfersHtml = (provData.transfers || []).filter(function(t){return String(t||'').trim();}).map(function(t) {
-        return '<div class="timeline-item" style="padding:10px 12px"><div class="activity" style="font-size:.9rem"><i class="fas fa-exchange-alt" style="color:var(--primary);margin-right:6px"></i>' + esc(t) + '</div></div>';
+        // 解析 "A→B： 高铁约1小时 ¥40"（兼容半角冒号与↔）→ 附携程订票链接（火车走火车票，大巴/公交走汽车票）
+        var tm = String(t).match(/^\s*([^→↔：:]+)\s*[→↔]\s*([^：:]+?)\s*[：:]/);
+        var link = '';
+        if (tm) {
+            // 目的地括号注释（"黄山（汤口）"）清洗掉，否则携程搜不到站名
+            var from = encodeURIComponent(tm[1].trim().replace(/[（(].*$/, '')), to = encodeURIComponent(tm[2].trim().replace(/[（(].*$/, ''));
+            var url = /高铁|动车|火车/.test(t)
+                ? 'https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation=' + from + '&aStation=' + to
+                : 'https://bus.ctrip.com/';
+            link = ' <a href="' + url + '" target="_blank" rel="noopener" style="color:var(--primary);font-size:.8rem;white-space:nowrap;margin-left:8px"><i class="fas fa-ticket-alt"></i> 携程订票 →</a>';
+        }
+        return '<div class="timeline-item" style="padding:10px 12px"><div class="activity" style="font-size:.9rem"><i class="fas fa-exchange-alt" style="color:var(--primary);margin-right:6px"></i>' + esc(t) + link + '</div></div>';
     }).join('');
     const hotelsHtml = (provData.hotels || []).filter(function(h){return String(h||'').trim();}).map(function(h) {
-        return '<div class="timeline-item" style="padding:10px 12px"><div class="activity" style="font-size:.9rem"><i class="fas fa-hotel" style="color:var(--primary);margin-right:6px"></i>' + esc(h) + '</div></div>';
+        // 解析 "南京： 新街口/夫子庙商圈 ¥250-600" → 取城市名附携程酒店搜索链接；无冒号时取 ¥ 前文字
+        var hm = String(h).match(/^\s*([^：:]+?)\s*[：:]/);
+        var kw = hm ? hm[1].trim() : String(h).split('¥')[0].trim();
+        var link = '';
+        if (kw) {
+            var url = 'https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(kw);
+            link = ' <a href="' + url + '" target="_blank" rel="noopener" style="color:var(--primary);font-size:.8rem;white-space:nowrap;margin-left:8px"><i class="fas fa-external-link-alt"></i> 携程订酒店 →</a>';
+        }
+        return '<div class="timeline-item" style="padding:10px 12px"><div class="activity" style="font-size:.9rem"><i class="fas fa-hotel" style="color:var(--primary);margin-right:6px"></i>' + esc(h) + link + '</div></div>';
     }).join('');
     const foodsHtml = (provData.foods || []).filter(function(fd){return String(fd||'').trim();}).map(function(fd) {
         return '<span class="meta-tag ticket" style="margin:0 6px 6px 0;display:inline-block">' + esc(fd) + '</span>';
@@ -1956,10 +1975,11 @@ function openTourModalBack(data, backType) {
     const itinHtml = itineraryData.map(day => {
         const tl = (day.timeline || []).map(item => {
             const m = [];
-            if (item.duration) m.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + item.duration + '</span>');
-            if (item.ticket) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + item.ticket + '</span>');
-            if (item.price) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + item.price + '</span>');
-            if (item.tip) m.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + item.tip + '</span>');
+            const _dur=String(item.duration||'').trim(),_tic=String(item.ticket||'').trim(),_prc=String(item.price||'').trim(),_tip=String(item.tip||'').trim();
+            if (_dur) m.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + _dur + '</span>');
+            if (_tic) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + _tic + '</span>');
+            if (_prc && _prc!==_tic) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + _prc + '</span>');
+            if (_tip) m.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + _tip + '</span>');
             return '<div class="timeline-item"><div class="time">' + (item.time || '') + '</div><div class="activity"><strong>' + (item.activity || '') + '</strong></div><div class="detail">' + (item.detail || '') + '</div>' + (m.length ? '<div class="meta-row">' + m.join('') + '</div>' : '') + '</div>';
         }).join('');
         return '<div class="itinerary-day loop-day" data-day="' + (day.day || '') + '"><h4><span class="day-tag">' + (day.day || '') + '</span>' + (day.theme || day.title || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
@@ -2161,10 +2181,11 @@ function openTourModal(type) {
     const itinHtml = itineraryData.map(day => {
         const tl = (day.timeline || []).map(item => {
             const m = [];
-            if (item.duration) m.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + item.duration + '</span>');
-            if (item.ticket) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + item.ticket + '</span>');
-            if (item.price) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + item.price + '</span>');
-            if (item.tip) m.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + item.tip + '</span>');
+            const _dur=String(item.duration||'').trim(),_tic=String(item.ticket||'').trim(),_prc=String(item.price||'').trim(),_tip=String(item.tip||'').trim();
+            if (_dur) m.push('<span class="meta-tag duration"><i class="fas fa-clock"></i> ' + _dur + '</span>');
+            if (_tic) m.push('<span class="meta-tag ticket"><i class="fas fa-ticket-alt"></i> ' + _tic + '</span>');
+            if (_prc && _prc!==_tic) m.push('<span class="meta-tag"><i class="fas fa-yen-sign"></i> ' + _prc + '</span>');
+            if (_tip) m.push('<span class="meta-tag tip"><i class="fas fa-lightbulb"></i> ' + _tip + '</span>');
             return '<div class="timeline-item"><div class="time">' + (item.time || '') + '</div><div class="activity"><strong>' + (item.activity || '') + '</strong></div><div class="detail">' + (item.detail || '') + '</div>' + (m.length ? '<div class="meta-row">' + m.join('') + '</div>' : '') + '</div>';
         }).join('');
         return '<div class="itinerary-day loop-day" data-day="' + (day.day || '') + '"><h4><span class="day-tag">' + (day.day || '') + '</span>' + (day.theme || day.title || '') + '</h4><div class="day-timeline">' + tl + '</div></div>';
@@ -2172,10 +2193,10 @@ function openTourModal(type) {
 
     const mapHtml = buildTourMapHtml(data);
 
-    const hlHtml = (data.coverages || []).map(c => 
+    const hlHtml = (data.coverages || []).filter(function(c){return String(c||'').trim();}).map(c =>
         '<span class="loop-hl" style="padding:4px 12px;background:#fef3c7;color:#b45309;border-radius:12px;font-size:.8rem;margin-right:6px">' + c + '</span>'
     ).join('');
-    const tagHtml = (data.tags || []).map(t => 
+    const tagHtml = (data.tags || []).filter(function(t){return String(t||'').trim();}).map(t =>
         '<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">' + t + '</span>'
     ).join('');
 
@@ -2423,14 +2444,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } catch(e) {}
-        // 3. LOOP_ROUTES (loop-data.js 环线)
-        try {
-            (window.LOOP_ROUTES || []).forEach(function(d) {
-                if (d && d.itinerary && d.itinerary.length >= 2) {
-                    try { window.syncCityData(d); } catch(e) {}
-                }
-            });
-        } catch(e) {}
+        // 3. LOOP_ROUTES 跳过 sync：10 条环线的 itinerary/days 全是手工精编的，
+        //    sync 会误删"空 Day"并把 15天14晚 重算成 14天13晚（青甘/西藏/稻城/新西兰/泰北 5 条全中招）
         // 4. PROVINCES_ALL 省地级市 (province-data-all.js)
         try {
             (window.PROVINCES_ALL || []).forEach(function(prov) {
