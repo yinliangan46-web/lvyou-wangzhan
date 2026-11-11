@@ -494,6 +494,15 @@ ul {
     height: 180px;
 }
 
+/* 省份弹窗内的地级市卡片：紧凑配图 */
+.prov-city-card .dest-img {
+    height: 96px;
+}
+
+.prov-city-card .dest-info {
+    padding: 8px 10px !important;
+}
+
 .china-card .dest-info {
     padding: 16px;
 }

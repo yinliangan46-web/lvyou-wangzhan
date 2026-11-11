@@ -1,4 +1,4 @@
-window.ALL_CITY_COORDS = {"石家庄":[114.5088,38.043],"唐山":[118.1739,39.6296],"秦皇岛":[119.5863,39.9649],"邯郸":[114.4857,36.6108],"邢台":[114.4997,37.0617],"保定":[115.4907,38.858],"张家口":[114.8783,40.8171],"承德":[117.9567,40.9507],"沧州":[116.8724,38.3089],"廊坊":[116.703,39.5084],"衡水":[115.6851,37.7435],"太原":[112.5818,37.86],"大同":[113.2953,40.0923],"阳泉":[113.5266,38.0936],"长治":[113.0993,36.183],"晋城":[112.8454,35.4913],"朔州":[112.5413,39.5927],"晋中":[112.7383,37.6867],"运城":[110.985,35.0269],"忻州":[112.3858,38.765],"临汾":[111.3818,36.23],"吕梁":[111.3179,37.6856],"沈阳":[123.4279,41.8026],"大连":[121.6277,38.9217],"鞍山":[122.8275,40.8222],"抚顺":[124.7459,41.8012],"本溪":[124.1574,41.1769],"丹东":[124.3818,40.1229],"锦州":[121.6153,41.4944],"营口":[122.2358,40.6747],"阜新":[122.0153,42.3303],"辽阳":[123.1631,41.2796],"盘锦":[122.0655,41.1169],"铁岭":[124.2858,42.6345],"朝阳":[120.4391,41.5755],"葫芦岛":[120.8316,40.7094],"长春":[125.3177,43.9088],"吉林":[126.1997,43.729],"四平":[125.3182,43.8845],"辽源":[125.1405,42.9007],"通化":[125.7536,41.6747],"白山":[124.2953,43.3775],"松原":[124.8171,45.1387],"白城":[122.8321,45.618],"延边":[129.3667,42.9213],"哈尔滨":[126.6276,45.7594],"齐齐哈尔":[123.99,47.3385],"鸡西":[132.4615,45.658],"鹤岗":[130.2685,47.3272],"双鸭山":[132.6455,46.5227],"大庆":[124.5598,46.324],"伊春":[128.9002,47.7259],"佳木斯":[130.3759,46.8017],"七台河":[131.0067,45.7704],"牡丹江":[129.6114,44.579],"黑河":[127.1173,49.2499],"绥化":[127.0095,46.6432],"南京":[118.7789,32.0438],"无锡":[120.2953,31.5777],"徐州":[117.181,34.2665],"常州":[119.9692,31.8123],"苏州":[120.6213,31.3111],"南通":[120.8905,31.9828],"连云港":[119.2172,34.5933],"淮安":[119.0197,33.5978],"盐城":[120.1577,33.3496],"扬州":[119.4078,32.3969],"镇江":[119.427,32.1997],"泰州":[119.9181,32.458],"宿迁":[118.2697,33.9645],"杭州":[120.2052,30.249],"宁波":[121.55,29.872],"温州":[120.6953,27.9964],"嘉兴":[120.7511,30.7474],"湖州":[120.0851,30.8943],"绍兴":[120.5769,29.9992],"金华":[119.6312,29.1143],"衢州":[118.8761,28.927],"舟山":[122.203,29.9873],"台州":[121.4164,28.6582],"丽水":[119.9184,28.4704],"合肥":[117.2814,31.8666],"芜湖":[118.2142,31.1801],"蚌埠":[117.3826,32.9176],"淮南":[117.013,32.5867],"马鞍山":[118.5048,31.6866],"淮北":[116.7929,33.9566],"铜陵":[117.6141,30.9058],"安庆":[116.6303,30.6592],"黄山":[118.3325,29.7173],"滁州":[118.3139,32.3027],"阜阳":[115.809,32.8927],"宿州":[116.9588,33.6482],"六安":[116.5142,31.7383],"亳州":[115.7731,33.8491],"池州":[117.486,30.6671],"宣城":[118.754,30.9413],"福州":[119.2918,26.0775],"厦门":[118.0853,24.4801],"莆田":[119.0571,25.3539],"三明":[117.4425,26.3356],"泉州":[118.3387,25.1902],"漳州":[117.4524,24.2388],"南平":[118.0753,27.3857],"龙岩":[117.0123,25.0767],"宁德":[119.4386,27.0143],"南昌":[116.0348,28.6472],"景德镇":[117.2736,29.3582],"萍乡":[113.836,27.6503],"九江":[115.382,29.3886],"新余":[114.8867,27.8536],"鹰潭":[117.1143,28.2378],"赣州":[115.3482,25.7039],"吉安":[114.9614,27.0937],"宜春":[115.0154,28.3803],"抚州":[116.4152,27.5022],"上饶":[117.4054,28.7436],"济南":[117.1138,36.652],"青岛":[120.3778,36.0663],"淄博":[118.0488,36.813],"枣庄":[117.3179,34.8109],"东营":[118.6689,37.4335],"烟台":[121.4425,37.4619],"潍坊":[119.1558,36.7075],"济宁":[116.5849,35.4125],"泰安":[117.0809,36.2003],"威海":[122.1153,37.5121],"日照":[119.5214,35.4179],"临沂":[118.3507,35.1032],"德州":[116.2827,37.4487],"聊城":[115.9642,36.4442],"滨州":[117.9647,37.3821],"菏泽":[115.5019,35.2313],"郑州":[113.6537,34.7475],"开封":[114.3491,34.772],"洛阳":[112.4477,34.6197],"平顶山":[113.3002,33.742],"安阳":[114.3343,36.1046],"鹤壁":[114.2913,35.7495],"新乡":[113.8536,35.3064],"焦作":[113.2287,35.2226],"濮阳":[115.0234,35.7631],"许昌":[113.7147,34.1478],"漯河":[114.0107,33.5827],"三门峡":[111.049,34.4229],"南阳":[112.5056,33.0009],"商丘":[115.6519,34.4461],"信阳":[114.0768,32.1307],"周口":[114.9119,33.8083],"驻马店":[114.0368,32.981],"武汉":[114.2921,30.5789],"黄石":[115.0334,30.2025],"十堰":[110.5608,32.4527],"宜昌":[111.2804,30.6941],"襄阳":[112.1164,32.011],"鄂州":[114.8899,30.3925],"荆门":[112.1938,31.0375],"孝感":[113.9224,31.1764],"荆州":[112.2337,30.3376],"黄冈":[114.8673,30.456],"咸宁":[114.3169,29.8438],"随州":[113.4658,31.9209],"长沙":[113.2384,28.1451],"株洲":[113.1517,27.8388],"湘潭":[112.6263,27.6819],"衡阳":[112.5666,26.8971],"邵阳":[111.2831,26.9589],"岳阳":[113.301,29.1385],"常德":[111.6929,29.0346],"张家界":[110.5301,29.3738],"益阳":[112.0567,28.4387],"郴州":[113.0094,25.7734],"永州":[111.5655,26.4577],"怀化":[109.9633,27.5607],"娄底":[111.9891,27.6995],"广州":[113.259,23.1288],"韶关":[113.8155,24.8309],"深圳":[114.0545,22.5446],"珠海":[113.5721,22.2737],"汕头":[116.6776,23.3564],"佛山":[113.116,23.024],"江门":[113.0761,22.5817],"湛江":[110.3548,21.2737],"茂名":[110.921,21.6657],"肇庆":[112.4604,23.0502],"惠州":[114.4127,23.1125],"梅州":[116.1171,24.2918],"汕尾":[115.51,23.0124],"河源":[115.0578,24.1015],"阳江":[111.7831,22.0958],"清远":[113.0506,23.6833],"东莞":[113.7452,23.0184],"中山":[113.3872,22.5197],"潮州":[116.6204,23.6566],"揭阳":[116.368,23.5532],"云浮":[111.8079,22.8547],"海口":[110.1957,20.0462],"三亚":[109.5034,18.2535],"儋州":[109.4044,19.5689],"成都":[104.0633,30.6599],"自贡":[104.7761,29.3419],"攀枝花":[101.7179,26.586],"泸州":[105.5383,28.5298],"德阳":[104.3901,31.1244],"绵阳":[104.7161,31.4603],"广元":[105.8395,32.2686],"遂宁":[105.5893,30.5359],"内江":[105.0545,29.5827],"乐山":[103.5966,29.2233],"南充":[106.2317,31.2102],"眉山":[103.8458,30.0791],"宜宾":[104.6406,28.7555],"广安":[106.6287,30.4593],"达州":[107.463,31.2101],"雅安":[102.7417,29.8931],"巴中":[106.7417,31.8689],"资阳":[104.6478,30.1237],"贵阳":[106.6987,26.5599],"六盘水":[104.828,26.5964],"遵义":[106.9153,27.6898],"安顺":[105.9396,26.233],"毕节":[105.4157,27.2658],"铜仁":[108.584,27.9529],"昆明":[102.7169,25.0399],"曲靖":[103.9861,25.7199],"玉溪":[102.5111,24.3421],"保山":[99.2515,25.1017],"昭通":[103.7167,27.3389],"丽江":[100.225,26.8596],"普洱":[100.8784,23.2949],"临沧":[100.0879,23.8885],"西安":[108.9423,34.261],"铜川":[108.9404,34.8973],"宝鸡":[107.1482,34.3742],"咸阳":[108.7301,34.3457],"渭南":[109.4643,34.5169],"延安":[109.4874,36.6028],"汉中":[107.045,33.1711],"榆林":[109.729,38.2851],"安康":[109.0178,32.7065],"商洛":[109.9378,33.8691],"兰州":[103.6323,36.2859],"嘉峪关":[98.2178,39.8022],"金昌":[102.0382,38.2559],"白银":[104.785,36.5365],"天水":[105.7063,34.5798],"武威":[102.6346,37.8819],"张掖":[99.9249,39.1218],"平凉":[106.6608,35.5432],"酒泉":[98.5098,39.7437],"庆阳":[107.6216,36.1824],"定西":[104.5936,35.1773],"陇南":[105.3514,33.5364],"西宁":[101.4408,36.8245],"海东":[102.3565,36.3099],"呼和浩特":[111.6602,40.8185],"包头":[109.8302,40.6041],"乌海":[106.9005,39.4858],"赤峰":[118.9759,43.2565],"通辽":[122.2601,43.6152],"鄂尔多斯":[109.7764,39.6081],"呼伦贝尔":[119.8256,49.2079],"巴彦淖尔":[107.382,40.7419],"乌兰察布":[113.1316,40.9903],"南宁":[108.318,22.8158],"柳州":[109.3833,24.3106],"桂林":[110.2772,25.2643],"梧州":[111.0139,23.5715],"北海":[109.373,21.6741],"防城港":[108.0272,21.8615],"钦州":[108.6208,21.9648],"贵港":[110.0413,23.3594],"玉林":[110.2143,22.4199],"百色":[106.6149,23.9054],"贺州":[111.3591,24.3705],"河池":[107.8857,24.7169],"来宾":[109.217,23.7533],"崇左":[107.3282,22.491],"拉萨":[91.1173,29.6542],"日喀则":[88.8807,29.2714],"昌都":[97.1712,31.1435],"林芝":[94.3602,29.651],"山南":[91.7523,28.7628],"那曲":[92.0498,31.4786],"银川":[106.1686,38.4917],"石嘴山":[106.3772,38.9869],"吴忠":[106.1943,37.9971],"固原":[106.2379,36.0149],"中卫":[105.4966,36.9851],"克拉玛依":[84.9574,45.4652],"吐鲁番":[89.7283,42.4562],"哈密":[93.5142,42.8174],"阿克苏":[79.9634,37.1015],"喀什":[75.99,39.4666],"和田":[79.6795,36.621],"伊犁":[81.3387,43.9466],"塔城":[84.285,45.7492],"阿勒泰":[88.4342,47.1002],"台北":[121.5654,25.033],"新北":[121.4657,25.012],"桃园":[121.2299,24.9883],"台中":[120.6159,24.1121],"台南":[120.2864,22.9247],"高雄":[120.3026,22.6395],"基隆":[121.7392,25.133],"新竹":[120.9605,24.8039],"嘉义":[120.4491,23.4801],"香港岛":[114.1858,22.3492],"九龙":[114.1694,22.3193],"新界":[114.2477,22.4329],"澳门半岛":[113.5439,22.1987],"氹仔":[113.556,22.156],"香港":[114.1694,22.3193],"澳门":[113.5439,22.1987],"兴安盟":[122.07,46.08],"锡林郭勒盟":[116.09,43.94],"阿拉善盟":[105.68,38.84],"延边朝鲜族自治州":[129.51,42.89],"大兴安岭地区":[124.12,50.42],"济源":[112.6,35.09],"恩施土家族苗族自治州":[109.49,30.27],"湘西土家族苗族自治州":[109.72,28.32],"三沙":[112.35,16.83],"阿坝藏族羌族自治州":[102.22,31.9],"甘孜藏族自治州":[101.96,30.05],"凉山彝族自治州":[102.26,27.89],"黔西南布依族苗族自治州":[104.9,25.09],"黔东南苗族侗族自治州":[107.98,26.58],"黔南布依族苗族自治州":[107.52,26.26],"楚雄彝族自治州":[101.55,25.03],"红河哈尼族彝族自治州":[103.36,23.36],"文山壮族苗族自治州":[104.22,23.4],"西双版纳傣族自治州":[100.8,22.01],"大理白族自治州":[100.23,25.59],"德宏傣族景颇族自治州":[98.59,24.43],"怒江傈僳族自治州":[98.85,25.85],"迪庆藏族自治州":[99.71,27.83],"临夏回族自治州":[103.21,35.6],"甘南藏族自治州":[102.91,34.98],"海北藏族自治州":[100.99,36.96],"黄南藏族自治州":[102.02,35.52],"海南藏族自治州":[100.62,36.28],"果洛藏族自治州":[100.24,34.47],"玉树藏族自治州":[97.01,33],"海西蒙古族藏族自治州":[97.36,37.37],"乌鲁木齐":[87.62,43.83],"昌吉回族自治州":[87.31,44.01],"博尔塔拉蒙古自治州":[82.07,44.9],"巴音郭楞蒙古自治州":[86.15,41.73],"阿克苏地区":[80.26,41.17],"克孜勒苏柯尔克孜自治州":[76.17,39.71],"喀什地区":[75.99,39.47],"和田地区":[79.92,37.11],"伊犁哈萨克自治州":[81.32,43.92],"塔城地区":[82.98,46.75],"阿勒泰地区":[88.14,47.85],"路环":[113.56,22.12],"阿里地区":[80.1,32.5],"楚雄":[101.55,25.03],"红河":[103.36,23.36],"文山":[104.22,23.4],"西双版纳":[100.8,22.01],"大理":[100.23,25.59],"德宏":[98.59,24.43],"怒江":[98.85,25.85],"迪庆":[99.71,27.83],"北京":[116.407,39.904],"上海":[121.474,31.23],"重庆":[106.551,29.563],"黄果树":[105.71,25.99],"敦煌":[94.66,40.14],"九寨沟":[104.23,33.26]};
+window.ALL_CITY_COORDS = {"石家庄":[114.5088,38.043],"唐山":[118.1739,39.6296],"秦皇岛":[119.5863,39.9649],"邯郸":[114.4857,36.6108],"邢台":[114.4997,37.0617],"保定":[115.4907,38.858],"张家口":[114.8783,40.8171],"承德":[117.9567,40.9507],"沧州":[116.8724,38.3089],"廊坊":[116.703,39.5084],"衡水":[115.6851,37.7435],"太原":[112.5818,37.86],"大同":[113.2953,40.0923],"阳泉":[113.5266,38.0936],"长治":[113.0993,36.183],"晋城":[112.8454,35.4913],"朔州":[112.5413,39.5927],"晋中":[112.7383,37.6867],"运城":[110.985,35.0269],"忻州":[112.3858,38.765],"临汾":[111.3818,36.23],"吕梁":[111.3179,37.6856],"沈阳":[123.4279,41.8026],"大连":[121.6277,38.9217],"鞍山":[122.8275,40.8222],"抚顺":[123.9571,41.8813],"本溪":[123.685,41.4868],"丹东":[124.3818,40.1229],"锦州":[121.1357,41.1193],"营口":[122.2358,40.6747],"阜新":[122.0153,42.3303],"辽阳":[123.1631,41.2796],"盘锦":[122.0655,41.1169],"铁岭":[123.7257,42.2233],"朝阳":[120.4391,41.5755],"葫芦岛":[120.8316,40.7094],"长春":[125.3177,43.9088],"吉林":[126.1997,43.729],"四平":[124.3708,43.1703],"辽源":[125.1405,42.9007],"通化":[125.7536,41.6747],"白山":[126.4278,41.9425],"松原":[124.8171,45.1387],"白城":[122.8321,45.618],"延边":[129.3667,42.9213],"哈尔滨":[126.6276,45.7594],"齐齐哈尔":[123.99,47.3385],"鸡西":[130.976,45.3],"鹤岗":[130.2685,47.3272],"双鸭山":[131.1573,46.6434],"大庆":[125.1127,46.5907],"伊春":[128.9002,47.7259],"佳木斯":[130.3759,46.8017],"七台河":[131.0067,45.7704],"牡丹江":[129.6114,44.579],"黑河":[127.499,50.2496],"绥化":[127.0095,46.6432],"南京":[118.7789,32.0438],"无锡":[120.2953,31.5777],"徐州":[117.181,34.2665],"常州":[119.9692,31.8123],"苏州":[120.6213,31.3111],"南通":[120.8905,31.9828],"连云港":[119.2172,34.5933],"淮安":[119.0197,33.5978],"盐城":[120.1577,33.3496],"扬州":[119.4078,32.3969],"镇江":[119.427,32.1997],"泰州":[119.9181,32.458],"宿迁":[118.2697,33.9645],"杭州":[120.2052,30.249],"宁波":[121.55,29.872],"温州":[120.6953,27.9964],"嘉兴":[120.7511,30.7474],"湖州":[120.0851,30.8943],"绍兴":[120.5769,29.9992],"金华":[119.6312,29.1143],"衢州":[118.8761,28.927],"舟山":[122.203,29.9873],"台州":[121.4164,28.6582],"丽水":[119.9184,28.4704],"合肥":[117.2814,31.8666],"芜湖":[118.2142,31.1801],"蚌埠":[117.3826,32.9176],"淮南":[117.013,32.5867],"马鞍山":[118.5048,31.6866],"淮北":[116.7929,33.9566],"铜陵":[117.6141,30.9058],"安庆":[116.6303,30.6592],"黄山":[118.3325,29.7173],"滁州":[118.3139,32.3027],"阜阳":[115.809,32.8927],"宿州":[116.9588,33.6482],"六安":[116.5142,31.7383],"亳州":[115.7731,33.8491],"池州":[117.486,30.6671],"宣城":[118.754,30.9413],"福州":[119.2918,26.0775],"厦门":[118.0853,24.4801],"莆田":[119.0571,25.3539],"三明":[117.4425,26.3356],"泉州":[118.3387,25.1902],"漳州":[117.4524,24.2388],"南平":[118.0753,27.3857],"龙岩":[117.0123,25.0767],"宁德":[119.4386,27.0143],"南昌":[116.0348,28.6472],"景德镇":[117.2736,29.3582],"萍乡":[113.836,27.6503],"九江":[115.9536,29.6612],"新余":[114.8867,27.8536],"鹰潭":[117.1143,28.2378],"赣州":[115.3482,25.7039],"吉安":[114.9614,27.0937],"宜春":[114.3911,27.8043],"抚州":[116.3584,27.9839],"上饶":[117.9712,28.4444],"济南":[117.1138,36.652],"青岛":[120.3778,36.0663],"淄博":[118.0488,36.813],"枣庄":[117.3179,34.8109],"东营":[118.6689,37.4335],"烟台":[121.4425,37.4619],"潍坊":[119.1558,36.7075],"济宁":[116.5849,35.4125],"泰安":[117.0809,36.2003],"威海":[122.1153,37.5121],"日照":[119.5214,35.4179],"临沂":[118.3507,35.1032],"德州":[116.2827,37.4487],"聊城":[115.9642,36.4442],"滨州":[117.9647,37.3821],"菏泽":[115.5019,35.2313],"郑州":[113.6537,34.7475],"开封":[114.3491,34.772],"洛阳":[112.4477,34.6197],"平顶山":[113.3002,33.742],"安阳":[114.3343,36.1046],"鹤壁":[114.2913,35.7495],"新乡":[113.8536,35.3064],"焦作":[113.2287,35.2226],"濮阳":[115.0234,35.7631],"许昌":[113.7147,34.1478],"漯河":[114.0107,33.5827],"三门峡":[111.049,34.4229],"南阳":[112.5056,33.0009],"商丘":[115.6519,34.4461],"信阳":[114.0768,32.1307],"周口":[114.9119,33.8083],"驻马店":[114.0368,32.981],"武汉":[114.2921,30.5789],"黄石":[115.0334,30.2025],"十堰":[110.5608,32.4527],"宜昌":[111.2804,30.6941],"襄阳":[112.1164,32.011],"鄂州":[114.8899,30.3925],"荆门":[112.1938,31.0375],"孝感":[113.9224,31.1764],"荆州":[112.2337,30.3376],"黄冈":[114.8673,30.456],"咸宁":[114.3169,29.8438],"随州":[113.4658,31.9209],"长沙":[113.2384,28.1451],"株洲":[113.1517,27.8388],"湘潭":[112.6263,27.6819],"衡阳":[112.5666,26.8971],"邵阳":[111.2831,26.9589],"岳阳":[113.301,29.1385],"常德":[111.6929,29.0346],"张家界":[110.5301,29.3738],"益阳":[112.0567,28.4387],"郴州":[113.0094,25.7734],"永州":[111.5655,26.4577],"怀化":[109.9633,27.5607],"娄底":[111.9891,27.6995],"广州":[113.259,23.1288],"韶关":[113.8155,24.8309],"深圳":[114.0545,22.5446],"珠海":[113.5721,22.2737],"汕头":[116.6776,23.3564],"佛山":[113.116,23.024],"江门":[113.0761,22.5817],"湛江":[110.3548,21.2737],"茂名":[110.921,21.6657],"肇庆":[112.4604,23.0502],"惠州":[114.4127,23.1125],"梅州":[116.1171,24.2918],"汕尾":[115.51,23.0124],"河源":[114.6978,23.7463],"阳江":[111.7831,22.0958],"清远":[113.0506,23.6833],"东莞":[113.7452,23.0184],"中山":[113.3872,22.5197],"潮州":[116.6204,23.6566],"揭阳":[116.368,23.5532],"云浮":[111.8079,22.8547],"海口":[110.1957,20.0462],"三亚":[109.5034,18.2535],"儋州":[109.4044,19.5689],"成都":[104.0633,30.6599],"自贡":[104.7761,29.3419],"攀枝花":[101.7179,26.586],"泸州":[105.5383,28.5298],"德阳":[104.3901,31.1244],"绵阳":[104.7161,31.4603],"广元":[105.8395,32.2686],"遂宁":[105.5893,30.5359],"内江":[105.0545,29.5827],"乐山":[103.5966,29.2233],"南充":[106.2317,31.2102],"眉山":[103.8458,30.0791],"宜宾":[104.6406,28.7555],"广安":[106.6287,30.4593],"达州":[107.463,31.2101],"雅安":[102.7417,29.8931],"巴中":[106.7417,31.8689],"资阳":[104.6478,30.1237],"贵阳":[106.6987,26.5599],"六盘水":[104.828,26.5964],"遵义":[106.9153,27.6898],"安顺":[105.9396,26.233],"毕节":[105.4157,27.2658],"铜仁":[109.1916,27.7183],"昆明":[102.7169,25.0399],"曲靖":[103.9861,25.7199],"玉溪":[102.5111,24.3421],"保山":[99.2515,25.1017],"昭通":[103.7167,27.3389],"丽江":[100.225,26.8596],"普洱":[100.966,22.8252],"临沧":[100.0879,23.8885],"西安":[108.9423,34.261],"铜川":[108.9404,34.8973],"宝鸡":[107.1482,34.3742],"咸阳":[108.7301,34.3457],"渭南":[109.4643,34.5169],"延安":[109.4874,36.6028],"汉中":[107.045,33.1711],"榆林":[109.729,38.2851],"安康":[109.0178,32.7065],"商洛":[109.9378,33.8691],"兰州":[103.6323,36.2859],"嘉峪关":[98.2178,39.8022],"金昌":[102.0382,38.2559],"白银":[104.1736,36.5457],"天水":[105.7063,34.5798],"武威":[102.6346,37.8819],"张掖":[100.4555,38.9329],"平凉":[106.6608,35.5432],"酒泉":[98.5098,39.7437],"庆阳":[107.6216,36.1824],"定西":[104.5936,35.1773],"陇南":[105.3514,33.5364],"西宁":[101.4408,36.8245],"海东":[102.3565,36.3099],"呼和浩特":[111.6602,40.8185],"包头":[109.8302,40.6041],"乌海":[106.9005,39.4858],"赤峰":[118.8876,42.2569],"通辽":[122.2601,43.6152],"鄂尔多斯":[109.7764,39.6081],"呼伦贝尔":[119.8256,49.2079],"巴彦淖尔":[107.382,40.7419],"乌兰察布":[113.1316,40.9903],"南宁":[108.318,22.8158],"柳州":[109.3833,24.3106],"桂林":[110.2772,25.2643],"梧州":[111.0139,23.5715],"北海":[109.373,21.6741],"防城港":[108.0272,21.8615],"钦州":[108.6208,21.9648],"贵港":[109.6021,23.0936],"玉林":[110.2143,22.4199],"百色":[106.6149,23.9054],"贺州":[111.3591,24.3705],"河池":[107.8857,24.7169],"来宾":[109.217,23.7533],"崇左":[107.3282,22.491],"拉萨":[91.1173,29.6542],"日喀则":[88.8807,29.2714],"昌都":[97.1712,31.1435],"林芝":[94.3602,29.651],"山南":[91.7665,29.236],"那曲":[92.0498,31.4786],"银川":[106.1686,38.4917],"石嘴山":[106.3772,38.9869],"吴忠":[106.1943,37.9971],"固原":[106.2379,36.0149],"中卫":[105.1896,37.515],"克拉玛依":[84.9574,45.4652],"吐鲁番":[89.1841,42.9476],"哈密":[93.5142,42.8174],"阿克苏":[80.2651,41.1707],"喀什":[75.99,39.4666],"和田":[79.9275,37.1089],"伊犁":[81.3387,43.9466],"塔城":[82.984,46.7463],"阿勒泰":[88.1387,47.8489],"台北":[121.5654,25.033],"新北":[121.4657,25.012],"桃园":[121.2299,24.9883],"台中":[120.6159,24.1121],"台南":[120.2864,22.9247],"高雄":[120.3026,22.6395],"基隆":[121.7392,25.133],"新竹":[120.9605,24.8039],"嘉义":[120.4491,23.4801],"香港岛":[114.1858,22.3492],"九龙":[114.1694,22.3193],"新界":[114.2477,22.4329],"澳门半岛":[113.5439,22.1987],"氹仔":[113.556,22.156],"香港":[114.1694,22.3193],"澳门":[113.5439,22.1987],"兴安盟":[122.07,46.08],"锡林郭勒盟":[116.09,43.94],"阿拉善盟":[105.68,38.84],"延边朝鲜族自治州":[129.51,42.89],"大兴安岭地区":[124.12,50.42],"济源":[112.6,35.09],"恩施土家族苗族自治州":[109.49,30.27],"湘西土家族苗族自治州":[109.72,28.32],"三沙":[112.35,16.83],"阿坝藏族羌族自治州":[102.22,31.9],"甘孜藏族自治州":[101.96,30.05],"凉山彝族自治州":[102.26,27.89],"黔西南布依族苗族自治州":[104.9,25.09],"黔东南苗族侗族自治州":[107.98,26.58],"黔南布依族苗族自治州":[107.52,26.26],"楚雄彝族自治州":[101.55,25.03],"红河哈尼族彝族自治州":[103.36,23.36],"文山壮族苗族自治州":[104.22,23.4],"西双版纳傣族自治州":[100.8,22.01],"大理白族自治州":[100.23,25.59],"德宏傣族景颇族自治州":[98.59,24.43],"怒江傈僳族自治州":[98.85,25.85],"迪庆藏族自治州":[99.71,27.83],"临夏回族自治州":[103.21,35.6],"甘南藏族自治州":[102.91,34.98],"海北藏族自治州":[100.99,36.96],"黄南藏族自治州":[102.02,35.52],"海南藏族自治州":[100.62,36.28],"果洛藏族自治州":[100.24,34.47],"玉树藏族自治州":[97.01,33],"海西蒙古族藏族自治州":[97.36,37.37],"乌鲁木齐":[87.62,43.83],"昌吉回族自治州":[87.31,44.01],"博尔塔拉蒙古自治州":[82.07,44.9],"巴音郭楞蒙古自治州":[86.15,41.73],"阿克苏地区":[80.26,41.17],"克孜勒苏柯尔克孜自治州":[76.17,39.71],"喀什地区":[75.99,39.47],"和田地区":[79.92,37.11],"伊犁哈萨克自治州":[81.32,43.92],"塔城地区":[82.98,46.75],"阿勒泰地区":[88.14,47.85],"路环":[113.56,22.12],"阿里地区":[80.1,32.5],"楚雄":[101.55,25.03],"红河":[103.36,23.36],"文山":[104.22,23.4],"西双版纳":[100.8,22.01],"大理":[100.23,25.59],"德宏":[98.59,24.43],"怒江":[98.85,25.85],"迪庆":[99.71,27.83],"北京":[116.407,39.904],"上海":[121.474,31.23],"重庆":[106.551,29.563],"黄果树":[105.71,25.99],"敦煌":[94.66,40.14],"九寨沟":[104.23,33.26]};
 window.PROVINCES_ALL = [
  {
   "key": "hebei",
@@ -23,7 +23,7 @@ window.PROVINCES_ALL = [
       38.043
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shijiazhuang%20Zhongshan%20Geometry%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shijiazhuang.jpg"
    },
    {
     "name": "唐山",
@@ -34,7 +34,7 @@ window.PROVINCES_ALL = [
       39.6296
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chengde%20mountain%20resort%208748%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tangshan.jpg"
    },
    {
     "name": "秦皇岛",
@@ -45,7 +45,7 @@ window.PROVINCES_ALL = [
       39.9649
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shanhaiguan%20pass%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qinhuangdao.jpg"
    },
    {
     "name": "邯郸",
@@ -56,7 +56,7 @@ window.PROVINCES_ALL = [
       36.6108
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhaowang%20Mausoleum%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/handan.jpg"
    },
    {
     "name": "邢台",
@@ -67,7 +67,7 @@ window.PROVINCES_ALL = [
       37.0617
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chengde%20mountain%20resort%208748%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xingtai.jpg"
    },
    {
     "name": "保定",
@@ -78,7 +78,7 @@ window.PROVINCES_ALL = [
       38.858
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Ancient%20Lotus%20Pond%20Baoding%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baoding.jpg"
    },
    {
     "name": "张家口",
@@ -89,7 +89,7 @@ window.PROVINCES_ALL = [
       40.8171
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhangjiakou%20cityscape%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhangjiakou.jpg"
    },
    {
     "name": "承德",
@@ -100,7 +100,7 @@ window.PROVINCES_ALL = [
       40.9507
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chengde%20mountain%20resort%208748%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chengde.jpg"
    },
    {
     "name": "沧州",
@@ -111,7 +111,7 @@ window.PROVINCES_ALL = [
       38.3089
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chengde%20mountain%20resort%208748%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/cangzhou.jpg"
    },
    {
     "name": "廊坊",
@@ -122,7 +122,7 @@ window.PROVINCES_ALL = [
       39.5084
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chengde%20mountain%20resort%208748%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/langfang.jpg"
    },
    {
     "name": "衡水",
@@ -133,7 +133,7 @@ window.PROVINCES_ALL = [
       37.7435
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chengde%20mountain%20resort%208748%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hengshui.jpg"
    }
   ],
   "routePins": [
@@ -459,7 +459,7 @@ window.PROVINCES_ALL = [
       37.86
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taiyuan%20Jinyang%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taiyuan.jpg"
    },
    {
     "name": "大同",
@@ -470,7 +470,7 @@ window.PROVINCES_ALL = [
       40.0923
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yungang%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/datong.jpg"
    },
    {
     "name": "阳泉",
@@ -481,7 +481,7 @@ window.PROVINCES_ALL = [
       38.0936
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yangquan.jpg"
    },
    {
     "name": "长治",
@@ -492,7 +492,7 @@ window.PROVINCES_ALL = [
       36.183
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhangzhi.jpg"
    },
    {
     "name": "晋城",
@@ -503,7 +503,7 @@ window.PROVINCES_ALL = [
       35.4913
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jincheng.jpg"
    },
    {
     "name": "朔州",
@@ -514,7 +514,7 @@ window.PROVINCES_ALL = [
       39.5927
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shuozhou.jpg"
    },
    {
     "name": "晋中",
@@ -525,7 +525,7 @@ window.PROVINCES_ALL = [
       37.6867
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jinzhong.jpg"
    },
    {
     "name": "运城",
@@ -536,7 +536,7 @@ window.PROVINCES_ALL = [
       35.0269
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hukou%20Waterfall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yuncheng.jpg"
    },
    {
     "name": "忻州",
@@ -547,7 +547,7 @@ window.PROVINCES_ALL = [
       38.765
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mount%20Wutai%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinzhou.jpg"
    },
    {
     "name": "临汾",
@@ -558,7 +558,7 @@ window.PROVINCES_ALL = [
       36.23
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/linfen.jpg"
    },
    {
     "name": "吕梁",
@@ -569,7 +569,7 @@ window.PROVINCES_ALL = [
       37.6856
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Pingyao%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lvliang.jpg"
    }
   ],
   "routePins": [
@@ -888,7 +888,7 @@ window.PROVINCES_ALL = [
       41.8026
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Forbidden%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shenyang.jpg"
    },
    {
     "name": "大连",
@@ -899,7 +899,7 @@ window.PROVINCES_ALL = [
       38.9217
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Dalian%20Binhai%20Road%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dalian.jpg"
    },
    {
     "name": "鞍山",
@@ -910,29 +910,29 @@ window.PROVINCES_ALL = [
       40.8222
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Qianshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/anshan.jpg"
    },
    {
     "name": "抚顺",
     "key": "抚顺",
     "coords": [
      [
-      124.7459,
-      41.8012
+      123.9571,
+      41.8813
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/fushun.jpg"
    },
    {
     "name": "本溪",
     "key": "本溪",
     "coords": [
      [
-      124.1574,
-      41.1769
+      123.685,
+      41.4868
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Benxi%20Water%20Cave%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/benxi.jpg"
    },
    {
     "name": "丹东",
@@ -943,18 +943,18 @@ window.PROVINCES_ALL = [
       40.1229
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dandong.jpg"
    },
    {
     "name": "锦州",
     "key": "锦州",
     "coords": [
      [
-      121.6153,
-      41.4944
+      121.1357,
+      41.1193
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jinzhou.jpg"
    },
    {
     "name": "营口",
@@ -965,7 +965,7 @@ window.PROVINCES_ALL = [
       40.6747
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yingkou.jpg"
    },
    {
     "name": "阜新",
@@ -976,7 +976,7 @@ window.PROVINCES_ALL = [
       42.3303
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/fuxin.jpg"
    },
    {
     "name": "辽阳",
@@ -987,7 +987,7 @@ window.PROVINCES_ALL = [
       41.2796
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/liaoyang.jpg"
    },
    {
     "name": "盘锦",
@@ -998,18 +998,18 @@ window.PROVINCES_ALL = [
       41.1169
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/panjin.jpg"
    },
    {
     "name": "铁岭",
     "key": "铁岭",
     "coords": [
      [
-      124.2858,
-      42.6345
+      123.7257,
+      42.2233
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tieling.jpg"
    },
    {
     "name": "朝阳",
@@ -1020,7 +1020,7 @@ window.PROVINCES_ALL = [
       41.5755
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenyang%20Imperial%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhaoyang.jpg"
    },
    {
     "name": "葫芦岛",
@@ -1031,7 +1031,7 @@ window.PROVINCES_ALL = [
       40.7094
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jixian%20Great%20Wall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huludao.jpg"
    }
   ],
   "routePins": [
@@ -1357,7 +1357,7 @@ window.PROVINCES_ALL = [
       43.9088
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changchun%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/changchun.jpg"
    },
    {
     "name": "吉林",
@@ -1368,18 +1368,18 @@ window.PROVINCES_ALL = [
       43.729
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mount%20Changbai%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jilin.jpg"
    },
    {
     "name": "四平",
     "key": "四平",
     "coords": [
      [
-      125.3182,
-      43.8845
+      124.3708,
+      43.1703
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changbai%20Mountain%20Heaven%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/siping.jpg"
    },
    {
     "name": "辽源",
@@ -1390,7 +1390,7 @@ window.PROVINCES_ALL = [
       42.9007
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changbai%20Mountain%20Heaven%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/liaoyuan.jpg"
    },
    {
     "name": "通化",
@@ -1401,18 +1401,18 @@ window.PROVINCES_ALL = [
       41.6747
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changbai%20Mountain%20Heaven%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tonghua.jpg"
    },
    {
     "name": "白山",
     "key": "白山",
     "coords": [
      [
-      124.2953,
-      43.3775
+      126.4278,
+      41.9425
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changbai%20Mountain%20Heaven%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baishan.jpg"
    },
    {
     "name": "松原",
@@ -1423,7 +1423,7 @@ window.PROVINCES_ALL = [
       45.1387
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changbai%20Mountain%20Heaven%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/songyuan.jpg"
    },
    {
     "name": "白城",
@@ -1434,7 +1434,7 @@ window.PROVINCES_ALL = [
       45.618
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changbai%20Mountain%20Heaven%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baicheng.jpg"
    },
    {
     "name": "延边",
@@ -1445,7 +1445,7 @@ window.PROVINCES_ALL = [
       42.9213
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Korean%20Walled%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yanbian.jpg"
    }
   ],
   "routePins": [
@@ -1728,7 +1728,7 @@ window.PROVINCES_ALL = [
       45.7594
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20Ice%20Festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/haerbin.jpg"
    },
    {
     "name": "齐齐哈尔",
@@ -1739,18 +1739,18 @@ window.PROVINCES_ALL = [
       47.3385
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qiqihaer.jpg"
    },
    {
     "name": "鸡西",
     "key": "鸡西",
     "coords": [
      [
-      132.4615,
-      45.658
+      130.976,
+      45.3
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jixi.jpg"
    },
    {
     "name": "鹤岗",
@@ -1761,29 +1761,29 @@ window.PROVINCES_ALL = [
       47.3272
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hegang.jpg"
    },
    {
     "name": "双鸭山",
     "key": "双鸭山",
     "coords": [
      [
-      132.6455,
-      46.5227
+      131.1573,
+      46.6434
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shuangyashan.jpg"
    },
    {
     "name": "大庆",
     "key": "大庆",
     "coords": [
      [
-      124.5598,
-      46.324
+      125.1127,
+      46.5907
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/daqing.jpg"
    },
    {
     "name": "伊春",
@@ -1794,7 +1794,7 @@ window.PROVINCES_ALL = [
       47.7259
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yichun.jpg"
    },
    {
     "name": "佳木斯",
@@ -1805,7 +1805,7 @@ window.PROVINCES_ALL = [
       46.8017
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiamusi.jpg"
    },
    {
     "name": "七台河",
@@ -1816,7 +1816,7 @@ window.PROVINCES_ALL = [
       45.7704
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qitaihe.jpg"
    },
    {
     "name": "牡丹江",
@@ -1827,18 +1827,18 @@ window.PROVINCES_ALL = [
       44.579
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mudanjiang%20887%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/mudanjiang.jpg"
    },
    {
     "name": "黑河",
     "key": "黑河",
     "coords": [
      [
-      127.1173,
-      49.2499
+      127.499,
+      50.2496
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/heihe.jpg"
    },
    {
     "name": "绥化",
@@ -1849,7 +1849,7 @@ window.PROVINCES_ALL = [
       46.6432
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Harbin%20ice%20sculpture%20festival%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/suihua.jpg"
    }
   ],
   "routePins": [
@@ -2123,7 +2123,7 @@ window.PROVINCES_ALL = [
       32.0438
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Nanjing%20Aerial%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nanjing.jpg"
    },
    {
     "name": "无锡",
@@ -2134,7 +2134,7 @@ window.PROVINCES_ALL = [
       31.5777
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuxi.jpg"
    },
    {
     "name": "徐州",
@@ -2145,7 +2145,7 @@ window.PROVINCES_ALL = [
       34.2665
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yunlong%20Lake%20Xuzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xuzhou.jpg"
    },
    {
     "name": "常州",
@@ -2156,7 +2156,7 @@ window.PROVINCES_ALL = [
       31.8123
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/changzhou.jpg"
    },
    {
     "name": "苏州",
@@ -2167,7 +2167,7 @@ window.PROVINCES_ALL = [
       31.3111
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Humble%20Administrator's%20Garden%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/suzhou.jpg"
    },
    {
     "name": "南通",
@@ -2178,7 +2178,7 @@ window.PROVINCES_ALL = [
       31.9828
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nantong.jpg"
    },
    {
     "name": "连云港",
@@ -2189,7 +2189,7 @@ window.PROVINCES_ALL = [
       34.5933
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lianyungang.jpg"
    },
    {
     "name": "淮安",
@@ -2200,7 +2200,7 @@ window.PROVINCES_ALL = [
       33.5978
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huaian.jpg"
    },
    {
     "name": "盐城",
@@ -2211,7 +2211,7 @@ window.PROVINCES_ALL = [
       33.3496
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yancheng.jpg"
    },
    {
     "name": "扬州",
@@ -2222,7 +2222,7 @@ window.PROVINCES_ALL = [
       32.3969
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Slender%20West%20Lake%20Yangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yangzhou.jpg"
    },
    {
     "name": "镇江",
@@ -2233,7 +2233,7 @@ window.PROVINCES_ALL = [
       32.1997
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhenjiang.jpg"
    },
    {
     "name": "泰州",
@@ -2244,7 +2244,7 @@ window.PROVINCES_ALL = [
       32.458
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taizhou.jpg"
    },
    {
     "name": "宿迁",
@@ -2255,7 +2255,7 @@ window.PROVINCES_ALL = [
       33.9645
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Suzhou%20Gardens%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/suqian.jpg"
    }
   ],
   "routePins": [
@@ -2590,7 +2590,7 @@ window.PROVINCES_ALL = [
       30.249
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hangzhou%20West%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hangzhou.jpg"
    },
    {
     "name": "宁波",
@@ -2601,7 +2601,7 @@ window.PROVINCES_ALL = [
       29.872
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Ningbo%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/ningbo.jpg"
    },
    {
     "name": "温州",
@@ -2612,7 +2612,7 @@ window.PROVINCES_ALL = [
       27.9964
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wenzhou.jpg"
    },
    {
     "name": "嘉兴",
@@ -2623,7 +2623,7 @@ window.PROVINCES_ALL = [
       30.7474
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiaxing.jpg"
    },
    {
     "name": "湖州",
@@ -2634,7 +2634,7 @@ window.PROVINCES_ALL = [
       30.8943
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huzhou.jpg"
    },
    {
     "name": "绍兴",
@@ -2645,7 +2645,7 @@ window.PROVINCES_ALL = [
       29.9992
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lu%20Xun%20hometown%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shaoxing.jpg"
    },
    {
     "name": "金华",
@@ -2656,7 +2656,7 @@ window.PROVINCES_ALL = [
       29.1143
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jinhua.jpg"
    },
    {
     "name": "衢州",
@@ -2667,7 +2667,7 @@ window.PROVINCES_ALL = [
       28.927
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/quzhou.jpg"
    },
    {
     "name": "舟山",
@@ -2678,7 +2678,7 @@ window.PROVINCES_ALL = [
       29.9873
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhoushan%20Islands%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhoushan.jpg"
    },
    {
     "name": "台州",
@@ -2689,7 +2689,7 @@ window.PROVINCES_ALL = [
       28.6582
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taizhou.jpg"
    },
    {
     "name": "丽水",
@@ -2700,7 +2700,7 @@ window.PROVINCES_ALL = [
       28.4704
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=West%20Lake%20Hangzhou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lishui.jpg"
    }
   ],
   "routePins": [
@@ -3034,7 +3034,7 @@ window.PROVINCES_ALL = [
       31.8666
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hefei%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hefei.jpg"
    },
    {
     "name": "芜湖",
@@ -3045,7 +3045,7 @@ window.PROVINCES_ALL = [
       31.1801
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuhu.jpg"
    },
    {
     "name": "蚌埠",
@@ -3056,7 +3056,7 @@ window.PROVINCES_ALL = [
       32.9176
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/bengbu.jpg"
    },
    {
     "name": "淮南",
@@ -3067,7 +3067,7 @@ window.PROVINCES_ALL = [
       32.5867
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huainan.jpg"
    },
    {
     "name": "马鞍山",
@@ -3078,7 +3078,7 @@ window.PROVINCES_ALL = [
       31.6866
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/maanshan.jpg"
    },
    {
     "name": "淮北",
@@ -3089,7 +3089,7 @@ window.PROVINCES_ALL = [
       33.9566
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huaibei.jpg"
    },
    {
     "name": "铜陵",
@@ -3100,7 +3100,7 @@ window.PROVINCES_ALL = [
       30.9058
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tongling.jpg"
    },
    {
     "name": "安庆",
@@ -3111,7 +3111,7 @@ window.PROVINCES_ALL = [
       30.6592
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/anqing.jpg"
    },
    {
     "name": "黄山",
@@ -3122,7 +3122,7 @@ window.PROVINCES_ALL = [
       29.7173
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Yellow%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huangshan.jpg"
    },
    {
     "name": "滁州",
@@ -3133,7 +3133,7 @@ window.PROVINCES_ALL = [
       32.3027
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chuzhou.jpg"
    },
    {
     "name": "阜阳",
@@ -3144,7 +3144,7 @@ window.PROVINCES_ALL = [
       32.8927
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/fuyang.jpg"
    },
    {
     "name": "宿州",
@@ -3155,7 +3155,7 @@ window.PROVINCES_ALL = [
       33.6482
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/suzhou.jpg"
    },
    {
     "name": "六安",
@@ -3166,7 +3166,7 @@ window.PROVINCES_ALL = [
       31.7383
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/luan.jpg"
    },
    {
     "name": "亳州",
@@ -3177,7 +3177,7 @@ window.PROVINCES_ALL = [
       33.8491
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/bozhou.jpg"
    },
    {
     "name": "池州",
@@ -3188,7 +3188,7 @@ window.PROVINCES_ALL = [
       30.6671
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chizhou.jpg"
    },
    {
     "name": "宣城",
@@ -3199,7 +3199,7 @@ window.PROVINCES_ALL = [
       30.9413
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xuancheng.jpg"
    }
   ],
   "routePins": [
@@ -3500,7 +3500,7 @@ window.PROVINCES_ALL = [
       26.0775
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Fuzhou%20Sanfang%20Qixiang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/fuzhou.jpg"
    },
    {
     "name": "厦门",
@@ -3511,7 +3511,7 @@ window.PROVINCES_ALL = [
       24.4801
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xiamen%20Gulangyu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xiamen.jpg"
    },
    {
     "name": "莆田",
@@ -3522,7 +3522,7 @@ window.PROVINCES_ALL = [
       25.3539
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Gulangyu%20Island%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/putian.jpg"
    },
    {
     "name": "三明",
@@ -3533,7 +3533,7 @@ window.PROVINCES_ALL = [
       26.3356
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Gulangyu%20Island%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/sanming.jpg"
    },
    {
     "name": "泉州",
@@ -3544,7 +3544,7 @@ window.PROVINCES_ALL = [
       25.1902
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Quanzhou%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/quanzhou.jpg"
    },
    {
     "name": "漳州",
@@ -3555,7 +3555,7 @@ window.PROVINCES_ALL = [
       24.2388
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Gulangyu%20Island%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhangzhou.jpg"
    },
    {
     "name": "南平",
@@ -3566,7 +3566,7 @@ window.PROVINCES_ALL = [
       27.3857
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Gulangyu%20Island%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nanping.jpg"
    },
    {
     "name": "龙岩",
@@ -3577,7 +3577,7 @@ window.PROVINCES_ALL = [
       25.0767
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Gulangyu%20Island%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/longyan.jpg"
    },
    {
     "name": "宁德",
@@ -3588,7 +3588,7 @@ window.PROVINCES_ALL = [
       27.0143
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Gulangyu%20Island%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/ningde.jpg"
    }
   ],
   "routePins": [
@@ -3862,7 +3862,7 @@ window.PROVINCES_ALL = [
       28.6472
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Nanchang%20Bayi%20Square%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nanchang.jpg"
    },
    {
     "name": "景德镇",
@@ -3873,7 +3873,7 @@ window.PROVINCES_ALL = [
       29.3582
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jingdezhen%20Porcelain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jingdezhen.jpg"
    },
    {
     "name": "萍乡",
@@ -3884,18 +3884,18 @@ window.PROVINCES_ALL = [
       27.6503
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/pingxiang.jpg"
    },
    {
     "name": "九江",
     "key": "九江",
     "coords": [
      [
-      115.382,
-      29.3886
+      115.9536,
+      29.6612
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiujiang.jpg"
    },
    {
     "name": "新余",
@@ -3906,7 +3906,7 @@ window.PROVINCES_ALL = [
       27.8536
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinyu.jpg"
    },
    {
     "name": "鹰潭",
@@ -3917,7 +3917,7 @@ window.PROVINCES_ALL = [
       28.2378
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yingtan.jpg"
    },
    {
     "name": "赣州",
@@ -3928,7 +3928,7 @@ window.PROVINCES_ALL = [
       25.7039
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/ganzhou.jpg"
    },
    {
     "name": "吉安",
@@ -3939,40 +3939,40 @@ window.PROVINCES_ALL = [
       27.0937
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jian.jpg"
    },
    {
     "name": "宜春",
     "key": "宜春",
     "coords": [
      [
-      115.0154,
-      28.3803
+      114.3911,
+      27.8043
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yichun.jpg"
    },
    {
     "name": "抚州",
     "key": "抚州",
     "coords": [
      [
-      116.4152,
-      27.5022
+      116.3584,
+      27.9839
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/fuzhou.jpg"
    },
    {
     "name": "上饶",
     "key": "上饶",
     "coords": [
      [
-      117.4054,
-      28.7436
+      117.9712,
+      28.4444
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lushan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shangrao.jpg"
    }
   ],
   "routePins": [
@@ -4255,7 +4255,7 @@ window.PROVINCES_ALL = [
       36.652
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jinan%20Daming%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jinan.jpg"
    },
    {
     "name": "青岛",
@@ -4266,7 +4266,7 @@ window.PROVINCES_ALL = [
       36.0663
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Qingdao%20Bay%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qingdao.jpg"
    },
    {
     "name": "淄博",
@@ -4277,7 +4277,7 @@ window.PROVINCES_ALL = [
       36.813
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zibo.jpg"
    },
    {
     "name": "枣庄",
@@ -4288,7 +4288,7 @@ window.PROVINCES_ALL = [
       34.8109
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zaozhuang.jpg"
    },
    {
     "name": "东营",
@@ -4299,7 +4299,7 @@ window.PROVINCES_ALL = [
       37.4335
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dongying.jpg"
    },
    {
     "name": "烟台",
@@ -4310,7 +4310,7 @@ window.PROVINCES_ALL = [
       37.4619
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yantai%20Penglai%20Pavilion%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yantai.jpg"
    },
    {
     "name": "潍坊",
@@ -4321,7 +4321,7 @@ window.PROVINCES_ALL = [
       36.7075
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/weifang.jpg"
    },
    {
     "name": "济宁",
@@ -4332,7 +4332,7 @@ window.PROVINCES_ALL = [
       35.4125
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jining.jpg"
    },
    {
     "name": "泰安",
@@ -4343,7 +4343,7 @@ window.PROVINCES_ALL = [
       36.2003
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mount%20Tai%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taian.jpg"
    },
    {
     "name": "威海",
@@ -4354,7 +4354,7 @@ window.PROVINCES_ALL = [
       37.5121
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Weihai%20Bay%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/weihai.jpg"
    },
    {
     "name": "日照",
@@ -4365,7 +4365,7 @@ window.PROVINCES_ALL = [
       35.4179
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/rizhao.jpg"
    },
    {
     "name": "临沂",
@@ -4376,7 +4376,7 @@ window.PROVINCES_ALL = [
       35.1032
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/linyi.jpg"
    },
    {
     "name": "德州",
@@ -4387,7 +4387,7 @@ window.PROVINCES_ALL = [
       37.4487
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dezhou.jpg"
    },
    {
     "name": "聊城",
@@ -4398,7 +4398,7 @@ window.PROVINCES_ALL = [
       36.4442
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/liaocheng.jpg"
    },
    {
     "name": "滨州",
@@ -4409,7 +4409,7 @@ window.PROVINCES_ALL = [
       37.3821
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/binzhou.jpg"
    },
    {
     "name": "菏泽",
@@ -4420,7 +4420,7 @@ window.PROVINCES_ALL = [
       35.2313
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Confucius%20Temple%20Qufu%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/heze.jpg"
    }
   ],
   "routePins": [
@@ -4754,7 +4754,7 @@ window.PROVINCES_ALL = [
       34.7475
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhengzhou%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhengzhou.jpg"
    },
    {
     "name": "开封",
@@ -4765,7 +4765,7 @@ window.PROVINCES_ALL = [
       34.772
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kaifeng%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/kaifeng.jpg"
    },
    {
     "name": "洛阳",
@@ -4776,7 +4776,7 @@ window.PROVINCES_ALL = [
       34.6197
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Luoyang%20Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/luoyang.jpg"
    },
    {
     "name": "平顶山",
@@ -4787,7 +4787,7 @@ window.PROVINCES_ALL = [
       33.742
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/pingdingshan.jpg"
    },
    {
     "name": "安阳",
@@ -4798,7 +4798,7 @@ window.PROVINCES_ALL = [
       36.1046
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yinxu%20Ruins%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/anyang.jpg"
    },
    {
     "name": "鹤壁",
@@ -4809,7 +4809,7 @@ window.PROVINCES_ALL = [
       35.7495
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hebi.jpg"
    },
    {
     "name": "新乡",
@@ -4820,7 +4820,7 @@ window.PROVINCES_ALL = [
       35.3064
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinxiang.jpg"
    },
    {
     "name": "焦作",
@@ -4831,7 +4831,7 @@ window.PROVINCES_ALL = [
       35.2226
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiaozuo.jpg"
    },
    {
     "name": "濮阳",
@@ -4842,7 +4842,7 @@ window.PROVINCES_ALL = [
       35.7631
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/puyang.jpg"
    },
    {
     "name": "许昌",
@@ -4853,7 +4853,7 @@ window.PROVINCES_ALL = [
       34.1478
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xuchang.jpg"
    },
    {
     "name": "漯河",
@@ -4864,7 +4864,7 @@ window.PROVINCES_ALL = [
       33.5827
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tahe.jpg"
    },
    {
     "name": "三门峡",
@@ -4875,7 +4875,7 @@ window.PROVINCES_ALL = [
       34.4229
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/sanmenxia.jpg"
    },
    {
     "name": "南阳",
@@ -4886,7 +4886,7 @@ window.PROVINCES_ALL = [
       33.0009
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nanyang.jpg"
    },
    {
     "name": "商丘",
@@ -4897,7 +4897,7 @@ window.PROVINCES_ALL = [
       34.4461
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shangqiu.jpg"
    },
    {
     "name": "信阳",
@@ -4908,7 +4908,7 @@ window.PROVINCES_ALL = [
       32.1307
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinyang.jpg"
    },
    {
     "name": "周口",
@@ -4919,7 +4919,7 @@ window.PROVINCES_ALL = [
       33.8083
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhoukou.jpg"
    },
    {
     "name": "驻马店",
@@ -4930,7 +4930,7 @@ window.PROVINCES_ALL = [
       32.981
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Longmen%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhumadian.jpg"
    }
   ],
   "routePins": [
@@ -5264,7 +5264,7 @@ window.PROVINCES_ALL = [
       30.5789
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Wuhan%20Yellow%20Crane%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuhan.jpg"
    },
    {
     "name": "黄石",
@@ -5275,7 +5275,7 @@ window.PROVINCES_ALL = [
       30.2025
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huangshi.jpg"
    },
    {
     "name": "十堰",
@@ -5286,7 +5286,7 @@ window.PROVINCES_ALL = [
       32.4527
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shiyan.jpg"
    },
    {
     "name": "宜昌",
@@ -5297,7 +5297,7 @@ window.PROVINCES_ALL = [
       30.6941
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yichang.jpg"
    },
    {
     "name": "襄阳",
@@ -5308,7 +5308,7 @@ window.PROVINCES_ALL = [
       32.011
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xiangyang%20Ancient%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xiangyang.jpg"
    },
    {
     "name": "鄂州",
@@ -5319,7 +5319,7 @@ window.PROVINCES_ALL = [
       30.3925
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/ezhou.jpg"
    },
    {
     "name": "荆门",
@@ -5330,7 +5330,7 @@ window.PROVINCES_ALL = [
       31.0375
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jingmen.jpg"
    },
    {
     "name": "孝感",
@@ -5341,7 +5341,7 @@ window.PROVINCES_ALL = [
       31.1764
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xiaogan.jpg"
    },
    {
     "name": "荆州",
@@ -5352,7 +5352,7 @@ window.PROVINCES_ALL = [
       30.3376
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jingzhou.jpg"
    },
    {
     "name": "黄冈",
@@ -5363,7 +5363,7 @@ window.PROVINCES_ALL = [
       30.456
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huanggang.jpg"
    },
    {
     "name": "咸宁",
@@ -5374,7 +5374,7 @@ window.PROVINCES_ALL = [
       29.8438
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xianning.jpg"
    },
    {
     "name": "随州",
@@ -5385,7 +5385,7 @@ window.PROVINCES_ALL = [
       31.9209
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Three%20Gorges%20Dam%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/suizhou.jpg"
    }
   ],
   "routePins": [
@@ -5711,7 +5711,7 @@ window.PROVINCES_ALL = [
       28.1451
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Changsha%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/changsha.jpg"
    },
    {
     "name": "株洲",
@@ -5722,7 +5722,7 @@ window.PROVINCES_ALL = [
       27.8388
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhuzhou.jpg"
    },
    {
     "name": "湘潭",
@@ -5733,7 +5733,7 @@ window.PROVINCES_ALL = [
       27.6819
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xiangtan.jpg"
    },
    {
     "name": "衡阳",
@@ -5744,7 +5744,7 @@ window.PROVINCES_ALL = [
       26.8971
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hengyang.jpg"
    },
    {
     "name": "邵阳",
@@ -5755,7 +5755,7 @@ window.PROVINCES_ALL = [
       26.9589
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shaoyang.jpg"
    },
    {
     "name": "岳阳",
@@ -5766,7 +5766,7 @@ window.PROVINCES_ALL = [
       29.1385
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yueyang%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yueyang.jpg"
    },
    {
     "name": "常德",
@@ -5777,7 +5777,7 @@ window.PROVINCES_ALL = [
       29.0346
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/changde.jpg"
    },
    {
     "name": "张家界",
@@ -5788,7 +5788,7 @@ window.PROVINCES_ALL = [
       29.3738
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhangjiajie%20Tianmen%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhangjiajie.jpg"
    },
    {
     "name": "益阳",
@@ -5799,7 +5799,7 @@ window.PROVINCES_ALL = [
       28.4387
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yiyang.jpg"
    },
    {
     "name": "郴州",
@@ -5810,7 +5810,7 @@ window.PROVINCES_ALL = [
       25.7734
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chenzhou.jpg"
    },
    {
     "name": "永州",
@@ -5821,7 +5821,7 @@ window.PROVINCES_ALL = [
       26.4577
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yongzhou.jpg"
    },
    {
     "name": "怀化",
@@ -5832,7 +5832,7 @@ window.PROVINCES_ALL = [
       27.5607
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huaihua.jpg"
    },
    {
     "name": "娄底",
@@ -5843,7 +5843,7 @@ window.PROVINCES_ALL = [
       27.6995
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianmenshan%20Mountain%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/loudi.jpg"
    }
   ],
   "routePins": [
@@ -6168,7 +6168,7 @@ window.PROVINCES_ALL = [
       23.1288
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guangzhou%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guangzhou.jpg"
    },
    {
     "name": "韶关",
@@ -6179,7 +6179,7 @@ window.PROVINCES_ALL = [
       24.8309
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shaoguan.jpg"
    },
    {
     "name": "深圳",
@@ -6190,7 +6190,7 @@ window.PROVINCES_ALL = [
       22.5446
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Shenzhen%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shenzhen.jpg"
    },
    {
     "name": "珠海",
@@ -6201,7 +6201,7 @@ window.PROVINCES_ALL = [
       22.2737
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhuhai%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhuhai.jpg"
    },
    {
     "name": "汕头",
@@ -6212,7 +6212,7 @@ window.PROVINCES_ALL = [
       23.3564
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shantou.jpg"
    },
    {
     "name": "佛山",
@@ -6223,7 +6223,7 @@ window.PROVINCES_ALL = [
       23.024
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/foshan.jpg"
    },
    {
     "name": "江门",
@@ -6234,7 +6234,7 @@ window.PROVINCES_ALL = [
       22.5817
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiangmen.jpg"
    },
    {
     "name": "湛江",
@@ -6245,7 +6245,7 @@ window.PROVINCES_ALL = [
       21.2737
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhanjiang.jpg"
    },
    {
     "name": "茂名",
@@ -6256,7 +6256,7 @@ window.PROVINCES_ALL = [
       21.6657
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/maoming.jpg"
    },
    {
     "name": "肇庆",
@@ -6267,7 +6267,7 @@ window.PROVINCES_ALL = [
       23.0502
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhaoqing.jpg"
    },
    {
     "name": "惠州",
@@ -6278,7 +6278,7 @@ window.PROVINCES_ALL = [
       23.1125
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huizhou.jpg"
    },
    {
     "name": "梅州",
@@ -6289,7 +6289,7 @@ window.PROVINCES_ALL = [
       24.2918
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/meizhou.jpg"
    },
    {
     "name": "汕尾",
@@ -6300,18 +6300,18 @@ window.PROVINCES_ALL = [
       23.0124
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shanwei.jpg"
    },
    {
     "name": "河源",
     "key": "河源",
     "coords": [
      [
-      115.0578,
-      24.1015
+      114.6978,
+      23.7463
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/heyuan.jpg"
    },
    {
     "name": "阳江",
@@ -6322,7 +6322,7 @@ window.PROVINCES_ALL = [
       22.0958
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yangjiang.jpg"
    },
    {
     "name": "清远",
@@ -6333,7 +6333,7 @@ window.PROVINCES_ALL = [
       23.6833
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qingyuan.jpg"
    },
    {
     "name": "东莞",
@@ -6344,7 +6344,7 @@ window.PROVINCES_ALL = [
       23.0184
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dongguan.jpg"
    },
    {
     "name": "中山",
@@ -6355,7 +6355,7 @@ window.PROVINCES_ALL = [
       22.5197
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhongshan.jpg"
    },
    {
     "name": "潮州",
@@ -6366,7 +6366,7 @@ window.PROVINCES_ALL = [
       23.6566
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chaozhou.jpg"
    },
    {
     "name": "揭阳",
@@ -6377,7 +6377,7 @@ window.PROVINCES_ALL = [
       23.5532
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jieyang.jpg"
    },
    {
     "name": "云浮",
@@ -6388,7 +6388,7 @@ window.PROVINCES_ALL = [
       22.8547
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Canton%20Tower%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yunfu.jpg"
    }
   ],
   "routePins": [
@@ -6713,7 +6713,7 @@ window.PROVINCES_ALL = [
       20.0462
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Haikou%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/haikou.jpg"
    },
    {
     "name": "三亚",
@@ -6724,7 +6724,7 @@ window.PROVINCES_ALL = [
       18.2535
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Sanya%20Tropical%20Beach%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/sanya.jpg"
    },
    {
     "name": "儋州",
@@ -6735,7 +6735,7 @@ window.PROVINCES_ALL = [
       19.5689
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Sanya%20Hainan%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/danzhou.jpg"
    }
   ],
   "routePins": [
@@ -6990,7 +6990,7 @@ window.PROVINCES_ALL = [
       30.6599
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chengdu%20Kuanzhai%20Alley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chengdu.jpg"
    },
    {
     "name": "自贡",
@@ -7001,7 +7001,7 @@ window.PROVINCES_ALL = [
       29.3419
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zigong.jpg"
    },
    {
     "name": "攀枝花",
@@ -7012,7 +7012,7 @@ window.PROVINCES_ALL = [
       26.586
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/panzhihua.jpg"
    },
    {
     "name": "泸州",
@@ -7023,7 +7023,7 @@ window.PROVINCES_ALL = [
       28.5298
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/luzhou.jpg"
    },
    {
     "name": "德阳",
@@ -7034,7 +7034,7 @@ window.PROVINCES_ALL = [
       31.1244
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/deyang.jpg"
    },
    {
     "name": "绵阳",
@@ -7045,7 +7045,7 @@ window.PROVINCES_ALL = [
       31.4603
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/mianyang.jpg"
    },
    {
     "name": "广元",
@@ -7056,7 +7056,7 @@ window.PROVINCES_ALL = [
       32.2686
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guangyuan.jpg"
    },
    {
     "name": "遂宁",
@@ -7067,7 +7067,7 @@ window.PROVINCES_ALL = [
       30.5359
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/suining.jpg"
    },
    {
     "name": "内江",
@@ -7078,7 +7078,7 @@ window.PROVINCES_ALL = [
       29.5827
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/neijiang.jpg"
    },
    {
     "name": "乐山",
@@ -7089,7 +7089,7 @@ window.PROVINCES_ALL = [
       29.2233
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Leshan%20Giant%20Buddha%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/leshan.jpg"
    },
    {
     "name": "南充",
@@ -7100,7 +7100,7 @@ window.PROVINCES_ALL = [
       31.2102
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nanchong.jpg"
    },
    {
     "name": "眉山",
@@ -7111,7 +7111,7 @@ window.PROVINCES_ALL = [
       30.0791
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/meishan.jpg"
    },
    {
     "name": "宜宾",
@@ -7122,7 +7122,7 @@ window.PROVINCES_ALL = [
       28.7555
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yibin.jpg"
    },
    {
     "name": "广安",
@@ -7133,7 +7133,7 @@ window.PROVINCES_ALL = [
       30.4593
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guangan.jpg"
    },
    {
     "name": "达州",
@@ -7144,7 +7144,7 @@ window.PROVINCES_ALL = [
       31.2101
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dazhou.jpg"
    },
    {
     "name": "雅安",
@@ -7155,7 +7155,7 @@ window.PROVINCES_ALL = [
       29.8931
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yaan.jpg"
    },
    {
     "name": "巴中",
@@ -7166,7 +7166,7 @@ window.PROVINCES_ALL = [
       31.8689
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/bazhong.jpg"
    },
    {
     "name": "资阳",
@@ -7177,7 +7177,7 @@ window.PROVINCES_ALL = [
       30.1237
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiuzhaigou%20Valley%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/ziyang.jpg"
    }
   ],
   "routePins": [
@@ -7502,7 +7502,7 @@ window.PROVINCES_ALL = [
       26.5599
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guiyang%20Jiaxiu%20Lou%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guiyang.jpg"
    },
    {
     "name": "六盘水",
@@ -7513,7 +7513,7 @@ window.PROVINCES_ALL = [
       26.5964
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangguoshu%20Waterfall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/liupanshui.jpg"
    },
    {
     "name": "遵义",
@@ -7524,7 +7524,7 @@ window.PROVINCES_ALL = [
       27.6898
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zunyi%20HUI%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zunyi.jpg"
    },
    {
     "name": "安顺",
@@ -7535,7 +7535,7 @@ window.PROVINCES_ALL = [
       26.233
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangguoshu%20Waterfall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/anshun.jpg"
    },
    {
     "name": "毕节",
@@ -7546,18 +7546,18 @@ window.PROVINCES_ALL = [
       27.2658
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangguoshu%20Waterfall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/bijie.jpg"
    },
    {
     "name": "铜仁",
     "key": "铜仁",
     "coords": [
      [
-      108.584,
-      27.9529
+      109.1916,
+      27.7183
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Huangguoshu%20Waterfall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tongren.jpg"
    }
   ],
   "routePins": [
@@ -7873,7 +7873,7 @@ window.PROVINCES_ALL = [
       25.0399
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kunming%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/kunming.jpg"
    },
    {
     "name": "曲靖",
@@ -7884,7 +7884,7 @@ window.PROVINCES_ALL = [
       25.7199
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qujing.jpg"
    },
    {
     "name": "玉溪",
@@ -7895,7 +7895,7 @@ window.PROVINCES_ALL = [
       24.3421
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yuxi.jpg"
    },
    {
     "name": "保山",
@@ -7906,7 +7906,7 @@ window.PROVINCES_ALL = [
       25.1017
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baoshan.jpg"
    },
    {
     "name": "昭通",
@@ -7917,7 +7917,7 @@ window.PROVINCES_ALL = [
       27.3389
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhaotong.jpg"
    },
    {
     "name": "丽江",
@@ -7928,18 +7928,18 @@ window.PROVINCES_ALL = [
       26.8596
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lijiang.jpg"
    },
    {
     "name": "普洱",
     "key": "普洱",
     "coords": [
      [
-      100.8784,
-      23.2949
+      100.966,
+      22.8252
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/puer.jpg"
    },
    {
     "name": "临沧",
@@ -7950,7 +7950,7 @@ window.PROVINCES_ALL = [
       23.8885
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lijiang%20Old%20Town%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lincang.jpg"
    }
   ],
   "routePins": [
@@ -8318,7 +8318,7 @@ window.PROVINCES_ALL = [
       34.261
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xi'an%20City%20Wall%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xian.jpg"
    },
    {
     "name": "铜川",
@@ -8329,7 +8329,7 @@ window.PROVINCES_ALL = [
       34.8973
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tongchuan.jpg"
    },
    {
     "name": "宝鸡",
@@ -8340,7 +8340,7 @@ window.PROVINCES_ALL = [
       34.3742
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baoji.jpg"
    },
    {
     "name": "咸阳",
@@ -8351,7 +8351,7 @@ window.PROVINCES_ALL = [
       34.3457
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mausoleum%20of%20the%20First%20Qin%20Emperor%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xianyang.jpg"
    },
    {
     "name": "渭南",
@@ -8362,7 +8362,7 @@ window.PROVINCES_ALL = [
       34.5169
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/weinan.jpg"
    },
    {
     "name": "延安",
@@ -8373,7 +8373,7 @@ window.PROVINCES_ALL = [
       36.6028
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yan'an%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yanan.jpg"
    },
    {
     "name": "汉中",
@@ -8384,7 +8384,7 @@ window.PROVINCES_ALL = [
       33.1711
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hanzhong.jpg"
    },
    {
     "name": "榆林",
@@ -8395,7 +8395,7 @@ window.PROVINCES_ALL = [
       38.2851
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yulin.jpg"
    },
    {
     "name": "安康",
@@ -8406,7 +8406,7 @@ window.PROVINCES_ALL = [
       32.7065
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/ankang.jpg"
    },
    {
     "name": "商洛",
@@ -8417,7 +8417,7 @@ window.PROVINCES_ALL = [
       33.8691
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Terracotta%20Warriors%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shangluo.jpg"
    }
   ],
   "routePins": [
@@ -8691,7 +8691,7 @@ window.PROVINCES_ALL = [
       36.2859
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Lanzhou%20Yellow%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lanzhou.jpg"
    },
    {
     "name": "嘉峪关",
@@ -8702,7 +8702,7 @@ window.PROVINCES_ALL = [
       39.8022
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Jiayuguan%20Fort%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiayuguan.jpg"
    },
    {
     "name": "金昌",
@@ -8713,18 +8713,18 @@ window.PROVINCES_ALL = [
       38.2559
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jinchang.jpg"
    },
    {
     "name": "白银",
     "key": "白银",
     "coords": [
      [
-      104.785,
-      36.5365
+      104.1736,
+      36.5457
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baiyin.jpg"
    },
    {
     "name": "天水",
@@ -8735,7 +8735,7 @@ window.PROVINCES_ALL = [
       34.5798
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Maijishan%20Grottoes%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tianshui.jpg"
    },
    {
     "name": "武威",
@@ -8746,18 +8746,18 @@ window.PROVINCES_ALL = [
       37.8819
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuwei.jpg"
    },
    {
     "name": "张掖",
     "key": "张掖",
     "coords": [
      [
-      99.9249,
-      39.1218
+      100.4555,
+      38.9329
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Zhangye%20Danxia%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhangye.jpg"
    },
    {
     "name": "平凉",
@@ -8768,7 +8768,7 @@ window.PROVINCES_ALL = [
       35.5432
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/pingliang.jpg"
    },
    {
     "name": "酒泉",
@@ -8779,7 +8779,7 @@ window.PROVINCES_ALL = [
       39.7437
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiuquan.jpg"
    },
    {
     "name": "庆阳",
@@ -8790,7 +8790,7 @@ window.PROVINCES_ALL = [
       36.1824
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qingyang.jpg"
    },
    {
     "name": "定西",
@@ -8801,7 +8801,7 @@ window.PROVINCES_ALL = [
       35.1773
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dingxi.jpg"
    },
    {
     "name": "陇南",
@@ -8812,7 +8812,7 @@ window.PROVINCES_ALL = [
       33.5364
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mogao%20Caves%20Dunhuang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/longnan.jpg"
    }
   ],
   "routePins": [
@@ -9170,7 +9170,7 @@ window.PROVINCES_ALL = [
       36.8245
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xining%20Dongguan%20Mosque%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xining.jpg"
    },
    {
     "name": "海东",
@@ -9181,7 +9181,7 @@ window.PROVINCES_ALL = [
       36.3099
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Qinghai%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/haidong.jpg"
    }
   ],
   "routePins": [
@@ -9455,7 +9455,7 @@ window.PROVINCES_ALL = [
       40.8185
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hohhot%20Grand%20Lama%20Temple%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/huhehaote.jpg"
    },
    {
     "name": "包头",
@@ -9466,7 +9466,7 @@ window.PROVINCES_ALL = [
       40.6041
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Inner%20Mongolia%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baotou.jpg"
    },
    {
     "name": "乌海",
@@ -9477,18 +9477,18 @@ window.PROVINCES_ALL = [
       39.4858
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Inner%20Mongolia%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuhai.jpg"
    },
    {
     "name": "赤峰",
     "key": "赤峰",
     "coords": [
      [
-      118.9759,
-      43.2565
+      118.8876,
+      42.2569
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Inner%20Mongolia%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chifeng.jpg"
    },
    {
     "name": "通辽",
@@ -9499,7 +9499,7 @@ window.PROVINCES_ALL = [
       43.6152
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Inner%20Mongolia%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tongliao.jpg"
    },
    {
     "name": "鄂尔多斯",
@@ -9510,7 +9510,7 @@ window.PROVINCES_ALL = [
       39.6081
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Ordos%20Mausoleum%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/eerduosi.jpg"
    },
    {
     "name": "呼伦贝尔",
@@ -9521,7 +9521,7 @@ window.PROVINCES_ALL = [
       49.2079
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hulunbuir%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hulunbeier.jpg"
    },
    {
     "name": "巴彦淖尔",
@@ -9532,7 +9532,7 @@ window.PROVINCES_ALL = [
       40.7419
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Inner%20Mongolia%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/bayannaoer.jpg"
    },
    {
     "name": "乌兰察布",
@@ -9543,7 +9543,7 @@ window.PROVINCES_ALL = [
       40.9903
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Inner%20Mongolia%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wulanchabu.jpg"
    }
   ],
   "routePins": [
@@ -9885,7 +9885,7 @@ window.PROVINCES_ALL = [
       22.8158
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Nanning%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/nanning.jpg"
    },
    {
     "name": "柳州",
@@ -9896,7 +9896,7 @@ window.PROVINCES_ALL = [
       24.3106
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/liuzhou.jpg"
    },
    {
     "name": "桂林",
@@ -9907,7 +9907,7 @@ window.PROVINCES_ALL = [
       25.2643
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guilin.jpg"
    },
    {
     "name": "梧州",
@@ -9918,7 +9918,7 @@ window.PROVINCES_ALL = [
       23.5715
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuzhou.jpg"
    },
    {
     "name": "北海",
@@ -9929,7 +9929,7 @@ window.PROVINCES_ALL = [
       21.6741
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Beihai%20Beach%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/beihai.jpg"
    },
    {
     "name": "防城港",
@@ -9940,7 +9940,7 @@ window.PROVINCES_ALL = [
       21.8615
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/fangchenggang.jpg"
    },
    {
     "name": "钦州",
@@ -9951,18 +9951,18 @@ window.PROVINCES_ALL = [
       21.9648
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/qinzhou.jpg"
    },
    {
     "name": "贵港",
     "key": "贵港",
     "coords": [
      [
-      110.0413,
-      23.3594
+      109.6021,
+      23.0936
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guigang.jpg"
    },
    {
     "name": "玉林",
@@ -9973,7 +9973,7 @@ window.PROVINCES_ALL = [
       22.4199
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yulin.jpg"
    },
    {
     "name": "百色",
@@ -9984,7 +9984,7 @@ window.PROVINCES_ALL = [
       23.9054
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/baise.jpg"
    },
    {
     "name": "贺州",
@@ -9995,7 +9995,7 @@ window.PROVINCES_ALL = [
       24.3705
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hezhou.jpg"
    },
    {
     "name": "河池",
@@ -10006,7 +10006,7 @@ window.PROVINCES_ALL = [
       24.7169
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hechi.jpg"
    },
    {
     "name": "来宾",
@@ -10017,7 +10017,7 @@ window.PROVINCES_ALL = [
       23.7533
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/laibin.jpg"
    },
    {
     "name": "崇左",
@@ -10028,7 +10028,7 @@ window.PROVINCES_ALL = [
       22.491
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Guilin%20Li%20River%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/chongzuo.jpg"
    }
   ],
   "routePins": [
@@ -10353,7 +10353,7 @@ window.PROVINCES_ALL = [
       29.6542
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Potala%20Palace%20Lhasa%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/lasa.jpg"
    },
    {
     "name": "日喀则",
@@ -10364,7 +10364,7 @@ window.PROVINCES_ALL = [
       29.2714
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tashilhunpo%20Monastery%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/rikaze.jpg"
    },
    {
     "name": "昌都",
@@ -10375,7 +10375,7 @@ window.PROVINCES_ALL = [
       31.1435
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Potala%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/changdou.jpg"
    },
    {
     "name": "林芝",
@@ -10386,18 +10386,18 @@ window.PROVINCES_ALL = [
       29.651
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Nyingchi%20Peach%20Blossom%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/linzhi.jpg"
    },
    {
     "name": "山南",
     "key": "山南",
     "coords": [
      [
-      91.7523,
-      28.7628
+      91.7665,
+      29.236
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Potala%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shannan.jpg"
    },
    {
     "name": "那曲",
@@ -10408,7 +10408,7 @@ window.PROVINCES_ALL = [
       31.4786
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Potala%20Palace%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/naqu.jpg"
    }
   ],
   "routePins": [
@@ -10733,7 +10733,7 @@ window.PROVINCES_ALL = [
       38.4917
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yinchuan%20Xixia%20Mausoleum%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yinchuan.jpg"
    },
    {
     "name": "石嘴山",
@@ -10744,7 +10744,7 @@ window.PROVINCES_ALL = [
       38.9869
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xixia%20Kings%20Tombs%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/shizuishan.jpg"
    },
    {
     "name": "吴忠",
@@ -10755,7 +10755,7 @@ window.PROVINCES_ALL = [
       37.9971
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xixia%20Kings%20Tombs%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wuzhong.jpg"
    },
    {
     "name": "固原",
@@ -10766,18 +10766,18 @@ window.PROVINCES_ALL = [
       36.0149
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xixia%20Kings%20Tombs%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/guyuan.jpg"
    },
    {
     "name": "中卫",
     "key": "中卫",
     "coords": [
      [
-      105.4966,
-      36.9851
+      105.1896,
+      37.515
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Xixia%20Kings%20Tombs%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/zhongwei.jpg"
    }
   ],
   "routePins": [
@@ -11041,7 +11041,7 @@ window.PROVINCES_ALL = [
       43.83
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=%E4%B9%8C%E9%B2%81%E6%9C%A8%E9%BD%90%E5%B8%82%202021%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/wulumuqi.jpg"
    },
    {
     "name": "克拉玛依",
@@ -11052,18 +11052,18 @@ window.PROVINCES_ALL = [
       45.4652
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianshan%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/kelamayi.jpg"
    },
    {
     "name": "吐鲁番",
     "key": "吐鲁番",
     "coords": [
      [
-      89.7283,
-      42.4562
+      89.1841,
+      42.9476
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Turpan%20Flaming%20Mountains%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tulufan.jpg"
    },
    {
     "name": "哈密",
@@ -11074,18 +11074,18 @@ window.PROVINCES_ALL = [
       42.8174
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianshan%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hami.jpg"
    },
    {
     "name": "阿克苏",
     "key": "阿克苏",
     "coords": [
      [
-      79.9634,
-      37.1015
+      80.2651,
+      41.1707
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianshan%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/akesu.jpg"
    },
    {
     "name": "喀什",
@@ -11096,18 +11096,18 @@ window.PROVINCES_ALL = [
       39.4666
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kashgar%20Old%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/kashi.jpg"
    },
    {
     "name": "和田",
     "key": "和田",
     "coords": [
      [
-      79.6795,
-      36.621
+      79.9275,
+      37.1089
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianshan%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/hetian.jpg"
    },
    {
     "name": "伊犁",
@@ -11118,29 +11118,29 @@ window.PROVINCES_ALL = [
       43.9466
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Yili%20Grassland%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/yili.jpg"
    },
    {
     "name": "塔城",
     "key": "塔城",
     "coords": [
      [
-      84.285,
-      45.7492
+      82.984,
+      46.7463
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Tianshan%20Lake%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tacheng.jpg"
    },
    {
     "name": "阿勒泰",
     "key": "阿勒泰",
     "coords": [
      [
-      88.4342,
-      47.1002
+      88.1387,
+      47.8489
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kanas%20Lake%20Xinjiang%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/aleitai.jpg"
    }
   ],
   "routePins": [
@@ -11516,7 +11516,7 @@ window.PROVINCES_ALL = [
       25.033
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taibei.jpg"
    },
    {
     "name": "新北",
@@ -11527,7 +11527,7 @@ window.PROVINCES_ALL = [
       25.012
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinbei.jpg"
    },
    {
     "name": "桃园",
@@ -11538,7 +11538,7 @@ window.PROVINCES_ALL = [
       24.9883
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taoyuan.jpg"
    },
    {
     "name": "台中",
@@ -11549,7 +11549,7 @@ window.PROVINCES_ALL = [
       24.1121
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taichung%20City%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/taizhong.jpg"
    },
    {
     "name": "台南",
@@ -11560,7 +11560,7 @@ window.PROVINCES_ALL = [
       22.9247
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/tainan.jpg"
    },
    {
     "name": "高雄",
@@ -11571,7 +11571,7 @@ window.PROVINCES_ALL = [
       22.6395
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kaohsiung%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/gaoxiong.jpg"
    },
    {
     "name": "基隆",
@@ -11582,7 +11582,7 @@ window.PROVINCES_ALL = [
       25.133
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jilong.jpg"
    },
    {
     "name": "新竹",
@@ -11593,7 +11593,7 @@ window.PROVINCES_ALL = [
       24.8039
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinzhu.jpg"
    },
    {
     "name": "嘉义",
@@ -11604,7 +11604,7 @@ window.PROVINCES_ALL = [
       23.4801
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Taipei%20101%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiayi.jpg"
    }
   ],
   "routePins": [
@@ -11896,7 +11896,7 @@ window.PROVINCES_ALL = [
       22.3492
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hong%20Kong%20Victoria%20Harbour%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xianggangdao.jpg"
    },
    {
     "name": "九龙",
@@ -11907,7 +11907,7 @@ window.PROVINCES_ALL = [
       22.3193
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kowloon%20Hong%20Kong%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/jiulong.jpg"
    },
    {
     "name": "新界",
@@ -11918,7 +11918,7 @@ window.PROVINCES_ALL = [
       22.4329
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Hong%20Kong%20Victoria%20Harbour%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/xinjie.jpg"
    }
   ],
   "routePins": [
@@ -12183,7 +12183,7 @@ window.PROVINCES_ALL = [
       22.1987
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Macau%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/aomenbandao.jpg"
    },
    {
     "name": "氹仔",
@@ -12194,7 +12194,7 @@ window.PROVINCES_ALL = [
       22.156
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Macau%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/dangzai.jpg"
    },
    {
     "name": "路环",
@@ -12205,7 +12205,7 @@ window.PROVINCES_ALL = [
       22.12
      ]
     ],
-    "img": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Macau%20Skyline%2C%20China%2C%20famous%20landmark%2C%20photorealistic%20travel%20photography&image_size=landscape_4_3"
+    "img": "images/cities/luhuan.jpg"
    }
   ],
   "routePins": [

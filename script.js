@@ -1404,8 +1404,10 @@ function openProvinceModal(provinceKey) {
     // 城市 grid（有坐标的都能点进详情）
     const citiesHtml = (provData.cities || []).map(c => {
         const coordOk = !!_cc(c);
+        const cityImg = (c.img && !/text_to_image/.test(c.img)) ? c.img : '';
         return `
-        <div class="dest-card china-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer" title="${coordOk ? '查看详情' : '坐标加载中'}">
+        <div class="dest-card china-card prov-city-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer" title="${coordOk ? '查看详情' : '坐标加载中'}">
+            ${cityImg ? `<div class="dest-img"><img src="${cityImg}" alt="${c.name}" loading="lazy"></div>` : ''}
             <div class="dest-info" style="padding:10px 14px">
                 <h3 style="font-size:0.95rem;margin:0 0 2px 0">${c.name}</h3>
             </div>
