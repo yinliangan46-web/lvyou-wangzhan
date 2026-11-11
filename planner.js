@@ -1967,8 +1967,9 @@
         var model = cfg.model || preset.model;
         if (!endpoint) throw new Error('未填写接口地址');
         var isSite = cfg.provider === 'site' || endpoint === '/api/chat';
+        var isOllama = cfg.provider === 'ollama' || (endpoint && endpoint.indexOf('ollama') >= 0);
         var headers = { 'Content-Type': 'application/json' };
-        if (!isSite) headers['Authorization'] = 'Bearer ' + (cfg.key || '');
+        if (!isSite && !isOllama && cfg.key) headers['Authorization'] = 'Bearer ' + cfg.key;
         return fetch(endpoint, {
             method: 'POST',
             headers: headers,
@@ -2020,9 +2021,12 @@
         if (input) input.value = '';
 
         var cfg = state.aiCfg || {};
+        var preset = AI_PRESETS[cfg.provider] || {};
+        var endpoint = cfg.endpoint || preset.endpoint;
+        var needsKey = cfg.provider !== 'site' && cfg.provider !== 'ollama';
+        var hasKey = cfg.key || !needsKey;
         var useAi = cfg.provider && cfg.provider !== 'builtin' &&
-            (cfg.provider === 'site' || !!cfg.key) &&
-            (cfg.endpoint || (AI_PRESETS[cfg.provider] || {}).endpoint);
+            hasKey && !!endpoint;
 
         state.busy = true;
         state.msgs.push({ role: 'ai', text: '', typing: true });
