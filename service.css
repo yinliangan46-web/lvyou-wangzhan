@@ -116,6 +116,7 @@
 .cs-page.open { opacity: 1; visibility: visible; }
 
 .cs-shell {
+    position: relative;
     width: 100%;
     max-width: 760px;
     height: min(86vh, 860px);
@@ -242,8 +243,18 @@
 
 .cs-msg.me .cs-ava { background: linear-gradient(135deg, #94a3b8, #64748b); }
 
-.cs-bubble {
+.cs-bubblewrap {
     max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.cs-msg.me .cs-bubblewrap { align-items: flex-end; }
+
+.cs-bubble {
+    max-width: 100%;
     background: #fff;
     color: var(--text);
     padding: 11px 14px;
@@ -313,6 +324,8 @@
     flex-shrink: 0;
 }
 
+.cs-chips:empty { display: none; }
+
 .cs-chip {
     border: 1px solid #c7d8fb;
     background: #fff;
@@ -379,6 +392,231 @@
     margin: 8px 0 0;
 }
 
+/* ---------- 消息元信息 ---------- */
+.cs-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    padding: 0 3px;
+    font-size: 11px;
+    color: #94a3b8;
+    opacity: .9;
+}
+
+.cs-msg.me .cs-meta { justify-content: flex-end; }
+
+.cs-time { letter-spacing: .3px; }
+
+.cs-act {
+    border: none;
+    background: none;
+    padding: 0;
+    color: #a3aec2;
+    cursor: pointer;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: inherit;
+    transition: color .18s;
+}
+
+.cs-act:hover,
+.cs-act.on { color: var(--primary); }
+
+.cs-fb-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #16a34a;
+}
+
+/* ---------- 服务导航 ---------- */
+.cs-hint-line {
+    display: block;
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: #94a3b8;
+}
+
+.cs-menu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.cs-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 10px 9px;
+    border: 1px solid #e2e8f5;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+
+.cs-tile i {
+    font-size: 15px;
+    color: var(--primary);
+    margin-bottom: 3px;
+}
+
+.cs-tile b {
+    font-size: 13px;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+.cs-tile small {
+    font-size: 10.5px;
+    color: #94a3b8;
+    line-height: 1.3;
+}
+
+.cs-tile:hover {
+    border-color: #bfdbfe;
+    background: #f8fbff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, .10);
+}
+
+/* ---------- 常见问题 ---------- */
+.cs-faq {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 9px;
+}
+
+.cs-faq button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    text-align: left;
+    border: 1px solid #e2e8f5;
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 13px;
+    color: #334155;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .18s;
+}
+
+.cs-faq button i { color: #93c5fd; font-size: 12px; }
+
+.cs-faq button:hover {
+    border-color: #bfdbfe;
+    background: #f8fbff;
+    color: var(--primary-dark);
+}
+
+/* ---------- 景点标签 ---------- */
+.cs-spot-city {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    margin-left: 2px;
+}
+
+.cs-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 6px;
+}
+
+.cs-tag-wx { background: #dcfce7; color: #15803d; }
+.cs-tag-paid { background: #dbeafe; color: #1d4ed8; }
+.cs-tag-free { background: #f1f5f9; color: #475569; }
+
+.cs-note { font-size: 11.5px; color: #94a3b8; }
+
+/* ---------- 正在输入 ---------- */
+.cs-typing-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+}
+
+.cs-typing-txt { font-size: 12px; color: #94a3b8; }
+
+/* ---------- 回到最新 ---------- */
+.cs-tobottom {
+    position: absolute;
+    right: 18px;
+    bottom: 124px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f5;
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .14);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    font-size: 13px;
+}
+
+.cs-tobottom.show { display: flex; }
+
+/* ---------- 更多菜单 ---------- */
+.cs-more-wrap { position: relative; flex-shrink: 0; }
+.cs-more-btn { padding: 7px 10px; }
+
+.cs-more-list {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    display: none;
+    min-width: 156px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, .22);
+    padding: 6px;
+    z-index: 8;
+}
+
+.cs-more-list.open { display: block; }
+
+.cs-more-list button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #334155;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+}
+
+.cs-more-list button:hover { background: #f1f5f9; color: var(--primary-dark); }
+.cs-more-list i { width: 14px; color: #93c5fd; }
+
+.cs-send:disabled { opacity: .45; cursor: default; box-shadow: none; }
+
 body.cs-lock { overflow: hidden; }
 
 @media (max-width: 768px) {
@@ -393,8 +631,11 @@ body.cs-lock { overflow: hidden; }
     .cs-fab { right: 14px; bottom: 84px; }
     .cs-fab-avatar { width: 56px; height: 56px; font-size: 23px; }
     .cs-fab-tip { display: none; }
-    .cs-bubble { max-width: 84%; font-size: 14px; }
-    .cs-head { padding: 13px 14px; }
+    .cs-bubblewrap { max-width: 84%; }
+    .cs-bubble { font-size: 14px; }
+    .cs-head { padding: 13px 14px; gap: 8px; }
     .cs-head-info h4 { font-size: 16px; }
     .cs-head-btn span { display: none; }
+    .cs-menu { grid-template-columns: repeat(2, 1fr); }
+    .cs-tobottom { right: 12px; bottom: 120px; }
 }

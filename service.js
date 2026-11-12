@@ -1,14 +1,35 @@
-/* ============ MYL 智能客服（24小时在线，无需电话） ============ */
+/* ============ MYL 智能客服 v2（24小时在线，无需电话） ============ */
 (function () {
     'use strict';
 
-    var STORE_KEY = 'myl_cs_history_v1';
-    var page, body, input, fab, badge, tip;
+    var STORE_KEY = 'myl_cs_history_v2';
+    var page, body, input, chipsBar, fab, badge, tip, toBottom, sendBtn;
     var history = [];
     var greeted = false;
     var tipTimer = null;
+    var ctx = { dest: null, spot: null };
+    var spotIndex = null;
+    var ticketIndex = null;
 
-    var WELCOME = '你好呀，我是 MYL 智能客服 👋<br>门票预约、行程规划、退改政策、交通住宿都能问我，7×24 小时在线。';
+    var MENU_ITEMS = [
+        { q: '怎么预约门票', icon: 'fa-ticket-alt', title: '门票预约', desc: '实名预约/购票入口' },
+        { q: '帮我规划行程', icon: 'fa-route', title: '行程定制', desc: '按天数排路线' },
+        { q: '退改政策', icon: 'fa-undo-alt', title: '退改签', desc: '退款/改期规则' },
+        { q: '交通和住宿', icon: 'fa-hotel', title: '交通住宿', desc: '怎么去/住哪里' },
+        { q: '发票怎么开', icon: 'fa-file-invoice', title: '发票报销', desc: '电子发票开具' },
+        { q: '转人工客服', icon: 'fa-user-tie', title: '人工客服', desc: '邮箱/电话' }
+    ];
+
+    var FAQS = [
+        '故宫怎么预约',
+        '南京博物院要预约吗',
+        '门票能退吗',
+        '怎么开发票',
+        '带老人怎么安排',
+        '几月去新疆最好',
+        '支付方式',
+        '怎么联系人工'
+    ];
 
     var CHIPS_DEFAULT = ['怎么预约门票', '帮我规划行程', '退改政策', '交通和住宿', '转人工客服'];
 
@@ -41,8 +62,8 @@
             k: ['你好', '您好', '在吗', 'hello', 'hi', '哈喽', '早上好', '晚上好'],
             a: function () {
                 return '你好！我在的，24 小时都有人值守 🙂<br>可以直接说需求，比如「帮我生成南京 3 日游」「故宫怎么预约」「门票能退吗」。';
-                    },
-                    c: CHIPS_DEFAULT
+            },
+            c: CHIPS_DEFAULT
         },
         {
             k: ['门票', '购票', '订票', '买票', '预约', '抢票', '预约不上'],
@@ -51,9 +72,9 @@
                     '· <b>收费景点</b>：行程里点「携程购票」或「抖音看票」，直接到对应平台的购票页<span class="cs-line"></span>' +
                     '· <b>免费但需实名预约</b>（如南京博物院、中山陵、湖南省博物馆）：点绿色的「微信预约」，会自动复制小程序名，打开微信搜索即可<span class="cs-line"></span>' +
                     '· <b>热门景点</b>建议提前 3-7 天约，故宫、国博、莫高窟节假日基本秒空' +
-                    '<div class="cs-card"><h5>需要我帮你查具体景点？</h5>直接说名字，例如「故宫怎么预约」「黄山门票多少」</div>';
-                    },
-                    c: ['故宫怎么预约', '南京博物院要预约吗', '黄山门票怎么买', '转人工客服']
+                    '<div class="cs-card"><h5>需要我帮你查具体景点？</h5>直接说名字，例如「故宫怎么预约」「黄山门票怎么买」</div>';
+            },
+            c: ['故宫怎么预约', '南京博物院要预约吗', '黄山门票怎么买', '转人工客服']
         },
         {
             k: ['退', '退款', '退票', '改期', '取消', '改签'],
@@ -62,15 +83,15 @@
                     '· <b>景点门票</b>：以携程/抖音/景区小程序的规则为准，多数「未使用可退」，部分特价票不可退<span class="cs-line"></span>' +
                     '· <b>行程定制</b>：出行前 7 天可全额退，3-7 天退 70%，48 小时内退 50%，具体看合同条款<span class="cs-line"></span>' +
                     '本站不收取任何预付款，所有支付都走平台或对公账户，谨防私下转账。';
-                    },
-                    c: ['怎么联系人工', '门票能退吗', '支付方式']
+            },
+            c: ['怎么联系人工', '门票能退吗', '支付方式']
         },
         {
             k: ['发票', '报销', '开票'],
             a: function () {
                 return '可以开发票。把「订单号 + 抬头 + 税号 + 邮箱」发到 <b>2377411629@qq.com</b>，1 个工作日内开出电子普票，专票需另附开户信息。';
-                    },
-                    c: ['转人工客服', '支付方式']
+            },
+            c: ['转人工客服', '支付方式']
         },
         {
             k: ['行程', '路线', '规划', '日游', '几日游', '几天', '环线', '攻略', '怎么玩', '安排'],
@@ -80,8 +101,8 @@
                     '· 点「确认此方案」→ 上方生成时间线，含门票、美食、交通<span class="cs-line"></span>' +
                     '· 想微调就说「住好一点」「预算 5000」「加一天」' +
                     '<div class="cs-card"><h5>也可以告诉我</h5>出发城市 + 天数 + 偏好（亲子/出片/慢节奏），我给你排个方向</div>';
-                    },
-                    c: ['南京一日游', '川西 5 日游', '带老人怎么安排', '预算 5000 怎么玩']
+            },
+            c: ['南京一日游', '川西 5 日游', '带老人怎么安排', '预算 5000 怎么玩']
         },
         {
             k: ['价格', '多少钱', '报价', '预算', '费用', '贵'],
@@ -91,8 +112,8 @@
                     '· 省内环线 5-7 日：¥2,500-4,500<span class="cs-line"></span>' +
                     '· 新疆/西藏 8-12 日：¥6,000-12,000<span class="cs-line"></span>' +
                     '影响最大的是住宿档次和是否包车。你把「人数 + 天数 + 想住什么档次」发我，我给个更准的区间。';
-                    },
-                    c: ['预算 5000 怎么玩', '住好一点', '包车贵吗']
+            },
+            c: ['预算 5000 怎么玩', '住好一点', '包车贵吗']
         },
         {
             k: ['酒店', '住宿', '住哪', '民宿', '住好'],
@@ -102,8 +123,8 @@
                     '· 环线游：住县城中心，比景区内便宜一半<span class="cs-line"></span>' +
                     '· 张家界住武陵源、黄山住汤口、九寨沟住沟口，通勤最省时间' +
                     '<div class="cs-card"><h5>选酒店三看</h5>看最近 3 个月评价、看是否含早、看能否免费取消</div>';
-                    },
-                    c: ['帮我规划行程', '预算 5000 怎么玩']
+            },
+            c: ['帮我规划行程', '预算 5000 怎么玩']
         },
         {
             k: ['交通', '高铁', '航班', '机票', '火车', '怎么去', '包车', '自驾', '租车'],
@@ -113,8 +134,8 @@
                     '· 环线（川西/青甘/新疆）建议包车或拼车，自驾注意高反和限速<span class="cs-line"></span>' +
                     '· 景区内多用官方摆渡车，别信门口拉客的「私家车直达」<span class="cs-line"></span>' +
                     '本站不代订机酒票，行程里会给到交通方式和时长参考。';
-                    },
-                    c: ['包车贵吗', '川西 5 日游', '转人工客服']
+            },
+            c: ['包车贵吗', '川西 5 日游', '转人工客服']
         },
         {
             k: ['天气', '穿衣', '几月去', '季节', '雨季', '冷'],
@@ -125,8 +146,8 @@
                     '· 9-11 月：全国最稳，新疆喀纳斯、内蒙胡杨林正当时<span class="cs-line"></span>' +
                     '· 12-2 月：哈尔滨冰雪、三亚避寒、云南晒太阳<span class="cs-line"></span>' +
                     '具体出发前 3 天看实时预报，山区昼夜温差按 10℃ 准备。';
-                    },
-                    c: ['几月去新疆最好', '帮我规划行程']
+            },
+            c: ['几月去新疆最好', '帮我规划行程']
         },
         {
             k: ['老人', '小孩', '亲子', '带娃', '孕妇', '高反', '高原'],
@@ -136,8 +157,8 @@
                     '· 高原（西藏/川西/青海）6 岁以下和 70 岁以上谨慎，先去西宁或林芝过渡<span class="cs-line"></span>' +
                     '· 亲子优先：动物园、科技馆、海洋馆、乐园，博物馆控制在 1.5 小时内<span class="cs-line"></span>' +
                     '· 随身带常用药、保温杯，行程别排太满。';
-                    },
-                    c: ['帮我规划行程', '转人工客服']
+            },
+            c: ['帮我规划行程', '转人工客服']
         },
         {
             k: ['安全', '靠谱', '诈骗', '被骗', '正规'],
@@ -146,8 +167,8 @@
                     '· 本站不收取预付款，不会让你转账到个人账户<span class="cs-line"></span>' +
                     '· 所有门票走携程/抖音/景区官方小程序，行程确认后再付款<span class="cs-line"></span>' +
                     '· 遇到要求「私下加微信转账」的一律拒绝，并可回来找我们核实。';
-                    },
-                    c: ['支付方式', '转人工客服']
+            },
+            c: ['支付方式', '转人工客服']
         },
         {
             k: ['支付', '付款', '定金', '转账', '怎么付'],
@@ -156,8 +177,8 @@
                     '· 门票/酒店：在携程、抖音、景区官方渠道自行支付<span class="cs-line"></span>' +
                     '· 定制服务：签合同后走对公账户或平台担保交易<span class="cs-line"></span>' +
                     '· 本站页面不收集银行卡信息，也不会索要验证码。';
-                    },
-                    c: ['退改政策', '转人工客服']
+            },
+            c: ['退改政策', '转人工客服']
         },
         {
             k: ['人工', '转人工', '真人', '客服电话', '投诉', '建议', '反馈', '在线留言', '留言'],
@@ -167,8 +188,8 @@
                     '邮箱：<b>2377411629@qq.com</b>（1 个工作日内回复）<br>' +
                     '如需打电话：<a href="tel:17708491297"><b>17708491297</b></a></div>' +
                     '也可以直接把问题发我，我能处理的会立刻给方案。';
-                    },
-                    c: ['在线留言', '退改政策']
+            },
+            c: ['在线留言', '退改政策']
         },
         {
             k: ['你是谁', '你们是谁', '关于', '公司', '靠谱吗', '介绍'],
@@ -177,8 +198,8 @@
                     '· 覆盖全国 300+ 城市、60+ 条经典环线<span class="cs-line"></span>' +
                     '· 免费生成行程、地图路线、门票与预约入口<span class="cs-line"></span>' +
                     '· 不卖机票酒店，不做预付，只把信息和工具做好。';
-                    },
-                    c: ['帮我规划行程', '怎么预约门票']
+            },
+            c: ['帮我规划行程', '怎么预约门票']
         },
         {
             k: ['谢谢', '感谢', '好的', '收到', 'ok', '嗯'],
@@ -189,6 +210,7 @@
         }
     ];
 
+    /* ---------- 基础工具 ---------- */
     function nowTime() {
         var d = new Date();
         return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
@@ -219,11 +241,21 @@
         return m.text;
     }
 
+    function metaHTML(m) {
+        var h = '<div class="cs-meta"><span class="cs-time">' + esc(m.t || '') + '</span>';
+        h += '<button type="button" class="cs-act" data-cs-copy title="复制"><i class="fas fa-copy"></i></button>';
+        if (m.from !== 'me') {
+            h += '<button type="button" class="cs-act" data-cs-fb="up" title="有帮助"><i class="far fa-thumbs-up"></i></button>' +
+                '<button type="button" class="cs-act" data-cs-fb="down" title="没帮助"><i class="far fa-thumbs-down"></i></button>';
+        }
+        return h + '</div>';
+    }
+
     function appendMsg(m, animate) {
         var wrap = document.createElement('div');
         wrap.className = 'cs-msg' + (m.from === 'me' ? ' me' : '');
         wrap.innerHTML = '<div class="cs-ava"><i class="fas fa-' + (m.from === 'me' ? 'user' : 'headset') + '"></i></div>' +
-            '<div class="cs-bubble">' + bubbleHTML(m) + '</div>';
+            '<div class="cs-bubblewrap"><div class="cs-bubble">' + bubbleHTML(m) + '</div>' + metaHTML(m) + '</div>';
         if (animate) {
             wrap.style.opacity = '0';
             wrap.style.transform = 'translateY(8px)';
@@ -234,18 +266,28 @@
             wrap.style.opacity = '1';
             wrap.style.transform = 'translateY(0)';
         });
-        body.scrollTop = body.scrollHeight;
+        scrollBottom(m.from === 'me');
+    }
+
+    function scrollBottom(force) {
+        if (!body) return;
+        var near = body.scrollHeight - body.scrollTop - body.clientHeight < 140;
+        if (force || near) body.scrollTop = body.scrollHeight;
+        updateToBottom();
+    }
+
+    function updateToBottom() {
+        if (!body || !toBottom) return;
+        var far = body.scrollHeight - body.scrollTop - body.clientHeight > 200;
+        toBottom.classList.toggle('show', far);
     }
 
     function renderChips(list) {
-        var bar = document.getElementById('csChips');
-        if (!bar) return;
-        bar.innerHTML = (list || CHIPS_DEFAULT).map(function (t) {
-            return '<button class="cs-chip" type="button">' + esc(t) + '</button>';
+        if (!chipsBar) return;
+        var arr = Array.isArray(list) ? list : CHIPS_DEFAULT;
+        chipsBar.innerHTML = arr.map(function (t) {
+            return '<button class="cs-chip" type="button" data-cs-send="' + esc(t) + '">' + esc(t) + '</button>';
         }).join('');
-        Array.prototype.forEach.call(bar.querySelectorAll('.cs-chip'), function (b) {
-            b.addEventListener('click', function () { send(b.textContent); });
-        });
     }
 
     function typing() {
@@ -253,9 +295,11 @@
         wrap.className = 'cs-msg';
         wrap.id = 'csTyping';
         wrap.innerHTML = '<div class="cs-ava"><i class="fas fa-headset"></i></div>' +
-            '<div class="cs-bubble"><span class="cs-typing"><i></i><i></i><i></i></span></div>';
+            '<div class="cs-bubblewrap"><div class="cs-bubble cs-typing-wrap">' +
+            '<span class="cs-typing"><i></i><i></i><i></i></span><span class="cs-typing-txt">客服正在输入</span>' +
+            '</div></div>';
         body.appendChild(wrap);
-        body.scrollTop = body.scrollHeight;
+        scrollBottom(true);
     }
 
     function stopTyping() {
@@ -263,43 +307,248 @@
         if (t) t.remove();
     }
 
-    /* ---------- 意图识别 ---------- */
+    function botSay(r) {
+        history.push({ from: 'bot', text: r.text, t: nowTime() });
+        appendMsg({ from: 'bot', text: r.text, t: nowTime() }, true);
+        renderChips(r.chips);
+        save();
+    }
+
+    /* ---------- 服务导航 / 常见问题 ---------- */
+    function menuHTML() {
+        return '<div class="cs-menu">' + MENU_ITEMS.map(function (m) {
+            return '<button type="button" class="cs-tile" data-cs-send="' + esc(m.q) + '">' +
+                '<i class="fas ' + m.icon + '"></i><b>' + esc(m.title) + '</b><small>' + esc(m.desc) + '</small></button>';
+        }).join('') + '</div>';
+    }
+
+    function welcomeText() {
+        return '你好呀，我是 MYL 智能客服 👋<br>门票预约、行程规划、退改政策、交通住宿都能问我，7×24 小时在线。' +
+            '<div class="cs-hint-line">你可以点下面的服务，也可以直接输入问题</div>' + menuHTML();
+    }
+
+    function faqAnswer() {
+        return {
+            text: '<b>常见问题</b><span class="cs-line"></span>点一条直接问我，也可以输入景点名查门票和预约：' +
+                '<div class="cs-faq">' + FAQS.map(function (q) {
+                    return '<button type="button" data-cs-send="' + esc(q) + '"><i class="fas fa-question-circle"></i>' + esc(q) + '</button>';
+                }).join('') + '</div>',
+            chips: CHIPS_DEFAULT
+        };
+    }
+
+    /* ---------- 景点数据 ---------- */
+    function buildSpotIndex() {
+        spotIndex = [];
+        var co = window.REAL_POI_COORDS || {};
+        for (var k in co) {
+            var city = '';
+            var name = k;
+            var i = k.indexOf('·');
+            if (i > 0) { city = k.slice(0, i); name = k.slice(i + 1); }
+            if (name.length < 2 || name === city) continue;
+            spotIndex.push({ name: name, city: city });
+        }
+        spotIndex.sort(function (a, b) { return b.name.length - a.name.length; });
+    }
+
+    function findSpot(text) {
+        if (!spotIndex) buildSpotIndex();
+        for (var i = 0; i < spotIndex.length; i++) {
+            if (text.indexOf(spotIndex[i].name) >= 0) return spotIndex[i];
+        }
+        return null;
+    }
+
+    function findTicketPrice(name) {
+        if (ticketIndex === null) {
+            ticketIndex = {};
+            var routes = window.LOOP_ROUTES || [];
+            for (var r = 0; r < routes.length; r++) {
+                var days = (routes[r] && routes[r].itinerary) || [];
+                for (var d = 0; d < days.length; d++) {
+                    var list = (days[d] && days[d].timeline) || [];
+                    for (var j = 0; j < list.length; j++) {
+                        var it = list[j] || {};
+                        var m = String(it.ticket || '').match(/[¥￥]\s*(\d{1,4})/);
+                        if (m && it.activity) {
+                            var key = String(it.activity);
+                            if (!ticketIndex[key]) ticketIndex[key] = m[1];
+                        }
+                    }
+                }
+            }
+        }
+        var found = '', prices = {};
+        for (var act in ticketIndex) {
+            if (act.indexOf(name) >= 0) {
+                if (!found || act.length < found.length) found = act;
+                prices[ticketIndex[act]] = 1;
+            }
+        }
+        var keys = Object.keys(prices);
+        if (!found || keys.length !== 1) return '';
+        return { price: keys[0], activity: found };
+    }
+
+    function miniNameFor(name) {
+        try {
+            var html = String(window._wechatReserveBtn ? window._wechatReserveBtn(name) : '');
+            var m = html.match(/mylWechatReserve\('([^']*)','([^']*)'\)/);
+            return m ? m[2] : '';
+        } catch (e) { return ''; }
+    }
+
+    function ticketLinksFor(name) {
+        try {
+            return String(window._ticketLinks ? window._ticketLinks(name, '', '') : '');
+        } catch (e) { return ''; }
+    }
+
+    function spotAnswer(s) {
+        ctx.spot = s.name;
+        if (s.city) ctx.dest = s.city;
+        var html = '<b>' + esc(s.name) + '</b>' + (s.city ? ' <span class="cs-spot-city">' + esc(s.city) + '</span>' : '') + '<span class="cs-line"></span>';
+        var mini = miniNameFor(s.name);
+        var links = ticketLinksFor(s.name);
+
+        if (mini) {
+            html += '<span class="cs-tag cs-tag-wx"><i class="fas fa-check-circle"></i> 需实名预约</span>' +
+                '微信搜索小程序「<b>' + esc(mini) + '</b>」，建议提前 3-7 天预约，节假日更早。';
+        } else if (/携程购票/.test(links)) {
+            html += '<span class="cs-tag cs-tag-paid">收费景点</span>购票入口：' + links;
+        } else {
+            html += '<span class="cs-tag cs-tag-free">免费开放</span>通常无需购票' +
+                (/博物馆|博物院|纪念馆|美术馆|遗址/.test(s.name)
+                    ? '，但多数场馆仍需实名预约，出发前在官方公众号/小程序确认。'
+                    : '，个别体验项目单独收费，以现场公示为准。');
+        }
+
+        var t = findTicketPrice(s.name);
+        if (t) {
+            html += '<span class="cs-line"></span>行程参考门票：<b>¥' + t.price + '</b>' +
+                '<span class="cs-note">（来自站内「' + esc(t.activity) + '」，以景区当日票价为准）</span>';
+        }
+
+        html += '<div class="cs-card"><h5>下一步</h5>' +
+            '想看完整路线？回复「' + esc(s.city || s.name) + ' 3 日游」，或用站内 AI 行程助手生成带地图的方案。</div>';
+        return {
+            text: html,
+            chips: ['帮我规划行程', '怎么预约门票', '转人工客服']
+        };
+    }
+
+    /* ---------- 意图匹配 ---------- */
     function matchDest(text) {
         for (var d in DESTS) if (text.indexOf(d) >= 0) return d;
         return null;
     }
 
-    function reply(text) {
-        var t = String(text || '');
-        // 明确的购票/预约/退改问题优先，避免被城市名带偏
-        var strong = /门票|购票|订票|买票|预约|退票|退款|改期|改签/.test(t);
-        var dest = strong ? null : matchDest(t);
-        if (dest) {
-            var info = DESTS[dest];
+    function destAnswer(d) {
+        ctx.dest = d;
+        var info = DESTS[d];
+        return {
+            text: '<b>' + d + ' · 建议 ' + info[0] + '</b><span class="cs-line"></span>' +
+                '值得去：' + info[1] + '<span class="cs-line"></span>' +
+                '小提示：' + info[2] +
+                '<div class="cs-card"><h5>要我直接排行程吗？</h5>回复「' + d + ' 3 日游」或在 AI 行程助手里输入，会生成带地图路线的完整方案</div>',
+            chips: [d + ' 3 日游', '帮我规划行程', '怎么预约门票', '转人工客服']
+        };
+    }
+
+    function firstSpotOf(city) {
+        if (!spotIndex) buildSpotIndex();
+        for (var i = 0; i < spotIndex.length; i++) {
+            if (spotIndex[i].city === city) return spotIndex[i].name;
+        }
+        return '';
+    }
+
+    function followUpAnswer(t) {
+        if (!ctx.dest || !DESTS[ctx.dest]) return null;
+        var d = ctx.dest;
+        if (/门票|预约|买票|购票/.test(t)) {
+            var s = firstSpotOf(d);
+            var pr = findTicketPrice(d);
             return {
-                text: '<b>' + dest + ' · 建议 ' + info[0] + '</b><span class="cs-line"></span>' +
-                    '值得去：' + info[1] + '<span class="cs-line"></span>' +
-                    '小提示：' + info[2] +
-                    '<div class="cs-card"><h5>要我直接排行程吗？</h5>回复「' + dest + ' 3 日游」或在 AI 行程助手里输入，会生成带地图路线的完整方案</div>',
-                chips: [dest + ' 3 日游', '帮我规划行程', '怎么预约门票', '转人工客服']
+                text: '你问的是 <b>' + d + '</b>：' + DESTS[d][2] +
+                    (pr ? '<span class="cs-line"></span>参考门票：<b>¥' + pr.price + '</b><span class="cs-note">（来自站内「' + esc(pr.activity) + '」，以景区当日票价为准）</span>' : '') +
+                    '<span class="cs-line"></span>具体景点直接说名字，比如「' + (s || d) + '门票」，我给你查预约入口和购票方式。',
+                chips: ['怎么预约门票', '转人工客服']
             };
         }
-        if (strong && /退|改期|改签|取消/.test(t)) {
-            for (var r0 = 0; r0 < INTENTS.length; r0++) {
-                if (INTENTS[r0].k[0] === '退') {
-                    return { text: INTENTS[r0].a(), chips: INTENTS[r0].c };
-                }
-            }
+        if (/(住|酒店|民宿)/.test(t)) {
+            return {
+                text: '去 <b>' + d + '</b> 住宿：建议住地铁沿线或古城/景区周边 2-3 站的位置，比景区门口便宜一半，出行也方便。' +
+                    '<span class="cs-line"></span>选酒店看三点：近 3 个月评价、是否含早、能否免费取消。',
+                chips: ['帮我规划行程', '预算 5000 怎么玩']
+            };
         }
+        if (/(怎么去|交通|高铁|飞机|自驾|包车)/.test(t)) {
+            return {
+                text: '去 <b>' + d + '</b> 的交通：能高铁就优先高铁，3 小时内比飞机省心；' +
+                    '到当地后地铁/网约车为主。如果走环线，建议包车或拼车，山路和高海拔路段别夜间自驾。',
+                chips: ['帮我规划行程', '转人工客服']
+            };
+        }
+        if (/(几天|玩几天|安排|行程|怎么玩)/.test(t)) return destAnswer(d);
+        return null;
+    }
+
+    function refundAnswer() {
+        for (var i = 0; i < INTENTS.length; i++) {
+            if (INTENTS[i].k[0] === '退') return { text: INTENTS[i].a(), chips: INTENTS[i].c };
+        }
+        return null;
+    }
+
+    function ticketIntentAnswer() {
+        for (var i = 0; i < INTENTS.length; i++) {
+            if (INTENTS[i].k[0] === '门票') return { text: INTENTS[i].a(), chips: INTENTS[i].c };
+        }
+        return null;
+    }
+
+    function reply(text) {
+        var t = String(text || '').trim();
+
+        if (/常见问题|faq|帮助|能做什么|会什么/i.test(t)) return faqAnswer();
+
+        var refund = /退票|退款|退改|能退|改期|改签|取消/.test(t);
+        if (refund) {
+            var rr = refundAnswer();
+            if (rr) return rr;
+        }
+
+        var spot = findSpot(t);
+        if (spot) return spotAnswer(spot);
+
+        var dest = matchDest(t);
+        if (dest) {
+            if (/门票|预约|购票|买票|抢票/.test(t)) {
+                ctx.dest = dest;
+                return followUpAnswer(t) || destAnswer(dest);
+            }
+            return destAnswer(dest);
+        }
+
+        var fu = followUpAnswer(t);
+        if (fu) return fu;
+
+        if (/门票|预约|购票|买票|抢票/.test(t)) {
+            var ti = ticketIntentAnswer();
+            if (ti) return ti;
+        }
+
         for (var i = 0; i < INTENTS.length; i++) {
             var it = INTENTS[i];
             for (var j = 0; j < it.k.length; j++) {
                 if (t.toLowerCase().indexOf(it.k[j].toLowerCase()) >= 0) {
-                    var r = it.a();
-                    return { text: r, chips: it.c };
+                    return { text: it.a(), chips: it.c };
                 }
             }
         }
+
         return {
             text: '这个问题我先记下来，你可以这样问我会更准：<span class="cs-line"></span>' +
                 '· 「故宫怎么预约」· 「黄山门票多少」· 「南京 3 日游怎么安排」<span class="cs-line"></span>' +
@@ -314,24 +563,26 @@
         text = String(text || '').trim();
         if (!text) return;
         history.push({ from: 'me', text: text, t: nowTime() });
-        appendMsg({ from: 'me', text: text }, true);
+        appendMsg({ from: 'me', text: text, t: nowTime() }, true);
         save();
         input.value = '';
+        toggleSend();
 
         typing();
         var r = reply(text);
-        var delay = 420 + Math.min(600, r.text.length * 6);
+        var plain = String(r.text).replace(/<[^>]+>/g, '');
+        var delay = 480 + Math.min(700, plain.length * 4);
         setTimeout(function () {
             stopTyping();
-            history.push({ from: 'bot', text: r.text, t: nowTime() });
-            appendMsg({ from: 'bot', text: r.text }, true);
-            renderChips(r.chips);
-            save();
-            if (page && !page.classList.contains('open')) bumpBadge();
+            botSay(r);
         }, delay);
     }
 
-    /* ---------- 气泡提示 ---------- */
+    function toggleSend() {
+        if (sendBtn && input) sendBtn.disabled = !input.value.trim();
+    }
+
+    /* ---------- 角标 ---------- */
     function bumpBadge(n) {
         if (!badge) return;
         var cur = parseInt(badge.textContent || '0', 10) || 0;
@@ -345,23 +596,21 @@
         badge.textContent = '0';
     }
 
-    /* ---------- 打开/关闭 ---------- */
+    /* ---------- 打开/关闭/重启 ---------- */
     function openChat() {
         if (!page) return;
         page.classList.add('open');
         page.setAttribute('aria-hidden', 'false');
         document.body.classList.add('cs-lock');
         clearBadge();
+        closeMore();
         if (!greeted) {
             greeted = true;
             setTimeout(function () {
-                history.push({ from: 'bot', text: WELCOME, t: nowTime() });
-                appendMsg({ from: 'bot', text: WELCOME }, true);
-                renderChips(CHIPS_DEFAULT);
-                save();
+                botSay({ text: welcomeText(), chips: CHIPS_DEFAULT });
             }, 260);
         } else {
-            setTimeout(function () { body.scrollTop = body.scrollHeight; }, 60);
+            setTimeout(function () { scrollBottom(true); }, 60);
         }
         setTimeout(function () { if (input) input.focus(); }, 420);
         if (tip) tip.classList.remove('show');
@@ -372,6 +621,95 @@
         page.classList.remove('open');
         page.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('cs-lock');
+        closeMore();
+    }
+
+    function restartChat() {
+        history = [];
+        greeted = true;
+        ctx = { dest: null, spot: null };
+        try { sessionStorage.removeItem(STORE_KEY); } catch (e) { }
+        body.innerHTML = '';
+        renderChips([]);
+        closeMore();
+        setTimeout(function () { botSay({ text: welcomeText(), chips: CHIPS_DEFAULT }); }, 120);
+    }
+
+    /* ---------- 更多菜单 ---------- */
+    function closeMore() {
+        var list = document.getElementById('csMoreList');
+        if (list) list.classList.remove('open');
+    }
+
+    /* ---------- 工具：复制 / 反馈 ---------- */
+    function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(function () { fallbackCopy(text); });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) { }
+        ta.remove();
+    }
+
+    function handleBodyClick(e) {
+        var target = e.target;
+        if (!target || !target.closest) return;
+
+        var sendEl = target.closest('[data-cs-send]');
+        if (sendEl) {
+            send(sendEl.getAttribute('data-cs-send'));
+            return;
+        }
+
+        var copyEl = target.closest('[data-cs-copy]');
+        if (copyEl) {
+            var wrap = copyEl.closest('.cs-bubblewrap');
+            var bubble = wrap && wrap.querySelector('.cs-bubble');
+            if (bubble) {
+                copyText(bubble.innerText || bubble.textContent || '');
+                copyEl.innerHTML = '<i class="fas fa-check"></i>';
+                copyEl.classList.add('on');
+                setTimeout(function () {
+                    copyEl.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyEl.classList.remove('on');
+                }, 1600);
+            }
+            return;
+        }
+
+        var fbEl = target.closest('[data-cs-fb]');
+        if (fbEl) {
+            var w = fbEl.closest('.cs-bubblewrap');
+            if (!w || w.getAttribute('data-fb-done')) return;
+            w.setAttribute('data-fb-done', '1');
+            var kind = fbEl.getAttribute('data-cs-fb');
+            Array.prototype.forEach.call(w.querySelectorAll('[data-cs-fb]'), function (b) { b.remove(); });
+            var meta = w.querySelector('.cs-meta');
+            if (meta) {
+                var done = document.createElement('span');
+                done.className = 'cs-fb-done';
+                done.innerHTML = kind === 'up' ? '<i class="fas fa-check"></i> 谢谢反馈' : '<i class="fas fa-check"></i> 已记录';
+                meta.appendChild(done);
+            }
+            if (kind === 'down') {
+                setTimeout(function () {
+                    botSay({
+                        text: '抱歉没帮到你。可以补充一下具体城市/景点，或者直接转人工，我们会尽快跟进。',
+                        chips: ['转人工客服', '常见问题']
+                    });
+                }, 260);
+            }
+        }
     }
 
     /* ---------- 初始化 ---------- */
@@ -379,18 +717,21 @@
         page = document.getElementById('csPage');
         body = document.getElementById('csBody');
         input = document.getElementById('csInput');
+        chipsBar = document.getElementById('csChips');
         fab = document.getElementById('csFab');
         badge = document.getElementById('csBadge');
         tip = document.getElementById('csFabTip');
+        toBottom = document.getElementById('csToBottom');
+        sendBtn = document.getElementById('csSend');
         if (!page || !body) return;
 
         load();
         if (history.length) {
             history.forEach(function (m) { appendMsg(m); });
+            greeted = history.some(function (m) { return m.from === 'bot'; });
             renderChips(CHIPS_DEFAULT);
         }
 
-        /* 底部动态头像 */
         if (fab) {
             fab.addEventListener('click', openChat);
             setTimeout(function () {
@@ -399,26 +740,55 @@
             }, 2600);
         }
 
-        /* 关闭 */
         var closer = document.getElementById('csClose');
         if (closer) closer.addEventListener('click', closeChat);
         page.addEventListener('click', function (e) { if (e.target === page) closeChat(); });
+
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && page.classList.contains('open')) closeChat();
         });
 
-        /* 发送 */
-        var sendBtn = document.getElementById('csSend');
         if (sendBtn) sendBtn.addEventListener('click', function () { send(input.value); });
-        if (input) input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input.value); }
-        });
+        if (input) {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input.value); }
+            });
+            input.addEventListener('input', toggleSend);
+        }
+        toggleSend();
 
-        /* 人工客服按钮 */
         var human = document.getElementById('csHuman');
         if (human) human.addEventListener('click', function () { send('转人工客服'); });
 
-        /* 一级页面入口 */
+        var moreBtn = document.getElementById('csMore');
+        if (moreBtn) moreBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var list = document.getElementById('csMoreList');
+            if (list) list.classList.toggle('open');
+        });
+
+        var moreList = document.getElementById('csMoreList');
+        if (moreList) moreList.addEventListener('click', function (e) {
+            var b = e.target.closest ? e.target.closest('[data-cs-act]') : null;
+            if (!b) return;
+            var act = b.getAttribute('data-cs-act');
+            closeMore();
+            if (act === 'faq') {
+                botSay(faqAnswer());
+            } else if (act === 'restart') {
+                restartChat();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            var wrap = document.querySelector('.cs-more-wrap');
+            if (wrap && !wrap.contains(e.target)) closeMore();
+        });
+
+        if (toBottom) toBottom.addEventListener('click', function () { scrollBottom(true); });
+        body.addEventListener('scroll', updateToBottom);
+        page.addEventListener('click', handleBodyClick);
+
         Array.prototype.forEach.call(document.querySelectorAll('[data-open-cs]'), function (el) {
             el.addEventListener('click', function (e) {
                 e.preventDefault();

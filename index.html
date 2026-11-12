@@ -27,7 +27,7 @@
 
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="planner.css?v=20261112q" />
-    <link rel="stylesheet" href="service.css?v=20261112w" />
+    <link rel="stylesheet" href="service.css?v=20261112z" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet" />
@@ -1113,13 +1113,21 @@
                     <span><i class="cs-live"></i> 24 小时在线 · 秒级响应</span>
                 </div>
                 <button type="button" class="cs-head-btn" id="csHuman"><i class="fas fa-user-tie"></i> <span>人工客服</span></button>
+                <div class="cs-more-wrap">
+                    <button type="button" class="cs-head-btn cs-more-btn" id="csMore" aria-label="更多"><i class="fas fa-ellipsis-vertical"></i></button>
+                    <div class="cs-more-list" id="csMoreList">
+                        <button type="button" data-cs-act="faq"><i class="fas fa-circle-question"></i> 常见问题</button>
+                        <button type="button" data-cs-act="restart"><i class="fas fa-rotate-right"></i> 重新开始</button>
+                    </div>
+                </div>
                 <button type="button" class="cs-close" id="csClose" aria-label="关闭">&times;</button>
             </div>
             <div class="cs-body" id="csBody"></div>
+            <button type="button" class="cs-tobottom" id="csToBottom" aria-label="回到最新消息"><i class="fas fa-arrow-down"></i></button>
             <div class="cs-chips" id="csChips"></div>
             <div class="cs-foot">
                 <div class="cs-inputbar">
-                    <input type="text" id="csInput" placeholder="想问什么？如：故宫怎么预约" autocomplete="off" />
+                    <input type="text" id="csInput" maxlength="200" placeholder="想问什么？如：故宫怎么预约" autocomplete="off" />
                     <button type="button" class="cs-send" id="csSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <p class="cs-hint">智能客服 7×24 在线 · 复杂问题可转人工</p>
@@ -1134,6 +1142,6 @@
     <script src="script.js?v=20261112u"></script>
     <script src="province-data-all.js?v=20261112u"></script>
     <script src="planner.js?v=20261112u"></script>
-    <script src="service.js?v=20261112w"></script>
+    <script src="service.js?v=20261112z"></script>
 </body>
 </html>
