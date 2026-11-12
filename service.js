@@ -57,6 +57,29 @@
         '青海': ['6-8天', '西宁、青海湖、茶卡盐湖、大柴旦、敦煌', '青甘大环线 7 天最经典，注意防晒和海拔']
     };
 
+    /* 中文城市名 → city-data key（CITY_DETAIL） */
+    var CITY_KEY = {
+        '北京': 'beijing', '上海': 'shanghai', '成都': 'chengdu', '重庆': 'chongqing',
+        '西安': 'xian', '杭州': 'hangzhou', '南京': 'nanjing', '苏州': 'suzhou',
+        '长沙': 'changsha', '厦门': 'xiamen', '青岛': 'qingdao', '桂林': 'guilin',
+        '张家界': 'zhangjiajie', '黄山': 'huangshan', '丽江': 'lijiang', '大理': 'dali',
+        '昆明': 'kunming', '拉萨': 'lasa', '三亚': 'sanya', '海口': 'haikou',
+        '哈尔滨': 'harbin', '武汉': 'wuhan', '广州': 'guangzhou', '深圳': 'shenzhen',
+        '香港': 'hongkong', '天津': 'tianjin', '福州': 'fuzhou', '贵阳': 'guiyang',
+        '兰州': 'lanzhou', '西宁': 'xining', '银川': 'yinchuan', '乌鲁木齐': 'urumqi',
+        '敦煌': 'dunhuang', '九寨沟': 'jiuzhaigou', '乐山': 'leshan', '西双版纳': 'xishuangbanna',
+        '郑州': 'zhengzhou', '济南': 'jinan', '合肥': 'hefei', '南昌': 'nanchang',
+        '太原': 'taiyuan', '石家庄': 'shijiazhuang', '沈阳': 'shenyang', '长春': 'changchun',
+        '呼和浩特': 'huhehaote', '南宁': 'nanning', '巴黎': 'paris', '东京': 'tokyo',
+        '伦敦': 'london', '迪拜': 'dubai', '曼谷': 'bangkok', '巴厘岛': 'bali'
+    };
+
+    /* 交通关键词 —— 出现这些词优先走交通意图 */
+    var TRANSPORT_KW = /航班|机票|飞机|飞|高铁|动车|火车|列车|地铁|打车|网约车|包车|自驾|租车|轮渡|船票|怎么去|怎么到|如何去|到达|出发|从.{0,4}到|↔|->|→/;
+
+    /* 行程关键词 —— "X日游"明确要日程 */
+    var ITINERARY_KW = /日游|天游|天行程|日行程|安排一下|具体行程|详细安排|每天怎么玩|每天安排/;
+
     var INTENTS = [
         {
             k: ['你好', '您好', '在吗', 'hello', 'hi', '哈喽', '早上好', '晚上好'],
@@ -352,6 +375,149 @@
         spotIndex.sort(function (a, b) { return b.name.length - a.name.length; });
     }
 
+    /* ---------- 城市数据 ---------- */
+    function cityKeyOf(name) { return CITY_KEY[name] || null; }
+    function cityDataOf(name) {
+        var k = cityKeyOf(name);
+        if (!k) return null;
+        var cd = window.CITY_DETAIL || {};
+        return cd[k] || null;
+    }
+
+    /* 解析 "A到B 的 航班/高铁" */
+    function parseRoute(text) {
+        var t = String(text);
+        var found = [];
+        for (var cn in CITY_KEY) {
+            if (t.indexOf(cn) >= 0) found.push({ name: cn, idx: t.indexOf(cn) });
+        }
+        found.sort(function (a, b) { return a.idx - b.idx; });
+        if (found.length < 2) return null;
+        var dirIdx = -1;
+        var dirs = ['到', '至', '飞', '前往', '去', '→', '->', '↔'];
+        for (var d = 0; d < dirs.length; d++) {
+            var p = t.indexOf(dirs[d]);
+            if (p >= 0 && (dirIdx < 0 || p < dirIdx)) dirIdx = p;
+        }
+        var from, to;
+        if (dirIdx < 0) { from = found[0].name; to = found[found.length - 1].name; }
+        else if (found[0].idx < dirIdx) { from = found[0].name; to = found[1].name; }
+        else { from = found[1].name; to = found[0].name; }
+        if (from === to) return null;
+        return { from: from, to: to };
+    }
+
+    /* 航班/火车 回复 */
+    function transportAnswer(route, kind) {
+        var fromD = cityDataOf(route.from);
+        var toD = cityDataOf(route.to);
+        var html = '<b>' + esc(route.from) + ' → ' + esc(route.to) + '</b>';
+        html += '<span class="cs-line"></span><span class="cs-tag cs-tag-paid">' + (kind === 'flight' ? '航班' : '火车') + '</span>';
+
+        if (kind === 'flight') {
+            var links = [];
+            if (toD && toD.airfare) {
+                for (var i = 0; i < toD.airfare.length; i++) {
+                    if (toD.airfare[i].from.indexOf(route.from) >= 0) links.push(toD.airfare[i]);
+                }
+            }
+            if (links.length === 0 && fromD && fromD.airfare) {
+                for (var j = 0; j < fromD.airfare.length; j++) {
+                    if (fromD.airfare[j].to.indexOf(route.to) >= 0) links.push(fromD.airfare[j]);
+                }
+            }
+            if (links.length > 0) {
+                for (var k = 0; k < links.length; k++) {
+                    var l = links[k];
+                    html += '<div class="cs-t-row"><b>' + esc(l.from) + '→' + esc(l.to) + '</b> ' +
+                        '<span class="cs-t-p">¥' + esc(l.price.replace(/[¥￥]/g, '')) + '</span> ' +
+                        '<span class="cs-t-tip">' + esc(l.time) + '</span> ' +
+                        '<a href="' + esc(l.bookingUrl) + '" target="_blank" rel="noopener">' +
+                        '<i class="fas fa-external-link"></i> ' + esc(l.platform) + '</a></div>';
+                }
+            } else {
+                html += '本站暂未收录这条线路的实时机票信息。建议：' +
+                    '<span class="cs-line"></span>· 在携程/去哪儿搜「' + esc(route.from) + ' → ' + esc(route.to) + '」' +
+                    '<span class="cs-line"></span>· 国际航班通常需中转（北京/上海/香港/首尔/迪拜等）' +
+                    '<span class="cs-line"></span>· 提前 2-3 个月订票最便宜，留意廉航促销' +
+                    '<span class="cs-line"></span><a href="https://flights.ctrip.com" target="_blank" rel="noopener"><i class="fas fa-external-link"></i> 携程机票</a>';
+            }
+            if (toD && toD.transport) {
+                html += '<span class="cs-line"></span><b>' + esc(route.to) + ' 市内交通</b>';
+                toD.transport.forEach(function (t) {
+                    html += '<div class="cs-t-row"><b>' + esc(t.label) + '</b>：' + esc(t.value) + '</div>';
+                });
+            }
+        } else {
+            var trains = [];
+            if (toD && toD.trains) {
+                for (var t = 0; t < toD.trains.length; t++) {
+                    if (toD.trains[t].from.indexOf(route.from) >= 0) trains.push(toD.trains[t]);
+                }
+            }
+            if (trains.length > 0) {
+                for (var m = 0; m < trains.length; m++) {
+                    var tr = trains[m];
+                    html += '<div class="cs-t-row"><b>' + esc(tr.from) + '→' + esc(tr.to) + '</b> ' +
+                        '<span class="cs-t-p">¥' + esc(tr.price.replace(/[¥￥]/g, '')) + '</span> ' +
+                        '<span class="cs-t-tip">' + esc(tr.duration) + '，' + esc(tr.time) + '</span> ' +
+                        '<a href="' + esc(tr.bookingUrl) + '" target="_blank" rel="noopener">' +
+                        '<i class="fas fa-external-link"></i> ' + esc(tr.platform) + '</a></div>';
+                }
+            } else {
+                html += '这条线路暂无直达高铁数据，可在 12306 / 携程 火车票频道查询，或考虑飞机。';
+            }
+        }
+        return { text: html, chips: ['酒店多少钱一晚', '怎么预约门票', '转人工客服'] };
+    }
+
+    /* X日游 → 直接输出每日行程 */
+    function itineraryAnswer(city, dayNum) {
+        var cd = cityDataOf(city);
+        var days = cd && cd.itinerary ? cd.itinerary.slice(0, dayNum) : [];
+        var html = '<b>' + esc(city) + ' · ' + dayNum + ' 日行程安排</b>';
+
+        if (days.length === 0) {
+            var info = DESTS[city];
+            if (!info) {
+                return { text: '抱歉，' + esc(city) + ' 的详细行程数据暂未收录。在 AI 行程助手里输入「' + esc(city) + ' ' + dayNum + ' 日游」能直接生成带地图的方案。', chips: ['帮我规划行程', '转人工客服'] };
+            }
+            html += '<span class="cs-line"></span>值得去：' + esc(info[1]) +
+                '<span class="cs-line"></span>' + esc(info[2]) +
+                '<div class="cs-card"><h5>完整每日安排</h5>在 AI 行程助手里输入「' + esc(city) + ' ' + dayNum + ' 日游」会生成带地图路线的详细方案</div>';
+            return { text: html, chips: [city + ' ' + dayNum + ' 日游', '帮我规划行程', '转人工客服'] };
+        }
+
+        days.forEach(function (d) {
+            html += '<span class="cs-line"></span><b>' + esc(d.day || ('Day ' + (days.indexOf(d) + 1))) + '</b>' +
+                (d.theme ? ' <span class="cs-t-tip">' + esc(d.theme) + '</span>' : '');
+            var items = (d.timeline || []).slice(0, 5);
+            items.forEach(function (it) {
+                var time = it.time ? '<span class="cs-t-time">' + esc(it.time) + '</span>' : '';
+                var act = esc(it.activity || '');
+                var det = it.detail ? '<span class="cs-t-detail"> ' + esc(it.detail) + '</span>' : '';
+                var tic = it.ticket ? ' <span class="cs-tag cs-tag-paid">门票 ' + esc(it.ticket) + '</span>' : '';
+                html += '<div class="cs-d-item">' + time + ' <b>' + act + '</b>' + det + tic + '</div>';
+            });
+        });
+
+        if (cd.transport) {
+            html += '<span class="cs-line"></span><b>' + esc(city) + ' 交通</b>';
+            cd.transport.forEach(function (t) {
+                html += '<div class="cs-t-row"><b>' + esc(t.label) + '</b>：' + esc(t.value) + '</div>';
+            });
+        }
+        if (cd.tips && cd.tips.length) {
+            html += '<span class="cs-line"></span><b>小贴士</b>';
+            cd.tips.slice(0, 3).forEach(function (tp, idx) {
+                html += '<div class="cs-t-row">' + (idx + 1) + '. ' + esc(tp) + '</div>';
+            });
+        }
+
+        html += '<div class="cs-card"><h5>想更灵活一点？</h5>在 AI 行程助手里输入「' + esc(city) + ' ' + dayNum + ' 日游」可以地图上拖拽调整景点顺序</div>';
+        return { text: html, chips: ['帮我规划行程', '怎么预约门票', '酒店多少钱一晚', '转人工客服'] };
+    }
+
     function findSpot(text) {
         if (!spotIndex) buildSpotIndex();
         for (var i = 0; i < spotIndex.length; i++) {
@@ -514,27 +680,55 @@
 
         if (/常见问题|faq|帮助|能做什么|会什么/i.test(t)) return faqAnswer();
 
+        /* ===== 1. 交通关键词优先 ===== */
+        if (TRANSPORT_KW.test(t)) {
+            var route = parseRoute(t);
+            if (route) {
+                var isFlight = /航班|机票|飞机|飞|航空/.test(t);
+                var kind = /高铁|动车|火车|列车/.test(t) ? 'train' : (isFlight ? 'flight' : 'flight');
+                return transportAnswer(route, kind);
+            }
+        }
+
+        /* ===== 2. X日游 → 直接出每日行程 ===== */
+        var dayMatch = t.match(/(\d+)\s*(天|日)\s*游/);
+        var days = dayMatch ? parseInt(dayMatch[1], 10) : null;
+        if (days && days >= 1 && days <= 30) {
+            var city = null;
+            for (var cn in CITY_KEY) {
+                if (t.indexOf(cn) >= 0) { city = cn; break; }
+            }
+            if (!city) city = matchDest(t);
+            if (city) { ctx.dest = city; return itineraryAnswer(city, days); }
+        } else if (ITINERARY_KW.test(t)) {
+            var city2 = matchDest(t);
+            if (city2) {
+                ctx.dest = city2;
+                var suggest = DESTS[city2] ? parseInt(DESTS[city2][0], 10) || 3 : 3;
+                return itineraryAnswer(city2, suggest);
+            }
+        }
+
+        /* ===== 3. 退票退款 ===== */
         var refund = /退票|退款|退改|能退|改期|改签|取消/.test(t);
         if (refund) {
             var rr = refundAnswer();
             if (rr) return rr;
         }
 
+        /* ===== 4. 景点查询 ===== */
         var spot = findSpot(t);
         if (spot) return spotAnswer(spot);
 
+        /* ===== 5. 目的地名称 ===== */
         var dest = matchDest(t);
-        if (dest) {
-            if (/门票|预约|购票|买票|抢票/.test(t)) {
-                ctx.dest = dest;
-                return followUpAnswer(t) || destAnswer(dest);
-            }
-            return destAnswer(dest);
-        }
+        if (dest) { ctx.dest = dest; return destAnswer(dest); }
 
+        /* ===== 6. 上下文追问 ===== */
         var fu = followUpAnswer(t);
         if (fu) return fu;
 
+        /* ===== 7. 意图匹配 ===== */
         if (/门票|预约|购票|买票|抢票/.test(t)) {
             var ti = ticketIntentAnswer();
             if (ti) return ti;
@@ -552,7 +746,7 @@
         return {
             text: '这个问题我先记下来，你可以这样问我会更准：<span class="cs-line"></span>' +
                 '· 「故宫怎么预约」· 「黄山门票多少」· 「南京 3 日游怎么安排」<span class="cs-line"></span>' +
-                '· 「门票能退吗」· 「预算 5000 怎么玩」· 「转人工客服」' +
+                '· 「北京到长沙的高铁」· 「伦敦到长沙的航班」· 「转人工客服」' +
                 '<div class="cs-card"><h5>也可以直接转人工</h5>邮箱 <b>2377411629@qq.com</b> ｜ 电话 <b>17708491297</b>，7×24 值守</div>',
             chips: CHIPS_DEFAULT
         };

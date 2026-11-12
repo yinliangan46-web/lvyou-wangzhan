@@ -555,6 +555,59 @@
 
 .cs-typing-txt { font-size: 12px; color: #94a3b8; }
 
+/* ---------- 航班/火车/行程条目样式 ---------- */
+.cs-t-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.cs-t-row b { color: var(--primary-dark); font-weight: 600; }
+.cs-t-p { color: #dc2626; font-weight: 600; font-size: 13.5px; }
+.cs-t-tip { color: #94a3b8; font-size: 11.5px; }
+.cs-t-row a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 12px;
+    padding: 2px 8px;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    transition: all .15s;
+}
+
+.cs-t-row a:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.cs-t-time {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 3px;
+}
+
+.cs-t-detail { color: #475569; font-size: 12.5px; }
+
+.cs-d-item {
+    padding: 4px 0 4px 10px;
+    border-left: 2px solid #dbeafe;
+    margin: 3px 0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.cs-d-item b { color: #1e293b; }
+
 /* ---------- 回到最新 ---------- */
 .cs-tobottom {
     position: absolute;
