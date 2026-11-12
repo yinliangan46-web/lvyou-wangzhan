@@ -407,77 +407,181 @@
         return { from: from, to: to };
     }
 
+    /* 价格区间（"¥400-1500" → [400,1500]） */
+    function priceSpan(p) {
+        var m = String(p).match(/(\d+)\s*[-~—]\s*(\d+)/);
+        if (m) return [parseInt(m[1], 10), parseInt(m[2], 10)];
+        var n = String(p).match(/(\d+)/);
+        return n ? [parseInt(n[1], 10), parseInt(n[1], 10)] : null;
+    }
+
+    function ctripFlightUrl(from, to) {
+        return 'https://flights.ctrip.com/online/list/oneway-' + encodeURIComponent(from) + '-' + encodeURIComponent(to);
+    }
+
+    /* 找 A→B 的机票数据（也接受反向记录，按返程同价参考） */
+    function fareRows(fromName, toName) {
+        var res = [], seen = {};
+        [cityDataOf(toName), cityDataOf(fromName)].forEach(function (d) {
+            if (!d || !d.airfare) return;
+            d.airfare.forEach(function (f) {
+                var a = String(f.from || ''), b = String(f.to || '');
+                var exact = a.indexOf(fromName) >= 0 && b.indexOf(toName) >= 0;
+                var rev = a.indexOf(toName) >= 0 && b.indexOf(fromName) >= 0;
+                if (!exact && !rev) return;
+                var key = a + '|' + b + '|' + f.price;
+                if (seen[key]) return;
+                seen[key] = 1;
+                res.push({ fare: f, reverse: rev && !exact });
+            });
+        });
+        return res;
+    }
+
+    /* 无直飞时，找出可中转的枢纽城市（数据里同时存在两段机票） */
+    function transferHubs(fromName, toName) {
+        var fromD = cityDataOf(fromName);
+        if (!fromD || !fromD.airfare) return [];
+        var hubs = {}, res = [];
+        fromD.airfare.forEach(function (f) { hubs[f.from] = 1; hubs[f.to] = 1; });
+        Object.keys(hubs).forEach(function (h) {
+            if (h === fromName || h === toName) return;
+            var l1 = fareRows(fromName, h), l2 = fareRows(h, toName);
+            if (l1.length && l2.length) res.push({ hub: h, l1: l1[0], l2: l2[0] });
+        });
+        return res;
+    }
+
+    function fareRowHtml(item, label, oFrom, oTo) {
+        var f = item.fare;
+        var a = oFrom || f.from, b = oTo || f.to;
+        var url = item.reverse ? ctripFlightUrl(a, b) : (f.bookingUrl || ctripFlightUrl(a, b));
+        return '<div class="cs-t-row">' + (label ? '<b>' + label + '</b> ' : '') +
+            '<b>' + esc(a) + '→' + esc(b) + '</b> ' +
+            '<span class="cs-t-p">¥' + esc(String(f.price).replace(/[¥￥]/g, '')) + '</span> ' +
+            '<span class="cs-t-tip">' + esc(f.time || '') + (item.reverse ? '（返程同价参考）' : '') + '</span> ' +
+            '<a href="' + esc(url) + '" target="_blank" rel="noopener">' +
+            '<i class="fas fa-external-link"></i> ' + esc(f.platform || '携程机票') + '</a></div>';
+    }
+
+    function flightPart(route) {
+        var direct = fareRows(route.from, route.to);
+        if (direct.length) {
+            var out = '';
+            direct.forEach(function (item) { out += fareRowHtml(item, '', route.from, route.to); });
+            return out;
+        }
+        var trans = transferHubs(route.from, route.to);
+        if (trans.length) {
+            var html = '<div class="cs-t-tip">暂无直达，推荐中转（站内参考，需分段购买）：</div>';
+            trans.slice(0, 2).forEach(function (tr) {
+                html += fareRowHtml(tr.l1, '①', route.from, tr.hub);
+                html += fareRowHtml(tr.l2, '②', tr.hub, route.to);
+                var p1 = priceSpan(tr.l1.fare.price), p2 = priceSpan(tr.l2.fare.price);
+                if (p1 && p2) {
+                    html += '<div class="cs-t-row"><b>合计参考</b> <span class="cs-t-p">¥' +
+                        (p1[0] + p2[0]) + '-' + (p1[1] + p2[1]) + '</span> ' +
+                        '<span class="cs-t-tip">转机建议预留 3 小时以上</span></div>';
+                }
+                html += '<span class="cs-line"></span>';
+            });
+            return html;
+        }
+        return '本站暂未收录这条线路的直达航班，建议：' +
+            '<span class="cs-line"></span>· <a href="' + ctripFlightUrl(route.from, route.to) + '" target="_blank" rel="noopener"><i class="fas fa-external-link"></i> 携程搜索「' + esc(route.from) + ' → ' + esc(route.to) + '」</a>' +
+            '<span class="cs-line"></span>· 国际航班通常需中转（北京/上海/香港/首尔/迪拜等），转机预留 3 小时以上' +
+            '<span class="cs-line"></span>· 提前 2-3 个月订票更便宜，留意廉航促销';
+    }
+
+    function trainPart(route) {
+        var toD = cityDataOf(route.to);
+        var rows = [];
+        if (toD && toD.trains) {
+            toD.trains.forEach(function (tr) {
+                if (String(tr.from).indexOf(route.from) >= 0) rows.push(tr);
+            });
+        }
+        if (!rows.length) {
+            return '这条线路暂无直达高铁数据，可在 <a href="https://www.12306.cn" target="_blank" rel="noopener">12306</a> / 携程火车票查询，或考虑飞机。';
+        }
+        var html = '';
+        rows.forEach(function (tr) {
+            html += '<div class="cs-t-row"><b>' + esc(tr.from) + '→' + esc(tr.to) + '</b> ' +
+                '<span class="cs-t-p">¥' + esc(String(tr.price).replace(/[¥￥]/g, '')) + '</span> ' +
+                '<span class="cs-t-tip">' + esc(tr.duration) + '，' + esc(tr.time) + '</span> ' +
+                '<a href="' + esc(tr.bookingUrl) + '" target="_blank" rel="noopener">' +
+                '<i class="fas fa-external-link"></i> ' + esc(tr.platform) + '</a></div>';
+        });
+        return html;
+    }
+
     /* 航班/火车 回复 */
     function transportAnswer(route, kind) {
-        var fromD = cityDataOf(route.from);
         var toD = cityDataOf(route.to);
         var html = '<b>' + esc(route.from) + ' → ' + esc(route.to) + '</b>';
-        html += '<span class="cs-line"></span><span class="cs-tag cs-tag-paid">' + (kind === 'flight' ? '航班' : '火车') + '</span>';
+        html += '<span class="cs-line"></span><span class="cs-tag cs-tag-paid">' +
+            (kind === 'train' ? '火车' : (kind === 'flight' ? '航班' : '航班 / 火车')) + '</span>';
 
-        if (kind === 'flight') {
-            var links = [];
-            if (toD && toD.airfare) {
-                for (var i = 0; i < toD.airfare.length; i++) {
-                    if (toD.airfare[i].from.indexOf(route.from) >= 0) links.push(toD.airfare[i]);
-                }
-            }
-            if (links.length === 0 && fromD && fromD.airfare) {
-                for (var j = 0; j < fromD.airfare.length; j++) {
-                    if (fromD.airfare[j].to.indexOf(route.to) >= 0) links.push(fromD.airfare[j]);
-                }
-            }
-            if (links.length > 0) {
-                for (var k = 0; k < links.length; k++) {
-                    var l = links[k];
-                    html += '<div class="cs-t-row"><b>' + esc(l.from) + '→' + esc(l.to) + '</b> ' +
-                        '<span class="cs-t-p">¥' + esc(l.price.replace(/[¥￥]/g, '')) + '</span> ' +
-                        '<span class="cs-t-tip">' + esc(l.time) + '</span> ' +
-                        '<a href="' + esc(l.bookingUrl) + '" target="_blank" rel="noopener">' +
-                        '<i class="fas fa-external-link"></i> ' + esc(l.platform) + '</a></div>';
-                }
-            } else {
-                html += '本站暂未收录这条线路的实时机票信息。建议：' +
-                    '<span class="cs-line"></span>· 在携程/去哪儿搜「' + esc(route.from) + ' → ' + esc(route.to) + '」' +
-                    '<span class="cs-line"></span>· 国际航班通常需中转（北京/上海/香港/首尔/迪拜等）' +
-                    '<span class="cs-line"></span>· 提前 2-3 个月订票最便宜，留意廉航促销' +
-                    '<span class="cs-line"></span><a href="https://flights.ctrip.com" target="_blank" rel="noopener"><i class="fas fa-external-link"></i> 携程机票</a>';
-            }
-            if (toD && toD.transport) {
-                html += '<span class="cs-line"></span><b>' + esc(route.to) + ' 市内交通</b>';
-                toD.transport.forEach(function (t) {
-                    html += '<div class="cs-t-row"><b>' + esc(t.label) + '</b>：' + esc(t.value) + '</div>';
-                });
-            }
-        } else {
-            var trains = [];
-            if (toD && toD.trains) {
-                for (var t = 0; t < toD.trains.length; t++) {
-                    if (toD.trains[t].from.indexOf(route.from) >= 0) trains.push(toD.trains[t]);
-                }
-            }
-            if (trains.length > 0) {
-                for (var m = 0; m < trains.length; m++) {
-                    var tr = trains[m];
-                    html += '<div class="cs-t-row"><b>' + esc(tr.from) + '→' + esc(tr.to) + '</b> ' +
-                        '<span class="cs-t-p">¥' + esc(tr.price.replace(/[¥￥]/g, '')) + '</span> ' +
-                        '<span class="cs-t-tip">' + esc(tr.duration) + '，' + esc(tr.time) + '</span> ' +
-                        '<a href="' + esc(tr.bookingUrl) + '" target="_blank" rel="noopener">' +
-                        '<i class="fas fa-external-link"></i> ' + esc(tr.platform) + '</a></div>';
-                }
-            } else {
-                html += '这条线路暂无直达高铁数据，可在 12306 / 携程 火车票频道查询，或考虑飞机。';
-            }
+        if (kind !== 'train') html += flightPart(route);
+        if (kind !== 'flight') {
+            if (kind === 'all') html += '<span class="cs-line"></span><b>火车</b>';
+            html += trainPart(route);
+        }
+        if (toD && toD.transport) {
+            html += '<span class="cs-line"></span><b>' + esc(route.to) + ' 市内交通</b>';
+            toD.transport.forEach(function (t) {
+                html += '<div class="cs-t-row"><b>' + esc(t.label) + '</b>：' + esc(t.value) + '</div>';
+            });
         }
         return { text: html, chips: ['酒店多少钱一晚', '怎么预约门票', '转人工客服'] };
+    }
+
+    /* 只说了目的地、没说起点的交通查询 */
+    function cityTransportAnswer(city, kind) {
+        var cd = cityDataOf(city);
+        var html = '<b>' + esc(city) + ' · 交通方案</b>';
+        var hasData = false;
+
+        if (kind !== 'train' && cd && cd.airfare && cd.airfare.length) {
+            hasData = true;
+            html += '<span class="cs-line"></span><b>航班参考</b>';
+            cd.airfare.slice(0, 5).forEach(function (f) {
+                html += fareRowHtml({ fare: f, reverse: false }, '');
+            });
+            html += '<div class="cs-t-row"><a href="https://flights.ctrip.com" target="_blank" rel="noopener">' +
+                '<i class="fas fa-external-link"></i> 更多出发地 / 实时比价</a></div>';
+        }
+        if (kind !== 'flight' && cd && cd.trains && cd.trains.length) {
+            hasData = true;
+            html += '<span class="cs-line"></span><b>火车参考</b>';
+            cd.trains.slice(0, 5).forEach(function (tr) {
+                html += '<div class="cs-t-row"><b>' + esc(tr.from) + '→' + esc(tr.to) + '</b> ' +
+                    '<span class="cs-t-p">¥' + esc(String(tr.price).replace(/[¥￥]/g, '')) + '</span> ' +
+                    '<span class="cs-t-tip">' + esc(tr.duration || '') + '，' + esc(tr.time || '') + '</span> ' +
+                    '<a href="' + esc(tr.bookingUrl) + '" target="_blank" rel="noopener">' +
+                    '<i class="fas fa-external-link"></i> ' + esc(tr.platform || '12306') + '</a></div>';
+            });
+        }
+        if (!hasData) {
+            html += '<span class="cs-line"></span>站内暂未收录「' + esc(city) + '」的交通数据，可在携程/12306 查询；' +
+                '告诉我出发城市，我帮你找直达或中转方案。';
+        }
+        if (cd && cd.transport) {
+            html += '<span class="cs-line"></span><b>' + esc(city) + ' 市内交通</b>';
+            cd.transport.forEach(function (t) {
+                html += '<div class="cs-t-row"><b>' + esc(t.label) + '</b>：' + esc(t.value) + '</div>';
+            });
+        }
+        return { text: html, chips: ['帮我规划行程', '酒店多少钱一晚', '转人工客服'] };
     }
 
     /* X日游 → 直接输出每日行程 */
     function itineraryAnswer(city, dayNum) {
         var cd = cityDataOf(city);
-        var days = cd && cd.itinerary ? cd.itinerary.slice(0, dayNum) : [];
+        var all = (cd && cd.itinerary) ? cd.itinerary : [];
         var html = '<b>' + esc(city) + ' · ' + dayNum + ' 日行程安排</b>';
 
-        if (days.length === 0) {
+        if (all.length === 0) {
             var info = DESTS[city];
             if (!info) {
                 return { text: '抱歉，' + esc(city) + ' 的详细行程数据暂未收录。在 AI 行程助手里输入「' + esc(city) + ' ' + dayNum + ' 日游」能直接生成带地图的方案。', chips: ['帮我规划行程', '转人工客服'] };
@@ -488,10 +592,35 @@
             return { text: html, chips: [city + ' ' + dayNum + ' 日游', '帮我规划行程', '转人工客服'] };
         }
 
-        days.forEach(function (d) {
-            html += '<span class="cs-line"></span><b>' + esc(d.day || ('Day ' + (days.indexOf(d) + 1))) + '</b>' +
+        var arriveRe = /抵达|入住|退房|返程|前往机场|值机|登机|起床|酒店早餐/;
+        var picked;
+
+        if (dayNum === 1) {
+            /* 一日游：挑内容最满的一天，避免只回「抵达+入住」 */
+            var best = null, bestScore = -1;
+            for (var i = 0; i < all.length && i < 3; i++) {
+                var usable = (all[i].timeline || []).filter(function (it) { return !arriveRe.test(String(it.activity || '')); });
+                if (usable.length > bestScore) { bestScore = usable.length; best = all[i]; }
+                if (usable.length >= 3) break;
+            }
+            picked = [best || all[0]];
+        } else {
+            picked = all.slice(0, dayNum);
+        }
+
+        if (picked.length < dayNum) {
+            html += ' <span class="cs-t-tip">（站内详细日程 ' + picked.length + ' 天，其余为建议安排）</span>';
+        }
+
+        picked.forEach(function (d, idx) {
+            var label = dayNum === 1 ? 'Day 1' : (d.day || ('Day ' + (idx + 1)));
+            html += '<span class="cs-line"></span><b>' + esc(label) + '</b>' +
                 (d.theme ? ' <span class="cs-t-tip">' + esc(d.theme) + '</span>' : '');
-            var items = (d.timeline || []).slice(0, 5);
+            var items = (d.timeline || []).slice(0, 6);
+            if (dayNum === 1) {
+                var filtered = items.filter(function (it) { return !arriveRe.test(String(it.activity || '')); });
+                if (filtered.length) items = filtered;
+            }
             items.forEach(function (it) {
                 var time = it.time ? '<span class="cs-t-time">' + esc(it.time) + '</span>' : '';
                 var act = esc(it.activity || '');
@@ -500,6 +629,24 @@
                 html += '<div class="cs-d-item">' + time + ' <b>' + act + '</b>' + det + tic + '</div>';
             });
         });
+
+        /* 站内天数不够时，用目的地亮点补齐剩余天数 */
+        if (picked.length < dayNum) {
+            var used = '';
+            all.forEach(function (d) {
+                (d.timeline || []).forEach(function (it) { used += '|' + String(it.activity || ''); });
+            });
+            var destInfo = DESTS[city];
+            var pool = destInfo ? destInfo[1].split(/[、,，]/).filter(function (x) { return x && used.indexOf(x) < 0; }) : [];
+            for (var dd = picked.length; dd < dayNum; dd++) {
+                html += '<span class="cs-line"></span><b>Day ' + (dd + 1) + '</b> <span class="cs-t-tip">城市精华 · 自由安排</span>';
+                var a1 = pool.shift(), a2 = pool.shift();
+                if (a1) html += '<div class="cs-d-item"><span class="cs-t-time">09:30</span> <b>' + esc(a1) + '</b><span class="cs-t-detail"> 出发前查开放时间，热门场馆提前预约</span></div>';
+                if (a2) html += '<div class="cs-d-item"><span class="cs-t-time">14:30</span> <b>' + esc(a2) + '</b><span class="cs-t-detail"> 与上午景点就近安排，减少通勤</span></div>';
+                else html += '<div class="cs-d-item"><span class="cs-t-time">14:30</span> <b>自由活动</b><span class="cs-t-detail"> 商圈逛街、咖啡休息或周边短途</span></div>';
+                html += '<div class="cs-d-item"><span class="cs-t-time">19:00</span> <b>当地美食</b><span class="cs-t-detail"> 找本地人常去的老字号，避开景区门口</span></div>';
+            }
+        }
 
         if (cd.transport) {
             html += '<span class="cs-line"></span><b>' + esc(city) + ' 交通</b>';
@@ -675,38 +822,70 @@
         return null;
     }
 
+    /* 中文数字 → 阿拉伯数字（支持 一~九十九） */
+    var CN_DIGITS = { '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 };
+    function cnToNum(s) {
+        if (!s) return 0;
+        if (s === '十') return 10;
+        if (s.length === 1) return CN_DIGITS[s] || 0;
+        if (s[0] === '十') return 10 + (CN_DIGITS[s[1]] || 0);
+        if (s[1] === '十') return (CN_DIGITS[s[0]] || 0) * 10 + (CN_DIGITS[s[2]] || 0);
+        return 0;
+    }
+
+    /* 解析「一日游 / 两天 / 3日游」里的天数 */
+    function parseDayNum(t) {
+        /* 先剔除「11月12日」这类日期，避免把 12 日当成 12 天 */
+        t = t.replace(/\d{1,2}\s*月\s*\d{1,2}\s*[日号]?/g, ' ');
+        var m = t.match(/(\d{1,2})\s*天\s*(?:游|行程|安排|怎么玩)?/) ||
+            t.match(/(\d{1,2})\s*日\s*(?:游|行程|安排|怎么玩)/);
+        if (m) {
+            var n = parseInt(m[1], 10);
+            if (n >= 1 && n <= 30) return n;
+        }
+        m = t.match(/([一二两三四五六七八九十]{1,3})\s*[天日]\s*(?:游|行程|安排|怎么玩)/);
+        if (!m) m = t.match(/玩\s*([一二两三四五六七八九十]{1,3})\s*天/);
+        if (m) {
+            var n2 = cnToNum(m[1]);
+            if (n2 >= 1 && n2 <= 30) return n2;
+        }
+        return null;
+    }
+
+    function cityInText(t) {
+        for (var cn in CITY_KEY) if (t.indexOf(cn) >= 0) return cn;
+        return null;
+    }
+
     function reply(text) {
         var t = String(text || '').trim();
 
         if (/常见问题|faq|帮助|能做什么|会什么/i.test(t)) return faqAnswer();
 
-        /* ===== 1. 交通关键词优先 ===== */
-        if (TRANSPORT_KW.test(t)) {
-            var route = parseRoute(t);
-            if (route) {
-                var isFlight = /航班|机票|飞机|飞|航空/.test(t);
-                var kind = /高铁|动车|火车|列车/.test(t) ? 'train' : (isFlight ? 'flight' : 'flight');
-                return transportAnswer(route, kind);
-            }
-        }
-
-        /* ===== 2. X日游 → 直接出每日行程 ===== */
-        var dayMatch = t.match(/(\d+)\s*(天|日)\s*游/);
-        var days = dayMatch ? parseInt(dayMatch[1], 10) : null;
-        if (days && days >= 1 && days <= 30) {
-            var city = null;
-            for (var cn in CITY_KEY) {
-                if (t.indexOf(cn) >= 0) { city = cn; break; }
-            }
-            if (!city) city = matchDest(t);
-            if (city) { ctx.dest = city; return itineraryAnswer(city, days); }
+        /* ===== 1. X日游 → 直接出每日行程（支持「一日游/两天/3日游」） ===== */
+        var dayNum = parseDayNum(t);
+        if (dayNum) {
+            var route0 = parseRoute(t);
+            var city = route0 ? route0.to : (cityInText(t) || matchDest(t));
+            if (city) { ctx.dest = city; return itineraryAnswer(city, dayNum); }
         } else if (ITINERARY_KW.test(t)) {
-            var city2 = matchDest(t);
+            var city2 = cityInText(t) || matchDest(t);
             if (city2) {
                 ctx.dest = city2;
                 var suggest = DESTS[city2] ? parseInt(DESTS[city2][0], 10) || 3 : 3;
                 return itineraryAnswer(city2, suggest);
             }
+        }
+
+        /* ===== 2. 交通关键词 ===== */
+        if (TRANSPORT_KW.test(t)) {
+            var isTrain = /高铁|动车|火车|列车|12306/.test(t);
+            var isFlight = /航班|机票|飞机|飞|航空/.test(t);
+            var kind = isTrain ? 'train' : (isFlight ? 'flight' : 'all');
+            var route = parseRoute(t);
+            if (route) return transportAnswer(route, kind);
+            var cityOnly = cityInText(t) || matchDest(t);
+            if (cityOnly) return cityTransportAnswer(cityOnly, kind);
         }
 
         /* ===== 3. 退票退款 ===== */
