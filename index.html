@@ -27,6 +27,7 @@
 
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="planner.css?v=20261112q" />
+    <link rel="stylesheet" href="service.css?v=20261112v" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet" />
@@ -805,12 +806,12 @@
                     <p>全天候中文客服支持，遇到任何问题随时联系我们</p>
                     <ul class="feature-detail">
                         <li><i class="fas fa-check-circle"></i> <strong>全天候服务</strong> — 365天×24小时中文客服在线</li>
-                        <li><i class="fas fa-check-circle"></i> <strong>极速响应</strong> — 平均30秒内接通，紧急问题15分钟响应</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>极速响应</strong> — 智能客服秒级答复，复杂问题转人工 15 分钟内响应</li>
                         <li><i class="fas fa-check-circle"></i> <strong>全程跟进</strong> — 从咨询到返程，专属客服一对一服务</li>
                         <li><i class="fas fa-check-circle"></i> <strong>售后无忧</strong> — 行程中任何问题，我们第一时间解决</li>
                     </ul>
                     <div class="feature-actions">
-                        <a href="tel:17708491297" class="feature-btn"><i class="fas fa-phone-volume"></i> 立即致电客服</a>
+                        <button type="button" class="feature-btn" data-open-cs><i class="fas fa-comments"></i> 进入智能客服</button>
                         <a href="#contact" class="feature-btn feature-btn-ghost">在线留言</a>
                     </div>
                 </div>
@@ -1092,6 +1093,40 @@
         </div>
     </div>
 
+    <!-- ========== 智能客服：右下角动态头像 ========== -->
+    <button type="button" class="cs-fab" id="csFab" aria-label="打开24小时智能客服">
+        <span class="cs-fab-tip" id="csFabTip">有问题？随时问我</span>
+        <span class="cs-fab-avatar">
+            <i class="fas fa-headset"></i>
+            <span class="cs-fab-dot"></span>
+            <span class="cs-fab-badge" id="csBadge">0</span>
+        </span>
+    </button>
+
+    <!-- ========== 智能客服：二级对话页面 ========== -->
+    <div class="cs-page" id="csPage" aria-hidden="true">
+        <div class="cs-shell" role="dialog" aria-modal="true" aria-label="MYL 智能客服">
+            <div class="cs-head">
+                <div class="cs-head-avatar"><i class="fas fa-headset"></i></div>
+                <div class="cs-head-info">
+                    <h4>MYL 智能客服</h4>
+                    <span><i class="cs-live"></i> 24 小时在线 · 秒级响应</span>
+                </div>
+                <button type="button" class="cs-head-btn" id="csHuman"><i class="fas fa-user-tie"></i> <span>人工客服</span></button>
+                <button type="button" class="cs-close" id="csClose" aria-label="关闭">&times;</button>
+            </div>
+            <div class="cs-body" id="csBody"></div>
+            <div class="cs-chips" id="csChips"></div>
+            <div class="cs-foot">
+                <div class="cs-inputbar">
+                    <input type="text" id="csInput" placeholder="想问什么？如：故宫怎么预约" autocomplete="off" />
+                    <button type="button" class="cs-send" id="csSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <p class="cs-hint">智能客服 7×24 在线，无需拨打电话 · 复杂问题可转人工</p>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/leaflet/leaflet.js?v=20261110za"></script>
     <script src="map-coords.js?v=20261110za"></script>
     <script src="city-data.js?v=20261110za"></script>
@@ -1099,5 +1134,6 @@
     <script src="script.js?v=20261112u"></script>
     <script src="province-data-all.js?v=20261112u"></script>
     <script src="planner.js?v=20261112u"></script>
+    <script src="service.js?v=20261112v"></script>
 </body>
 </html>
