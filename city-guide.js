@@ -69,7 +69,16 @@
 
     /* ---------- 基础素材 ---------- */
     var pins = [];
-    var landmarks = (window.CITY_LANDMARKS || {})[name] || [];
+    function matchedCityKey(data, cityName) {
+        if (data[cityName]) return cityName;
+        var keys = Object.keys(data);
+        for (var i = 0; i < keys.length; i++) {
+            if (keys[i].indexOf(cityName) === 0 || cityName.indexOf(keys[i]) === 0) return keys[i];
+        }
+        return cityName;
+    }
+    var landmarkKey = matchedCityKey(window.CITY_LANDMARKS || {}, name);
+    var landmarks = (window.CITY_LANDMARKS || {})[landmarkKey] || [];
     if (detail && detail.routePins && detail.routePins.length) {
         pins = detail.routePins.slice(0, 9);
     } else if (landmarks.length) {
@@ -77,19 +86,19 @@
     }
     if (!pins.length) pins = [name + '博物馆', name + '历史街区', name + '城市公园'];
     // 去掉机场、车站、返程等交通节点，景点区只保留可游览地点
-    var realPins = pins.filter(function (p) { return !/机场|高铁站|火车站|汽车站|返程|抵达|入住|集合|出发/.test(p); });
+    var realPins = pins.filter(function (p) { return !/机场|高铁站|火车站|汽车站|客运站|(?:东|南|西|北)站$|返程|抵达|入住|集合|出发/.test(p); });
     if (realPins.length) pins = realPins;
 
     var foods = [];
     var foodsFromProv = false;
     var CF = window.CITY_FOODS || {};
-    if (detail && detail.foods && detail.foods.length) {
+    if (CF[name] && CF[name].length) {
+        foods = CF[name].map(function (f) { return typeof f === 'string' ? { name: f } : f; });
+    } else if (detail && detail.foods && detail.foods.length) {
         foods = detail.foods.map(function (f) {
             if (typeof f === 'string') return { name: f };
             return { name: f.name || '', desc: f.desc || '', price: f.price || '' };
-        });
-    } else if (CF[name] && CF[name].length) {
-        foods = CF[name].map(function (f) { return typeof f === 'string' ? { name: f } : f; });
+        }).filter(function (f) { return f.name && !/招牌菜|特色小吃|必喝饮品/.test(f.name); });
     } else if (prov && prov.foods && prov.foods.length) {
         foodsFromProv = true;
         foods = prov.foods.map(function (f) { return typeof f === 'string' ? { name: f } : f; });
@@ -125,8 +134,8 @@
         var A = window.ALL_CITY_COORDS || {};
         var M = {};
         Object.keys(R).forEach(function (k) { M[k] = R[k]; });
-        Object.keys(EX).forEach(function (k) { if (!M[k]) M[k] = EX[k]; });
-        var keys = [name + '·' + pin, pin];
+        Object.keys(EX).forEach(function (k) { M[k] = EX[k]; });
+        var keys = [name + '·' + pin, landmarkKey + '·' + pin, pin];
         for (var i = 0; i < keys.length; i++) {
             var c0 = M[keys[i]];
             if (c0 && isFinite(c0[0]) && isFinite(c0[1])) return c0;
@@ -285,9 +294,9 @@
     };
     // 拼音重名：这些城市与同名拼音城市共用一张图，改用对应城市的生成图
     var WRONG_IMG_NAME = { '宿州': 1, '台州': 1, '抚州': 1, '玉林': 1, '宜春': 1 };
-    function traeImage() {
-        var prompt = name + ' ' + (region || '') + ' 城市地标 天际线 旅行摄影 真实光影 高清';
-        return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=' + encodeURIComponent(prompt) + '&image_size=landscape_16_9';
+    function traeImage(prompt, size) {
+        prompt = prompt || (name + ' ' + (region || '') + ' 城市地标 天际线 旅行摄影 真实光影 高清');
+        return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=' + encodeURIComponent(prompt) + '&image_size=' + (size || 'landscape_16_9');
     }
     function heroImage() {
         var raw = (detail && detail.img) || (cityRec && cityRec.img) || '';
@@ -500,9 +509,8 @@
         (spots.some(function (s) { return s.coord; }) ? '点地图圆点可以查看景点名称与建议。' : '部分景点暂无精确坐标，地图仅作城市方位参考。');
 
     var mapPoints = [];
-    spots.forEach(function (s, i) {
-        var c = s.coord || (cityCoord && i === 0 ? cityCoord : null);
-        if (c) mapPoints.push({ name: s.name, coord: c, day: s.day, idx: s.idx, desc: s.desc, type: s.type });
+    spots.forEach(function (s) {
+        if (s.coord) mapPoints.push({ name: s.name, coord: s.coord, day: s.day, idx: s.idx, desc: s.desc, type: s.type });
     });
 
     $('cgSpotGrid').innerHTML = spots.map(function (s) {
@@ -510,7 +518,7 @@
         if (s.day) meta.push('<span>行程 Day ' + s.day + '</span>');
         if (s.ticket) meta.push('<span>门票 ' + esc(priceText(s.ticket)) + '</span>');
         if (s.coord) meta.push('<span>地图可定位</span>');
-        return '<div class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '">' +
+        return '<div class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '" role="button" tabindex="0" aria-label="在地图查看' + esc(s.name) + '">' +
             '<span class="n">' + s.idx + '</span><div><span class="cg-spot-tag">' + esc(s.type) + '</span>' +
             '<h3>' + esc(s.name) + '</h3>' +
             '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></div>';
@@ -528,6 +536,34 @@
             return '<button class="cg-mapbtn" data-day="' + d + '" aria-pressed="false"><i style="background:#2563eb"></i>Day ' + d + '</button>';
         }).join('') : '');
 
+    // 原始数据保留 WGS-84；国内高德底图仅在显示层转换为 GCJ-02，境外坐标不转换
+    function transformLat(lng, lat) {
+        var ret = -100 + 2 * lng + 3 * lat + .2 * lat * lat + .1 * lng * lat + .2 * Math.sqrt(Math.abs(lng));
+        ret += (20 * Math.sin(6 * lng * Math.PI) + 20 * Math.sin(2 * lng * Math.PI)) * 2 / 3;
+        ret += (20 * Math.sin(lat * Math.PI) + 40 * Math.sin(lat / 3 * Math.PI)) * 2 / 3;
+        ret += (160 * Math.sin(lat / 12 * Math.PI) + 320 * Math.sin(lat * Math.PI / 30)) * 2 / 3;
+        return ret;
+    }
+    function transformLng(lng, lat) {
+        var ret = 300 + lng + 2 * lat + .1 * lng * lng + .1 * lng * lat + .1 * Math.sqrt(Math.abs(lng));
+        ret += (20 * Math.sin(6 * lng * Math.PI) + 20 * Math.sin(2 * lng * Math.PI)) * 2 / 3;
+        ret += (20 * Math.sin(lng * Math.PI) + 40 * Math.sin(lng / 3 * Math.PI)) * 2 / 3;
+        ret += (150 * Math.sin(lng / 12 * Math.PI) + 300 * Math.sin(lng / 30 * Math.PI)) * 2 / 3;
+        return ret;
+    }
+    function mapCoord(coord) {
+        var lng = coord[0], lat = coord[1];
+        if (lng < 72.004 || lng > 137.8347 || lat < .8293 || lat > 55.8271) return coord;
+        var a = 6378245, ee = .00669342162296594323;
+        var dLat = transformLat(lng - 105, lat - 35), dLng = transformLng(lng - 105, lat - 35);
+        var radLat = lat / 180 * Math.PI, magic = Math.sin(radLat);
+        magic = 1 - ee * magic * magic;
+        var sqrtMagic = Math.sqrt(magic);
+        dLat = (dLat * 180) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+        dLng = (dLng * 180) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+        return [lng + dLng, lat + dLat];
+    }
+
     function initMap() {
         if (!window.L || !$('cgMap') || !mapPoints.length) {
             var frame = document.querySelector('.cg-map-frame');
@@ -541,13 +577,14 @@
 
         var latlngs = [], markers = [];
         mapPoints.forEach(function (p) {
-            var ll = [p.coord[1], p.coord[0]];
+            var mc = mapCoord(p.coord);
+            var ll = [mc[1], mc[0]];
             latlngs.push(ll);
             var marker = L.marker(ll, {
                 icon: L.divIcon({
                     className: 'cg-marker',
                     html: '<div class="cg-dot" style="--c:#2563eb">' + p.idx + '</div>',
-                    iconSize: [24, 24], iconAnchor: [12, 12]
+                    iconSize: [32, 32], iconAnchor: [16, 16]
                 }),
                 title: p.name
             });
@@ -610,8 +647,7 @@
             applyFilter();
         });
 
-        $('cgSpotGrid').addEventListener('click', function (e) {
-            var card = e.target.closest('.cg-spot');
+        function locateSpot(card) {
             if (!card) return;
             var idx = card.getAttribute('data-idx');
             var m = markers.filter(function (x) { return String(x.idx) === String(idx); })[0];
@@ -620,6 +656,14 @@
                 m.marker.openPopup();
                 highlightSpot(idx);
             }
+        }
+        $('cgSpotGrid').addEventListener('click', function (e) {
+            locateSpot(e.target.closest('.cg-spot'));
+        });
+        $('cgSpotGrid').addEventListener('keydown', function (e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            locateSpot(e.target.closest('.cg-spot'));
         });
     }
 
@@ -631,9 +675,11 @@
         : '站内暂未收录这座城市的具体美食清单，可以先从本地小吃、老字号和夜市入手。';
     if (foods.length) {
         $('cgFoodGrid').innerHTML = foods.slice(0, 9).map(function (f) {
-            return '<div class="cg-food"><div class="top"><h3>' + esc(f.name) + '</h3>' +
+            var img = traeImage(name + ' ' + f.name + ' 地道菜品 食物特写 真实美食摄影 自然光 高清 无文字', 'square');
+            return '<article class="cg-food"><div class="cg-food-media"><img src="' + esc(img) + '" alt="' + esc(f.name) + '" loading="lazy" decoding="async"></div>' +
+                '<div class="cg-food-body"><div class="top"><h3>' + esc(f.name) + '</h3>' +
                 (f.price ? '<span class="price">' + esc(f.price) + '</span>' : '') + '</div>' +
-                (f.desc ? '<p>' + esc(f.desc) + '</p>' : '<p>本地代表味道，建议找居民区老店或本地人常去的馆子。</p>') + '</div>';
+                (f.desc ? '<p>' + esc(f.desc) + '</p>' : '<p>' + esc(name) + '的具体地方风味，点菜时可直接报菜名，优先选择本地人常去的餐馆。</p>') + '</div></article>';
         }).join('');
     } else {
         $('cgFoodGrid').innerHTML = '<div class="cg-food"><p>可以先尝本地早餐、夜市小吃和当季食材；具体店铺以本地人推荐为准。</p></div>';
@@ -738,7 +784,21 @@
         { k: '线路 02', color: 'var(--cg-r2)', title: poems[1].t, p: poems[1].m, note: '两日经典 · 覆盖核心景点与一顿本地味道', list: twoDay },
         { k: '线路 03', color: 'var(--cg-r3)', title: poems[2].t, p: poems[2].m, note: '深度走法 · 按 ' + deepTarget + ' 天把城市与周边走完整', list: deepDays }
     ];
-    $('cgPlanCards').innerHTML = planDefs.map(function (p) {
+    function planSpot(plan, index) {
+        var text = plan.list.map(function (d) {
+            return String(d.theme || '') + '|' + (d.timeline || []).map(function (it) {
+                return String(it.activity || '') + '|' + String(it.detail || '');
+            }).join('|');
+        }).join('|');
+        var matches = [];
+        for (var i = 0; i < pins.length; i++) {
+            if (text.indexOf(pins[i]) >= 0) matches.push(pins[i]);
+        }
+        if (matches.length) return matches[index % matches.length];
+        return pins[index % Math.max(pins.length, 1)] || name + '城市风景';
+    }
+
+    $('cgPlanCards').innerHTML = planDefs.map(function (p, pi) {
         // 每条线路只读自己的日程：一日看当日重点，两日/三日按天推进，节奏自然不同
         var segs = p.list.map(function (d, i) {
             var theme = String(d.theme || '').replace(/\s*·\s*/g, ' · ').trim();
@@ -753,9 +813,13 @@
             return (p.list.length > 1 ? 'D' + (i + 1) + ' ' : '') + (theme || '城市漫步');
         });
         var rhythm = p.list.length + ' 天 · ' + segs.join(' → ');
-        return '<div class="cg-plan" style="--rc:' + p.color + '"><span class="k">' + p.k + '</span><h3>' + esc(p.title) + '</h3>' +
+        var spot = planSpot(p, pi);
+        var img = traeImage(name + ' ' + spot + ' 著名旅游景点 真实旅行摄影 地标清晰 自然光 高清 无文字', 'landscape_16_9');
+        return '<article class="cg-plan" style="--rc:' + p.color + '" data-route="' + pi + '" role="button" tabindex="0" aria-controls="cgDayList" aria-pressed="false" aria-label="查看' + esc(p.title) + '逐日安排">' +
+            '<div class="cg-plan-media"><img src="' + esc(img) + '" alt="' + esc(name + spot) + '" loading="lazy" decoding="async"><span>' + esc(spot) + '</span></div>' +
+            '<div class="cg-plan-body"><span class="k">' + p.k + '</span><h3>' + esc(p.title) + '</h3>' +
             '<p class="poem">' + esc(p.p) + '</p><p class="note">' + esc(p.note) + '</p>' +
-            '<div class="line"><b>节奏：</b>' + esc(rhythm) + '</div></div>';
+            '<div class="line"><b>节奏：</b>' + esc(rhythm) + '</div><span class="cg-plan-go">展开逐日安排 <i class="fas fa-arrow-down"></i></span></div></article>';
     }).join('');
 
     function timelineHtml(d) {
@@ -780,6 +844,33 @@
             '<span class="arrow"><i class="fas fa-chevron-right"></i></span></summary>' +
             '<div class="inner">' + timelineHtml(d) + '</div></details>';
     }).join('');
+
+    function openPlan(card) {
+        var pi = parseInt(card.getAttribute('data-route'), 10);
+        var selected = planDefs[pi] ? planDefs[pi].list : [];
+        var first = days.indexOf(selected[0]);
+        var dayEls = document.querySelectorAll('.cg-day');
+        Array.prototype.forEach.call(document.querySelectorAll('.cg-plan'), function (el) {
+            el.setAttribute('aria-pressed', el === card ? 'true' : 'false');
+        });
+        Array.prototype.forEach.call(dayEls, function (el, i) {
+            var inRoute = selected.indexOf(days[i]) >= 0;
+            el.classList.toggle('selected', inRoute);
+            el.open = inRoute && (selected.length <= 3 || i === first);
+        });
+        $('cgDayList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    $('cgPlanCards').addEventListener('click', function (e) {
+        var card = e.target.closest('.cg-plan');
+        if (card) openPlan(card);
+    });
+    $('cgPlanCards').addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        var card = e.target.closest('.cg-plan');
+        if (!card) return;
+        e.preventDefault();
+        openPlan(card);
+    });
 
     /* ---------- 贴士与预算 ---------- */
     var groups = [

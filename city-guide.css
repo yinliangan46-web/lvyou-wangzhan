@@ -137,7 +137,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .cg-map-legend span { display: flex; align-items: center; gap: 6px; }
 .cg-map-legend i { width: 14px; height: 3px; display: inline-block; }
 .cg-marker { background: none; border: none; }
-.cg-dot { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1.5px solid var(--c); color: var(--c); display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 600; box-shadow: 0 1px 6px rgba(16, 27, 44, .22); transition: opacity .25s; }
+.cg-dot { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1.5px solid var(--c); color: var(--c); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; box-shadow: 0 1px 6px rgba(16, 27, 44, .22); transition: opacity .25s; }
 .cg-dot.dim { opacity: .2; }
 .cg-pop b { display: block; font-family: var(--cg-serif); font-size: 13.5px; color: var(--cg-ink); }
 .cg-pop span { display: block; margin-top: 3px; font-size: 11.5px; color: var(--cg-muted); }
@@ -305,9 +305,16 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     .cg-tbl-scroll { display: none; }
     .cg-chart { aspect-ratio: 1.45 / 1; }
     .cg-chart-lbl { font-size: 9.5px; }
-    .cg-mapbar { display: grid; grid-template-columns: 1fr 1fr; }
-    .cg-mapbtn { min-height: 40px; justify-content: center; font-size: 11.5px; }
+    .cg-mapbar { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 7px; scrollbar-width: none; scroll-snap-type: x proximity; }
+    .cg-mapbar::-webkit-scrollbar { display: none; }
+    .cg-mapbtn { flex: none; min-height: 44px; justify-content: center; font-size: 11.5px; scroll-snap-align: start; touch-action: manipulation; }
+    .cg-mapsep { flex: none; height: 26px; align-self: center; }
     .cg-route-head { grid-template-columns: auto 1fr; gap: 8px 16px; }
+    .cg-food { display: grid; grid-template-columns: 116px minmax(0, 1fr); }
+    .cg-food-media { height: 100%; min-height: 142px; aspect-ratio: auto; }
+    .cg-food-body { padding: 14px 14px 15px; }
+    .cg-plan-go { min-height: 44px; }
+    .leaflet-control-zoom a { width: 40px !important; height: 40px !important; line-height: 40px !important; }
 }
 /* ---------- 百科：首屏速览条 ---------- */
 .cg-hero-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 26px; border-top: 1px solid rgba(255, 255, 255, .22); border-left: 1px solid rgba(255, 255, 255, .22); max-width: 720px; }
@@ -331,7 +338,11 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .cg-spot p { font-size: 12.5px; color: var(--cg-ink2); line-height: 1.8; margin-top: 4px; }
 .cg-spot .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .cg-spot .meta span { font-size: 10.5px; color: var(--cg-blue-d); background: rgba(37, 99, 235, .07); border: 1px solid var(--cg-line-soft); padding: 2px 7px; border-radius: 2px; }
-.cg-food { background: #fff; padding: 19px 18px 20px; }
+.cg-food { background: #fff; overflow: hidden; display: flex; flex-direction: column; }
+.cg-food-media { aspect-ratio: 16 / 10; overflow: hidden; background: #e8edf3; }
+.cg-food-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+.cg-food:hover .cg-food-media img { transform: scale(1.035); }
+.cg-food-body { padding: 16px 18px 19px; }
 .cg-food .top { display: flex; align-items: baseline; gap: 9px; }
 .cg-food h3 { font-family: var(--cg-serif); font-size: 16px; font-weight: 600; }
 .cg-food .price { margin-left: auto; font-size: 12px; color: var(--cg-r1); font-weight: 500; white-space: nowrap; }
@@ -359,8 +370,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 /* ---------- 百科：行程建议 ---------- */
 .cg-plan-cards { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); }
-.cg-plan { background: #fff; padding: 22px 18px 20px; display: flex; flex-direction: column; gap: 8px; position: relative; }
-.cg-plan::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--rc); }
+.cg-plan { background: #fff; display: flex; flex-direction: column; position: relative; overflow: hidden; cursor: pointer; touch-action: manipulation; transition: transform .25s ease, box-shadow .25s ease; }
+.cg-plan::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--rc); z-index: 3; }
+.cg-plan:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(16, 27, 44, .1); }
+.cg-plan:focus-visible, .cg-spot:focus-visible { outline: 3px solid rgba(37, 99, 235, .45); outline-offset: -3px; }
+.cg-plan[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--rc); }
+.cg-plan-media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #152238; }
+.cg-plan-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 48%, rgba(8, 14, 26, .72)); }
+.cg-plan-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.cg-plan:hover .cg-plan-media img { transform: scale(1.04); }
+.cg-plan-media span { position: absolute; left: 16px; bottom: 12px; z-index: 2; color: #fff; font-size: 12px; letter-spacing: .08em; text-shadow: 0 1px 4px rgba(0, 0, 0, .35); }
+.cg-plan-body { padding: 20px 18px 18px; display: flex; flex: 1; flex-direction: column; gap: 8px; }
 .cg-plan .k { font-family: var(--cg-serif); font-size: 11.5px; letter-spacing: .1em; color: var(--rc); }
 .cg-plan h3 { font-family: var(--cg-serif); font-size: 19px; font-weight: 600; line-height: 1.4; }
 .cg-plan p { font-size: 12.5px; color: var(--cg-ink2); line-height: 1.78; }
@@ -368,9 +388,12 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .cg-plan .note { font-size: 11px; color: var(--cg-muted); letter-spacing: .02em; }
 .cg-plan .line { font-size: 11.5px; color: var(--cg-muted); line-height: 1.75; margin-top: auto; }
 .cg-plan .line b { color: var(--cg-ink); font-weight: 500; }
-.cg-daylist { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
-.cg-day { background: #fff; border: 1px solid var(--cg-line); }
-.cg-day summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 11px; padding: 14px 16px; font-size: 13.5px; }
+.cg-plan-go { min-height: 36px; display: inline-flex; align-items: center; align-self: flex-start; gap: 7px; color: var(--rc); font-size: 12px; font-weight: 500; }
+.cg-plan[aria-pressed="true"] .cg-plan-go i { transform: rotate(180deg); }
+.cg-daylist { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; scroll-margin-top: 72px; }
+.cg-day { background: #fff; border: 1px solid var(--cg-line); transition: border-color .2s ease; }
+.cg-day.selected { border-color: rgba(37, 99, 235, .45); }
+.cg-day summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 11px; padding: 14px 16px; min-height: 56px; font-size: 13.5px; touch-action: manipulation; }
 .cg-day summary::-webkit-details-marker { display: none; }
 .cg-day summary .dn { flex: none; font-family: var(--cg-serif); font-size: 11px; letter-spacing: .08em; color: #fff; background: var(--cg-r1); padding: 3px 8px; border-radius: 2px; }
 .cg-day summary b { font-family: var(--cg-serif); font-size: 15px; font-weight: 600; line-height: 1.45; }
@@ -412,6 +435,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 @media (max-width: 767px) {
     .cg-hero-facts { max-width: none; }
     .cg-row { font-size: 12px; }
+}
+
+/* H5 安全区与触控 */
+.cg-nav { height: calc(58px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top); }
+.cg-links a { min-height: 44px; display: inline-flex; align-items: center; touch-action: manipulation; }
+.cg-hero { padding-top: calc(104px + env(safe-area-inset-top)); }
+.cg-foot { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+.cg-spot, .cg-hr, .cg-back { touch-action: manipulation; }
+
+@media (min-width: 768px) {
+    .cg-hero { padding-top: calc(120px + env(safe-area-inset-top)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
