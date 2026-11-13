@@ -92,16 +92,30 @@
     var foods = [];
     var foodsFromProv = false;
     var CF = window.CITY_FOODS || {};
-    if (CF[name] && CF[name].length) {
-        foods = CF[name].map(function (f) { return typeof f === 'string' ? { name: f } : f; });
-    } else if (detail && detail.foods && detail.foods.length) {
-        foods = detail.foods.map(function (f) {
-            if (typeof f === 'string') return { name: f };
-            return { name: f.name || '', desc: f.desc || '', price: f.price || '' };
-        }).filter(function (f) { return f.name && !/招牌菜|特色小吃|必喝饮品/.test(f.name); });
-    } else if (prov && prov.foods && prov.foods.length) {
+    function foodKey(n) {
+        var key = String(n || '').replace(/\s+/g, '');
+        var re = new RegExp('^老?' + String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        key = key.replace(re, '');
+        return key === '嘎巴菜' ? '锅巴菜' : key;
+    }
+    function addFoods(list) {
+        (list || []).forEach(function (f) {
+            var item = typeof f === 'string' ? { name: f } : { name: f.name || '', desc: f.desc || '', price: f.price || '' };
+            if (!item.name || /招牌菜|特色小吃|必喝饮品/.test(item.name)) return;
+            var existing = foods.filter(function (x) { return foodKey(x.name) === foodKey(item.name); })[0];
+            if (existing) {
+                if (!existing.desc && item.desc) existing.desc = item.desc;
+                if (!existing.price && item.price) existing.price = item.price;
+            } else {
+                foods.push(item);
+            }
+        });
+    }
+    addFoods(CF[name]);
+    if (detail) addFoods(detail.foods);
+    if (!foods.length && prov && prov.foods) {
         foodsFromProv = true;
-        foods = prov.foods.map(function (f) { return typeof f === 'string' ? { name: f } : f; });
+        addFoods(prov.foods);
     }
 
     var tips = (detail && detail.tips && detail.tips.length) ? detail.tips.slice() : [];
@@ -161,6 +175,39 @@
 
     /* ---------- 行程数据 ---------- */
     var arriveRe = /抵达|返程|入住|退房|前往机场|值机|登机|酒店早餐/;
+    var mealNames = unique(foods.map(function (f) { return f.name; }).filter(Boolean));
+    var baseDays = (detail && detail.itinerary && detail.itinerary.length) ? detail.itinerary.slice() : null;
+    var mealDayTarget = Math.max(3, baseDays ? baseDays.length : 0);
+    var namedMealsPerDay = mealNames.length >= mealDayTarget * 2 ? 2 : 1;
+
+    function mealName(dayIndex, mealOffset) {
+        if (namedMealsPerDay === 1 && mealOffset === 1) return '';
+        return mealNames[dayIndex * namedMealsPerDay + mealOffset] || '';
+    }
+    function mealActivity(dayIndex, mealOffset) {
+        var dish = mealName(dayIndex, mealOffset);
+        return (mealOffset ? '晚餐' : '午餐') + ' · ' + (dish || '当季本地风味');
+    }
+    function withDailyMeals(list) {
+        return list.map(function (d, dayIndex) {
+            var copy = {};
+            Object.keys(d).forEach(function (k) { copy[k] = d[k]; });
+            copy.timeline = (d.timeline || []).map(function (it) {
+                var activity = String(it.activity || '');
+                var mealOffset = /晚餐|夜宵/.test(activity) ? 1 : (/午餐/.test(activity) ? 0 : -1);
+                if (mealOffset < 0) return it;
+                var item = {};
+                Object.keys(it).forEach(function (k) { item[k] = it[k]; });
+                var dish = mealName(dayIndex, mealOffset);
+                item.activity = mealActivity(dayIndex, mealOffset);
+                item.detail = dish
+                    ? '今日推荐：' + dish + '。' + (it.detail || '选择本地人常去的餐馆，实际营业时间以当日为准。')
+                    : '不重复前几日的推荐菜品，在居民区餐馆选择当季本地风味。';
+                return item;
+            });
+            return copy;
+        });
+    }
 
     function synthDays() {
         var count = Math.max(3, Math.ceil(pins.length / 2));
@@ -174,16 +221,16 @@
                 theme: a + (b ? ' · ' + b : ''),
                 timeline: [
                     { time: '09:00', activity: '游览 ' + a, detail: '城市代表景点，建议预留 2–3 小时；出发前确认开放时间与预约要求。' },
-                    { time: '12:00', activity: '本地午餐', detail: '找本地人常去的餐馆，避开景区门口，试试当季食材。' },
+                    { time: '12:00', activity: mealActivity(i, 0), detail: '找本地人常去的餐馆，避开景区门口，试试当季食材。' },
                     { time: '14:30', activity: '前往 ' + b, detail: '与上午景点就近安排，减少来回通勤。' },
-                    { time: '19:00', activity: '夜市或老街', detail: '尝本地小吃，感受城市的夜间生活节奏。' }
+                    { time: '19:00', activity: mealActivity(i, 1), detail: '品尝当日推荐风味，感受城市的夜间生活节奏。' }
                 ]
             });
         }
         return out;
     }
 
-    var days = (detail && detail.itinerary && detail.itinerary.length) ? detail.itinerary.slice() : synthDays();
+    var days = withDailyMeals(baseDays || synthDays());
 
     function padDays(list, target) {
         var out = list.slice();
@@ -201,9 +248,9 @@
                 theme: a + (b ? ' · ' + b : ''),
                 timeline: [
                     { time: '09:00', activity: '游览 ' + a, detail: '建议预留 2–3 小时，出发前确认开放时间与预约要求。' },
-                    { time: '12:00', activity: '本地午餐', detail: '找本地人常去的餐馆，避开景区门口。' },
+                    { time: '12:00', activity: mealActivity(out.length, 0), detail: '找本地人常去的餐馆，避开景区门口。' },
                     { time: '14:30', activity: '前往 ' + b, detail: '与上午景点就近安排，减少来回通勤。' },
-                    { time: '19:00', activity: '夜市或老街', detail: '尝本地小吃，感受城市的夜间生活。' }
+                    { time: '19:00', activity: mealActivity(out.length, 1), detail: '品尝当日推荐风味，感受城市的夜间生活。' }
                 ]
             });
         }
@@ -280,9 +327,8 @@
     });
 
     /* ---------- 图片与首屏 ---------- */
-    // 站内已备好 309 座城市的真实实景图；拼音与文件名不一致的做一次映射
+    // 首屏优先使用站内实景图；景点与菜品按名称检索真实照片，失败时回退到本地图片。
     var IMG_ALIAS = { harbin: 'haerbin', urumqi: 'wulumuqi', hongkong: 'xianggangdao', macau: 'aomenbandao', taipei: 'taibei', huangguoshu: 'anshun' };
-    // 这些城市站内暂无实景图，改用对应的真实摄影或生成图
     var NO_LOCAL_IMG = { beijing: 1, shanghai: 1, chongqing: 1, dali: 1, dunhuang: 1, jiuzhaigou: 1, xishuangbanna: 1, paris: 1, tokyo: 1, london: 1, dubai: 1, bangkok: 1, bali: 1 };
     var REMOTE_IMG = {
         paris: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=80',
@@ -292,11 +338,15 @@
         bangkok: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1600&q=80',
         bali: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1600&q=80'
     };
-    // 拼音重名：这些城市与同名拼音城市共用一张图，改用对应城市的生成图
     var WRONG_IMG_NAME = { '宿州': 1, '台州': 1, '抚州': 1, '玉林': 1, '宜春': 1 };
-    function traeImage(prompt, size) {
-        prompt = prompt || (name + ' ' + (region || '') + ' 城市地标 天际线 旅行摄影 真实光影 高清');
-        return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=' + encodeURIComponent(prompt) + '&image_size=' + (size || 'landscape_16_9');
+    function photoImage(subject, kind) {
+        var suffix = kind === 'food' ? ' 地道菜品 美食' : (kind === 'city' ? ' 城市地标 实景' : ' 景点 实景');
+        return 'https://tse1-mm.cn.bing.net/th?q=' + encodeURIComponent(name + ' ' + subject + suffix) +
+            '&w=960&h=640&c=7&rs=1&p=0&dpr=1.5&pid=1.7';
+    }
+    function photoImg(subject, kind, alt) {
+        var fallback = kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
+        return '<img src="' + esc(photoImage(subject, kind)) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async" data-fallback="' + fallback + '">';
     }
     function heroImage() {
         var raw = (detail && detail.img) || (cityRec && cityRec.img) || '';
@@ -304,21 +354,24 @@
         var k = String(qKey || (cityRec && cityRec.key) || '');
         if (!/^[a-z0-9_-]+$/i.test(k)) k = '';
         if (REMOTE_IMG[k]) return REMOTE_IMG[k];
+        if (WRONG_IMG_NAME[name]) return photoImage(name, 'city');
         k = IMG_ALIAS[k] || k;
         if (k && !NO_LOCAL_IMG[k]) return 'images/cities/' + k + '.jpg';
-        return traeImage();
+        return photoImage(name, 'city');
     }
+    document.addEventListener('error', function (e) {
+        var img = e.target;
+        if (!img || img.tagName !== 'IMG' || !img.getAttribute('data-fallback') || img.getAttribute('data-failed')) return;
+        img.setAttribute('data-failed', '1');
+        img.src = img.getAttribute('data-fallback');
+    }, true);
 
     document.title = name + '旅行百科 · 景点/美食/交通/住宿一页看懂 | MYL 旅行';
     var descEl = document.querySelector('meta[name="description"]');
     if (descEl) descEl.setAttribute('content', name + '旅行百科：必游景点、地道美食、交通、住宿、预算与逐日行程建议。');
 
     var heroImg = $('cgHeroImg');
-    heroImg.onerror = function () {
-        var fb = this.getAttribute('data-fb') || '0';
-        if (fb === '0') { this.setAttribute('data-fb', '1'); this.src = traeImage(); }
-        else { this.onerror = null; this.style.opacity = '0'; }
-    };
+    heroImg.setAttribute('data-fallback', 'images/city-fallback.jpg');
     heroImg.src = heroImage();
     heroImg.alt = name + '城市风景';
 
@@ -352,8 +405,8 @@
 
     $('cgHeroLinks').innerHTML = [
         { href: '#cgSpots', idx: '03', color: 'var(--cg-r1)', title: '必游景点', small: pins.slice(0, 3).join(' · '), d: pins.length + ' 个' },
-        { href: '#cgFood', idx: '04', color: 'var(--cg-r2)', title: '地道美食', small: foods.slice(0, 3).map(function (f) { return f.name; }).join(' · '), d: foods.length + ' 种' },
-        { href: '#cgPlan', idx: '06', color: 'var(--cg-r3)', title: '行程建议', small: '1 日 / 2 日 / ' + deepTarget + ' 日', d: deepTarget + ' 天' }
+        { href: '#cgPlan', idx: '04', color: 'var(--cg-r3)', title: '行程建议', small: '1 日 / 2 日 / ' + deepTarget + ' 日', d: deepTarget + ' 天' },
+        { href: '#cgFood', idx: '05', color: 'var(--cg-r2)', title: '地道美食', small: foods.slice(0, 3).map(function (f) { return f.name; }).join(' · '), d: foods.length + ' 种' }
     ].map(function (x) {
         return '<a class="cg-hr" href="' + x.href + '"><span class="idx">' + x.idx + '</span>' +
             '<span class="bar" style="background:' + x.color + '"></span>' +
@@ -518,10 +571,11 @@
         if (s.day) meta.push('<span>行程 Day ' + s.day + '</span>');
         if (s.ticket) meta.push('<span>门票 ' + esc(priceText(s.ticket)) + '</span>');
         if (s.coord) meta.push('<span>地图可定位</span>');
-        return '<div class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '" role="button" tabindex="0" aria-label="在地图查看' + esc(s.name) + '">' +
-            '<span class="n">' + s.idx + '</span><div><span class="cg-spot-tag">' + esc(s.type) + '</span>' +
+        return '<article class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '" role="button" tabindex="0" aria-label="在地图查看' + esc(s.name) + '">' +
+            '<div class="cg-spot-media">' + photoImg(s.name, 'spot', name + s.name + '实景') + '<span class="n">' + s.idx + '</span></div>' +
+            '<div class="cg-spot-body"><span class="cg-spot-tag">' + esc(s.type) + '</span>' +
             '<h3>' + esc(s.name) + '</h3>' +
-            '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></div>';
+            '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></article>';
     }).join('');
 
     /* 地图筛选：类型 + 行程日 */
@@ -675,8 +729,7 @@
         : '站内暂未收录这座城市的具体美食清单，可以先从本地小吃、老字号和夜市入手。';
     if (foods.length) {
         $('cgFoodGrid').innerHTML = foods.slice(0, 9).map(function (f) {
-            var img = traeImage(name + ' ' + f.name + ' 地道菜品 食物特写 真实美食摄影 自然光 高清 无文字', 'square');
-            return '<article class="cg-food"><div class="cg-food-media"><img src="' + esc(img) + '" alt="' + esc(f.name) + '" loading="lazy" decoding="async"></div>' +
+            return '<article class="cg-food"><div class="cg-food-media">' + photoImg(f.name, 'food', name + f.name) + '</div>' +
                 '<div class="cg-food-body"><div class="top"><h3>' + esc(f.name) + '</h3>' +
                 (f.price ? '<span class="price">' + esc(f.price) + '</span>' : '') + '</div>' +
                 (f.desc ? '<p>' + esc(f.desc) + '</p>' : '<p>' + esc(name) + '的具体地方风味，点菜时可直接报菜名，优先选择本地人常去的餐馆。</p>') + '</div></article>';
@@ -814,9 +867,8 @@
         });
         var rhythm = p.list.length + ' 天 · ' + segs.join(' → ');
         var spot = planSpot(p, pi);
-        var img = traeImage(name + ' ' + spot + ' 著名旅游景点 真实旅行摄影 地标清晰 自然光 高清 无文字', 'landscape_16_9');
         return '<article class="cg-plan" style="--rc:' + p.color + '" data-route="' + pi + '" role="button" tabindex="0" aria-controls="cgDayList" aria-pressed="false" aria-label="查看' + esc(p.title) + '逐日安排">' +
-            '<div class="cg-plan-media"><img src="' + esc(img) + '" alt="' + esc(name + spot) + '" loading="lazy" decoding="async"><span>' + esc(spot) + '</span></div>' +
+            '<div class="cg-plan-media">' + photoImg(spot, 'spot', name + spot + '实景') + '<span>' + esc(spot) + '</span></div>' +
             '<div class="cg-plan-body"><span class="k">' + p.k + '</span><h3>' + esc(p.title) + '</h3>' +
             '<p class="poem">' + esc(p.p) + '</p><p class="note">' + esc(p.note) + '</p>' +
             '<div class="line"><b>节奏：</b>' + esc(rhythm) + '</div><span class="cg-plan-go">展开逐日安排 <i class="fas fa-arrow-down"></i></span></div></article>';

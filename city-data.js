@@ -5192,7 +5192,7 @@ window.CITY_DETAIL = {
       },
       {
         "day": "Day 3",
-        "theme": "张家界森林公园·天门山",
+        "theme": "湖南省博物馆·潮宗街",
         "timeline": [
           {
             "time": "08:00",
@@ -5202,22 +5202,22 @@ window.CITY_DETAIL = {
           },
           {
             "time": "09:30",
-            "activity": "景区深度游览",
-            "detail": "前往核心景区，避开人流高峰",
-            "duration": "4小时",
-            "ticket": "¥100-300",
-            "tip": "建议提前线上购票"
+            "activity": "湖南省博物馆",
+            "detail": "参观马王堆汉墓陈列，预留约3小时；免费但需提前实名预约",
+            "duration": "3小时",
+            "ticket": "免费",
+            "tip": "周一闭馆，建议提前在官方渠道预约"
           },
           {
             "time": "12:00",
-            "activity": "景区内午餐",
-            "detail": "在景区附近吃当地特色",
+            "activity": "午餐",
+            "detail": "在烈士公园或东风路附近品尝长沙本地风味",
             "duration": "1小时"
           },
           {
             "time": "13:30",
-            "activity": "下午自由活动",
-            "detail": "周边商圈逛街、拍照、自由体验",
+            "activity": "潮宗街历史文化街区",
+            "detail": "沿麻石老街看历史建筑、独立书店与咖啡馆，感受长沙老城生活",
             "duration": "3小时"
           },
           {

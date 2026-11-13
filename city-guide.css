@@ -332,8 +332,13 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 /* ---------- 百科：景点/美食/住宿卡片 ---------- */
 .cg-spot-grid, .cg-food-grid, .cg-hotel-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); margin-top: 16px; }
-.cg-spot { background: #fff; padding: 20px 18px 21px; display: flex; gap: 13px; align-items: flex-start; }
-.cg-spot .n { flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--cg-paper); border: 1px solid var(--cg-line); font-family: var(--cg-serif); font-size: 12px; color: var(--cg-blue); display: flex; align-items: center; justify-content: center; }
+.cg-spot { background: #fff; padding: 0; display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 0; align-items: stretch; overflow: hidden; }
+.cg-spot-media { position: relative; min-height: 100%; overflow: hidden; background: #dfe6ee; }
+.cg-spot-media::after { content: ""; position: absolute; inset: 45% 0 0; background: linear-gradient(180deg, transparent, rgba(8, 14, 26, .38)); pointer-events: none; }
+.cg-spot-media img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+.cg-spot:hover .cg-spot-media img { transform: scale(1.04); }
+.cg-spot-body { min-width: 0; padding: 16px 15px 17px; }
+.cg-spot .n { position: absolute; left: 10px; bottom: 10px; z-index: 1; width: 28px; height: 28px; border-radius: 50%; background: rgba(13, 28, 48, .82); border: 1px solid rgba(255, 255, 255, .65); backdrop-filter: blur(5px); font-family: var(--cg-serif); font-size: 12px; color: #fff; display: flex; align-items: center; justify-content: center; }
 .cg-spot h3 { font-family: var(--cg-serif); font-size: 16.5px; font-weight: 600; line-height: 1.45; }
 .cg-spot p { font-size: 12.5px; color: var(--cg-ink2); line-height: 1.8; margin-top: 4px; }
 .cg-spot .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -420,6 +425,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     .cg-hero-facts { grid-template-columns: repeat(4, 1fr); }
     .cg-quick { grid-template-columns: repeat(4, 1fr); }
     .cg-spot-grid { grid-template-columns: repeat(2, 1fr); }
+    .cg-spot { display: flex; flex-direction: column; }
+    .cg-spot-media { width: 100%; min-height: 0; aspect-ratio: 16 / 10; }
+    .cg-spot-body { flex: 1; padding: 18px 18px 20px; }
     .cg-food-grid { grid-template-columns: repeat(2, 1fr); }
     .cg-hotel-grid { grid-template-columns: repeat(2, 1fr); }
     .cg-transport { grid-template-columns: repeat(2, 1fr); }

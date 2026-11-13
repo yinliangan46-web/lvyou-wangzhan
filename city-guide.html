@@ -9,11 +9,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="preconnect" href="https://trae-api-cn.mchost.guru" />
+    <link rel="preconnect" href="https://tse1-mm.cn.bing.net" />
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="city-guide.css?v=20261116c" />
+    <link rel="stylesheet" href="city-guide.css?v=20261116d" />
 </head>
 <body>
 
@@ -25,10 +25,10 @@
         <a href="#cgOverview">速览</a>
         <a href="#cgHistory">历史</a>
         <a href="#cgSpots">必游景点</a>
+        <a href="#cgPlan">行程建议</a>
         <a href="#cgFood">美食</a>
         <a href="#cgTransport">交通</a>
         <a href="#cgStay">住宿</a>
-        <a href="#cgPlan">行程建议</a>
         <a href="#cgTips">贴士</a>
     </div>
     <div class="cg-progress" id="cgProgress"></div>
@@ -108,10 +108,22 @@
         </div>
     </section>
 
+    <section class="cg-sec cg-intro" id="cgPlan">
+        <div class="cg-wrap">
+            <div class="cg-head">
+                <div class="cg-eyebrow"><b>行程建议</b> / 04</div>
+                <h2>时间多就多看，时间少就看重点</h2>
+                <p>下面给出 1 日、2 日与深度三种走法，以及逐日时间轴。点开任意一天可以查看当天的具体安排。</p>
+            </div>
+            <div class="cg-plan-cards" id="cgPlanCards"></div>
+            <div class="cg-daylist" id="cgDayList"></div>
+        </div>
+    </section>
+
     <section class="cg-sec" id="cgFood">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>地道美食</b> / 04</div>
+                <div class="cg-eyebrow"><b>地道美食</b> / 05</div>
                 <h2>吃什么，比去哪吃更重要</h2>
                 <p id="cgFoodDesc"></p>
             </div>
@@ -122,7 +134,7 @@
     <section class="cg-sec cg-map-sec" id="cgTransport">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>交通指南</b> / 05</div>
+                <div class="cg-eyebrow"><b>交通指南</b> / 06</div>
                 <h2>怎么去、怎么在城里移动</h2>
                 <p id="cgTransportDesc"></p>
             </div>
@@ -133,7 +145,7 @@
     <section class="cg-sec" id="cgStay">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>住宿建议</b> / 06</div>
+                <div class="cg-eyebrow"><b>住宿建议</b> / 07</div>
                 <h2>住对区域，等于省下半天路程</h2>
                 <p id="cgStayDesc"></p>
             </div>
@@ -141,22 +153,10 @@
         </div>
     </section>
 
-    <section class="cg-sec cg-intro" id="cgPlan">
-        <div class="cg-wrap">
-            <div class="cg-head">
-                <div class="cg-eyebrow"><b>行程建议</b> / 06</div>
-                <h2>时间多就多看，时间少就看重点</h2>
-                <p>下面给出 1 日、2 日与深度三种走法，以及逐日时间轴。点开任意一天可以查看当天的具体安排。</p>
-            </div>
-            <div class="cg-plan-cards" id="cgPlanCards"></div>
-            <div class="cg-daylist" id="cgDayList"></div>
-        </div>
-    </section>
-
     <section class="cg-sec cg-tips" id="cgTips">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>行前贴士</b> / 07</div>
+                <div class="cg-eyebrow"><b>行前贴士</b> / 08</div>
                 <h2>出发前把这几件事想好</h2>
                 <p>门票、预约、天气和预算是最容易临时踩坑的四件事，提前看一眼能省不少时间。</p>
             </div>
@@ -183,15 +183,15 @@
     </div>
 </footer>
 
-<script src="city-data.js?v=20261116c"></script>
-<script src="province-data-all.js?v=20261116c"></script>
-<script src="loop-data.js?v=20261116c"></script>
-<script src="city-landmarks.js?v=20261116c"></script>
-<script src="city-history.js?v=20261116c"></script>
-<script src="city-foods.js?v=20261116c"></script>
-<script src="city-spot-coords.js?v=20261116c"></script>
-<script src="city-routes.js?v=20261116c"></script>
+<script src="city-data.js?v=20261116d"></script>
+<script src="province-data-all.js?v=20261116d"></script>
+<script src="loop-data.js?v=20261116d"></script>
+<script src="city-landmarks.js?v=20261116d"></script>
+<script src="city-history.js?v=20261116d"></script>
+<script src="city-foods.js?v=20261116d"></script>
+<script src="city-spot-coords.js?v=20261116d"></script>
+<script src="city-routes.js?v=20261116d"></script>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="city-guide.js?v=20261116c"></script>
+<script src="city-guide.js?v=20261116f"></script>
 </body>
 </html>

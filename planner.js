@@ -145,12 +145,12 @@
     function classify(name) {
         var tags = [];
         if (/山|湖|海|岛|湾|林|湿地|草原|沙漠|峡谷|瀑布|溪|洞|泉|江|河|滩|峰|岭|谷|冰川|梯田|地质/.test(name)) tags.push('nature');
-        if (/古镇|古城|寺|塔|宫|陵|博物|纪念馆|遗址|长城|祠|庙|府|关|楼|阁|园|书院|大佛|石窟|庙|城墙|皇陵|帅府|故居/.test(name)) tags.push('history');
+        if (/古镇|古城|寺|塔|宫|陵|博物|纪念馆|遗址|长城|祠|庙|府|关|楼|阁|园|书院|书店|书城|书房|图书馆|大佛|石窟|庙|城墙|皇陵|帅府|故居/.test(name)) tags.push('history');
         if (/街|夜市|小吃|美食|巷|集市|老城|食|吊锅|粑粑|瓜片|板栗|米酒/.test(name)) tags.push('food');
         if (/锦里|宽窄巷子|回民街|户部巷|太平老街|曾厝垵|南锣鼓巷|夫子庙|观前街|东关街/.test(name) && tags.indexOf('food') < 0) tags.push('food');
         if (/乐园|海洋|动物|欢乐谷|方特|迪士尼|世界之窗|科技馆|水族|儿童|锦绣中华|极地|游乐园|影视城/.test(name)) tags.push('family');
         if (/景|湾|海|日落|观景|塔|峰|湖|岛|夜游|夜景/.test(name)) tags.push('photo');
-        if (/温泉|古镇|湖|公园|度假|庄园|茶园|湿地|草原/.test(name)) tags.push('relax');
+        if (/温泉|古镇|湖|公园|度假|庄园|茶园|湿地|草原|书店|书城|书房|图书馆/.test(name)) tags.push('relax');
         return tags;
     }
 
@@ -374,19 +374,50 @@
     };
 
     var FOOD_GENERIC = ['老字号早点', '本地人常去的苍蝇馆子', '老城夜市小吃街', '人气商圈餐厅', '当地招牌农家菜', '特色面馆'];
-    /* 每天从美食池轮换，避免多天推荐重复 */
+    /* 合并城市专属菜名，午餐、晚餐和每日美食区共用同一份当日清单。 */
     function foodsFor(city) {
-        var arr = CITY_FOOD[city];
-        if (arr && arr.length) return arr;
-        var cat = CATALOG[city];
-        var picks = cat ? cat.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; }).map(function (i) { return i.name; }) : [];
-        return picks.concat(FOOD_GENERIC.map(function (g) { return city + g; }));
+        var out = [], seen = {};
+        function foodKey(n) {
+            var key = String(n || '').replace(/\s+/g, '');
+            var re = new RegExp('^老?' + String(city).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+            key = key.replace(re, '');
+            return key === '嘎巴菜' ? '锅巴菜' : key;
+        }
+        function add(arr) {
+            (arr || []).forEach(function (f) {
+                var n = typeof f === 'string' ? f : (f && f.name);
+                var key = foodKey(n);
+                if (n && key && !seen[key] && !/招牌菜|特色小吃|必喝饮品/.test(n)) {
+                    seen[key] = 1;
+                    out.push(n);
+                }
+            });
+        }
+        add(CITY_FOOD[city]);
+        add((window.CITY_FOODS || {})[city]);
+        var details = window.CITY_DETAIL || {};
+        Object.keys(details).forEach(function (k) {
+            if (details[k] && details[k].name === city) add(details[k].foods);
+        });
+        return out.length ? out : FOOD_GENERIC.map(function (g) { return city + g; });
     }
-    function pickFood(city, dayIdx, n) {
-        var arr = foodsFor(city);
-        var out = [];
-        for (var i = 0; i < (n || 1); i++) out.push(arr[(((dayIdx || 0) * 2 + i) % arr.length + arr.length) % arr.length]);
+    function foodSlotsPerDay(city) {
+        var totalDays = clamp((state && state.days) || 1, 1, 20);
+        var count = foodsFor(city).length;
+        return count >= totalDays * 4 ? 4 : (count >= totalDays * 2 ? 2 : 1);
+    }
+    function pickFood(city, start, n) {
+        var arr = foodsFor(city), out = [];
+        start = Math.max(0, Number(start) || 0);
+        for (var i = 0; i < (n || 1); i++) {
+            if (arr[start + i]) out.push(arr[start + i]);
+        }
         return out;
+    }
+    function dayFoods(d) {
+        var slots = foodSlotsPerDay(d.city);
+        var cityDay = d.cityDay || d.dayNo || 1;
+        return pickFood(d.city, Math.max(0, cityDay - 1) * slots, slots);
     }
 
 
@@ -403,7 +434,7 @@
         '中山陵', '明孝陵', '天安门广场', '毛主席纪念堂', '人民大会堂', '国家大剧院'];
 
     function cityFoods(city) {
-        return CITY_FOOD[city] || ['本地老字号小吃', '当地招牌菜', '夜市小吃街'];
+        return foodsFor(city);
     }
 
     function needReserve(name) {
@@ -436,7 +467,8 @@
             var nm = pp.length > 1 ? pp.slice(1).join('·') : k;
             var cc0 = R[k];
             if (!nm || !cc0 || !isFinite(cc0[0]) || !isFinite(cc0[1])) return;
-            if (usedPoi[nm]) return;
+            // 带城市前缀的真实地点允许不同城市使用相同名称（如新华书店），仅在本地目录内去重。
+            if (usedPoi[nm] && pp.length === 1) return;
             if (!city) {
                 var bd = 1e9;
                 Object.keys(centers).forEach(function (cn) {
@@ -755,9 +787,9 @@
                         desc: poiDesc(city, p),
                         poi: p
                     });
-                    if (i === 0) blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city, dayNo) });
+                    if (i === 0) blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city, di + 1) });
                 });
-                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city, dayNo) });
+                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city, di + 1) });
                 var lastPoi = poiArr[poiArr.length - 1];
                 blocks.push({
                     time: '21:00', type: 'hotel',
@@ -772,7 +804,8 @@
                             time: '10:00', type: 'free', title: city + '深度漫游 · 自由活动',
                             desc: '睡到自然醒，逛老城 / 咖啡馆 / 补拍照片' + (spare ? '；如果还想玩，可以去「' + spare.name + '」' : '')
                         },
-                        { time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city, dayNo) },
+                        { time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city, di + 1) },
+                        { time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city, di + 1) },
                         { time: '21:00', type: 'hotel', title: '入住 · ' + city + '市中心', hotelCity: city }
                     ];
                 }
@@ -780,6 +813,7 @@
                 if (dayNo < nDays) hotelNights++;
                 daysList.push({
                     dayNo: dayNo,
+                    cityDay: di + 1,
                     city: city,
                     cityChange: leg ? { from: prevCity, to: city, mode: leg.mode, hours: leg.hours, km: leg.km, cost: leg.cost } : null,
                     theme: poiArr.length ? poiArr.slice(0, 3).map(function (p) { return p.name; }).join(' · ') : city + '自由活动',
@@ -981,10 +1015,16 @@
     }
 
     function lunchName(city, dayIdx) {
-        return pickFood(city, (dayIdx || 0) * 2, 2).join('、') + ' · 人均 ¥45-70';
+        var slots = foodSlotsPerDay(city);
+        if (slots === 1) return '老城家常餐（午餐自理） · 人均 ¥35-55';
+        var dishes = pickFood(city, Math.max(0, (dayIdx || 1) - 1) * slots, slots === 4 ? 2 : 1);
+        return (dishes.length ? dishes.join('、') : '当季本地风味（今日自理）') + ' · 人均 ¥45-70';
     }
     function dinnerName(city, dayIdx) {
-        return pickFood(city, (dayIdx || 0) * 2 + 1, 2).join('、') + ' · 人均 ¥60-100';
+        var slots = foodSlotsPerDay(city);
+        var offset = slots === 4 ? 2 : (slots === 2 ? 1 : 0);
+        var dishes = pickFood(city, Math.max(0, (dayIdx || 1) - 1) * slots + offset, slots === 4 ? 2 : 1);
+        return (dishes.length ? dishes.join('、') : '当季本地风味（今日自理）') + ' · 人均 ¥60-100';
     }
 
     /* ==================== 推荐/自动挑选 ==================== */
@@ -1204,10 +1244,11 @@
             : '<div class="pl-ex-note">热门景区旺季可能限流，建议出发前在携程或景区公众号确认余票。</div>';
 
         var cityKw = encodeURIComponent(d.city);
-        var foodChips = cityFoods(d.city).map(function (f) {
+        var dailyFoods = dayFoods(d);
+        var foodChips = dailyFoods.map(function (f) {
             return '<a class="pl-ex-chip" href="https://www.dianping.com/search/keyword/0/0_' + encodeURIComponent(d.city + f) +
                 '" target="_blank" rel="noopener">' + esc(f) + '</a>';
-        }).join('');
+        }).join('') || '<span class="pl-ex-chip">当季本地风味（今日自理）</span>';
 
         var km = d.km || 0;
         var taxi = Math.round(km * 2.4 + 12);
@@ -1347,7 +1388,8 @@
             var needR = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });
             if (pois.length) lines.push('  门票：' + pois.map(function (b) { return b.title; }).join('、') + '（携程/抖音可查票）');
             if (needR.length) lines.push('  预约：' + needR.join('、') + ' 需实名预约，提前 1-3 天在景区公众号或携程预约');
-            lines.push('  美食：' + cityFoods(d.city).join('、'));
+            var dailyFoods = dayFoods(d);
+            lines.push('  美食：' + (dailyFoods.length ? dailyFoods.join('、') : '当季本地风味（今日自理）'));
             lines.push('  交通：市内约 ' + d.km + ' km，打车约 ¥' + Math.round((d.km || 0) * 2.4 + 12));
             lines.push('');
         });
