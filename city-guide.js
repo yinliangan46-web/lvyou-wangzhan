@@ -739,12 +739,23 @@
         { k: '线路 03', color: 'var(--cg-r3)', title: poems[2].t, p: poems[2].m, note: '深度走法 · 按 ' + deepTarget + ' 天把城市与周边走完整', list: deepDays }
     ];
     $('cgPlanCards').innerHTML = planDefs.map(function (p) {
-        var stops = [];
-        p.list.forEach(function (d) { stops = stops.concat((d.timeline || []).map(function (it) { return String(it.activity || ''); }).filter(Boolean)); });
-        stops = unique(stops).slice(0, 4);
+        // 每条线路只读自己的日程：一日看当日重点，两日/三日按天推进，节奏自然不同
+        var segs = p.list.map(function (d, i) {
+            var theme = String(d.theme || '').replace(/\s*·\s*/g, ' · ').trim();
+            if (!theme) {
+                var acts = unique((d.timeline || []).map(function (it) {
+                    return String(it.activity || '').replace(/^(游览|前往|抵达|入住|返回|参观|逛逛)\s*/, '');
+                }).filter(function (a) {
+                    return a && !/午餐|晚餐|早餐|夜宵|自由活动|入住|返程/.test(a);
+                }));
+                theme = acts.slice(0, 2).join(' · ');
+            }
+            return (p.list.length > 1 ? 'D' + (i + 1) + ' ' : '') + (theme || '城市漫步');
+        });
+        var rhythm = p.list.length + ' 天 · ' + segs.join(' → ');
         return '<div class="cg-plan" style="--rc:' + p.color + '"><span class="k">' + p.k + '</span><h3>' + esc(p.title) + '</h3>' +
             '<p class="poem">' + esc(p.p) + '</p><p class="note">' + esc(p.note) + '</p>' +
-            '<div class="line"><b>节奏：</b>' + p.list.length + ' 天 · ' + stops.join(' → ') + '</div></div>';
+            '<div class="line"><b>节奏：</b>' + esc(rhythm) + '</div></div>';
     }).join('');
 
     function timelineHtml(d) {
