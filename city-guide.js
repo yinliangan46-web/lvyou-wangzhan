@@ -82,11 +82,14 @@
 
     var foods = [];
     var foodsFromProv = false;
+    var CF = window.CITY_FOODS || {};
     if (detail && detail.foods && detail.foods.length) {
         foods = detail.foods.map(function (f) {
             if (typeof f === 'string') return { name: f };
             return { name: f.name || '', desc: f.desc || '', price: f.price || '' };
         });
+    } else if (CF[name] && CF[name].length) {
+        foods = CF[name].map(function (f) { return typeof f === 'string' ? { name: f } : f; });
     } else if (prov && prov.foods && prov.foods.length) {
         foodsFromProv = true;
         foods = prov.foods.map(function (f) { return typeof f === 'string' ? { name: f } : f; });
@@ -118,21 +121,25 @@
 
     function coordOf(pin) {
         var R = window.REAL_POI_COORDS || {};
+        var EX = window.CITY_SPOT_COORDS || {};
         var A = window.ALL_CITY_COORDS || {};
+        var M = {};
+        Object.keys(R).forEach(function (k) { M[k] = R[k]; });
+        Object.keys(EX).forEach(function (k) { if (!M[k]) M[k] = EX[k]; });
         var keys = [name + '·' + pin, pin];
         for (var i = 0; i < keys.length; i++) {
-            var c0 = R[keys[i]];
+            var c0 = M[keys[i]];
             if (c0 && isFinite(c0[0]) && isFinite(c0[1])) return c0;
         }
         // 模糊匹配：如「老虎滩」vs「老虎滩海洋公园」，需落在本市 250km 内
         if (cityCoord) {
             var hit = null;
-            Object.keys(R).forEach(function (k) {
+            Object.keys(M).forEach(function (k) {
                 if (hit) return;
                 var nm = k.indexOf('·') >= 0 ? k.split('·').pop() : k;
                 if (nm.length < 2) return;
                 if (nm.indexOf(pin) < 0 && pin.indexOf(nm) < 0) return;
-                var c = R[k];
+                var c = M[k];
                 if (!c || !isFinite(c[0]) || !isFinite(c[1])) return;
                 if (distKm(cityCoord, c) > 250) return;
                 hit = c;
