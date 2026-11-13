@@ -424,6 +424,35 @@
         });
         var R = window.REAL_POI_COORDS || {};
         var centers = window.ALL_CITY_COORDS || {};
+        /* 全国景点补全：REAL_POI_COORDS 里尚未被城市收录的景点，按最近城市挂载，
+           保证「搜景点」覆盖全国 1500+ 个有真实坐标的景点 */
+        var usedPoi = {};
+        Object.keys(known).forEach(function (c) {
+            (known[c] || []).forEach(function (n) { usedPoi[n] = 1; });
+        });
+        Object.keys(R).forEach(function (k) {
+            var pp = k.split('·');
+            var city = pp.length > 1 ? pp[0] : '';
+            var nm = pp.length > 1 ? pp.slice(1).join('·') : k;
+            var cc0 = R[k];
+            if (!nm || !cc0 || !isFinite(cc0[0]) || !isFinite(cc0[1])) return;
+            if (usedPoi[nm]) return;
+            if (!city) {
+                var bd = 1e9;
+                Object.keys(centers).forEach(function (cn) {
+                    var cc = centers[cn];
+                    if (!cc || !isFinite(cc[0])) return;
+                    var d = distKm(cc0, cc);
+                    if (d < bd) { bd = d; city = cn; }
+                });
+                if (!city || bd > 300) return;
+            }
+            if (!known[city]) known[city] = [];
+            if (known[city].indexOf(nm) >= 0) return;
+            known[city].push(nm);
+            usedPoi[nm] = 1;
+            if (!R[city + '·' + nm]) R[city + '·' + nm] = cc0;
+        });
         var out = {};
         Object.keys(known).forEach(function (city) {
             var center = centers[city];

@@ -416,3 +416,78 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     html { scroll-behavior: auto; }
 }
+
+/* ---------- 城市名片 chips ---------- */
+.cg-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 18px; }
+.cg-chip {
+    display: inline-flex; align-items: center; padding: 5px 12px;
+    border: 1px solid rgba(255, 255, 255, .28); border-radius: 999px;
+    background: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .92);
+    font-size: 12px; letter-spacing: .02em; backdrop-filter: blur(6px);
+}
+
+/* ---------- 历史沿革 ---------- */
+.cg-history-sec { background: #fff; border-top: 1px solid var(--cg-line-soft); border-bottom: 1px solid var(--cg-line-soft); }
+.cg-history { display: grid; gap: 26px; margin-top: 6px; }
+.cg-hist-lead {
+    position: relative; padding: 26px 26px 24px;
+    border-radius: 18px; background: linear-gradient(135deg, #f0f5ff 0%, #f8fafc 60%, #fff 100%);
+    border: 1px solid rgba(37, 99, 235, .14);
+}
+.cg-hist-lead::before {
+    content: '“'; position: absolute; top: 6px; left: 14px;
+    font-family: var(--cg-serif); font-size: 58px; line-height: 1; color: rgba(37, 99, 235, .14);
+}
+.cg-hist-alias {
+    display: inline-block; margin-bottom: 6px; padding: 3px 10px; border-radius: 6px;
+    background: var(--cg-blue); color: #fff; font-size: 11px; letter-spacing: .08em;
+}
+.cg-hist-alias:empty { display: none; }
+.cg-hist-lead p { position: relative; font-family: var(--cg-serif); font-size: clamp(15px, 2.6vw, 18px); line-height: 1.9; color: var(--cg-ink); }
+
+.cg-timeline { list-style: none; position: relative; padding-left: 20px; }
+.cg-timeline::before {
+    content: ''; position: absolute; left: 5px; top: 6px; bottom: 6px;
+    width: 1px; background: linear-gradient(180deg, rgba(37,99,235,.4), rgba(37,99,235,.08));
+}
+.cg-tl-item {
+    position: relative; display: grid; grid-template-columns: 92px 1fr; gap: 18px;
+    padding: 0 0 24px 16px; opacity: 0; transform: translateY(14px);
+    transition: opacity .55s ease, transform .55s ease;
+}
+.cg-tl-item.in { opacity: 1; transform: none; transition-delay: calc(var(--i, 0) * 90ms); }
+.cg-tl-year {
+    font-family: var(--cg-serif); font-size: 13px; font-weight: 700; color: var(--cg-blue-d);
+    text-align: right; padding-top: 2px; letter-spacing: .02em;
+}
+.cg-tl-dot {
+    position: absolute; left: -19px; top: 8px; width: 11px; height: 11px; border-radius: 50%;
+    background: #fff; border: 2px solid var(--cg-blue); box-shadow: 0 0 0 4px rgba(37, 99, 235, .1);
+}
+.cg-tl-card { border-left: 2px solid rgba(37, 99, 235, .16); padding: 0 0 2px 16px; }
+.cg-tl-card b { display: block; font-size: 15px; margin-bottom: 3px; }
+.cg-tl-card p { font-size: 13.5px; line-height: 1.8; color: var(--cg-muted); }
+
+/* ---------- 景点类型标签与联动 ---------- */
+.cg-spot-tag {
+    display: inline-block; margin-bottom: 5px; padding: 2px 8px; border-radius: 4px;
+    background: rgba(15, 118, 110, .1); color: var(--cg-r2);
+    font-size: 10.5px; letter-spacing: .04em;
+}
+.cg-spot { cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+.cg-spot:hover { transform: translateY(-2px); }
+.cg-spot.active { border-color: var(--cg-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+.cg-spot.hide { display: none; }
+.cg-mapsep { display: inline-block; width: 1px; height: 18px; background: var(--cg-line); margin: 0 4px; vertical-align: middle; }
+
+@media (min-width: 768px) {
+    .cg-history { grid-template-columns: 0.85fr 1.15fr; gap: 34px; align-items: start; }
+    .cg-hist-lead { position: sticky; top: 84px; }
+}
+@media (max-width: 767px) {
+    .cg-tl-item { grid-template-columns: 1fr; gap: 4px; padding-left: 12px; }
+    .cg-tl-year { text-align: left; }
+    .cg-tl-dot { left: -17px; top: 6px; }
+    .cg-tl-card { border-left: none; padding-left: 0; }
+    .cg-hist-lead { padding: 22px 20px; }
+}

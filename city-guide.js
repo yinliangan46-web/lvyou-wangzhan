@@ -108,11 +108,39 @@
         if (Array.isArray(cc) && isFinite(cc[0])) cityCoord = cc;
     }
 
+    function distKm(a, b) {
+        var rad = Math.PI / 180;
+        var dLat = (b[1] - a[1]) * rad, dLng = (b[0] - a[0]) * rad;
+        var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(a[1] * rad) * Math.cos(b[1] * rad) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        return 12742 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+    }
+
     function coordOf(pin) {
         var R = window.REAL_POI_COORDS || {};
         var A = window.ALL_CITY_COORDS || {};
-        var c = R[pin] || A[pin];
-        return (c && isFinite(c[0]) && isFinite(c[1])) ? c : null;
+        var keys = [name + '·' + pin, pin];
+        for (var i = 0; i < keys.length; i++) {
+            var c0 = R[keys[i]];
+            if (c0 && isFinite(c0[0]) && isFinite(c0[1])) return c0;
+        }
+        // 模糊匹配：如「老虎滩」vs「老虎滩海洋公园」，需落在本市 250km 内
+        if (cityCoord) {
+            var hit = null;
+            Object.keys(R).forEach(function (k) {
+                if (hit) return;
+                var nm = k.indexOf('·') >= 0 ? k.split('·').pop() : k;
+                if (nm.length < 2) return;
+                if (nm.indexOf(pin) < 0 && pin.indexOf(nm) < 0) return;
+                var c = R[k];
+                if (!c || !isFinite(c[0]) || !isFinite(c[1])) return;
+                if (distKm(cityCoord, c) > 250) return;
+                hit = c;
+            });
+            if (hit) return hit;
+        }
+        var c1 = A[pin];
+        return (c1 && isFinite(c1[0]) && isFinite(c1[1])) ? c1 : null;
     }
 
     /* ---------- 行程数据 ---------- */
@@ -219,9 +247,20 @@
         return out;
     }
 
+    function spotType(pin) {
+        var n = String(pin || '');
+        if (/博物馆|纪念馆|美术馆|展览馆|书院|遗址|故居|陵|寺|庙|塔|宫|楼|阁|关|城墙|古镇|古城|老街|街|巷|园|府|衙/.test(n)) {
+            if (/古镇|古城|老街|街|巷/.test(n)) return '古镇街区';
+            if (/博物馆|纪念馆|美术馆|展览馆/.test(n)) return '博物馆';
+            return '人文古迹';
+        }
+        if (/湖|山|峡|谷|江|河|海|岛|湾|湿地|森林|草原|沙漠|瀑布|温泉|泉|洞|滩|峰|岭|寨|林|溪|潭|岩/.test(n)) return '自然山水';
+        return '城市地标';
+    }
+
     var spots = pins.map(function (p, i) {
         var info = pinInfo(p);
-        return { name: p, idx: i + 1, coord: coordOf(p), desc: info.desc, ticket: info.ticket, day: info.day };
+        return { name: p, idx: i + 1, coord: coordOf(p), desc: info.desc, ticket: info.ticket, day: info.day, type: spotType(p) };
     });
 
     /* ---------- 图片与首屏 ---------- */
@@ -250,7 +289,14 @@
     if (!budgetTotal && prov && prov.price && !cityRec) budgetTotal = prov.price;
 
     $('cgSub').textContent = name + (region ? ' 位于' + region : '') + '，建议停留 ' + daysText +
-        '。下面用一页把景点、美食、交通、住宿和每天怎么走讲清楚，出发前 3 分钟就能建立整体印象。';
+        '。下面用一页把历史、景点、美食、交通、住宿和每天怎么走讲清楚，出发前 3 分钟就能建立整体印象。';
+
+    var histData = historyOf();
+    var chips = [];
+    if (histData && histData.alias) chips.push('别称 · ' + histData.alias);
+    tags.slice(0, 3).forEach(function (t) { chips.push(t); });
+    if (region) chips.push(region);
+    $('cgChips').innerHTML = chips.map(function (t) { return '<span class="cg-chip">' + esc(t) + '</span>'; }).join('');
 
     $('cgHeroFacts').innerHTML = [
         ['建议停留', daysText],
@@ -262,9 +308,9 @@
     }).join('');
 
     $('cgHeroLinks').innerHTML = [
-        { href: '#cgSpots', idx: '01', color: 'var(--cg-r1)', title: '必游景点', small: pins.slice(0, 3).join(' · '), d: pins.length + ' 个' },
-        { href: '#cgFood', idx: '02', color: 'var(--cg-r2)', title: '地道美食', small: foods.slice(0, 3).map(function (f) { return f.name; }).join(' · '), d: foods.length + ' 种' },
-        { href: '#cgPlan', idx: '03', color: 'var(--cg-r3)', title: '行程建议', small: '1 日 / 2 日 / ' + deepTarget + ' 日', d: deepTarget + ' 天' }
+        { href: '#cgSpots', idx: '03', color: 'var(--cg-r1)', title: '必游景点', small: pins.slice(0, 3).join(' · '), d: pins.length + ' 个' },
+        { href: '#cgFood', idx: '04', color: 'var(--cg-r2)', title: '地道美食', small: foods.slice(0, 3).map(function (f) { return f.name; }).join(' · '), d: foods.length + ' 种' },
+        { href: '#cgPlan', idx: '06', color: 'var(--cg-r3)', title: '行程建议', small: '1 日 / 2 日 / ' + deepTarget + ' 日', d: deepTarget + ' 天' }
     ].map(function (x) {
         return '<a class="cg-hr" href="' + x.href + '"><span class="idx">' + x.idx + '</span>' +
             '<span class="bar" style="background:' + x.color + '"></span>' +
@@ -363,6 +409,58 @@
         $('cgChart').style.marginBottom = '28px';
     }
 
+    /* ---------- 历史沿革 ---------- */
+    function historyOf() {
+        var H = window.CITY_HISTORY || {};
+        if (H[name]) return H[name];
+        var hit = null;
+        Object.keys(H).some(function (k) {
+            if (name.indexOf(k) >= 0 || k.indexOf(name) >= 0) { hit = H[k]; return true; }
+            return false;
+        });
+        if (hit) return hit;
+        if (prov && (prov.desc || prov.tag)) {
+            return { alias: '', summary: (prov.name || '') + '：' + (prov.desc || prov.tag || ''), eras: [], fallback: true };
+        }
+        if (detail && detail.desc) {
+            return { alias: '', summary: detail.desc, eras: [], fallback: true };
+        }
+        return null;
+    }
+
+    function renderHistory() {
+        var h = historyOf();
+        if (!h) { document.getElementById('cgHistory').style.display = 'none'; return; }
+        $('cgHistAlias').textContent = h.alias ? '别称 · ' + h.alias : '';
+        $('cgHistSummary').textContent = h.summary || '';
+        $('cgHistTitle').textContent = h.fallback ? '先看区域历史，再读这座城' : '这座城，是怎么一步步走到今天的';
+        $('cgHistSub').textContent = h.fallback
+            ? ((h.eras && h.eras.length)
+                ? '这座城市暂未收录独立沿革，以下为所在区域的历史脉络；景点与交通信息不受影响。'
+                : '这座城市的历史沿革正在补充，先通过简介建立印象，再到景点里感受它的时间痕迹。')
+            : '按时间顺序抽取关键节点，先建立时间感，再去景点会更有代入感。';
+        if (!h.eras || !h.eras.length) {
+            $('cgHistTimeline').innerHTML = '';
+            return;
+        }
+        $('cgHistTimeline').innerHTML = h.eras.map(function (e, i) {
+            return '<li class="cg-tl-item" style="--i:' + i + '">' +
+                '<span class="cg-tl-year">' + esc(e[0]) + '</span>' +
+                '<div class="cg-tl-dot"></div>' +
+                '<div class="cg-tl-card"><b>' + esc(e[1]) + '</b><p>' + esc(e[2]) + '</p></div></li>';
+        }).join('');
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) { if (en.isIntersecting) en.target.classList.add('in'); });
+            }, { threshold: 0.18 });
+            Array.prototype.forEach.call(document.querySelectorAll('.cg-tl-item'), function (el) { io.observe(el); });
+        } else {
+            Array.prototype.forEach.call(document.querySelectorAll('.cg-tl-item'), function (el) { el.classList.add('in'); });
+        }
+    }
+
+    renderHistory();
+
     /* ---------- 景点 ---------- */
     $('cgSpotsDesc').textContent = '共整理 ' + pins.length + ' 个核心景点/区域，地图编号与下方卡片一一对应。' +
         (spots.some(function (s) { return s.coord; }) ? '点地图圆点可以查看景点名称与建议。' : '部分景点暂无精确坐标，地图仅作城市方位参考。');
@@ -370,7 +468,7 @@
     var mapPoints = [];
     spots.forEach(function (s, i) {
         var c = s.coord || (cityCoord && i === 0 ? cityCoord : null);
-        if (c) mapPoints.push({ name: s.name, coord: c, day: s.day, idx: s.idx, desc: s.desc });
+        if (c) mapPoints.push({ name: s.name, coord: c, day: s.day, idx: s.idx, desc: s.desc, type: s.type });
     });
 
     $('cgSpotGrid').innerHTML = spots.map(function (s) {
@@ -378,17 +476,23 @@
         if (s.day) meta.push('<span>行程 Day ' + s.day + '</span>');
         if (s.ticket) meta.push('<span>门票 ' + esc(priceText(s.ticket)) + '</span>');
         if (s.coord) meta.push('<span>地图可定位</span>');
-        return '<div class="cg-spot"><span class="n">' + s.idx + '</span><div><h3>' + esc(s.name) + '</h3>' +
+        return '<div class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '">' +
+            '<span class="n">' + s.idx + '</span><div><span class="cg-spot-tag">' + esc(s.type) + '</span>' +
+            '<h3>' + esc(s.name) + '</h3>' +
             '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></div>';
     }).join('');
 
-    /* 地图筛选按钮 */
+    /* 地图筛选：类型 + 行程日 */
     var daySet = unique(mapPoints.map(function (p) { return p.day; }).filter(Boolean)).sort(function (a, b) { return a - b; });
+    var typeSet = unique(spots.map(function (s) { return s.type; }));
     var bar = $('cgMapBar');
-    bar.innerHTML = '<button class="cg-mapbtn" data-day="all" aria-pressed="true">全部景点</button>' +
-        daySet.map(function (d) {
+    bar.innerHTML = '<button class="cg-mapbtn" data-type="all" aria-pressed="true">全部景点</button>' +
+        typeSet.map(function (t) {
+            return '<button class="cg-mapbtn" data-type="' + esc(t) + '" aria-pressed="false"><i style="background:#0f766e"></i>' + esc(t) + '</button>';
+        }).join('') +
+        (daySet.length ? '<span class="cg-mapsep"></span>' + daySet.map(function (d) {
             return '<button class="cg-mapbtn" data-day="' + d + '" aria-pressed="false"><i style="background:#2563eb"></i>Day ' + d + '</button>';
-        }).join('');
+        }).join('') : '');
 
     function initMap() {
         if (!window.L || !$('cgMap') || !mapPoints.length) {
@@ -414,8 +518,9 @@
                 title: p.name
             });
             marker.bindPopup('<div class="cg-pop"><b>' + esc(p.name) + '</b><span>' + esc(p.desc) + '</span></div>', { closeButton: false });
+            marker.on('click', function () { highlightSpot(p.idx); });
             marker.addTo(map);
-            markers.push({ day: p.day, marker: marker, el: null });
+            markers.push({ day: p.day, type: p.type, idx: p.idx, name: p.name, marker: marker, el: null });
         });
         if (latlngs.length > 1) {
             L.polyline(latlngs, { color: '#2563eb', weight: 3, opacity: .75, lineCap: 'round', lineJoin: 'round' }).addTo(map);
@@ -423,19 +528,64 @@
         if (latlngs.length === 1) map.setView(latlngs[0], 11);
         else map.fitBounds(L.latLngBounds(latlngs).pad(.16), { padding: [24, 24], animate: false });
 
-        bar.addEventListener('click', function (e) {
-            var btn = e.target.closest('.cg-mapbtn');
-            if (!btn) return;
-            var sel = btn.getAttribute('data-day');
-            Array.prototype.forEach.call(bar.querySelectorAll('.cg-mapbtn'), function (b) {
-                b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        function highlightSpot(idx) {
+            Array.prototype.forEach.call(document.querySelectorAll('.cg-spot'), function (c) {
+                c.classList.toggle('active', c.getAttribute('data-idx') === String(idx));
+            });
+        }
+
+        var state = { day: 'all', type: 'all' };
+        function applyFilter() {
+            spots.forEach(function (s) {
+                var card = document.querySelector('.cg-spot[data-idx="' + s.idx + '"]');
+                if (!card) return;
+                var show = (state.day === 'all' || String(s.day) === state.day) &&
+                    (state.type === 'all' || s.type === state.type);
+                card.classList.toggle('hide', !show);
             });
             markers.forEach(function (m) {
                 if (!m.el) m.el = m.marker.getElement() && m.marker.getElement().querySelector('.cg-dot');
                 if (!m.el) return;
-                var dim = sel !== 'all' && String(m.day) !== sel;
+                var dim = (state.day !== 'all' && String(m.day) !== state.day) ||
+                    (state.type !== 'all' && m.type !== state.type);
                 m.el.classList.toggle('dim', dim);
             });
+        }
+
+        bar.addEventListener('click', function (e) {
+            var btn = e.target.closest('.cg-mapbtn');
+            if (!btn) return;
+            if (btn.hasAttribute('data-type')) {
+                var t = btn.getAttribute('data-type');
+                state.type = t === 'all' ? 'all' : (state.type === t ? 'all' : t);
+            }
+            if (btn.hasAttribute('data-day')) {
+                var d = btn.getAttribute('data-day');
+                state.day = state.day === d ? 'all' : d;
+            }
+            Array.prototype.forEach.call(bar.querySelectorAll('.cg-mapbtn'), function (b) {
+                var on = false;
+                if (b.hasAttribute('data-type')) {
+                    var bt = b.getAttribute('data-type');
+                    on = bt === 'all' ? state.type === 'all' : state.type === bt;
+                } else if (b.hasAttribute('data-day')) {
+                    on = state.day === b.getAttribute('data-day');
+                }
+                b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            applyFilter();
+        });
+
+        $('cgSpotGrid').addEventListener('click', function (e) {
+            var card = e.target.closest('.cg-spot');
+            if (!card) return;
+            var idx = card.getAttribute('data-idx');
+            var m = markers.filter(function (x) { return String(x.idx) === String(idx); })[0];
+            if (m) {
+                map.setView(m.marker.getLatLng(), Math.max(map.getZoom(), 11));
+                m.marker.openPopup();
+                highlightSpot(idx);
+            }
         });
     }
 

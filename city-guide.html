@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="city-guide.css?v=20261113a" />
+    <link rel="stylesheet" href="city-guide.css?v=20261114a" />
 </head>
 <body>
 
@@ -23,6 +23,7 @@
     </a>
     <div class="cg-links" id="cgLinks">
         <a href="#cgOverview">速览</a>
+        <a href="#cgHistory">历史</a>
         <a href="#cgSpots">必游景点</a>
         <a href="#cgFood">美食</a>
         <a href="#cgTransport">交通</a>
@@ -39,6 +40,7 @@
         <p class="cg-kicker" id="cgKicker">MYL 城市旅行百科</p>
         <h1 id="cgTitle">城市旅行百科</h1>
         <p class="cg-sub" id="cgSub"></p>
+        <div class="cg-chips" id="cgChips"></div>
         <div class="cg-hero-facts" id="cgHeroFacts"></div>
         <div class="cg-hero-routes" id="cgHeroLinks"></div>
     </div>
@@ -73,10 +75,27 @@
         </div>
     </section>
 
+    <section class="cg-sec cg-history-sec" id="cgHistory">
+        <div class="cg-wrap">
+            <div class="cg-head">
+                <div class="cg-eyebrow"><b>历史沿革</b> / 02</div>
+                <h2 id="cgHistTitle">这座城，是怎么一步步走到今天的</h2>
+                <p id="cgHistSub"></p>
+            </div>
+            <div class="cg-history" id="cgHistoryBox">
+                <div class="cg-hist-lead">
+                    <span class="cg-hist-alias" id="cgHistAlias"></span>
+                    <p id="cgHistSummary"></p>
+                </div>
+                <ol class="cg-timeline" id="cgHistTimeline"></ol>
+            </div>
+        </div>
+    </section>
+
     <section class="cg-sec cg-map-sec" id="cgSpots">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>必游景点</b> / 02</div>
+                <div class="cg-eyebrow"><b>必游景点</b> / 03</div>
                 <h2>先在地图上认清方向，再决定先去哪</h2>
                 <p id="cgSpotsDesc"></p>
             </div>
@@ -92,7 +111,7 @@
     <section class="cg-sec" id="cgFood">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>地道美食</b> / 03</div>
+                <div class="cg-eyebrow"><b>地道美食</b> / 04</div>
                 <h2>吃什么，比去哪吃更重要</h2>
                 <p id="cgFoodDesc"></p>
             </div>
@@ -103,7 +122,7 @@
     <section class="cg-sec cg-map-sec" id="cgTransport">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>交通指南</b> / 04</div>
+                <div class="cg-eyebrow"><b>交通指南</b> / 05</div>
                 <h2>怎么去、怎么在城里移动</h2>
                 <p id="cgTransportDesc"></p>
             </div>
@@ -114,7 +133,7 @@
     <section class="cg-sec" id="cgStay">
         <div class="cg-wrap">
             <div class="cg-head">
-                <div class="cg-eyebrow"><b>住宿建议</b> / 05</div>
+                <div class="cg-eyebrow"><b>住宿建议</b> / 06</div>
                 <h2>住对区域，等于省下半天路程</h2>
                 <p id="cgStayDesc"></p>
             </div>
@@ -164,11 +183,12 @@
     </div>
 </footer>
 
-<script src="city-data.js"></script>
-<script src="province-data-all.js"></script>
-<script src="loop-data.js"></script>
-<script src="city-landmarks.js"></script>
+<script src="city-data.js?v=20261114a"></script>
+<script src="province-data-all.js?v=20261114a"></script>
+<script src="loop-data.js?v=20261114a"></script>
+<script src="city-landmarks.js?v=20261114a"></script>
+<script src="city-history.js?v=20261114a"></script>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="city-guide.js?v=20261113c"></script>
+<script src="city-guide.js?v=20261114a"></script>
 </body>
 </html>
