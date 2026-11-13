@@ -264,11 +264,33 @@
     });
 
     /* ---------- 图片与首屏 ---------- */
-    function heroImage() {
-        var raw = (detail && detail.img) || (cityRec && cityRec.img) || (prov && prov.img);
-        if (raw) return raw;
+    // 站内已备好 309 座城市的真实实景图；拼音与文件名不一致的做一次映射
+    var IMG_ALIAS = { harbin: 'haerbin', urumqi: 'wulumuqi', hongkong: 'xianggangdao', macau: 'aomenbandao', taipei: 'taibei', huangguoshu: 'anshun' };
+    // 这些城市站内暂无实景图，改用对应的真实摄影或生成图
+    var NO_LOCAL_IMG = { beijing: 1, shanghai: 1, chongqing: 1, dali: 1, dunhuang: 1, jiuzhaigou: 1, xishuangbanna: 1, paris: 1, tokyo: 1, london: 1, dubai: 1, bangkok: 1, bali: 1 };
+    var REMOTE_IMG = {
+        paris: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=80',
+        tokyo: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1600&q=80',
+        london: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1600&q=80',
+        dubai: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1600&q=80',
+        bangkok: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1600&q=80',
+        bali: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1600&q=80'
+    };
+    // 拼音重名：这些城市与同名拼音城市共用一张图，改用对应城市的生成图
+    var WRONG_IMG_NAME = { '宿州': 1, '台州': 1, '抚州': 1, '玉林': 1, '宜春': 1 };
+    function traeImage() {
         var prompt = name + ' ' + (region || '') + ' 城市地标 天际线 旅行摄影 真实光影 高清';
         return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=' + encodeURIComponent(prompt) + '&image_size=landscape_16_9';
+    }
+    function heroImage() {
+        var raw = (detail && detail.img) || (cityRec && cityRec.img) || '';
+        if (raw && !/text_to_image/.test(raw) && !WRONG_IMG_NAME[name]) return raw;
+        var k = String(qKey || (cityRec && cityRec.key) || '');
+        if (!/^[a-z0-9_-]+$/i.test(k)) k = '';
+        if (REMOTE_IMG[k]) return REMOTE_IMG[k];
+        k = IMG_ALIAS[k] || k;
+        if (k && !NO_LOCAL_IMG[k]) return 'images/cities/' + k + '.jpg';
+        return traeImage();
     }
 
     document.title = name + '旅行百科 · 景点/美食/交通/住宿一页看懂 | MYL 旅行';
@@ -276,6 +298,11 @@
     if (descEl) descEl.setAttribute('content', name + '旅行百科：必游景点、地道美食、交通、住宿、预算与逐日行程建议。');
 
     var heroImg = $('cgHeroImg');
+    heroImg.onerror = function () {
+        var fb = this.getAttribute('data-fb') || '0';
+        if (fb === '0') { this.setAttribute('data-fb', '1'); this.src = traeImage(); }
+        else { this.onerror = null; this.style.opacity = '0'; }
+    };
     heroImg.src = heroImage();
     heroImg.alt = name + '城市风景';
 
@@ -679,17 +706,38 @@
     $('cgHotelGrid').innerHTML = hHtml;
 
     /* ---------- 行程建议 ---------- */
+    // 线路即产品：优先使用城市专属的文化线路名，未收录的城市按别称与景点自动生成
+    var ROUTES = window.CITY_ROUTES || {};
+    function routePoems() {
+        var r = ROUTES[name];
+        if (r && r.length >= 3) return r;
+        var h = historyOf() || {};
+        var fallback = !!h.fallback;
+        var alias = (!fallback && h.alias) || name;
+        var p1 = pins[0] || (name + '老城');
+        var p2 = pins[1] || (name + '地标');
+        var p3 = pins[2] || p2;
+        var food = (!foodsFromProv && foods.length) ? foods[0].name : '本地小吃';
+        var summary = (!fallback && h.summary) ? String(h.summary).replace(/。$/, '') : '';
+        return [
+            { t: '初见 · ' + alias, m: '用一天看' + name + '最容易被记住的样子：' + p1 + '、' + p2 + '，先把城市的第一眼收进心里。' },
+            { t: '慢行 · ' + alias, m: '放慢脚步，从' + p3 + '拐进老街与市集，尝一口' + food + '，像本地人一样过一天。' },
+            { t: '深读 · ' + name, m: (summary ? summary + '。' : '') + '用几天时间，把' + name + '的山水、街巷与历史连成一条完整的线。' }
+        ];
+    }
+    var poems = routePoems();
     var planDefs = [
-        { k: '线路 01', color: 'var(--cg-r1)', title: '一日精华', p: '适合中转停留或时间只有一天：只挑最能代表这座城市的一条线。', list: oneDay },
-        { k: '线路 02', color: 'var(--cg-r2)', title: '两日经典', p: '覆盖核心景点与一顿本地味道，节奏不赶，适合周末。', list: twoDay },
-        { k: '线路 03', color: 'var(--cg-r3)', title: deepTarget + ' 日深度', p: '按 ' + deepTarget + ' 天把城市及周边完整走一遍，适合小长假。', list: deepDays }
+        { k: '线路 01', color: 'var(--cg-r1)', title: poems[0].t, p: poems[0].m, note: '一日精华 · 适合中转停留或只有一天', list: oneDay },
+        { k: '线路 02', color: 'var(--cg-r2)', title: poems[1].t, p: poems[1].m, note: '两日经典 · 覆盖核心景点与一顿本地味道', list: twoDay },
+        { k: '线路 03', color: 'var(--cg-r3)', title: poems[2].t, p: poems[2].m, note: '深度走法 · 按 ' + deepTarget + ' 天把城市与周边走完整', list: deepDays }
     ];
     $('cgPlanCards').innerHTML = planDefs.map(function (p) {
         var stops = [];
         p.list.forEach(function (d) { stops = stops.concat((d.timeline || []).map(function (it) { return String(it.activity || ''); }).filter(Boolean)); });
         stops = unique(stops).slice(0, 4);
         return '<div class="cg-plan" style="--rc:' + p.color + '"><span class="k">' + p.k + '</span><h3>' + esc(p.title) + '</h3>' +
-            '<p>' + esc(p.p) + '</p><div class="line"><b>节奏：</b>' + p.list.length + ' 天 · ' + stops.join(' → ') + '</div></div>';
+            '<p class="poem">' + esc(p.p) + '</p><p class="note">' + esc(p.note) + '</p>' +
+            '<div class="line"><b>节奏：</b>' + p.list.length + ' 天 · ' + stops.join(' → ') + '</div></div>';
     }).join('');
 
     function timelineHtml(d) {

@@ -1446,7 +1446,7 @@ function openProvinceModal(provinceKey) {
     // 城市 grid（有坐标的都能点进详情）
     const citiesHtml = (provData.cities || []).map(c => {
         const coordOk = !!_cc(c);
-        const cityImg = (c.img && !/text_to_image/.test(c.img)) ? c.img : '';
+        const cityImg = window.CITY_IMG_COLLIDE[c.name] ? window.cityHeroImage('', c.name) : ((c.img && !/text_to_image/.test(c.img)) ? c.img : '');
         return `
         <div class="dest-card china-card prov-city-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer" title="${coordOk ? '查看详情' : '坐标加载中'}">
             ${cityImg ? `<div class="dest-img"><img src="${cityImg}" alt="${c.name}" loading="lazy"></div>` : ''}
@@ -1637,6 +1637,19 @@ function showProvinceOptionDetail(optionId) {
 
 
 // ========== 动态城市富数据生成器（与青甘大环线同标准） ==========
+// 拼音重名：这些城市与同名拼音城市共用一张图，改用对应城市的生成图
+window.CITY_IMG_COLLIDE = { '宿州': 1, '台州': 1, '抚州': 1, '玉林': 1, '宜春': 1 };
+
+// ========== 城市实景图：优先站内 309 座城市实景，缺失时用生成图 ==========
+window.cityHeroImage = function (key, name) {
+    var alias = { harbin: 'haerbin', urumqi: 'wulumuqi', hongkong: 'xianggangdao', macau: 'aomenbandao', taipei: 'taibei', huangguoshu: 'anshun' };
+    var noLocal = { beijing: 1, shanghai: 1, chongqing: 1, dali: 1, dunhuang: 1, jiuzhaigou: 1, xishuangbanna: 1, paris: 1, tokyo: 1, london: 1, dubai: 1, bangkok: 1, bali: 1 };
+    key = String(key || '');
+    key = alias[key] || key;
+    if (/^[a-z0-9_-]+$/i.test(key) && !noLocal[key]) return 'images/cities/' + key + '.jpg';
+    return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=' + encodeURIComponent((name || key) + ' 城市地标 天际线 旅行摄影 真实光影 高清') + '&image_size=landscape_16_9';
+};
+
 window.generateCityRichData = function(cityKey, cityName, provinceName) {
     // === 中文key → 拼音key 映射（热门城市 CITY_DETAIL 用拼音key）===
     var cn2py = {
@@ -1656,7 +1669,9 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
     }
     // === 优先级 1：已有富数据（CITY_DETAIL）===
     if (window.CITY_DETAIL && window.CITY_DETAIL[cityKey]) {
-        return JSON.parse(JSON.stringify(window.CITY_DETAIL[cityKey]));
+        var cdCopy = JSON.parse(JSON.stringify(window.CITY_DETAIL[cityKey]));
+        if (!cdCopy.img) cdCopy.img = window.cityHeroImage(cityKey, cdCopy.name);
+        return cdCopy;
     }
     // === 优先级 2：PROVINCES_ALL 里有真实景点 itinerary ===
     let provCity = null;
@@ -1916,7 +1931,8 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
     }
 
     // === 基础字段 ===
-    const baseImg = (provCity && provCity.img) || (dd && dd.img) || 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=80';
+    const baseImg = (provCity && provCity.img && !window.CITY_IMG_COLLIDE[cityName]) ? provCity.img
+        : (dd && dd.img) || window.cityHeroImage('', cityName);
     const baseRating = (dd && dd.rating) || (provCity && provCity.rating) || 4.5;
     const baseDays = (dd && dd.days) || '2天1晚';
     const basePrice = (dd && dd.price) || '¥1,299起';
@@ -1999,7 +2015,7 @@ window.openProvinceCityModal = function(cityKey, cityName, provinceName) {
             <h2>${richData.name}${richData.province ? ' · ' + richData.province : ''}</h2>
             ${cityGuideEntryHtml(cityKey, cityName, provinceName)}
             <div class="modal-subtitle">⭐ ${richData.rating} · ${richData.days} · ${richData.price}</div>
-            <img class="modal-hero" src="${richData.img}" alt="${richData.name}" />
+            <img class="modal-hero" src="${richData.img || window.cityHeroImage(cityKey, cityName)}" alt="${richData.name}" onerror="this.onerror=null;this.style.display='none'" />
             <div class="modal-section">
                 <h3><i class="fas fa-info-circle"></i> 目的地简介</h3>
                 <p>${richData.description}</p>
