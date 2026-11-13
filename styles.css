@@ -1494,6 +1494,102 @@ ul {
     margin-bottom: 8px;
 }
 
+/* ========== 城市旅行百科入口（城市弹窗内、城市名下方） ========== */
+.city-guide-entry {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 14px 0 18px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 62%, #10265c 100%);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.city-guide-entry::after {
+    content: '';
+    position: absolute;
+    right: -46px;
+    top: -70px;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+.city-guide-entry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(37, 99, 235, 0.32);
+}
+.city-guide-entry .cge-ico {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+}
+.city-guide-entry .cge-txt {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+    z-index: 1;
+}
+.city-guide-entry .cge-txt b {
+    font-size: 1.02rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+.city-guide-entry .cge-txt small {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.82);
+}
+.city-guide-entry .cge-go {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 600px) {
+    .city-guide-entry {
+        gap: 10px;
+        margin: 12px 0 16px;
+        padding: 12px 14px;
+    }
+    .city-guide-entry .cge-ico {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        font-size: 16px;
+    }
+    .city-guide-entry .cge-txt b { font-size: 0.94rem; }
+    .city-guide-entry .cge-txt small { font-size: 0.72rem; }
+    .city-guide-entry .cge-go {
+        padding: 7px 10px;
+        font-size: 0.72rem;
+    }
+    .city-guide-entry .cge-go i { display: none; }
+}
+
 .modal-body .modal-subtitle {
     color: var(--text-light);
     font-size: 1rem;

@@ -309,6 +309,109 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     .cg-mapbtn { min-height: 40px; justify-content: center; font-size: 11.5px; }
     .cg-route-head { grid-template-columns: auto 1fr; gap: 8px 16px; }
 }
+/* ---------- 百科：首屏速览条 ---------- */
+.cg-hero-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 26px; border-top: 1px solid rgba(255, 255, 255, .22); border-left: 1px solid rgba(255, 255, 255, .22); max-width: 720px; }
+.cg-hf { padding: 12px 13px 13px; border-right: 1px solid rgba(255, 255, 255, .22); border-bottom: 1px solid rgba(255, 255, 255, .22); }
+.cg-hf span { display: block; font-size: 10px; letter-spacing: .14em; color: rgba(255, 255, 255, .55); }
+.cg-hf b { display: block; font-family: var(--cg-serif); font-size: clamp(15px, 4vw, 19px); font-weight: 600; line-height: 1.4; margin-top: 3px; color: #fff; }
+
+/* ---------- 百科：一分钟速览 ---------- */
+.cg-quick { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); margin-top: clamp(34px, 5vw, 54px); }
+.cg-q { background: #fff; padding: 20px 18px 21px; display: flex; flex-direction: column; gap: 6px; }
+.cg-q .ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: rgba(37, 99, 235, .1); color: var(--cg-blue); font-size: 14px; margin-bottom: 2px; }
+.cg-q h3 { font-family: var(--cg-serif); font-size: 16px; font-weight: 600; }
+.cg-q p { font-size: 12.5px; line-height: 1.75; color: var(--cg-ink2); }
+.cg-q span { font-size: 11.5px; color: var(--cg-muted); line-height: 1.7; }
+
+/* ---------- 百科：景点/美食/住宿卡片 ---------- */
+.cg-spot-grid, .cg-food-grid, .cg-hotel-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); margin-top: 16px; }
+.cg-spot { background: #fff; padding: 20px 18px 21px; display: flex; gap: 13px; align-items: flex-start; }
+.cg-spot .n { flex: none; width: 27px; height: 27px; border-radius: 50%; background: var(--cg-paper); border: 1px solid var(--cg-line); font-family: var(--cg-serif); font-size: 12px; color: var(--cg-blue); display: flex; align-items: center; justify-content: center; }
+.cg-spot h3 { font-family: var(--cg-serif); font-size: 16.5px; font-weight: 600; line-height: 1.45; }
+.cg-spot p { font-size: 12.5px; color: var(--cg-ink2); line-height: 1.8; margin-top: 4px; }
+.cg-spot .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.cg-spot .meta span { font-size: 10.5px; color: var(--cg-blue-d); background: rgba(37, 99, 235, .07); border: 1px solid var(--cg-line-soft); padding: 2px 7px; border-radius: 2px; }
+.cg-food { background: #fff; padding: 19px 18px 20px; }
+.cg-food .top { display: flex; align-items: baseline; gap: 9px; }
+.cg-food h3 { font-family: var(--cg-serif); font-size: 16px; font-weight: 600; }
+.cg-food .price { margin-left: auto; font-size: 12px; color: var(--cg-r1); font-weight: 500; white-space: nowrap; }
+.cg-food p { font-size: 12.5px; color: var(--cg-ink2); line-height: 1.78; margin-top: 5px; }
+.cg-hotel { background: #fff; padding: 19px 18px 20px; }
+.cg-hotel .tier { font-size: 10.5px; letter-spacing: .1em; color: var(--cg-muted); }
+.cg-hotel h3 { font-family: var(--cg-serif); font-size: 16px; font-weight: 600; line-height: 1.45; margin-top: 3px; }
+.cg-hotel .area { font-size: 12px; color: var(--cg-ink2); line-height: 1.7; margin-top: 5px; }
+.cg-hotel .price { font-size: 13px; color: var(--cg-r1); font-weight: 600; margin-top: 6px; }
+.cg-hotel a { display: inline-flex; margin-top: 8px; font-size: 11.5px; color: var(--cg-blue); }
+.cg-hotel .hl { font-size: 12px; color: var(--cg-muted); line-height: 1.7; margin-top: 5px; }
+
+/* ---------- 百科：交通 ---------- */
+.cg-transport { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); margin-top: 16px; }
+.cg-tcard { background: #fff; padding: 20px 18px 21px; }
+.cg-tcard h3 { display: flex; align-items: center; gap: 8px; font-family: var(--cg-serif); font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+.cg-tcard h3 i { color: var(--cg-blue); font-size: 14px; }
+.cg-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding: 9px 0; border-bottom: 1px dashed var(--cg-line-soft); font-size: 12.5px; line-height: 1.65; color: var(--cg-ink2); }
+.cg-row:last-child { border-bottom: none; }
+.cg-row b { color: var(--cg-ink); font-weight: 500; }
+.cg-row .p { color: var(--cg-r1); font-weight: 600; white-space: nowrap; }
+.cg-row .tip { color: var(--cg-muted); font-size: 11.5px; }
+.cg-row a { color: var(--cg-blue); font-size: 11.5px; white-space: nowrap; }
+.cg-tempty { font-size: 12px; color: var(--cg-muted); line-height: 1.8; }
+
+/* ---------- 百科：行程建议 ---------- */
+.cg-plan-cards { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); }
+.cg-plan { background: #fff; padding: 22px 18px 20px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+.cg-plan::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--rc); }
+.cg-plan .k { font-family: var(--cg-serif); font-size: 11.5px; letter-spacing: .1em; color: var(--rc); }
+.cg-plan h3 { font-family: var(--cg-serif); font-size: 19px; font-weight: 600; line-height: 1.4; }
+.cg-plan p { font-size: 12.5px; color: var(--cg-ink2); line-height: 1.78; }
+.cg-plan .line { font-size: 11.5px; color: var(--cg-muted); line-height: 1.75; margin-top: auto; }
+.cg-plan .line b { color: var(--cg-ink); font-weight: 500; }
+.cg-daylist { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.cg-day { background: #fff; border: 1px solid var(--cg-line); }
+.cg-day summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 11px; padding: 14px 16px; font-size: 13.5px; }
+.cg-day summary::-webkit-details-marker { display: none; }
+.cg-day summary .dn { flex: none; font-family: var(--cg-serif); font-size: 11px; letter-spacing: .08em; color: #fff; background: var(--cg-r1); padding: 3px 8px; border-radius: 2px; }
+.cg-day summary b { font-family: var(--cg-serif); font-size: 15px; font-weight: 600; line-height: 1.45; }
+.cg-day summary .cnt { margin-left: auto; font-size: 11px; color: var(--cg-muted); white-space: nowrap; }
+.cg-day summary .arrow { color: var(--cg-muted); font-size: 11px; transition: transform .2s; }
+.cg-day[open] summary .arrow { transform: rotate(90deg); }
+.cg-day .inner { padding: 2px 16px 4px; border-top: 1px solid var(--cg-line-soft); }
+.cg-day .inner .cg-tl-body { padding-bottom: 18px; }
+
+/* ---------- 百科：预算 ---------- */
+.cg-budget { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--cg-line); border: 1px solid var(--cg-line); margin-top: 16px; }
+.cg-bud { background: #fff; padding: 16px 15px; }
+.cg-bud span { display: block; font-size: 11px; color: var(--cg-muted); letter-spacing: .06em; }
+.cg-bud b { display: block; font-family: var(--cg-serif); font-size: clamp(15px, 4vw, 18px); font-weight: 600; margin-top: 5px; line-height: 1.3; }
+.cg-bud.total { background: #eef4ff; }
+.cg-bud.total b { color: var(--cg-blue-d); }
+
+/* ---------- 百科：导航补充 ---------- */
+.cg-hero-facts + .cg-hero-routes { margin-top: 18px; }
+.cg-hero-routes .cg-hr .t small { display: block; font-size: 11.5px; color: rgba(255, 255, 255, .6); }
+.cg-hero-routes .cg-hr b { font-size: clamp(15px, 3.8vw, 18px); }
+
+@media (min-width: 768px) {
+    .cg-hero-facts { grid-template-columns: repeat(4, 1fr); }
+    .cg-quick { grid-template-columns: repeat(4, 1fr); }
+    .cg-spot-grid { grid-template-columns: repeat(2, 1fr); }
+    .cg-food-grid { grid-template-columns: repeat(2, 1fr); }
+    .cg-hotel-grid { grid-template-columns: repeat(2, 1fr); }
+    .cg-transport { grid-template-columns: repeat(2, 1fr); }
+    .cg-plan-cards { grid-template-columns: repeat(3, 1fr); }
+    .cg-budget { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 1080px) {
+    .cg-spot-grid { grid-template-columns: repeat(3, 1fr); }
+    .cg-food-grid { grid-template-columns: repeat(3, 1fr); }
+    .cg-hotel-grid { grid-template-columns: repeat(3, 1fr); }
+    .cg-transport { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 767px) {
+    .cg-hero-facts { max-width: none; }
+    .cg-row { font-size: 12px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     html { scroll-behavior: auto; }
