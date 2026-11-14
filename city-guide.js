@@ -20,6 +20,32 @@
     function priceText(p) {
         return String(p == null ? '' : p).replace(/[¥￥]/g, '').trim();
     }
+    // 桌面/平板多列网格最后一行常留空位，补同底色占位块，避免出现深色缺口
+    function fillGrid(id) {
+        var grid = document.getElementById(id);
+        if (!grid) return;
+        function apply() {
+            Array.prototype.forEach.call(grid.querySelectorAll('.cg-fill'), function (n) {
+                if (n.parentNode) n.parentNode.removeChild(n);
+            });
+            var cols = 1;
+            try {
+                cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+            } catch (e) { cols = 1; }
+            var need = (cols - grid.children.length % cols) % cols;
+            for (var i = 0; i < need; i++) {
+                var d = document.createElement('div');
+                d.className = 'cg-fill';
+                grid.appendChild(d);
+            }
+        }
+        apply();
+        var timer;
+        window.addEventListener('resize', function () {
+            clearTimeout(timer);
+            timer = setTimeout(apply, 120);
+        });
+    }
 
     var params = new URLSearchParams(location.search);
     var qKey = params.get('key') || '';
@@ -412,11 +438,11 @@
     var NO_LOCAL_IMG = { beijing: 1, shanghai: 1, chongqing: 1, dali: 1, dunhuang: 1, jiuzhaigou: 1, xishuangbanna: 1, paris: 1, tokyo: 1, london: 1, dubai: 1, bangkok: 1, bali: 1 };
     var REMOTE_IMG = {
         paris: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=80',
-        tokyo: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1600&q=80',
-        london: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1600&q=80',
+        tokyo: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&q=80',
+        london: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1600&q=80',
         dubai: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1600&q=80',
-        bangkok: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1600&q=80',
-        bali: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1600&q=80'
+        bangkok: 'https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?w=1600&q=80',
+        bali: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1600&q=80'
     };
     var WRONG_IMG_NAME = { '宿州': 1, '台州': 1, '抚州': 1, '玉林': 1, '宜春': 1 };
     function photoImage(subject, kind) {
@@ -688,6 +714,7 @@
             '<h3>' + esc(s.name) + '</h3>' +
             '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></article>';
     }).join('');
+    fillGrid('cgSpotGrid');
 
     /* 地图筛选：类型 + 行程日 */
     var daySet = unique(mapPoints.map(function (p) { return p.day; }).filter(Boolean)).sort(function (a, b) { return a - b; });
@@ -729,16 +756,34 @@
         return [lng + dLng, lat + dLat];
     }
 
+    function isOverseasCity() {
+        var country = String((detail && detail.country) || '');
+        if (country && country !== '中国') return true;
+        if (!cityCoord) return false;
+        var lng = cityCoord[0], lat = cityCoord[1];
+        return lng < 72.004 || lng > 137.8347 || lat < .8293 || lat > 55.8271;
+    }
+
     function initMap() {
         if (!window.L || !$('cgMap') || !mapPoints.length) {
             var frame = document.querySelector('.cg-map-frame');
             if (frame) frame.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#748196;font-size:13px">地图加载失败或暂无坐标，请查看下方景点列表。</div>';
             return;
         }
-        var map = L.map('cgMap', { scrollWheelZoom: false, attributionControl: false, zoomControl: true, zoomSnap: .5 });
-        L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=7&x={x}&y={y}&z={z}', {
-            subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 5
-        }).addTo(map);
+        var overseas = isOverseasCity();
+        var map = L.map('cgMap', { scrollWheelZoom: false, attributionControl: overseas, zoomControl: true, zoomSnap: .5 });
+        if (overseas) {
+            // 境外城市高德底图无覆盖，改用全球可用的 OpenStreetMap 底图
+            map.attributionControl.setPrefix('');
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19, minZoom: 3,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+            }).addTo(map);
+        } else {
+            L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=7&x={x}&y={y}&z={z}', {
+                subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 5
+            }).addTo(map);
+        }
 
         var latlngs = [], markers = [];
         mapPoints.forEach(function (p) {
@@ -848,6 +893,7 @@
     } else {
         $('cgFoodGrid').innerHTML = '<div class="cg-food"><p>可以先尝本地早餐、夜市小吃和当季食材；具体店铺以本地人推荐为准。</p></div>';
     }
+    fillGrid('cgFoodGrid');
 
     /* ---------- 交通 ---------- */
     var flights = (detail && detail.airfare) || [];
@@ -921,6 +967,7 @@
         hHtml = '<div class="cg-hotel"><h3>怎么选住宿</h3><p class="hl">城市游住地铁 2–3 站内的商圈，别住景区门口；环线游住县城中心；山区住换乘中心附近，第二天不用赶路。</p></div>';
     }
     $('cgHotelGrid').innerHTML = hHtml;
+    fillGrid('cgHotelGrid');
 
     /* ---------- 行程建议 ---------- */
     // 线路即产品：优先使用城市专属的文化线路名，未收录的城市按别称与景点自动生成
