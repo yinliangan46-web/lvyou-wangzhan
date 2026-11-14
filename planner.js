@@ -3185,6 +3185,9 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
     else boot();
 
+    // 供主站行程/预算复用同一套门票数据
+    window.MYL_TICKET_DB = { prices: TICKETS, free: FREE_POI };
+
     // 供调试/外部调用
     window.MYLPlanner = {
         state: state,

@@ -8205,6 +8205,127 @@ window.LOOP_ROUTES = [
 
 };
 
+    // ===== 景点门票：优先真实价格；未收录的按类型给参考区间，绝不默认写成“免费” =====
+    var SPOT_PRICE_EXTRA = {
+        '长沙世界之窗': 220, '世界之窗': 220, '天心阁': 32, '岳麓书院': 40, '开福寺': 10,
+        '长沙生态动物园': 60, '石燕湖': 98, '大围山': 50, '长沙铜官窑': 120,
+        '东江湖': 100, '莽山': 90, '桃花源': 128, '君山岛': 75, '芙蓉镇': 100,
+        '洪江古商城': 90, '通道万佛山': 80, '梅山龙宫': 80, '紫鹊界梯田': 68,
+        '大熊山': 60, '崀山': 130, '南山牧场': 55,
+        '香山公园': 10, '世界公园': 100, '园博园': 60, '上海植物园': 15,
+        '碑林博物馆': 65, '三星堆博物馆': 72, '金沙遗址博物馆': 70,
+        '秦始皇帝陵博物院': 120, '啤酒博物馆': 60, '张裕酒文化博物馆': 80,
+        '海军博物馆': 50, '电影博物馆': 60, '航海博物馆': 50, '观复博物馆': 100,
+        '半坡博物馆': 55, '南越王博物院': 12, '鼓浪屿钢琴博物馆': 50,
+        '良渚古城遗址公园': 80, '北京植物园': 50, '仙湖植物园': 20,
+        '瘦西湖': 100, '同里古镇': 100, '绍兴东湖': 50, '丽江古城': 50,
+        '鸽子窝公园': 25, '北陵公园': 40, '东陵公园': 40, '伪满皇宫博物院': 70,
+        '汤旺河国家公园': 90, '火山口国家森林公园': 50, '日照国家森林公园': 60,
+        '阿尔山森林公园': 180, '南岭森林公园': 80, '良凤江国家森林公园': 30,
+        '金殿公园': 30, '曼听公园': 40, '火山口公园': 60, '大明宫国家遗址公园': 60,
+        '贺兰山国家森林公园': 60, '鸣翠湖': 40, '雕塑公园': 30,
+        '开滦国家矿山公园': 30, '三国遗址公园': 25, '海洋公园': 480,
+        '黔灵山': 5, '广州莲花山': 10, '包公园': 50, '龙亭公园': 45, '铁塔公园': 50,
+        '菜阳河森林公园': 50,
+        '开封府': 65, '沈阳故宫': 50, '张氏帅府': 48, '大帅府': 48, '东陵': 40,
+        '清明上河园': 120, '包公祠': 30, '大相国寺': 40,
+        '山海关': 40, '老龙头': 50, '沈阳世博园': 50, '棋盘山': 20, '怪坡': 40,
+        '甪直': 78, '狮子林': 40, '木渎古镇': 78, '何园': 45, '大明寺': 45, '茱萸湾': 45,
+        '大研古城': 50, '拉市海': 30, '泸沽湖': 70, '黑龙潭': 30, '观音峡': 60,
+        '净月潭': 30,
+        '静安寺': 50, '东方明珠': 160, '豫园': 40, '上海中心': 180,
+        '飞来峰': 45, '岳王庙': 25,
+        '青城山': 90, '武侯祠': 50, '杜甫草堂': 50, '青羊宫': 10,
+        '秦始皇陵': 120,
+        '景山': 2, '恭王府': 40, '人民大会堂': 30,
+        '鲁迅故里': 0, '兰亭': 80, '沈园': 40, '大禹陵': 60, '柯岩': 115,
+        '绍兴|东湖': 50, '广州|莲花山': 10, '合肥|合肥开福寺': 10,
+        '西安|古城墙': 54, '西安|钟鼓楼': 50, '西安|小雁塔': 0
+    };
+    var SPOT_FREE_EXTRA = [
+        '岳麓山', '橘子洲', '橘子洲头', '太平老街', '坡子街', 'IFS国金中心', '长沙IFS',
+        '湖南第一师范', '谢子龙影像艺术馆', '黄兴路步行街', '五一广场', '湖南大学',
+        '大唐不夜城', '大雁塔北广场', '永兴坊', '回民街', '洪崖洞', '磁器口', '解放碑',
+        '鹅岭二厂', '李子坝', '宽窄巷子', '锦里', '春熙路', '太古里', '东郊记忆',
+        '三坊七巷', '上下杭', '曾厝垵', '沙坡尾', '环岛路', '中山路', '西湖', '苏堤', '白堤',
+        '河坊街', '南宋御街', '清河坊', '外滩', '南京路', '新天地', '田子坊', '徐家汇',
+        '王府井', '南锣鼓巷', '什刹海', '前门大街', '三里屯', '798艺术区', '天安门广场',
+        '五大道', '意式风情区', '古文化街', '栈桥', '八大关', '五四广场', '奥帆中心',
+        '台东步行街', '夫子庙', '老门东', '玄武湖', '中山陵', '雨花台', '南京博物院',
+        '平江路', '山塘街', '观前街', '金鸡湖', '李公堤', '苏州博物馆',
+        '户部巷', '楚河汉街', '昙华林', '武汉大学', '东湖', '江汉路', '光谷步行街',
+        '上下九', '北京路', '沙面', '永庆坊', '花城广场', '海心沙',
+        '深圳湾', '莲花山', '大梅沙', '大鹏所城', '华侨城创意园', '海上世界', '欢乐海岸',
+        '情侣路', '野狸岛', '珠海渔女', '日月贝', '香炉湾沙滩',
+        '人民公园', '天府广场', '九眼桥', '玉林路', '望平街', '钟鼓楼广场', '书院门',
+        '翠湖', '南屏街', '金马碧鸡坊', '大理古城', '洱海生态廊道', '喜洲古镇', '双廊',
+        '束河古镇', '白沙古镇', '八廓街', '布达拉宫广场', '国际大巴扎', '莫家街',
+        '黄河铁桥', '正宁路夜市', '怀远夜市', '塞上老街', '中央大街', '圣索菲亚广场',
+        '老道外', '果戈里大街', '南湖公园', '中街', '星海广场', '滨海路', '东港',
+        '厦门大学', '南普陀寺', '亚龙湾', '大东海', '三亚湾', '北海银滩',
+        '东西巷', '正阳步行街', '甲秀楼', '黔灵山', '花果园', '屯溪老街', '黎阳in巷',
+        '沙洲夜市', '喀什古城', '高椅岭', '柳叶湖', '芷江受降纪念坊', '凤凰古城',
+        '鄂州莲花山', '颍州西湖', '北戴河', '黄金海岸', '阿那亚',
+        '伪满八大部', '一汽红旗展馆', '般若寺', '皇寺庙会',
+        '武康路', '朱家角', '世博园', '龙井村', '京杭大运河', '文殊院',
+        '天安门', '毛主席纪念堂'
+    ];
+    function spotMatch(map, n) {
+        var bestKey = '', best = 0, bestMap = null;
+        Object.keys(map).forEach(function (k) {
+            if (!k) return;
+            var hit = n === k ? 3 : (n.indexOf(k) === 0 ? 2 : (k.length >= 4 && n.indexOf(k) >= 0 ? 1 : 0));
+            if (hit > best) { best = hit; bestKey = k; bestMap = map; }
+        });
+        return bestMap ? { key: bestKey, value: bestMap[bestKey] } : null;
+    }
+    function spotTicketMeta(name, origTickets, city) {
+        var n = String(name || '').trim();
+        if (!n) return { ticket: '', price: '' };
+        if (origTickets && origTickets[n]) {
+            var ok = origTickets[n];
+            if (ok === '免费') return { ticket: '免费', price: '' };
+            if (/^[¥￥]\d+(\/人)?$/.test(ok)) return { ticket: ok, price: ok };
+        }
+        var db = window.MYL_TICKET_DB || {};
+        // 同名不同价的景点按城市区分（如绍兴东湖、广州莲花山）
+        var cityHit = SPOT_PRICE_EXTRA[String(city || '') + '|' + n];
+        if (cityHit !== undefined) {
+            if (!cityHit) return { ticket: '免费', price: '' };
+            return { ticket: '¥' + cityHit, price: '¥' + cityHit };
+        }
+        // 精确票价优先（如丽江古城维护费、瘦西湖），避免被“免费”泛匹配覆盖
+        var priceMap = {};
+        Object.keys(db.prices || {}).forEach(function (k) { priceMap[k] = db.prices[k]; });
+        Object.keys(SPOT_PRICE_EXTRA).forEach(function (k) {
+            if (k.indexOf('|') < 0) priceMap[k] = SPOT_PRICE_EXTRA[k];
+        });
+        var pm = spotMatch(priceMap, n);
+        if (pm && pm.value !== undefined) {
+            if (!pm.value) return { ticket: '免费', price: '' };
+            return { ticket: '¥' + pm.value, price: '¥' + pm.value };
+        }
+        var freeMap = {};
+        (db.free || []).forEach(function (k) { freeMap[k] = 1; });
+        SPOT_FREE_EXTRA.forEach(function (k) { freeMap[k] = 1; });
+        var fm = spotMatch(freeMap, n);
+        if (fm) return { ticket: '免费', price: '' };
+        // 公共文化场馆与开放街区：默认免费（少数收费馆已在上方价格表覆盖）
+        if (/博物馆|博物院|纪念馆|美术馆|艺术馆|展览馆|图书馆|书店|书城|步行街|老街|古街|小吃街|美食街|夜市|广场|大学|学院/.test(n) &&
+            !/蜡像|海洋|科技|昆虫|地质|汽车|铁路|失恋|3D|错觉/.test(n)) {
+            return { ticket: '免费', price: '' };
+        }
+        if (/公园/.test(n) && !/野生动物园|动物园|植物园|世界公园|园博园|游乐园|恐龙园|方特/.test(n)) {
+            return { ticket: '免费', price: '' };
+        }
+        // 其余按类型给出参考区间，避免把收费景点写成“免费”
+        var range = '¥40-120';
+        if (/迪士尼|欢乐谷|方特|长隆|海洋王国|海洋世界|海洋馆|水世界|乐园|影视城|动物园|植物园|温泉|滑雪|马戏/.test(n)) range = '¥120-350';
+        else if (/山|峰|峡|谷|洞|湖|岛|湾|草原|沙漠|湿地|瀑布|梯田|森林|冰川|地质|江|河/.test(n)) range = '¥60-180';
+        else if (/古镇|古城|寺|庙|宫|祠|塔|陵|城墙|关|楼|阁|园|书院|遗址|石窟|长城|府|故居/.test(n)) range = '¥30-120';
+        return { ticket: '约' + range, price: '约' + range };
+    }
+
     window.syncCityData = function(data) {
     if (!data) return;
 if (!data.itinerary || !data.itinerary.length) return;
@@ -8212,6 +8333,15 @@ if (!data.itinerary || !data.itinerary.length) return;
             // 这里重算会走「中国境内」兜底逻辑（找不到坐标就填 116.4,39.9 北京），
             // 导致伦敦景点全跑到北京，直接跳过同步。
             if (data.country && !/中国|China/i.test(data.country)) return;
+            // 原行程里已有的真实票价（人工整理的精确值）优先保留
+            var origTickets = {};
+            data.itinerary.forEach(function (d) {
+                (d.timeline || []).forEach(function (t) {
+                    var name = String(t.activity || '').replace(/^游览\s*/, '').trim();
+                    var tk = String(t.ticket || '').trim();
+                    if (name && tk && (/^[¥￥]\d+(\/人)?$/.test(tk) || tk === '免费')) origTickets[name] = tk;
+                });
+            });
             var isTransportHub = function(s) {
                 return /机场|北站|东站|南站|西站|火车站|高铁站|车站|HK机场/.test(s);
             };
@@ -8539,24 +8669,27 @@ if (!data.itinerary || !data.itinerary.length) return;
                     if (dayPins.length >= 2) {
                         // 重写 theme（用 · 分隔）
                         d.theme = dayPins.join('·');
+                        var t0 = spotTicketMeta(dayPins[0], origTickets, data.name);
+                        var t1 = spotTicketMeta(dayPins[1], origTickets, data.name);
+                        var t2 = dayPins[2] ? spotTicketMeta(dayPins[2], origTickets, data.name) : null;
                         // 完全重写 timeline（完整胶囊：duration/ticket/price/detail/tip）
                         d.timeline = [
                             { time: '08:30', activity: dayPins[0],
                               detail: '上午游览' + dayPins[0] + '，感受最具代表性的核心景区',
-                              duration: '3-4小时', ticket: '¥50-150', price: '¥50-150',
+                              duration: '3-4小时', ticket: t0.ticket, price: t0.price,
                               tip: '提前在官方小程序订票更便宜，避开周末和节假日高峰' },
                             { time: '12:00', activity: '午餐',
                               detail: '逛到哪吃到哪，尝尝本地特色小吃',
                               duration: '1.5小时', price: '¥50-100', tip: '搜大众点评本地好评榜，别在景区门口吃' },
                             { time: '14:00', activity: dayPins[1],
                               detail: '下午游览' + dayPins[1] + '，深入了解这座城市的历史与文化',
-                              duration: '2-3小时', ticket: '免费-¥80', price: '¥0-80',
+                              duration: '2-3小时', ticket: t1.ticket, price: t1.price,
                               tip: '博物馆大多周一闭馆，建议避开；古镇老街拍照最好看' }
                         ];
                         if (dayPins[2]) {
                             d.timeline.push({ time: '17:30', activity: dayPins[2],
                               detail: '傍晚逛逛' + dayPins[2] + '，日落时分拍照最佳',
-                              duration: '2小时', ticket: '免费-¥50', price: '¥0-50',
+                              duration: '2小时', ticket: t2.ticket, price: t2.price,
                               tip: '夜景通常比白天更美；问问酒店前台本地人推荐什么' });
                         }
                         d.timeline.push({ time: '19:30', activity: '当地特色晚餐',
@@ -8574,10 +8707,12 @@ if (!data.itinerary || !data.itinerary.length) return;
                         var isTpl = /深度游览|自由活动|返程|酒店早餐|退房|前往机场|值机|登机|周边一日游|自由活动|随心漫游/.test(actStr);
                         if (isTpl) {
                             ld.theme = lastPins.join('·');
+                            var lt0 = spotTicketMeta(lastPins[0], origTickets, data.name);
+                            var lt1 = lastPins[1] ? spotTicketMeta(lastPins[1], origTickets, data.name) : null;
                             ld.timeline = [
                                 { time: '09:00', activity: lastPins[0],
                                   detail: '最后一天重点游览' + lastPins[0] + '，和前两天风格不同的体验',
-                                  duration: '3-4小时', ticket: '¥30-120', price: '¥30-120',
+                                  duration: '3-4小时', ticket: lt0.ticket, price: lt0.price,
                                   tip: '穿舒适运动鞋，很多景点需要步行；带好水' },
                                 { time: '12:30', activity: '午餐',
                                   detail: '吃一顿告别午餐，尝尝当地招牌菜',
@@ -8585,7 +8720,7 @@ if (!data.itinerary || !data.itinerary.length) return;
                                   tip: '找本地人推荐的店，品质有保障' },
                                 { time: '14:30', activity: lastPins[1] || '自由活动',
                                   detail: '下午逛逛' + (lastPins[1] || '本地特色街区') + '，拍几张合影留念',
-                                  duration: '2小时', ticket: '免费-¥50', price: '¥0-50',
+                                  duration: '2小时', ticket: lt1 ? lt1.ticket : '', price: lt1 ? lt1.price : '',
                                   tip: '留点时间买点伴手礼带回家' },
                                 { time: '18:00', activity: '当地特色晚餐',
                                   detail: '晚上尝尝地道美食，为这次旅行画上圆满句号',
@@ -8646,7 +8781,7 @@ if (!data.itinerary || !data.itinerary.length) return;
                         if (!_dd.timeline) _dd.timeline = [];
                         _dd.timeline.push({ time: '16:30', activity: p,
                             detail: '顺路游览' + p + '，感受当地特色',
-                            duration: '1.5-2小时', ticket: '免费-¥80', price: '¥0-80',
+                            duration: '1.5-2小时', ticket: spotTicketMeta(p, origTickets, data.name).ticket, price: spotTicketMeta(p, origTickets, data.name).price,
                             tip: '根据体力灵活调整，累了可提前回酒店休息' });
                         if (!_dd.theme) _dd.theme = p;
                     });
