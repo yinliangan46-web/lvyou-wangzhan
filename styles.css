@@ -2566,6 +2566,16 @@ a.hotel-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rg
 .loop-banner-meta { display: flex; gap: 16px; font-size: 0.85rem; opacity: 0.9; margin-bottom: 8px; }
 .loop-banner-price { font-size: 1.25rem; font-weight: 800; color: #fbbf24; }
 .loop-banner-price small { font-size: 0.8rem; opacity: 0.9; margin-left: 2px; }
+.loop-banner-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.loop-guide-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 13px; border-radius: 999px;
+    background: rgba(255,255,255,0.92); color: #1d4ed8;
+    font-size: 0.76rem; font-weight: 700; text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    transition: transform .2s ease, background .2s ease;
+}
+.loop-guide-link:hover { transform: translateY(-1px); background: #fff; }
 
 /* ========== SVG 路线地图 ========== */
 .loop-map-section {

@@ -7457,7 +7457,10 @@ window.LOOP_ROUTES = [
                         <span><i class="fas fa-route"></i> ${safe(data.totalKm || '')}</span>
                         <span><i class="fas fa-map-pin"></i> ${(data.routePins||[]).join(' → ')}</span>
                     </div>
-                    <div class="loop-banner-price">${safe(data.price)} <small>/人起</small></div>
+                    <div class="loop-banner-foot">
+                        <div class="loop-banner-price">${safe(data.price)}</div>
+                        <a class="loop-guide-link" href="loop-guide.html?key=${encodeURIComponent(data.id)}" target="_blank" rel="noopener"><i class="fas fa-book-open"></i> 环线旅行百科</a>
+                    </div>
                 </div>
             </div>`;
         
