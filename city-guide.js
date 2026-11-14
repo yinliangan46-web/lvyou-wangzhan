@@ -679,7 +679,7 @@
 
     $('cgSpotGrid').innerHTML = spots.map(function (s) {
         var meta = [];
-        if (s.day) meta.push('<span>行程 Day ' + s.day + '</span>');
+        if (s.day) meta.push('<span>行程 线路' + s.day + '</span>');
         if (s.ticket) meta.push('<span>门票 ' + esc(priceText(s.ticket)) + '</span>');
         if (s.coord) meta.push('<span>地图可定位</span>');
         return '<article class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '" role="button" tabindex="0" aria-label="在地图查看' + esc(s.name) + '">' +
@@ -698,7 +698,7 @@
             return '<button class="cg-mapbtn" data-type="' + esc(t) + '" aria-pressed="false"><i style="background:#0f766e"></i>' + esc(t) + '</button>';
         }).join('') +
         (daySet.length ? '<span class="cg-mapsep"></span>' + daySet.map(function (d) {
-            return '<button class="cg-mapbtn" data-day="' + d + '" aria-pressed="false"><i style="background:#2563eb"></i>Day ' + d + '</button>';
+            return '<button class="cg-mapbtn" data-day="' + d + '" aria-pressed="false"><i style="background:#2563eb"></i>线路' + d + '</button>';
         }).join('') : '');
 
     // 原始数据保留 WGS-84；国内高德底图仅在显示层转换为 GCJ-02，境外坐标不转换
@@ -944,9 +944,9 @@
     }
     var poems = routePoems();
     var planDefs = [
-        { k: '线路 01', color: 'var(--cg-r1)', title: poems[0].t, p: poems[0].m, note: '一日精华 · 适合中转停留或只有一天', list: oneDay },
-        { k: '线路 02', color: 'var(--cg-r2)', title: poems[1].t, p: poems[1].m, note: '两日经典 · 覆盖核心景点与一顿本地味道', list: twoDay },
-        { k: '线路 03', color: 'var(--cg-r3)', title: poems[2].t, p: poems[2].m, note: '深度走法 · 按 ' + deepTarget + ' 天把城市与周边走完整', list: deepDays }
+        { k: '线路1', color: 'var(--cg-r1)', title: poems[0].t, p: poems[0].m, note: '一日精华 · 适合中转停留或只有一天', list: oneDay },
+        { k: '线路2', color: 'var(--cg-r2)', title: poems[1].t, p: poems[1].m, note: '两日经典 · 覆盖核心景点与一顿本地味道', list: twoDay },
+        { k: '线路3', color: 'var(--cg-r3)', title: poems[2].t, p: poems[2].m, note: '深度走法 · 按 ' + deepTarget + ' 天把城市与周边走完整', list: deepDays }
     ];
     function planSpot(plan, index) {
         var text = plan.list.map(function (d) {
@@ -973,7 +973,7 @@
                 }));
                 theme = acts.slice(0, 2).join(' · ');
             }
-            return (p.list.length > 1 ? 'D' + (i + 1) + ' ' : '') + (theme || '城市漫步');
+            return (p.list.length > 1 ? '线路' + (i + 1) + ' ' : '') + (theme || '城市漫步');
         });
         var rhythm = p.list.length + ' 天 · ' + segs.join(' → ');
         var spot = planSpot(p, pi);
@@ -1000,7 +1000,7 @@
 
     $('cgDayList').innerHTML = days.map(function (d, i) {
         return '<details class="cg-day"' + (i === 0 ? ' open' : '') + '><summary>' +
-            '<span class="dn">Day ' + (i + 1) + '</span>' +
+            '<span class="dn">线路' + (i + 1) + '</span>' +
             '<b>' + esc(d.theme || '城市漫步') + '</b>' +
             '<span class="cnt">' + ((d.timeline || []).length) + ' 个节点</span>' +
             '<span class="arrow"><i class="fas fa-chevron-right"></i></span></summary>' +
