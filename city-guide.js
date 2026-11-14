@@ -175,6 +175,7 @@
 
     /* ---------- 行程数据 ---------- */
     var arriveRe = /抵达|返程|入住|退房|前往机场|值机|登机|酒店早餐/;
+    var departRe = /前往机场|前往车站|前往高铁|前往火车站|前往机场\/车站|去机场|赶飞机|赶火车|送机|送站|返程|离城/;
     var genericNodeRe = /景区深度游|景区深度游览|深度游览|市区自由活动|下午自由活动|自由活动|城市漫步|本地美食|夜市或老街|城市博物馆\/历史街区|城市公园\/滨水步道|周边古镇\/自然景区/;
     var mealNames = unique(foods.map(function (f) { return f.name; }).filter(Boolean));
     var baseDays = (detail && detail.itinerary && detail.itinerary.length) ? detail.itinerary.slice() : null;
@@ -239,6 +240,15 @@
         return list.map(function (d, di) {
             var dayIndex = startIndex + di;
             var copy = copyNode(d);
+            // 识别离城/返程节点：该节点是当天截止点，之后不再安排游览与餐饮
+            var departVal = 24, departIdx = -1;
+            (d.timeline || []).forEach(function (it, idx) {
+                if (!departRe.test(String(it.activity || ''))) return;
+                var v = timeValue(it.time, 12);
+                if (departIdx < 0) departIdx = idx;
+                if (v < departVal) departVal = v;
+            });
+            var hasDepart = departVal < 24;
             var preferred = [];
             if (pins.length) {
                 preferred.push(pins[(dayIndex * 2) % pins.length]);
@@ -253,6 +263,7 @@
                     var dish = mealName(dayIndex, mealOffset);
                     meal.activity = mealActivity(dayIndex, mealOffset);
                     meal.detail = '今日推荐：' + dish + '。选择本地人常去的餐馆，实际营业时间以当日为准。';
+                    meal._oi = nodeIndex;
                     timeline.push(meal);
                     return;
                 }
@@ -265,21 +276,44 @@
                             if (currentText.indexOf(preferred[pi]) < 0) { replacement = preferred[pi]; break; }
                         }
                     }
-                    if (replacement) timeline.push(sightNode(replacement, timeValue(it.time, 99) === 99 ? (nodeIndex ? '14:30' : '09:00') : it.time));
+                    if (replacement) {
+                        var gs = sightNode(replacement, timeValue(it.time, 99) === 99 ? (nodeIndex ? '14:30' : '09:00') : it.time);
+                        gs._oi = nodeIndex;
+                        timeline.push(gs);
+                    }
                     return;
                 }
-                timeline.push(copyNode(it));
+                var plain = copyNode(it);
+                plain._oi = nodeIndex;
+                timeline.push(plain);
             });
             var present = pinsInText(timeline.map(function (it) { return String(it.activity || ''); }).join('|'));
-            for (var i = 0; i < preferred.length && present.length < Math.min(2, pins.length); i++) {
-                if (present.indexOf(preferred[i]) >= 0) continue;
-                timeline.push(sightNode(preferred[i], present.length ? '14:30' : '09:00'));
-                present.push(preferred[i]);
+            // 离城日不再额外补景点，避免出现「去机场后还去游览」
+            if (!hasDepart) {
+                for (var i = 0; i < preferred.length && present.length < Math.min(2, pins.length); i++) {
+                    if (present.indexOf(preferred[i]) >= 0) continue;
+                    timeline.push(sightNode(preferred[i], present.length ? '14:30' : '09:00'));
+                    present.push(preferred[i]);
+                }
             }
             var hasLunch = timeline.some(function (it) { return /午餐/.test(String(it.activity || '')); });
             var hasDinner = timeline.some(function (it) { return /晚餐|夜宵/.test(String(it.activity || '')); });
-            if (!hasLunch) timeline.push(mealNode(dayIndex, 0));
-            if (!hasDinner) timeline.push(mealNode(dayIndex, 1));
+            if (!hasLunch && !(hasDepart && 12 >= departVal)) timeline.push(mealNode(dayIndex, 0));
+            if (!hasDinner && !(hasDepart && 18.5 >= departVal)) timeline.push(mealNode(dayIndex, 1));
+            // 离城节点之后的时间段全部清空：餐饮不得晚于离城时间，景点不得晚于离城时间
+            if (hasDepart) {
+                timeline = timeline.filter(function (it) {
+                    var text = String(it.activity || '');
+                    var v = timeValue(it.time, 99);
+                    if (departRe.test(text)) return true;
+                    if (typeof it._oi === 'number' && it._oi > departIdx) return false;
+                    // 无法判断时间的节点在离城日一律舍弃，避免排序后跑到离城节点之后
+                    if (v === 99) return false;
+                    if (/午餐|晚餐|夜宵/.test(text)) return v < departVal;
+                    return v <= departVal;
+                });
+            }
+            timeline.forEach(function (it) { delete it._oi; });
             timeline = timeline.map(function (it, i) { return { it: it, i: i, v: timeValue(it.time, 99) }; })
                 .sort(function (a, b) { return a.v === b.v ? a.i - b.i : a.v - b.v; })
                 .map(function (x) { return x.it; });
@@ -290,7 +324,7 @@
                 });
             });
             copy.timeline = timeline;
-            copy.theme = dayPins.slice(0, 3).join(' · ');
+            copy.theme = dayPins.slice(0, 3).join(' · ') || (hasDepart ? '收拾退房 · 返程' : '');
             return copy;
         });
     }
