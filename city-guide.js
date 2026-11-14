@@ -288,8 +288,10 @@
                 timeline.push(plain);
             });
             var present = pinsInText(timeline.map(function (it) { return String(it.activity || ''); }).join('|'));
-            // 离城日不再额外补景点，避免出现「去机场后还去游览」
-            if (!hasDepart) {
+            // 中午离城的返程日：把机场/车站挪到当天最后，先安排景点再走
+            var relocateDepart = hasDepart && departVal >= 11.5 && departVal <= 13.5;
+            // 离城日不再额外补景点（中午离城、机场后移的除外）
+            if (!hasDepart || relocateDepart) {
                 for (var i = 0; i < preferred.length && present.length < Math.min(2, pins.length); i++) {
                     if (present.indexOf(preferred[i]) >= 0) continue;
                     timeline.push(sightNode(preferred[i], present.length ? '14:30' : '09:00'));
@@ -298,19 +300,25 @@
             }
             var hasLunch = timeline.some(function (it) { return /午餐/.test(String(it.activity || '')); });
             var hasDinner = timeline.some(function (it) { return /晚餐|夜宵/.test(String(it.activity || '')); });
-            if (!hasLunch && !(hasDepart && 12 >= departVal)) timeline.push(mealNode(dayIndex, 0));
-            if (!hasDinner && !(hasDepart && 18.5 >= departVal)) timeline.push(mealNode(dayIndex, 1));
+            if (!hasLunch && !(hasDepart && !relocateDepart && 12 >= departVal)) timeline.push(mealNode(dayIndex, 0));
+            if (!hasDinner && !hasDepart) timeline.push(mealNode(dayIndex, 1));
+            if (relocateDepart) {
+                timeline.forEach(function (it) {
+                    if (departRe.test(String(it.activity || ''))) it.time = '17:30';
+                });
+            }
             // 离城节点之后的时间段全部清空：餐饮不得晚于离城时间，景点不得晚于离城时间
             if (hasDepart) {
+                var cutoff = relocateDepart ? 17.5 : departVal;
                 timeline = timeline.filter(function (it) {
                     var text = String(it.activity || '');
                     var v = timeValue(it.time, 99);
                     if (departRe.test(text)) return true;
-                    if (typeof it._oi === 'number' && it._oi > departIdx) return false;
+                    if (!relocateDepart && typeof it._oi === 'number' && it._oi > departIdx) return false;
                     // 无法判断时间的节点在离城日一律舍弃，避免排序后跑到离城节点之后
                     if (v === 99) return false;
-                    if (/午餐|晚餐|夜宵/.test(text)) return v < departVal;
-                    return v <= departVal;
+                    if (/午餐|晚餐|夜宵/.test(text)) return v < cutoff;
+                    return v <= cutoff;
                 });
             }
             timeline.forEach(function (it) { delete it._oi; });
