@@ -101,7 +101,7 @@
     function addFoods(list) {
         (list || []).forEach(function (f) {
             var item = typeof f === 'string' ? { name: f } : { name: f.name || '', desc: f.desc || '', price: f.price || '' };
-            if (!item.name || /招牌菜|特色小吃|必喝饮品/.test(item.name)) return;
+            if (!item.name || /特色菜|招牌菜|特色小吃|必喝饮品|当地特色|本地风味|当季本地/.test(item.name)) return;
             var existing = foods.filter(function (x) { return foodKey(x.name) === foodKey(item.name); })[0];
             if (existing) {
                 if (!existing.desc && item.desc) existing.desc = item.desc;
@@ -175,120 +175,158 @@
 
     /* ---------- 行程数据 ---------- */
     var arriveRe = /抵达|返程|入住|退房|前往机场|值机|登机|酒店早餐/;
+    var genericNodeRe = /景区深度游|景区深度游览|深度游览|市区自由活动|下午自由活动|自由活动|城市漫步|本地美食|夜市或老街|城市博物馆\/历史街区|城市公园\/滨水步道|周边古镇\/自然景区/;
     var mealNames = unique(foods.map(function (f) { return f.name; }).filter(Boolean));
     var baseDays = (detail && detail.itinerary && detail.itinerary.length) ? detail.itinerary.slice() : null;
-    var mealDayTarget = Math.max(3, baseDays ? baseDays.length : 0);
-    var namedMealsPerDay = mealNames.length >= mealDayTarget * 2 ? 2 : 1;
 
     function mealName(dayIndex, mealOffset) {
-        if (namedMealsPerDay === 1 && mealOffset === 1) return '';
-        return mealNames[dayIndex * namedMealsPerDay + mealOffset] || '';
+        if (!mealNames.length) return '';
+        return mealNames[(dayIndex * 2 + mealOffset) % mealNames.length];
     }
     function mealActivity(dayIndex, mealOffset) {
-        var dish = mealName(dayIndex, mealOffset);
-        return (mealOffset ? '晚餐' : '午餐') + ' · ' + (dish || '当季本地风味');
+        return (mealOffset ? '晚餐' : '午餐') + ' · ' + mealName(dayIndex, mealOffset);
     }
-    function withDailyMeals(list) {
-        return list.map(function (d, dayIndex) {
-            var copy = {};
-            Object.keys(d).forEach(function (k) { copy[k] = d[k]; });
-            copy.timeline = (d.timeline || []).map(function (it) {
+    function mealNode(dayIndex, mealOffset, time) {
+        var dish = mealName(dayIndex, mealOffset);
+        return { time: time || (mealOffset ? '18:30' : '12:00'), activity: mealActivity(dayIndex, mealOffset), detail: '今日推荐：' + dish + '。选择本地人常去的餐馆，实际营业时间以当日为准。' };
+    }
+    function pinsInText(text) {
+        text = String(text || '');
+        return pins.filter(function (p) { return text.indexOf(p) >= 0; });
+    }
+    function rawPinNode(pin) {
+        var hit = null;
+        (baseDays || []).forEach(function (d) {
+            (d.timeline || []).forEach(function (it) {
+                if (hit) return;
+                var activity = String(it.activity || '');
+                if (activity.indexOf(pin) >= 0 && !genericNodeRe.test(activity) && !/午餐|晚餐|夜宵/.test(activity)) hit = it;
+            });
+        });
+        return hit;
+    }
+    function sightNode(pin, time) {
+        var raw = rawPinNode(pin) || {};
+        return {
+            time: time || raw.time || '09:00',
+            activity: '游览 ' + pin,
+            detail: raw.detail || ('游览' + pin + '，建议预留 2–3 小时；出发前确认开放时间、预约要求与市内交通。'),
+            duration: raw.duration || '2-3h',
+            ticket: raw.ticket || '',
+            price: raw.price || '',
+            tip: raw.tip || ''
+        };
+    }
+    function copyNode(it) {
+        var item = {};
+        Object.keys(it || {}).forEach(function (k) { item[k] = it[k]; });
+        return item;
+    }
+    function timeValue(time, fallback) {
+        var text = String(time || '');
+        var m = text.match(/(\d{1,2}):(\d{2})/);
+        if (m) return parseInt(m[1], 10) + parseInt(m[2], 10) / 60;
+        if (/全天/.test(text)) return 7;
+        if (/上午|清晨|早上/.test(text)) return 9;
+        if (/中午/.test(text)) return 12;
+        if (/下午/.test(text)) return 14;
+        if (/傍晚/.test(text)) return 18;
+        if (/晚上|夜间/.test(text)) return 20;
+        return fallback;
+    }
+    function normalizeDays(list, startIndex) {
+        startIndex = startIndex || 0;
+        return list.map(function (d, di) {
+            var dayIndex = startIndex + di;
+            var copy = copyNode(d);
+            var preferred = [];
+            if (pins.length) {
+                preferred.push(pins[(dayIndex * 2) % pins.length]);
+                if (pins.length > 1) preferred.push(pins[(dayIndex * 2 + 1) % pins.length]);
+            }
+            var timeline = [];
+            (d.timeline || []).forEach(function (it, nodeIndex) {
                 var activity = String(it.activity || '');
                 var mealOffset = /晚餐|夜宵/.test(activity) ? 1 : (/午餐/.test(activity) ? 0 : -1);
-                if (mealOffset < 0) return it;
-                var item = {};
-                Object.keys(it).forEach(function (k) { item[k] = it[k]; });
-                var dish = mealName(dayIndex, mealOffset);
-                item.activity = mealActivity(dayIndex, mealOffset);
-                item.detail = dish
-                    ? '今日推荐：' + dish + '。' + (it.detail || '选择本地人常去的餐馆，实际营业时间以当日为准。')
-                    : '不重复前几日的推荐菜品，在居民区餐馆选择当季本地风味。';
-                return item;
+                if (mealOffset >= 0) {
+                    var meal = copyNode(it);
+                    var dish = mealName(dayIndex, mealOffset);
+                    meal.activity = mealActivity(dayIndex, mealOffset);
+                    meal.detail = '今日推荐：' + dish + '。选择本地人常去的餐馆，实际营业时间以当日为准。';
+                    timeline.push(meal);
+                    return;
+                }
+                if (genericNodeRe.test(activity)) {
+                    var mentioned = pinsInText(activity + '|' + String(it.detail || ''));
+                    var replacement = mentioned[0];
+                    if (!replacement) {
+                        var currentText = timeline.map(function (x) { return x.activity; }).join('|');
+                        for (var pi = 0; pi < preferred.length; pi++) {
+                            if (currentText.indexOf(preferred[pi]) < 0) { replacement = preferred[pi]; break; }
+                        }
+                    }
+                    if (replacement) timeline.push(sightNode(replacement, timeValue(it.time, 99) === 99 ? (nodeIndex ? '14:30' : '09:00') : it.time));
+                    return;
+                }
+                timeline.push(copyNode(it));
             });
+            var present = pinsInText(timeline.map(function (it) { return String(it.activity || ''); }).join('|'));
+            for (var i = 0; i < preferred.length && present.length < Math.min(2, pins.length); i++) {
+                if (present.indexOf(preferred[i]) >= 0) continue;
+                timeline.push(sightNode(preferred[i], present.length ? '14:30' : '09:00'));
+                present.push(preferred[i]);
+            }
+            var hasLunch = timeline.some(function (it) { return /午餐/.test(String(it.activity || '')); });
+            var hasDinner = timeline.some(function (it) { return /晚餐|夜宵/.test(String(it.activity || '')); });
+            if (!hasLunch) timeline.push(mealNode(dayIndex, 0));
+            if (!hasDinner) timeline.push(mealNode(dayIndex, 1));
+            timeline = timeline.map(function (it, i) { return { it: it, i: i, v: timeValue(it.time, 99) }; })
+                .sort(function (a, b) { return a.v === b.v ? a.i - b.i : a.v - b.v; })
+                .map(function (x) { return x.it; });
+            var dayPins = [];
+            timeline.forEach(function (it) {
+                pinsInText(String(it.activity || '')).forEach(function (p) {
+                    if (dayPins.indexOf(p) < 0) dayPins.push(p);
+                });
+            });
+            copy.timeline = timeline;
+            copy.theme = dayPins.slice(0, 3).join(' · ');
             return copy;
         });
     }
-
+    function syntheticDay(dayIndex) {
+        var a = pins[(dayIndex * 2) % pins.length];
+        var b = pins.length > 1 ? pins[(dayIndex * 2 + 1) % pins.length] : '';
+        var timeline = [sightNode(a, '09:00'), mealNode(dayIndex, 0)];
+        if (b && b !== a) timeline.push(sightNode(b, '14:30'));
+        timeline.push(mealNode(dayIndex, 1, '19:00'));
+        return { day: 'Day ' + (dayIndex + 1), theme: b && b !== a ? a + ' · ' + b : a, timeline: timeline };
+    }
     function synthDays() {
         var count = Math.max(3, Math.ceil(pins.length / 2));
-        var extras = ['城市博物馆/历史街区', '本地夜市/老街', '城市公园/滨水步道', '周边古镇/自然景区'];
         var out = [];
-        for (var i = 0; i < count; i++) {
-            var a = pins[i * 2] || extras[i % extras.length];
-            var b = pins[i * 2 + 1] || extras[(i + 1) % extras.length];
-            out.push({
-                day: 'Day ' + (i + 1),
-                theme: a + (b ? ' · ' + b : ''),
-                timeline: [
-                    { time: '09:00', activity: '游览 ' + a, detail: '城市代表景点，建议预留 2–3 小时；出发前确认开放时间与预约要求。' },
-                    { time: '12:00', activity: mealActivity(i, 0), detail: '找本地人常去的餐馆，避开景区门口，试试当季食材。' },
-                    { time: '14:30', activity: '前往 ' + b, detail: '与上午景点就近安排，减少来回通勤。' },
-                    { time: '19:00', activity: mealActivity(i, 1), detail: '品尝当日推荐风味，感受城市的夜间生活节奏。' }
-                ]
-            });
-        }
+        for (var i = 0; i < count; i++) out.push(syntheticDay(i));
         return out;
     }
 
-    var days = withDailyMeals(baseDays || synthDays());
+    var days = normalizeDays(baseDays || synthDays());
 
     function padDays(list, target) {
         var out = list.slice();
-        var used = '';
-        out.forEach(function (d) {
-            (d.timeline || []).forEach(function (it) { used += '|' + String(it.activity || ''); });
-        });
-        var pool = pins.filter(function (p) { return used.indexOf(p) < 0; });
-        var pi = 0;
-        while (out.length < target) {
-            var a = pool[pi++] || '城市漫步';
-            var b = pool[pi++] || '本地美食';
-            out.push({
-                day: 'Day ' + (out.length + 1),
-                theme: a + (b ? ' · ' + b : ''),
-                timeline: [
-                    { time: '09:00', activity: '游览 ' + a, detail: '建议预留 2–3 小时，出发前确认开放时间与预约要求。' },
-                    { time: '12:00', activity: mealActivity(out.length, 0), detail: '找本地人常去的餐馆，避开景区门口。' },
-                    { time: '14:30', activity: '前往 ' + b, detail: '与上午景点就近安排，减少来回通勤。' },
-                    { time: '19:00', activity: mealActivity(out.length, 1), detail: '品尝当日推荐风味，感受城市的夜间生活。' }
-                ]
-            });
-        }
+        while (out.length < target) out.push(normalizeDays([syntheticDay(out.length)], out.length)[0]);
         return out;
-    }
-
-    function scoreDay(d) {
-        return (d.timeline || []).filter(function (it) { return !arriveRe.test(String(it.activity || '')); }).length;
     }
     function allNodes() {
         var n = 0;
         days.forEach(function (d) { n += (d.timeline || []).length; });
         return n;
     }
-    function bestDay() {
-        var best = days[0], bs = -1;
-        days.forEach(function (d) {
-            var s = scoreDay(d);
-            if (s > bs) { bs = s; best = d; }
-        });
-        return best;
-    }
-    function twoDays() {
-        if (days.length >= 2) {
-            var ranked = days.map(function (d, i) { return { d: d, i: i, s: scoreDay(d) }; })
-                .sort(function (a, b) { return b.s - a.s; })
-                .slice(0, 2)
-                .sort(function (a, b) { return a.i - b.i; })
-                .map(function (x) { return x.d; });
-            if (ranked.length === 2) return ranked;
-        }
-        return padDays(days, 2);
-    }
 
-    var oneDay = [bestDay()];
-    var twoDay = twoDays();
     var deepTarget = Math.max(3, days.length);
     var deepDays = padDays(days, deepTarget);
+    days = deepDays;
+    var oneDay = [days[0]];
+    var twoDay = days.slice(0, 2);
 
     /* ---------- 景点信息 ---------- */
     function pinInfo(pin) {
@@ -348,6 +386,37 @@
         var fallback = kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
         return '<img src="' + esc(photoImage(subject, kind)) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async" data-fallback="' + fallback + '">';
     }
+    function photoSubjectKey(subject) {
+        var raw = String(subject || '').toLowerCase()
+            .replace(/[（(][^）)]*[）)]/g, '')
+            .replace(/\s+/g, '')
+            .replace(/国家级|国家|省级|风景区|旅游区|度假区|景区|步行街|商业街|公园/g, '')
+            .replace(/[·_\-—]/g, '');
+        var key = raw.replace(name.toLowerCase(), '');
+        return key || raw;
+    }
+    function samePhotoSubject(a, b) {
+        var x = photoSubjectKey(a), y = photoSubjectKey(b);
+        if (!x || !y) return false;
+        return x === y || (Math.min(x.length, y.length) >= 2 && (x.indexOf(y) >= 0 || y.indexOf(x) >= 0));
+    }
+    var routePhotoPool = [];
+    var reservedPhotoSubjects = pins.concat(foods.map(function (f) { return f.name; }));
+    function addRoutePhoto(subject) {
+        if (!subject || /机场|高铁站|火车站|汽车站|客运站|酒店|宾馆|返程|抵达/.test(subject)) return;
+        if (reservedPhotoSubjects.some(function (s) { return samePhotoSubject(s, subject); })) return;
+        if (routePhotoPool.some(function (s) { return samePhotoSubject(s, subject); })) return;
+        routePhotoPool.push(subject);
+    }
+    landmarks.forEach(addRoutePhoto);
+    [window.CITY_SPOT_COORDS || {}, window.REAL_POI_COORDS || {}, window.CITY_HOTSPOT_COORDS || {}].forEach(function (data) {
+        Object.keys(data).forEach(function (key) {
+            if (key.indexOf(name + '·') === 0 || key.indexOf(landmarkKey + '·') === 0) addRoutePhoto(key.split('·').pop());
+        });
+    });
+    ['城市夜景', '历史街区', '老城街巷', '城市天际线', '周边山水'].forEach(function (subject) {
+        if (routePhotoPool.length < 3) addRoutePhoto(subject);
+    });
     function heroImage() {
         var raw = (detail && detail.img) || (cityRec && cityRec.img) || '';
         if (raw && !/text_to_image/.test(raw) && !WRONG_IMG_NAME[name]) return raw;
@@ -843,12 +912,11 @@
                 return String(it.activity || '') + '|' + String(it.detail || '');
             }).join('|');
         }).join('|');
-        var matches = [];
-        for (var i = 0; i < pins.length; i++) {
-            if (text.indexOf(pins[i]) >= 0) matches.push(pins[i]);
+        for (var i = 0; i < routePhotoPool.length; i++) {
+            var candidate = routePhotoPool[(index + i) % routePhotoPool.length];
+            if (text.indexOf(candidate) >= 0) return candidate;
         }
-        if (matches.length) return matches[index % matches.length];
-        return pins[index % Math.max(pins.length, 1)] || name + '城市风景';
+        return routePhotoPool[index % routePhotoPool.length] || '城市风景';
     }
 
     $('cgPlanCards').innerHTML = planDefs.map(function (p, pi) {
