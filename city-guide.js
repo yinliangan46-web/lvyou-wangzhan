@@ -773,11 +773,11 @@
         var overseas = isOverseasCity();
         var map = L.map('cgMap', { scrollWheelZoom: false, attributionControl: overseas, zoomControl: true, zoomSnap: .5 });
         if (overseas) {
-            // 境外城市高德底图无覆盖，改用全球可用的 OpenStreetMap 底图
+            // 境外城市高德底图无覆盖，改用全球可用的 Esri 街道底图
             map.attributionControl.setPrefix('');
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19, minZoom: 3,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+                attribution: 'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>'
             }).addTo(map);
         } else {
             L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=7&x={x}&y={y}&z={z}', {
@@ -933,6 +933,8 @@
         tHtml = '<div class="cg-tcard"><h3><i class="fas fa-info-circle"></i> 交通信息</h3><p class="cg-tempty">站内暂未收录这座城市的详细交通数据。建议先在携程/12306 查询大交通，再按“市区住地铁沿线、景区住换乘中心附近”的原则安排。</p></div>';
     }
     $('cgTransportGrid').innerHTML = tHtml;
+    $('cgTransportGrid').classList.toggle('cols-2', $('cgTransportGrid').children.length === 2);
+    fillGrid('cgTransportGrid');
 
     /* ---------- 住宿 ---------- */
     var hotels = (detail && detail.hotels) || [];
