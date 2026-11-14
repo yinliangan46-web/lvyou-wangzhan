@@ -2734,3 +2734,88 @@ a.hotel-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rg
     background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.55) 100%);
     pointer-events: none;
 }
+
+/* ========== 城市详情：景点与美食照片 ========== */
+.rich-photo-section h3 { margin-bottom: 14px; }
+.rich-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+.rich-photo-card {
+    margin: 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.rich-photo-card img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: #f1f5f9;
+}
+.rich-photo-card figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 12px;
+}
+.rich-photo-card figcaption strong {
+    font-size: 0.94rem;
+    color: var(--text);
+}
+.rich-photo-card figcaption span {
+    font-size: 0.76rem;
+    color: var(--text-light);
+}
+.rich-photo-card.img-fail { display: none; }
+.rich-food-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+.rich-food-card {
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.rich-food-card img {
+    flex: 0 0 96px;
+    width: 96px;
+    height: 82px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f1f5f9;
+}
+.rich-food-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.rich-food-info strong { font-size: 0.94rem; color: var(--text); }
+.rich-food-info p {
+    margin: 0;
+    font-size: 0.79rem;
+    line-height: 1.45;
+    color: var(--text-light);
+}
+.rich-food-info em {
+    margin-top: auto;
+    font-style: normal;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+@media (max-width: 760px) {
+    .rich-photo-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .rich-photo-card img { height: 120px; }
+    .rich-food-grid { grid-template-columns: 1fr; }
+}

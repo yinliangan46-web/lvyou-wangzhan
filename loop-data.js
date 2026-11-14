@@ -8656,11 +8656,153 @@ if (!data.itinerary || !data.itinerary.length) return;
                 data.days = mDays + '天' + (mDays - 1) + '晚';
             }
 };
+
+    // ========== 城市详情：具体菜名 + 景点/美食照片 ==========
+    var GENERIC_FOOD_RE = /特色菜|招牌菜|特色小吃|必喝饮品|当地特色|本地风味|当季本地|招牌名菜|特色美食|当地美食|地方美食|伴手礼|特产/;
+    var GENERIC_SPOT_RE = /机场|车站|高铁|火车站|汽车站|码头|酒店|入住|退房|返程|抵达|出发|集合|早餐|夜宵/;
+
+    function cleanName(v) { return String(v || '').replace(/\s+/g, ' ').trim(); }
+
+    function uniqueNames(list) {
+        var seen = {}, out = [];
+        (list || []).forEach(function (n) {
+            var s = cleanName(n);
+            if (!s) return;
+            var key = s.replace(/[（(][^）)]*[）)]/g, '')
+                .replace(/风景区|景区|旅游区|度假区|公园|步行街|商业街|古城|古镇|国家级|省级/g, '')
+                .replace(/[·_\-—\s]/g, '').toLowerCase();
+            if (!key || seen[key]) return;
+            seen[key] = 1;
+            out.push(s);
+        });
+        return out;
+    }
+
+    function cityFoodNames(data) {
+        var map = window.CITY_FOODS || {};
+        var keys = [data.name, data._cityKey, data.city, data.province];
+        var names = null;
+        for (var i = 0; i < keys.length; i++) {
+            var k = cleanName(keys[i]);
+            if (k && map[k] && map[k].length) { names = map[k]; break; }
+        }
+        if (!names) {
+            names = (data.foods || []).map(function (f) {
+                return typeof f === 'string' ? f : (f && f.name);
+            }).filter(function (n) { return n && !GENERIC_FOOD_RE.test(n); });
+        }
+        return uniqueNames(names);
+    }
+
+    function foodMeta(data, name) {
+        var hit = null;
+        (data.foods || []).forEach(function (f) {
+            if (!hit && f && cleanName(f.name) === name) hit = f;
+        });
+        return {
+            desc: (hit && hit.desc && !GENERIC_FOOD_RE.test(hit.desc))
+                ? hit.desc
+                : ('到本地老字号或本地人常去的馆子，点一份' + name + '。'),
+            price: (hit && hit.price) || '¥30-80'
+        };
+    }
+
+    function normalizeMealNodes(data, foods) {
+        if (!foods || !foods.length) return;
+        (data.itinerary || []).forEach(function (day, di) {
+            (day.timeline || []).forEach(function (item) {
+                var act = cleanName(item.activity);
+                if (!/午餐|中餐|晚餐|晚饭/.test(act)) return;
+                var isDinner = /晚餐|晚饭/.test(act);
+                var matched = null;
+                foods.forEach(function (f) { if (!matched && act.indexOf(f) >= 0) matched = f; });
+                var dish = matched || foods[(di * 2 + (isDinner ? 1 : 0)) % foods.length];
+                if (!dish) return;
+                item.activity = (isDinner ? '晚餐 · ' : '午餐 · ') + dish;
+                var det = cleanName(item.detail);
+                if (!det || /当地|特色|招牌|美食|小吃|老字号|不踩雷|地方菜|本帮菜/.test(det)) {
+                    item.detail = '推荐品尝' + dish + '，选本地人常去的馆子更地道。';
+                }
+            });
+        });
+    }
+
+    function photoUrl(city, subject, kind) {
+        var suffix = kind === 'food' ? ' 地道菜品 美食' : ' 景点 实景';
+        return 'https://tse1-mm.cn.bing.net/th?q=' +
+            encodeURIComponent(city + ' ' + subject + suffix) +
+            '&w=960&h=640&c=7&rs=1&p=0&dpr=1.5&pid=1.7';
+    }
+
+    function spotNames(data) {
+        var out = [];
+        (data.routePins || []).forEach(function (p) {
+            var s = cleanName(p);
+            if (!s || GENERIC_SPOT_RE.test(s)) return;
+            if (/夜市\/夜景$|^城市夜景$/.test(s)) return;
+            out.push(s);
+        });
+        if (out.length < 2) {
+            (data.itinerary || []).forEach(function (day) {
+                (day.timeline || []).forEach(function (t) {
+                    var a = cleanName(t.activity).replace(/^游览\s*/, '');
+                    if (!a || GENERIC_SPOT_RE.test(a)) return;
+                    if (/午餐|晚餐|自由活动|城市初印象|晚餐时光|办理|值机|登机|返回|前往/.test(a)) return;
+                    out.push(a);
+                });
+            });
+        }
+        return uniqueNames(out).slice(0, 6);
+    }
+
+    function spotMeta(data, spot) {
+        var meta = '';
+        (data.itinerary || []).forEach(function (day, di) {
+            (day.timeline || []).forEach(function (t) {
+                if (meta) return;
+                if (cleanName(t.activity).indexOf(spot) >= 0 || cleanName(t.detail).indexOf(spot) >= 0) {
+                    meta = '第' + (di + 1) + '天' + (t.time ? ' · ' + t.time : '');
+                }
+            });
+        });
+        return meta;
+    }
+
+    function renderSpotGallery(data, spots) {
+        if (!spots || !spots.length) return '';
+        return '<div class="modal-section rich-photo-section">' +
+            '<h3><i class="fas fa-camera-retro"></i> 必游景点实景</h3>' +
+            '<div class="rich-photo-grid">' + spots.map(function (s) {
+                var meta = spotMeta(data, s);
+                return '<figure class="rich-photo-card">' +
+                    '<img src="' + photoUrl(data.name || '', s, 'spot') + '" alt="' + safe(s) + '实景" loading="lazy" onerror="this.onerror=null;this.src=\'images/city-fallback.jpg\'">' +
+                    '<figcaption><strong>' + safe(s) + '</strong>' + (meta ? '<span>' + safe(meta) + '</span>' : '') + '</figcaption>' +
+                    '</figure>';
+            }).join('') + '</div></div>';
+    }
+
+    function renderFoodGallery(data, foods) {
+        if (!foods || !foods.length) return '';
+        return '<div class="modal-section rich-photo-section">' +
+            '<h3><i class="fas fa-utensils"></i> 美食推荐</h3>' +
+            '<div class="rich-food-grid">' + foods.slice(0, 5).map(function (f) {
+                var meta = foodMeta(data, f);
+                return '<div class="rich-food-card">' +
+                    '<img src="' + photoUrl(data.name || '', f, 'food') + '" alt="' + safe(f) + '" loading="lazy" onerror="this.onerror=null;this.src=\'images/food-fallback.jpg\'">' +
+                    '<div class="rich-food-info"><strong>' + safe(f) + '</strong><p>' + safe(meta.desc) + '</p><em>' + safe(meta.price) + '</em></div>' +
+                    '</div>';
+            }).join('') + '</div></div>';
+    }
+
 window.renderRichDetail = function(data) {
         if (!data) return '';
         window.syncCityData(data);
-        
-        // === routePins + coords + itinerary 自动同步（核心逻辑提取为 window.syncCityData） ===
+
+        // 具体菜名 + 景点/美食配图（同一页面内去重）
+        const cityFoods = cityFoodNames(data);
+        normalizeMealNodes(data, cityFoods);
+        const spotGalleryHtml = renderSpotGallery(data, spotNames(data));
+        const foodGalleryHtml = renderFoodGallery(data, cityFoods);
         
 
 
@@ -8762,7 +8904,6 @@ window.renderRichDetail = function(data) {
         
         const hotels = (data.hotels || []).map(makeHotelCard).join('');
         const transport = (data.transport || []).map(t => `<div class="transport-item"><div class="label">${safe(t.label)}</div><div class="value">${safe(t.value)}</div></div>`).join('');
-        const foods = (data.foods || []).map(f => `<li><strong>${safe(f.name)}</strong> — ${safe(f.desc)} <em style="color:var(--primary);font-weight:600">${safe(f.price)}</em></li>`).join('');
         const tips = (data.tips || []).map(t => `<li>${safe(t)}</li>`).join('');
         const budget = (data.budget || []).map(b => `<div class="budget-item"><div class="label">${safe(b.label)}</div><div class="value">${safe(b.value)}</div></div>`).join('');
         const tagHtml = (data.tags || []).filter(t => String(t||'').trim()).map(t => `<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">${safe(t)}</span>`).join('');
@@ -8771,11 +8912,13 @@ window.renderRichDetail = function(data) {
             ${routeHtml}
             ${cityMapHtml}
             ${tagHtml ? `<div style="margin-bottom:12px">${tagHtml}</div>` : ''}
+            ${spotGalleryHtml}
             <div class="modal-section"><h3><i class="fas fa-calendar-day"></i> 每日行程安排</h3>${itin}</div>
             <div class="modal-section"><h3><i class="fas fa-hotel"></i> 酒店推荐</h3>${hotels}</div>
             ${makeFlightCard(data.airfare)}
             ${makeTrainCard(data.trains)}
-            <div class="info-grid"><div class="info-card"><h5><i class="fas fa-bus"></i> 交通指南</h5>${transport}</div><div class="info-card"><h5><i class="fas fa-utensils"></i> 美食推荐</h5><ul>${foods}</ul></div></div>
+            <div class="info-grid" style="grid-template-columns:1fr"><div class="info-card"><h5><i class="fas fa-bus"></i> 交通指南</h5>${transport}</div></div>
+            ${foodGalleryHtml}
             <div class="tips-warn"><h5><i class="fas fa-exclamation-triangle"></i> 避坑小贴士</h5><ul>${tips}</ul></div>
             <div class="budget-bar"><h5><i class="fas fa-calculator"></i> 预算参考</h5><div class="budget-items">${budget}</div></div>
         `;
