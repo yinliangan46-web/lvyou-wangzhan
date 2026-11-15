@@ -7652,7 +7652,7 @@ window.LOOP_ROUTES = [
         '松原·龙华寺': [124.85, 45.18],
         '芜湖·天门山': [118.4, 31.37],
         '绍兴·东湖': [120.654, 30.005],
-        '南宁·龙脊梯田': [110.1201, 25.831],
+        '桂林·龙脊梯田': [110.1201, 25.831],
         // 衡水（河北）：为 planner 路线分配补充真实坐标
         '衡水湖': [115.668, 37.553], '景州塔': [115.724, 37.741], '武强年画博物馆': [116.038, 38.028],
         '闾里古镇': [115.630, 37.730], '衡水老白干文化园': [115.722, 37.752],
@@ -8128,7 +8128,7 @@ window.LOOP_ROUTES = [
         '张掖·大佛寺': [100.452, 38.928],
         '西宁·藏文化博物馆': [101.75, 36.65],
         '潮州·开元寺': [116.641, 23.66],
-        '南宁·龙脊梯田': [110.1201, 25.831],
+        '桂林·龙脊梯田': [110.1201, 25.831],
         '香港·香港博物馆': [114.172, 22.301],
         '九龙·香港博物馆': [114.172, 22.301],
         '九龙·星光大道': [114.174, 22.293],
@@ -8614,20 +8614,21 @@ if (!data.itinerary || !data.itinerary.length) return;
                 // （上海"南京路"拿到迪士尼坐标、深圳"大梅沙"拿到莲花山坐标，全城错位）
                 var _prevCoordsArr = window.CITY_ROUTE_COORDS[cityKey] || [];
                 var _pinCoordMap = {};
-                result.forEach(function(p, i) {
+                (data.routePins || []).forEach(function(p, i) {
                     if (_prevCoordsArr[i] && typeof _prevCoordsArr[i][0] === 'number') _pinCoordMap[p] = _prevCoordsArr[i];
                 });
                 var _cnName2 = data.name || '';
-                var _ccFallback = (window.ALL_CITY_COORDS && (window.ALL_CITY_COORDS[cityKey] || window.ALL_CITY_COORDS[_cnName2])) || null;
                 window.CITY_ROUTE_COORDS[cityKey] = uniqPins.map(function(p) {
                     if (_pinCoordMap[p]) return _pinCoordMap[p];
-                    // result 里没有的（known dict 新增景点）→ 实时三层查找
+                    // known dict 新增景点 → 名称精确查找，查不到就不画点，绝不用北京/市中心兜底
                     var hit = (_cnName2 && window.REAL_POI_COORDS[_cnName2 + '·' + p])
                         || window.REAL_POI_COORDS[cityKey + '·' + p]
-                        || window.REAL_POI_COORDS[p];
-                    if (hit) return hit;
-                    if (_ccFallback) return [_ccFallback[0], _ccFallback[1]];
-                    return [116.4, 39.9];
+                        || window.REAL_POI_COORDS[p]
+                        || (window.CITY_SPOT_COORDS && (
+                            window.CITY_SPOT_COORDS[_cnName2 + '·' + p] ||
+                            window.CITY_SPOT_COORDS[cityKey + '·' + p] ||
+                            window.CITY_SPOT_COORDS[p]));
+                    return hit || null;
                 });
                 // ══════ 自动扩展/缩减天数逻辑只有一套：在下面 7982 行，基于 remainingPins 精确计算 ══════
                 // 收集 Day1 已用景点（避免重复）
@@ -9098,25 +9099,6 @@ window.renderRichDetail = function(data) {
             return `<div class="itinerary-day"><h4><span class="day-tag">${safe(day.day)}</span>${safe(day.theme || '')}</h4><div class="day-timeline">${tl}</div></div>`;
         }).join('');
         
-        // 三条线路：只保留 早餐→景点→午餐→景点→晚餐，去掉抵达/入住/退房/返程
-        const routePlansHtml = (function () {
-            if (!window.buildCityRoutePlans || !window.renderCityRoutePlans) return '';
-            try {
-                var h = window.CITY_HISTORY && window.CITY_HISTORY[data.name];
-                var plans = window.buildCityRoutePlans({
-                    name: data.name,
-                    tag: data.tag || (h && h.alias) || '',
-                    spots: (data.routePins || []).concat(
-                        window.citySpotsFromDays ? window.citySpotsFromDays(data.itinerary) : []
-                    ),
-                    foods: (window.CITY_FOODS && window.CITY_FOODS[data.name]) || data.foods
-                });
-                var cards = window.renderCityRoutePlans(plans);
-                var details = window.renderCityRouteDetails ? window.renderCityRouteDetails(plans) : '';
-                return cards + (details ? '<div class="cr-detail-wrap">' + details + '</div>' : '');
-            } catch (e) { return ''; }
-        })();
-
         const hotels = (data.hotels || []).map(makeHotelCard).join('');
         const transport = (data.transport || []).map(t => `<div class="transport-item"><div class="label">${safe(t.label)}</div><div class="value">${safe(t.value)}</div></div>`).join('');
         const metroHtml = (window.renderMetroBlock && data.name) ? window.renderMetroBlock(data.name) : '';
@@ -9129,7 +9111,7 @@ window.renderRichDetail = function(data) {
             ${cityMapHtml}
             ${tagHtml ? `<div style="margin-bottom:12px">${tagHtml}</div>` : ''}
             ${spotGalleryHtml}
-            ${routePlansHtml || `<div class="modal-section"><h3><i class="fas fa-calendar-day"></i> 每日行程安排</h3>${itin}</div>`}
+            <div class="modal-section"><h3><i class="fas fa-calendar-day"></i> 每日行程安排</h3>${itin}</div>
             <div class="modal-section"><h3><i class="fas fa-hotel"></i> 酒店推荐</h3>${hotels}</div>
             ${makeFlightCard(data.airfare)}
             ${makeTrainCard(data.trains)}

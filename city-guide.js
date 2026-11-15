@@ -189,20 +189,24 @@
             var c0 = M[keys[i]];
             if (c0 && isFinite(c0[0]) && isFinite(c0[1])) return c0;
         }
-        // 模糊匹配：如「老虎滩」vs「老虎滩海洋公园」，需落在本市 250km 内
+        // 模糊匹配：如「老虎滩」vs「老虎滩海洋公园」。只允许本市/无前缀的键，避免
+        // 「广州·长隆」误配到 118km 外的珠海长隆；同时取最近的一个
         if (cityCoord) {
-            var hit = null;
+            var best = null, bestD = 1e9;
             Object.keys(M).forEach(function (k) {
-                if (hit) return;
-                var nm = k.indexOf('·') >= 0 ? k.split('·').pop() : k;
+                var parts = k.split('·');
+                var pref = parts.length > 1 ? parts[0] : '';
+                if (pref && pref !== name && pref !== landmarkKey) return;
+                var nm = parts[parts.length - 1];
                 if (nm.length < 2) return;
                 if (nm.indexOf(pin) < 0 && pin.indexOf(nm) < 0) return;
                 var c = M[k];
                 if (!c || !isFinite(c[0]) || !isFinite(c[1])) return;
-                if (distKm(cityCoord, c) > 250) return;
-                hit = c;
+                var dd = distKm(cityCoord, c);
+                if (dd > 80) return;
+                if (dd < bestD) { bestD = dd; best = c; }
             });
-            if (hit) return hit;
+            if (best) return best;
         }
         var c1 = A[pin];
         return (c1 && isFinite(c1[0]) && isFinite(c1[1])) ? c1 : null;
