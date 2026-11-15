@@ -913,7 +913,7 @@
     var trains = (detail && detail.trains) || [];
     var local = (detail && detail.transport) || [];
 
-    $('cgTransportDesc').textContent = '跨城交通与市内移动分开看。机票、火车价格来自站内参考数据，实际以携程/12306 当日价格为准。';
+    $('cgTransportDesc').textContent = '跨城交通与市内移动分开看。机票、火车价格来自站内参考数据，实际以携程/12306 当日价格为准；景点之间怎么坐地铁，见下方「地铁出行」。';
 
     var tHtml = '';
     if (flights.length) {
@@ -936,6 +936,10 @@
         tHtml += '<div class="cg-tcard"><h3><i class="fas fa-bus"></i> 市内交通</h3>' + local.map(function (t) {
             return '<div class="cg-row"><b>' + esc(t.label) + '</b><span>' + esc(t.value) + '</span></div>';
         }).join('') + '</div>';
+    }
+    if (window.renderMetroBlock) {
+        tHtml += '<div class="cg-tcard"><h3><i class="fas fa-subway"></i> 地铁出行</h3>' +
+            window.renderMetroBlock(name, { bare: true }) + '</div>';
     }
     if (!detail) {
         tHtml += '<div class="cg-tcard"><h3><i class="fas fa-train"></i> 怎么到 ' + esc(name) + '</h3>' +
@@ -1023,28 +1027,16 @@
         return routePhotoPool[index % routePhotoPool.length] || '城市风景';
     }
 
-    $('cgPlanCards').innerHTML = planDefs.map(function (p, pi) {
-        // 每条线路只读自己的日程：一日看当日重点，两日/三日按天推进，节奏自然不同
-        var segs = p.list.map(function (d, i) {
-            var theme = String(d.theme || '').replace(/\s*·\s*/g, ' · ').trim();
-            if (!theme) {
-                var acts = unique((d.timeline || []).map(function (it) {
-                    return String(it.activity || '').replace(/^(游览|前往|抵达|入住|返回|参观|逛逛)\s*/, '');
-                }).filter(function (a) {
-                    return a && !/午餐|晚餐|早餐|夜宵|自由活动|入住|返程/.test(a);
-                }));
-                theme = acts.slice(0, 2).join(' · ');
-            }
-            return (p.list.length > 1 ? '线路' + (i + 1) + ' ' : '') + (theme || '城市漫步');
-        });
-        var rhythm = p.list.length + ' 天 · ' + segs.join(' → ');
-        var spot = planSpot(p, pi);
-        return '<article class="cg-plan" style="--rc:' + p.color + '" data-route="' + pi + '" role="button" tabindex="0" aria-controls="cgDayList" aria-pressed="false" aria-label="查看' + esc(p.title) + '逐日安排">' +
-            '<div class="cg-plan-media">' + photoImg(spot, 'spot', name + spot + '实景') + '<span>' + esc(spot) + '</span></div>' +
-            '<div class="cg-plan-body"><span class="k">' + p.k + '</span><h3>' + esc(p.title) + '</h3>' +
-            '<p class="poem">' + esc(p.p) + '</p><p class="note">' + esc(p.note) + '</p>' +
-            '<div class="line"><b>节奏：</b>' + esc(rhythm) + '</div><span class="cg-plan-go">展开逐日安排 <i class="fas fa-arrow-down"></i></span></div></article>';
-    }).join('');
+    // 三条线路：三种走法，每条只保留 早餐→景点→午餐→景点→晚餐
+    var routePlans = window.buildCityRoutePlans ? window.buildCityRoutePlans({
+        name: name,
+        tag: (cityRec && cityRec.tag) || '',
+        spots: pins,
+        foods: foods
+    }) : [];
+    $('cgPlanCards').innerHTML = window.renderCityRoutePlans
+        ? window.renderCityRoutePlans(routePlans, { bare: true, clickable: true })
+        : '';
 
     function timelineHtml(d) {
         return '<div class="cg-tl">' + (d.timeline || []).map(function (it) {
@@ -1060,40 +1052,30 @@
         }).join('') + '</div>';
     }
 
-    $('cgDayList').innerHTML = days.map(function (d, i) {
-        return '<details class="cg-day"' + (i === 0 ? ' open' : '') + '><summary>' +
-            '<span class="dn">线路' + (i + 1) + '</span>' +
-            '<b>' + esc(d.theme || '城市漫步') + '</b>' +
-            '<span class="cnt">' + ((d.timeline || []).length) + ' 个节点</span>' +
-            '<span class="arrow"><i class="fas fa-chevron-right"></i></span></summary>' +
-            '<div class="inner">' + timelineHtml(d) + '</div></details>';
-    }).join('');
+    $('cgDayList').innerHTML = window.renderCityRouteDetails
+        ? window.renderCityRouteDetails(routePlans)
+        : '';
 
-    function openPlan(card) {
-        var pi = parseInt(card.getAttribute('data-route'), 10);
-        var selected = planDefs[pi] ? planDefs[pi].list : [];
-        var first = days.indexOf(selected[0]);
-        var dayEls = document.querySelectorAll('.cg-day');
-        Array.prototype.forEach.call(document.querySelectorAll('.cg-plan'), function (el) {
-            el.setAttribute('aria-pressed', el === card ? 'true' : 'false');
+    function selectRoute(pi) {
+        Array.prototype.forEach.call(document.querySelectorAll('#cgPlanCards .cr-card'), function (el, idx) {
+            el.setAttribute('aria-pressed', idx === pi ? 'true' : 'false');
         });
-        Array.prototype.forEach.call(dayEls, function (el, i) {
-            var inRoute = selected.indexOf(days[i]) >= 0;
-            el.classList.toggle('selected', inRoute);
-            el.open = inRoute && (selected.length <= 3 || i === first);
+        Array.prototype.forEach.call(document.querySelectorAll('#cgDayList .cr-detail'), function (el, idx) {
+            el.open = idx === pi;
         });
-        $('cgDayList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        var target = document.querySelector('#cgDayList .cr-detail[data-route="' + pi + '"]');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     $('cgPlanCards').addEventListener('click', function (e) {
-        var card = e.target.closest('.cg-plan');
-        if (card) openPlan(card);
+        var card = e.target.closest('.cr-card');
+        if (card) selectRoute(parseInt(card.getAttribute('data-route'), 10) || 0);
     });
     $('cgPlanCards').addEventListener('keydown', function (e) {
         if (e.key !== 'Enter' && e.key !== ' ') return;
-        var card = e.target.closest('.cg-plan');
+        var card = e.target.closest('.cr-card');
         if (!card) return;
         e.preventDefault();
-        openPlan(card);
+        selectRoute(parseInt(card.getAttribute('data-route'), 10) || 0);
     });
 
     /* ---------- 贴士与预算 ---------- */

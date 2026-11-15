@@ -1,0 +1,148 @@
+/* ========== 城市三条线路（行程建议） ========== */
+.cr-wrap { margin: 8px 0 4px; }
+.cr-wrap.is-bare { margin: 0; }
+.cr-head { margin-bottom: 18px; }
+.cr-head h3 { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; color: #0f172a; }
+.cr-head h3 i { color: #2563eb; }
+.cr-head p { margin-top: 8px; color: #64748b; font-size: .92rem; line-height: 1.7; max-width: 760px; }
+
+.cr-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+.cr-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e6eaf2;
+    border-radius: 16px;
+    padding: 18px 18px 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .05);
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.cr-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: var(--rc, #2563eb);
+}
+.cr-card.is-clickable { cursor: pointer; }
+.cr-card.is-clickable:hover,
+.cr-card.is-clickable:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, .12);
+    outline: none;
+}
+.cr-card.is-clickable[aria-pressed="true"] { border-color: var(--rc, #2563eb); }
+
+.cr-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cr-no {
+    display: inline-block; padding: 3px 9px; border-radius: 999px;
+    background: #eef4ff;
+    background: color-mix(in srgb, var(--rc, #2563eb) 12%, #fff);
+    color: var(--rc, #2563eb); font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+}
+.cr-mode { display: inline-flex; align-items: center; gap: 5px; font-size: .74rem; color: #64748b; }
+.cr-mode i { color: var(--rc, #2563eb); }
+
+.cr-card h4 { margin: 12px 0 6px; font-size: 1.08rem; line-height: 1.4; color: #0f172a; }
+.cr-slogan { margin: 0; color: #64748b; font-size: .84rem; line-height: 1.65; min-height: 4.9em; }
+.cr-audience {
+    display: inline-block; margin: 10px 0 4px; padding: 3px 8px;
+    background: #f6f8fc; border-radius: 6px; color: #7a8699; font-size: .72rem;
+}
+
+.cr-nodes { list-style: none; margin: 12px 0 0; padding: 0; position: relative; }
+.cr-nodes::before {
+    content: ''; position: absolute; left: 55px; top: 20px; bottom: 20px;
+    width: 2px; background: linear-gradient(180deg, #e2e8f0, #eef2f7);
+}
+.cr-node {
+    position: relative; display: grid; grid-template-columns: 40px 14px minmax(0, 1fr);
+    gap: 8px; padding: 7px 0; align-items: flex-start;
+}
+.cr-time { font-size: .72rem; font-weight: 700; color: #94a3b8; line-height: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+.cr-dot {
+    width: 12px; height: 12px; margin: 4px 0 0 1px; border-radius: 50%;
+    background: #fff; border: 3px solid #bfdbfe; box-shadow: 0 0 0 2px #fff;
+}
+.cr-node.is-meal .cr-dot,
+.cr-node.is-breakfast .cr-dot,
+.cr-node.is-lunch .cr-dot,
+.cr-node.is-dinner .cr-dot { border-color: #fcd34d; background: #fff7e6; }
+.cr-body { min-width: 0; }
+.cr-body b { display: block; font-size: .89rem; color: #1e293b; line-height: 1.5; }
+.cr-body b i { color: var(--rc, #2563eb); margin-right: 3px; font-size: .82rem; }
+.cr-node.is-meal .cr-body b i { color: #d97706; }
+.cr-body p { margin: 3px 0 0; color: #64748b; font-size: .78rem; line-height: 1.6; }
+.cr-meta { display: inline-block; margin-top: 5px; color: #94a3b8; font-size: .7rem; }
+.cr-meta::before { content: '·'; margin-right: 5px; }
+
+/* 城市百科页：展开式线路详情 */
+.cr-detail {
+    border: 1px solid #e6eaf2; border-radius: 14px; background: #fff;
+    margin-top: 12px; overflow: hidden;
+}
+.cr-detail > summary {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    cursor: pointer; list-style: none; background: #fbfcfe;
+}
+.cr-detail > summary::-webkit-details-marker { display: none; }
+.cr-detail[open] > summary { border-bottom: 1px solid #eef2f7; }
+.cr-dno {
+    padding: 3px 9px; border-radius: 999px; font-size: .7rem; font-weight: 700;
+    background: #eef4ff;
+    background: color-mix(in srgb, var(--rc, #2563eb) 12%, #fff); color: var(--rc, #2563eb);
+}
+.cr-detail summary b { font-size: .95rem; color: #0f172a; flex: 1; min-width: 0; }
+.cr-dmode { color: #94a3b8; font-size: .74rem; white-space: nowrap; }
+.cr-arrow { color: #94a3b8; font-size: .72rem; transition: transform .2s ease; }
+.cr-detail[open] .cr-arrow { transform: rotate(180deg); }
+.cr-detail-body { padding: 12px 16px 14px; }
+.cr-move {
+    margin: 0 0 4px; padding: 9px 12px; border-radius: 9px;
+    background: #f6f9ff; color: #475569; font-size: .8rem; line-height: 1.65;
+}
+.cr-move i { color: #2563eb; margin-right: 4px; }
+
+/* ========== 地铁出行卡 ========== */
+.metro-card {
+    margin-top: 14px; padding: 16px; border: 1px solid #e6eaf2; border-radius: 14px;
+    background: linear-gradient(180deg, #fbfdff, #fff);
+}
+.metro-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; margin-bottom: 10px; }
+.metro-head h4 { font-size: .98rem; color: #0f172a; display: flex; align-items: center; gap: 7px; }
+.metro-head h4 i { color: #0ea5e9; }
+.metro-sum { color: #94a3b8; font-size: .76rem; }
+
+.metro-plan {
+    padding: 12px 0; border-top: 1px dashed #e8edf5;
+}
+.metro-plan:first-of-type { border-top: 0; padding-top: 4px; }
+.metro-pair { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: #1e293b; }
+.metro-pair i { color: #94a3b8; font-size: .72rem; }
+.metro-pair b { font-weight: 700; }
+.metro-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+.metro-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    background: #e0f2fe; color: #0369a1; font-size: .72rem; font-weight: 700;
+}
+.metro-sep { color: #94a3b8; font-size: .72rem; }
+.metro-route { margin: 6px 0 0; color: #64748b; font-size: .8rem; line-height: 1.65; }
+.metro-meta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; color: #94a3b8; font-size: .72rem; }
+.metro-meta i { margin-right: 4px; }
+
+.metro-none { background: #fbfcfe; }
+.cg-tcard .metro-sum { margin: 2px 0 8px; }
+.cg-tcard .metro-plan:first-of-type { border-top: 0; }
+.cg-tcard .metro-plan:last-child { padding-bottom: 2px; }
+.metro-none p { margin: 4px 0 0; color: #64748b; font-size: .82rem; line-height: 1.7; }
+.metro-alt { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.metro-alt span {
+    padding: 4px 9px; border-radius: 999px; background: #f1f5f9;
+    color: #475569; font-size: .74rem;
+}
+.metro-note { margin: 10px 0 0; color: #a0aec0; font-size: .72rem; line-height: 1.6; }
+
+@media (max-width: 1000px) {
+    .cr-grid { grid-template-columns: 1fr; }
+    .cr-slogan { min-height: 0; }
+}
