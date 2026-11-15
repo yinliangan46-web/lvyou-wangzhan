@@ -147,8 +147,107 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 
 .sd-btn.on { background: #fff; color: #b4443a; border-color: #fff; }
 
+/* ---------- 双栏：正文 + 速览侧栏 ---------- */
+.sd-main { max-width: 1180px; }
+.sd-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+}
+.sd-col { min-width: 0; }
+
+/* ---------- 实景图集 ---------- */
+.sd-gallery-sec { border-top: none; padding-top: 0; }
+.sd-gal { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 148px; gap: 8px; }
+.sd-gal button { position: relative; overflow: hidden; background: #e8ebef; border-radius: 2px; }
+.sd-gal button:first-child { grid-column: span 2; grid-row: span 2; }
+.sd-gal img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2, .6, .2, 1); }
+.sd-gal button:hover img { transform: scale(1.06); }
+.sd-gal button::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, .46), transparent 56%);
+    opacity: .8; pointer-events: none;
+}
+.sd-gal span {
+    position: absolute; left: 12px; bottom: 10px; z-index: 2;
+    font-size: 10.5px; letter-spacing: .16em; color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .6);
+}
+
+/* ---------- 到达方式 ---------- */
+.sd-transport { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.sd-transport div { border: 1px solid var(--sd-line); background: var(--sd-card); padding: 14px 16px; }
+.sd-transport i { color: var(--sd-accent); font-size: 13px; }
+.sd-transport b { display: block; margin-top: 8px; font-size: 13px; font-weight: 500; }
+.sd-transport span { display: block; margin-top: 3px; font-size: 12px; line-height: 1.8; color: var(--sd-muted); }
+
+/* ---------- 侧栏卡片 ---------- */
+.sd-aside { position: sticky; top: calc(var(--sd-nav-h) + 24px); display: grid; gap: 14px; }
+.sd-card { background: var(--sd-card); border: 1px solid var(--sd-line); padding: 18px 18px 16px; }
+.sd-card h3 { display: flex; align-items: center; gap: 8px; font-family: var(--sd-serif); font-size: 14.5px; font-weight: 600; letter-spacing: .02em; }
+.sd-card h3 i { color: var(--sd-accent); font-size: 12px; }
+.sd-facts { margin-top: 12px; display: grid; gap: 9px; }
+.sd-facts div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 12.5px; }
+.sd-facts dt { flex: none; color: var(--sd-muted); }
+.sd-facts dd { text-align: right; color: var(--sd-ink); }
+.sd-months { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 12px; }
+.sd-months span { padding: 6px 0; text-align: center; font-size: 10px; color: var(--sd-muted); border: 1px solid var(--sd-line); }
+.sd-months span.on { background: var(--sd-accent-soft); border-color: rgba(164, 90, 30, .35); color: var(--sd-accent); font-weight: 500; }
+.sd-score { margin-top: 14px; display: grid; gap: 10px; }
+.sd-score-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) 26px; align-items: center; gap: 10px; font-size: 11.5px; color: var(--sd-muted); }
+.sd-score-track { height: 3px; background: #ebe7e0; }
+.sd-score-track i { display: block; height: 100%; background: var(--sd-accent); }
+.sd-score-row em { font-style: normal; text-align: right; color: var(--sd-ink); }
+.sd-quote { background: #141d2a; color: rgba(255, 255, 255, .84); padding: 20px; }
+.sd-quote b { font-size: 10.5px; letter-spacing: .22em; color: var(--sd-accent); font-weight: 500; }
+.sd-quote p { margin-top: 10px; font-family: var(--sd-serif); font-size: 14px; line-height: 1.9; }
+.sd-quote span { display: block; margin-top: 12px; font-size: 10.5px; opacity: .55; }
+.sd-mapbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.sd-mapbtns a { border: 1px solid var(--sd-line); text-align: center; padding: 9px 4px; font-size: 12px; transition: .2s ease; }
+.sd-mapbtns a:hover { border-color: var(--sd-accent); color: var(--sd-accent); }
+.sd-aside-note { margin-top: 10px; font-size: 11px; line-height: 1.8; color: var(--sd-muted); }
+
+/* ---------- FAQ ---------- */
+.sd-faq { display: grid; gap: 0; }
+.sd-faq details { border-top: 1px solid var(--sd-line); padding: 14px 0; }
+.sd-faq details:first-child { border-top: none; padding-top: 2px; }
+.sd-faq summary { display: flex; justify-content: space-between; gap: 16px; list-style: none; cursor: pointer; font-size: 13.5px; font-weight: 500; color: var(--sd-ink); }
+.sd-faq summary::-webkit-details-marker { display: none; }
+.sd-faq summary i { margin-top: 4px; font-size: 11px; color: var(--sd-muted); transition: transform .25s ease; }
+.sd-faq details[open] summary i { transform: rotate(45deg); color: var(--sd-accent); }
+.sd-faq p { margin-top: 8px; font-size: 13px; line-height: 1.95; color: var(--sd-ink2); }
+
+/* ---------- 点单话术 ---------- */
+.sd-phrases { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.sd-phrases span { padding: 6px 12px; border: 1px dashed rgba(164, 90, 30, .4); border-radius: 999px; background: rgba(244, 231, 215, .4); color: var(--sd-accent); font-size: 12px; }
+
+/* ---------- 灯箱图集 ---------- */
+.sd-lightbox img { max-height: 82vh; }
+.sd-lightbox-cap { margin-top: 14px; font-size: 12px; letter-spacing: .16em; color: rgba(255, 255, 255, .7); }
+.sd-lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .28); color: #fff; display: grid; place-items: center; }
+.sd-lightbox-nav.prev { left: 18px; }
+.sd-lightbox-nav.next { right: 18px; }
+.sd-lightbox-nav:hover { background: rgba(255, 255, 255, .12); }
+
+@media (max-width: 1000px) {
+    .sd-grid { grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; }
+}
+@media (max-width: 900px) {
+    .sd-grid { grid-template-columns: 1fr; }
+    .sd-aside { position: static; order: -1; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sd-aside .sd-quote { grid-column: span 2; }
+}
 @media (max-width: 700px) {
     .sd-rel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sd-gal { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 118px; }
+    .sd-gal button:first-child { grid-column: span 2; grid-row: span 1; }
+    .sd-transport { grid-template-columns: 1fr; }
+    .sd-aside { grid-template-columns: 1fr; }
+    .sd-aside .sd-quote { grid-column: auto; }
+    .sd-lightbox-nav { width: 38px; height: 38px; }
+    .sd-lightbox-nav.prev { left: 8px; }
+    .sd-lightbox-nav.next { right: 8px; }
 }
 @media (max-width: 600px) {
     .sd-hero { min-height: 86svh; }

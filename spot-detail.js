@@ -373,6 +373,116 @@
             '<div class="sd-check-bar"><span id="sdCheckBar"></span></div></div>';
     }
 
+    /* ---------- 确定性评分（同一名称每次一致） ---------- */
+    function hashStr(s) {
+        var h = 0;
+        s = String(s || '');
+        for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
+        return h;
+    }
+    var seed = hashStr(NAME + '|' + cat + '|' + TYPE);
+    function sc(offset, min, max) {
+        return min + ((seed + offset * 137) % (max - min + 1));
+    }
+
+    /* ---------- 实景图集 ---------- */
+    var GAL_LABELS = IS_FOOD
+        ? ['刚上桌', '特写质感', '街边小店', '制作过程', '本地餐桌']
+        : ['全景', '近景细节', '清晨光线', '黄昏氛围', '人文一角'];
+    var GAL_MODS = IS_FOOD
+        ? [' 美食 实拍 自然光', ' 特写 质感 干净', ' 街边 小店 烟火气', ' 制作 过程', ' 餐桌 氛围']
+        : [' 实景 全景', ' 细节 特写', ' 清晨 光线', ' 黄昏 日落', ' 人文 街景'];
+    var galItems = [{ label: '主图', src: heroSrc }].concat(GAL_LABELS.map(function (l, i) {
+        return { label: l, src: photo(((info.city || info.loopName || '') + ' ' + NAME + GAL_MODS[i]).trim()) };
+    }));
+    function galleryBlock() {
+        return '<section class="sd-sec sd-gallery-sec" id="sec-gallery">' +
+            '<div class="sd-sec-head"><em>LOOK</em><h2>实景速览</h2><small>' + (IS_FOOD ? 'On the Table' : 'Gallery') + '</small></div>' +
+            '<div class="sd-sec-body"><div class="sd-gal">' + galItems.map(function (it, i) {
+                return '<button type="button" data-i="' + i + '" aria-label="查看' + esc(it.label) + '大图">' +
+                    '<img src="' + it.src + '" alt="' + esc(NAME + ' ' + it.label) + '" loading="' + (i ? 'lazy' : 'eager') + '"' +
+                    ' onerror="this.onerror=null;this.src=\'' + fallbackImg + '\'"><span>' + esc(it.label) + '</span></button>';
+            }).join('') + '</div></div></section>';
+    }
+
+    /* ---------- 侧栏 ---------- */
+    function scoreRows() {
+        var pairs = IS_FOOD
+            ? [['味道', sc(5, 78, 97)], ['性价比', sc(6, 58, 92)], ['排队热度', sc(7, 38, 88)], ['出片友好', sc(8, 52, 92)]]
+            : [['出片指数', sc(1, 72, 97)], ['人流拥挤', sc(2, 42, 92)], ['步行强度', sc(3, 28, 85)], ['性价比', sc(4, 58, 94)]];
+        return pairs.map(function (p) {
+            return '<div class="sd-score-row"><span>' + p[0] + '</span>' +
+                '<div class="sd-score-track"><i style="width:' + p[1] + '%"></i></div>' +
+                '<em>' + (p[1] / 20).toFixed(1) + '</em></div>';
+        }).join('');
+    }
+
+    var MONTH_BEST = {
+        nature: [[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0], '4-10 月景色在线，7-9 月最盛；旺季人多，早进景区。'],
+        heritage: [[0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0], '春秋两季气温与光线最舒服，夏季注意避正午。'],
+        museum: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], '全年可去，雨雪天与高温天的最佳备选。'],
+        street: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], '全年可去，傍晚到夜间最有烟火气。'],
+        landmark: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], '全年可去，日落亮灯前后最上镜。']
+    };
+    function monthBlock() {
+        var conf = MONTH_BEST[cat] || MONTH_BEST.landmark;
+        return '<div class="sd-card"><h3><i class="fas fa-calendar-days"></i>最佳到访</h3>' +
+            '<div class="sd-months">' + conf[0].map(function (on, i) {
+                return '<span class="' + (on ? 'on' : '') + '">' + (i + 1) + '月</span>';
+            }).join('') + '</div><p class="sd-aside-note">' + esc(conf[1]) + '</p></div>';
+    }
+    function mealBlock() {
+        return '<div class="sd-card"><h3><i class="fas fa-clock"></i>什么时候吃</h3>' +
+            '<div class="sd-months"><span>早餐</span><span class="on">午餐</span><span class="on">晚餐</span><span>夜宵</span><span>错峰</span><span>打包</span></div>' +
+            '<p class="sd-aside-note">午市 11:00-12:00、晚市 17:30-19:00 更从容，正点高峰通常要排。</p></div>';
+    }
+    function quickFacts() {
+        var fl = { name: '本地风味' };
+        FLAVOR.forEach(function (f) { if (f[0].test(NAME)) fl = { name: f[1] }; });
+        var rows = IS_FOOD
+            ? [['人均', info.price || '¥30-80'], ['适合餐次', '午餐 / 晚餐'], ['主调', fl.name], ['排队', '错峰更从容']]
+            : [['建议停留', duration[cat]], ['最佳时段', bestTime[cat]], ['门票', info.ticket || '以公告为准'], ['类型', catName[cat]]];
+        return '<div class="sd-card"><h3><i class="fas fa-circle-info"></i>速览</h3><dl class="sd-facts">' +
+            rows.map(function (r) {
+                return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
+            }).join('') + '</dl></div>';
+    }
+    function mapCard() {
+        var q = encodeURIComponent(((info.city || info.loopName || '') + ' ' + NAME).trim());
+        return '<div class="sd-card"><h3><i class="fas fa-map-location-dot"></i>在地图里打开</h3>' +
+            '<div class="sd-mapbtns">' +
+            '<a href="https://uri.amap.com/search?keyword=' + q + '&view=map" target="_blank" rel="noopener">高德地图</a>' +
+            '<a href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" rel="noopener">Google 地图</a>' +
+            '</div><p class="sd-aside-note">导航到官方入口或点评定位，避免被带到侧门与私人停车场。</p></div>';
+    }
+    function quoteCard() {
+        var NOTE = {
+            nature: '别把行程排满，这类山水最值钱的是等一场好光。',
+            heritage: '进门前先抬头看一眼屋檐，故事常常从那里开始。',
+            museum: '与其看完所有展厅，不如认真看懂三件展品。',
+            street: '白天记路，晚上再来一次，巷子会换一张脸。',
+            landmark: '拍完照别急着走，往旁边多走两条街。',
+            food: '先吃本地默认做法，再谈加辣加醋；第一口最诚实。'
+        };
+        return '<div class="sd-quote"><b>编辑手记</b><p>「' + esc(NOTE[IS_FOOD ? 'food' : cat]) + '」</p><span>MYL 旅行编辑部</span></div>';
+    }
+    function asideBlock() {
+        return '<aside class="sd-aside">' + quickFacts() +
+            '<div class="sd-card"><h3><i class="fas fa-star-half-stroke"></i>' + (IS_FOOD ? '口味参考' : '编辑评分') + '</h3>' +
+            '<div class="sd-score">' + scoreRows() + '</div>' +
+            '<p class="sd-aside-note">' + (IS_FOOD ? '按本地口味与到店体验综合判断。' : '按景观、体验与到达成本综合判断，仅供参考。') + '</p></div>' +
+            (IS_FOOD ? mealBlock() : monthBlock()) +
+            mapCard() + quoteCard() + '</aside>';
+    }
+
+    /* ---------- FAQ ---------- */
+    function faqBlock(items) {
+        return '<div class="sd-faq">' + items.map(function (q, i) {
+            return '<details' + (i === 0 ? ' open' : '') + '><summary>' + esc(q[0]) +
+                '<i class="fas fa-plus"></i></summary><p>' + esc(q[1]) + '</p></details>';
+        }).join('') + '</div>';
+    }
+
     var html = '';
 
     if (!IS_FOOD) {
@@ -384,7 +494,13 @@
         var routeText = '从市区出发，打车约 20-40 分钟；公交可到景区门口，自驾建议提前确认停车位。'
             + (nextSpot ? '与「' + nextSpot + '」串成半日线，路线更顺。' : '把周边点位安排在同一段步行范围内，能省下不少来回。');
         var loc2 = '建议把' + NAME + '安排在' + bestTime[cat] + '，光线和人流都更友好。';
-        html += sec('location', '01', '位置交通', 'Location', p(locText) + p(routeText) + p(loc2));
+        var transport = '<div class="sd-transport">' +
+            '<div><i class="fas fa-taxi"></i><b>打车</b><span>市区出发约 20-40 分钟，返程提前叫车</span></div>' +
+            '<div><i class="fas fa-bus"></i><b>公交 / 地铁</b><span>多有直达线路，留意末班车时间</span></div>' +
+            '<div><i class="fas fa-car"></i><b>自驾</b><span>导航到官方停车场，旺季车位紧张</span></div>' +
+            '<div><i class="fas fa-shoe-prints"></i><b>景区内</b><span>以步行为主，穿舒适的鞋，按需坐观光车</span></div>' +
+            '</div>';
+        html += sec('location', '01', '位置交通', 'Location', p(locText) + p(routeText) + p(loc2) + transport);
 
         // 核心亮点
         html += sec('highlights', '02', '核心亮点', 'Highlights',
@@ -415,6 +531,20 @@
         }
         html += sec('check', relList.length ? '07' : '06', '打卡清单', 'Checklist',
             checkBlock(['到现场拍一张构图舒展的照片', '走完主线，找到一处自己的私藏机位', '在周边吃一顿本地味道']));
+
+        html += sec('faq', relList.length ? '08' : '07', '常见问题', 'FAQ', faqBlock([
+            ['需要提前预约吗？', '热门景区旺季建议提前 1-3 天在官方渠道预约；普通景区现场购票即可，出发前查一次当日公告更稳妥。'],
+            ['大概要留多久？', '按' + duration[cat] + '安排比较从容；只有半天的话，优先保核心亮点，周边点位留到下次。'],
+            ['带老人或小孩合适吗？', /nature/.test(cat)
+                ? '可以，但尽量避开长距离爬升，把休息点安排在路线中段，带好水和防晒。'
+                : '可以，主线路面平整、坡度不大；推车与轮椅建议先确认无障碍入口位置。'],
+            ['下雨天还值得去吗？', /museum|heritage/.test(cat)
+                ? '值得，室内与廊下空间受天气影响小，反而更容易拍到干净的画面。'
+                : '小雨可以，大雨建议改期；山野与湖边天气变化快，出发前看一次实时预报。'],
+            ['周边怎么串最顺？', nextSpot
+                ? '建议和「' + nextSpot + '」串成半日线，先远后近，返程不赶。'
+                : '把周边点位放在同一段步行范围内，先远后近，能省下不少来回。']
+        ]));
     } else {
         // 原料工艺
         var craft = info.desc || (NAME + '是' + info.city + '很有代表性的本地味道，核心在于食材新鲜和火候准确。');
@@ -447,7 +577,12 @@
             ['选店', '优先选本地人排队、菜单不复杂的店，避开景区正门第一排。'],
             ['搭配', '配一杯本地茶饮或清汤，整顿饭的节奏更舒服。']
         ];
-        html += sec('tips', '04', '本地小贴士', 'Tips', list(tipsFood));
+        var phraseHtml = '<div class="sd-phrases">' +
+            ['少辣 / 不辣', '不要香菜', '多加一份主食', '汤汁少一点', '打包带走'].map(function (t) {
+                return '<span>' + t + '</span>';
+            }).join('') + '</div>';
+        html += sec('tips', '04', '本地小贴士', 'Tips',
+            list(tipsFood) + '<p class="sd-note" style="margin-top:16px">点单可以直接说：</p>' + phraseHtml);
 
         var relFood = relFoods.slice(0, 4).map(function (n) { return relCard(n, 'food'); });
         if (relFood.length) {
@@ -456,9 +591,20 @@
         }
         html += sec('check', relFood.length ? '06' : '05', '打卡清单', 'Checklist',
             checkBlock(['按本地默认吃法先尝原味', '找到一家本地人排队的店', '记住这一口的味道']));
+
+        html += sec('faq', relFood.length ? '07' : '06', '常见问题', 'FAQ', faqBlock([
+            ['人均大概多少？', info.price ? '人均参考 ' + info.price + '，按店铺与点单浮动。' : '人均约 ¥30-80，社区店通常更实惠。'],
+            ['不能吃辣怎么办？', '点单时直接说“不辣 / 少辣”，多数本地店都会调整；也可以先点一份原味试口。'],
+            ['需要排很久吗？', '避开 12:00 和 18:30 的正点高峰，提前或错后半小时通常能少排一半。'],
+            ['哪一餐吃最合适？', '午餐和晚餐都合适：想吃得从容选午市，想感受烟火气选晚市。'],
+            ['附近还有什么推荐的？', relFoods[0]
+                ? '可以顺路试试「' + relFoods[0] + '」，口味互补，一天吃两家也不腻。'
+                : '沿着老街区多走两条巷子，通常能遇到更本地的小店。']
+        ]));
     }
 
-    $('sdMain').innerHTML = html;
+    $('sdMain').innerHTML = galleryBlock() +
+        '<div class="sd-grid"><div class="sd-col">' + html + '</div>' + asideBlock() + '</div>';
 
     /* ---------- 导航 ---------- */
     var secs = Array.prototype.slice.call(document.querySelectorAll('.sd-sec'));
@@ -545,21 +691,47 @@
     });
     paintCheck();
 
-    /* ---------- 大图 ---------- */
-    function openLightbox(src) {
-        $('sdLightboxImg').src = src;
+    /* ---------- 大图 / 图集 ---------- */
+    var galIdx = -1;
+    function paintLightbox() {
+        var it = galIdx >= 0 ? galItems[galIdx] : { src: heroSrc, label: '主图' };
+        $('sdLightboxImg').src = it.src;
+        $('sdLightboxImg').alt = NAME + ' ' + it.label;
+        $('sdLightboxCap').textContent = (galIdx >= 0 ? (galIdx + 1) + ' / ' + galItems.length + ' · ' : '') + it.label;
+        var multi = galIdx >= 0 && galItems.length > 1;
+        $('sdPrev').style.display = multi ? '' : 'none';
+        $('sdNext').style.display = multi ? '' : 'none';
+    }
+    function openLightbox(idx) {
+        galIdx = typeof idx === 'number' ? idx : -1;
+        paintLightbox();
         $('sdLightbox').classList.add('in');
         document.body.style.overflow = 'hidden';
+    }
+    function stepLightbox(n) {
+        if (galIdx < 0) return;
+        galIdx = (galIdx + n + galItems.length) % galItems.length;
+        paintLightbox();
     }
     function closeLightbox() {
         $('sdLightbox').classList.remove('in');
         document.body.style.overflow = '';
     }
-    $('sdExpand').addEventListener('click', function () { openLightbox(heroSrc); });
-    $('sdHeroImg').addEventListener('click', function () { openLightbox(heroSrc); });
+    $('sdExpand').addEventListener('click', function () { openLightbox(0); });
+    $('sdHeroImg').addEventListener('click', function () { openLightbox(0); });
+    Array.prototype.forEach.call(document.querySelectorAll('.sd-gal button'), function (b) {
+        b.addEventListener('click', function () { openLightbox(Number(b.getAttribute('data-i')) || 0); });
+    });
+    $('sdPrev').addEventListener('click', function (e) { e.stopPropagation(); stepLightbox(-1); });
+    $('sdNext').addEventListener('click', function (e) { e.stopPropagation(); stepLightbox(1); });
     $('sdLightboxClose').addEventListener('click', closeLightbox);
     $('sdLightbox').addEventListener('click', function (e) { if (e.target === $('sdLightbox')) closeLightbox(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeLightbox();
+        if (!$('sdLightbox').classList.contains('in')) return;
+        if (e.key === 'ArrowLeft') stepLightbox(-1);
+        if (e.key === 'ArrowRight') stepLightbox(1);
+    });
 
     /* ---------- 复制链接 ---------- */
     var toastTimer;
