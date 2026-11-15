@@ -9103,14 +9103,17 @@ window.renderRichDetail = function(data) {
             if (!window.buildCityRoutePlans || !window.renderCityRoutePlans) return '';
             try {
                 var h = window.CITY_HISTORY && window.CITY_HISTORY[data.name];
-                return window.renderCityRoutePlans(window.buildCityRoutePlans({
+                var plans = window.buildCityRoutePlans({
                     name: data.name,
                     tag: data.tag || (h && h.alias) || '',
                     spots: (data.routePins || []).concat(
                         window.citySpotsFromDays ? window.citySpotsFromDays(data.itinerary) : []
                     ),
                     foods: (window.CITY_FOODS && window.CITY_FOODS[data.name]) || data.foods
-                }));
+                });
+                var cards = window.renderCityRoutePlans(plans);
+                var details = window.renderCityRouteDetails ? window.renderCityRouteDetails(plans) : '';
+                return cards + (details ? '<div class="cr-detail-wrap">' + details + '</div>' : '');
             } catch (e) { return ''; }
         })();
 

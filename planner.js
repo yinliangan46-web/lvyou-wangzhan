@@ -444,6 +444,31 @@
         return false;
     }
 
+    /* 景点名归一：去掉「步行街/景区/博物院/公园」等通用后缀，用于识别同义重复 */
+    function poiCore(n) {
+        return String(n || '').replace(/(旅游度假区|风景区|景区|步行街|风光带|历史文化街区|历史街区|博物院|博物馆|纪念馆|音乐台|公园|广场|老街)$/g, '').trim();
+    }
+    /* 同一城市内去掉「夫子庙 / 夫子庙秦淮河 / 秦淮河 / 夫子庙步行街」这类重复：
+       核心名互相包含时只保留信息更全的那个，等长则保留先出现的 */
+    function dedupePois(list) {
+        var arr = (list || []).filter(Boolean).map(function (n) { return String(n).trim(); });
+        var cores = arr.map(poiCore);
+        var keep = [];
+        for (var i = 0; i < arr.length; i++) {
+            var ci = cores[i] || arr[i];
+            if (ci.length < 2) { keep.push(arr[i]); continue; }
+            var dup = false;
+            for (var j = 0; j < arr.length; j++) {
+                if (i === j) continue;
+                var cj = cores[j] || arr[j];
+                if (cj.length < 2 || cj.indexOf(ci) < 0) continue;
+                if (cj.length > ci.length || (cj.length === ci.length && j < i)) { dup = true; break; }
+            }
+            if (!dup) keep.push(arr[i]);
+        }
+        return keep;
+    }
+
     function buildCatalog() {
         var src = window._knownDict || {};
         var known = {};
@@ -490,7 +515,7 @@
             var center = centers[city];
             if (!center || !isFinite(center[0])) return;
             var items = [], seen = {};
-            (known[city] || []).forEach(function (name, idx) {
+            dedupePois(known[city] || []).forEach(function (name, idx) {
                 if (!name || seen[name]) return;
                 var extra = CITY_EXTRA_COORDS[city + '·' + name];
                 var c = R[city + '·' + name] || R[name] || extra;
@@ -514,9 +539,10 @@
             if (!d || !d.name || out[d.name] || centers[d.name]) return;
             var coords = routeCoords[key] || [];
             var items = [], seen2 = {};
+            var keptPins = dedupePois(d.routePins || []);
             (d.routePins || []).forEach(function (p, i) {
                 var c = coords[i];
-                if (!c || !isFinite(c[0]) || seen2[p]) return;
+                if (!c || !isFinite(c[0]) || seen2[p] || keptPins.indexOf(p) < 0) return;
                 seen2[p] = 1;
                 items.push({ name: p, city: d.name, lng: +c[0], lat: +c[1], idx: i, cat: classify(p) });
             });

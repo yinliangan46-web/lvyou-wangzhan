@@ -1,27 +1,27 @@
 /* ========== MYL 城市三条线路生成器 ==========
    每条线路是一种“走法”，不是景点的简单拼接：
-   线路1 地铁纵贯（城市名片）、线路2 步行慢游（山水街巷）、线路3 市井烟火（从早市到夜市）。
+   线路1 初见（城市名片）、线路2 市井（街巷烟火）、线路3 纵深（山水古建）。
    每条线路只保留 5 个节点：早餐 → 景点 → 午餐 → 景点 → 晚餐。
    抵达、入住、退房、送站、返程等与线路无关的节点一律不出现。 */
 (function () {
     var STYLES = [
         {
-            no: '线路 01', mode: '地铁纵贯', icon: 'fa-subway', color: '#2563eb',
+            no: '线路 01', mode: '初见 · 城市名片', icon: 'fa-subway', color: '#2563eb',
             audience: '适合第一次来、只有一整天',
-            slogan: '用地铁把城市名片串成一条直线：少走路，多看地方，把“第一次来”该看的都看到。',
+            slogan: '把城市最值得记住的几处一次看完，少绕路，多留时间。',
             move: '这一程优先地铁，出站后按导航步行 5–10 分钟；早晚高峰避开换乘大站。'
         },
         {
-            no: '线路 02', mode: '步行慢游', icon: 'fa-person-walking', color: '#0f9d76',
+            no: '线路 02', mode: '市井 · 街巷烟火', icon: 'fa-person-walking', color: '#0f9d76',
             audience: '适合住两晚、想慢慢逛的人',
-            slogan: '少坐车、多走两步。上午只安排一处风景，下午拐进街巷，把时间留给自己。',
+            slogan: '不赶景点，跟着菜市场和老街走，把一座城吃进日常里。',
             move: '这一程以步行和共享单车为主，景点之间控制在 2 公里内，走累了就找家店坐下。'
         },
         {
-            no: '线路 03', mode: '市井烟火', icon: 'fa-bowl-rice', color: '#e2673a',
-            audience: '适合吃货、傍晚才有力气的人',
-            slogan: '从早市吃到夜市，景点只是消食的间隔。这条线不赶路，只赶热气腾腾的摊子。',
-            move: '这一程跟着菜市场和老街走，公交一两站或直接打车，留出排队和加餐的时间。'
+            no: '线路 03', mode: '纵深 · 山水古建', icon: 'fa-mountain-sun', color: '#e2673a',
+            audience: '适合二刷、想把周边也走透的人',
+            slogan: '往城外多走一步，用山水、古建与博物馆读懂城市的来处。',
+            move: '这一程会出城或走远一点，优先地铁+公交/景区直通车，出发前确认末班时间。'
         }
     ];
 
@@ -175,7 +175,7 @@
             return [food(foods[bi], '本地早餐'), food(foods[li], '本地午饭'), food(foods[di], '本地晚饭')];
         }
 
-        // 按线路气质分配景点：烟火线优先街巷/夜市，慢行线优先公园/山水，初见线留给城市名片
+        // 按线路气质分配景点：市井线优先街巷/夜市，纵深线优先山水/古建，初见线留给城市名片
         var used = {};
         function takeBy(re, n) {
             var out = [];
@@ -191,8 +191,8 @@
             used[top] = 1;
             r1spots.push(top);
         }
-        var r3spots = takeBy(/街|巷|夜市|市场|古城|古镇|老街|小吃|市集|胡同/, 2);
-        var r2spots = takeBy(/公园|湖|山|河|湿地|植物园|动物园|寺|塔|园林|园|岛|湾|林/, 2);
+        var r2spots = takeBy(/街|巷|夜市|市场|古城|古镇|老街|小吃|市集|胡同|菜场|码头/, 2);
+        var r3spots = takeBy(/公园|湖|山|河|湿地|植物园|动物园|寺|塔|园林|园|岛|湾|林|石窟|古镇|遗址|博物馆/, 2);
         function fill(list) {
             while (list.length < 2) {
                 var hit = spots.filter(function (s) { return !used[s]; })[0];
@@ -204,24 +204,31 @@
                 list.push(hit);
             }
         }
-        fill(r1spots); fill(r3spots); fill(r2spots);
+        fill(r1spots); fill(r2spots); fill(r3spots);
 
         var pairs = [r1spots, r2spots, r3spots];
         var meals = [mealOf(0), mealOf(1), mealOf(2)];
         var nickname = tag || city;
 
-        var titles = [
-            nickname + '初见',
-            nickname + '慢行 · 半日人间',
-            nickname + '烟火 · 从早市到夜宵'
-        ];
-        var poems = [
-            '第一次来' + city + '，先把最有代表性的地方走一遍：' + pairs[0][0] + '、' + pairs[0][1] + '，' +
-                '地铁串起来，一天就够。',
-            '不追景点数量，从' + pairs[1][0] + '慢慢走到' + pairs[1][1] + '，把半天交给街巷、公园和一杯茶。',
-            '从' + meals[2][0].name + '开场，到' + meals[2][2].name + '收尾，中间用' + pairs[2][0] + '与' +
-                pairs[2][1] + '消食。吃是主线，风景是配菜。'
-        ];
+        // 优先使用城市专属的文化线路名与导语（city-routes.js），没有收录的城市再自动生成
+        var cityRoutes = (window.CITY_ROUTES && window.CITY_ROUTES[city]) || null;
+        var titles, poems;
+        if (cityRoutes && cityRoutes.length >= 3) {
+            titles = [cityRoutes[0].t, cityRoutes[1].t, cityRoutes[2].t];
+            poems = [cityRoutes[0].m, cityRoutes[1].m, cityRoutes[2].m];
+        } else {
+            titles = [nickname + '初见', nickname + '市井', city + '纵深'];
+            poems = [
+                '第一次来' + city + '，先把最有代表性的地方走一遍：' + pairs[0][0] + '、' + pairs[0][1] + '，一天就够。',
+                '从' + pairs[1][0] + '拐进' + pairs[1][1] + '，跟着菜市场和老街走，尝一口本地人的日常。',
+                '往城外多走一步，' + pairs[2][0] + '与' + pairs[2][1] + '把' + city + '的山水与旧时光翻开。'
+            ];
+        }
+        function coverImage(spot) {
+            return 'https://tse1-mm.cn.bing.net/th?q=' +
+                encodeURIComponent(city + ' ' + spot + ' 景点 实景 风景') +
+                '&w=960&h=600&c=7&rs=1&p=0&dpr=1.5&pid=1.7';
+        }
 
         var times = [
             ['07:40', '09:10', '12:20', '14:00', '18:30'],
@@ -233,21 +240,21 @@
             ['早点吃扎实一点，今天靠地铁串起城市名片。找本地人排队的早餐铺，别在酒店吃。',
              '在下一站附近解决午饭，把时间留给景点；点一份招牌主食加一碗汤就够。',
              '收尾用一顿正经本地菜，吃完顺着夜景走一段，把这一天慢慢收住。'],
-            ['不赶时间，慢慢吃完再出门。上午只安排一处风景，吃饱了才有力气走。',
-             '找一家有窗的小馆，吃完坐一会儿，看看街上的人怎么生活。',
-             '晚餐清淡一点，饭后沿河边或老街散步，让一天的节奏慢下来。'],
-            ['跟着本地人进早市，先吃一轮再逛；看到现做现卖的摊子就停下来。',
+            ['从早市开始，先看本地人买什么，再找一家人多的小店坐下；吃完顺着老街慢慢逛。',
              '午饭专挑巷子里的小馆，点招牌不点套餐，人多的地方通常不会错。',
-             '夜市开吃，从街头吃到街尾；少量多样，留一点肚子给下一摊。']
+             '傍晚回到街区，边逛边吃，少量多样，把胃口留给最后一摊。'],
+            ['早点出发，路上时间留宽一点；包里带水和一点干粮，景区里不一定好买。',
+             '午饭在景区外或镇上解决，比景区门口实在；吃完再进下一处。',
+             '回城后用一顿热饭收尾，别再安排新景点，把体力留给明天。']
         ];
 
         var spotDetail = [
             ['第一眼就该记住的地方。建议开门就到，避开旅行团；拍照往侧门或高处走，人少构图也舒展。',
              '下午留给第二处地标，逛完正好接上晚餐。门票与开放时间以景区当日公示为准。'],
-            ['把脚步放慢，绕开主路走一圈，树荫、长椅和本地人的日常比打卡点更值得。',
-             '傍晚光线最好的时候到第二处，坐一会儿再走，不急着赶下一个点。'],
-            ['白天先看它的样子，晚上再回来吃一圈；老街的店铺下午才陆续开门。',
-             '傍晚是这类地方最好看的时候，逛完直接接上夜市晚餐。']
+            ['从主街拐进小巷，菜市场、老铺子和骑楼比打卡点更有意思；边走边吃，别急着赶路。',
+             '傍晚光线最好的时候到第二处，找家临街的小店坐下，看街上的人怎么生活。'],
+            ['路程稍远，建议提前查好交通和开放时间；山水类景点看天气，雨雪天改走博物馆。',
+             '第二处留给古建或遗址，慢慢看碑刻与格局，比拍照更值得。']
         ];
 
         var plans = STYLES.map(function (st, i) {
@@ -284,7 +291,7 @@
             return {
                 index: i, no: st.no, mode: st.mode, icon: st.icon, color: st.color,
                 audience: st.audience, title: titles[i], poem: poems[i],
-                move: st.move, nodes: nodes
+                cover: coverImage(p[0]), move: st.move, nodes: nodes
             };
         });
 
@@ -309,19 +316,24 @@
             return '<article class="cr-card' + (clickable ? ' is-clickable' : '') + '" data-route="' + p.index + '"' +
                 ' style="--rc:' + p.color + '"' +
                 (clickable ? ' role="button" tabindex="0" aria-pressed="false" aria-controls="cgDayList"' : '') + '>' +
-                '<div class="cr-card-top"><span class="cr-no">' + esc(p.no) + '</span>' +
-                '<span class="cr-mode"><i class="fas ' + p.icon + '"></i> ' + esc(p.mode) + '</span></div>' +
+                '<div class="cr-cover">' +
+                '<img src="' + esc(p.cover) + '" alt="' + esc(p.title) + '" loading="lazy" decoding="async" ' +
+                'onerror="this.onerror=null;this.src=\'images/city-fallback.jpg\'">' +
+                '<span class="cr-no">' + esc(p.no) + '</span>' +
+                '<span class="cr-mode"><i class="fas ' + p.icon + '"></i> ' + esc(p.mode) + '</span>' +
+                '</div>' +
+                '<div class="cr-card-body">' +
                 '<h4>' + esc(p.title) + '</h4>' +
                 '<p class="cr-slogan">' + esc(p.poem) + '</p>' +
                 '<div class="cr-audience">' + esc(p.audience) + '</div>' +
-                '<ol class="cr-nodes">' + p.nodes.map(nodeHtml).join('') + '</ol>' +
-                '</article>';
+                (clickable ? '<span class="cr-more">看这条线路的 5 个节点 <i class="fas fa-arrow-down"></i></span>' : '') +
+                '</div></article>';
         }).join('');
 
         var head = opt.bare ? '' :
             '<div class="cr-head"><h3><i class="fas fa-route"></i> 三条线路 · 三种走法</h3>' +
-            '<p>同一个城市，三种节奏。每条线路只安排「早餐 → 一处风景 → 午餐 → 一处风景 → 晚餐」，' +
-            '按你手里的时间选一条走。</p></div>';
+            '<p>三条线路各有各的名字与节奏。先看哪条像你，再展开下面这条线路的 5 个节点：' +
+            '早餐 → 一处风景 → 午餐 → 一处风景 → 晚餐。</p></div>';
 
         return '<div class="cr-wrap' + (opt.bare ? ' is-bare' : '') + '">' + head +
             '<div class="cr-grid">' + cards + '</div></div>';
