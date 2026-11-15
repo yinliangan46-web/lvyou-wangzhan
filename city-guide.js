@@ -20,6 +20,15 @@
     function priceText(p) {
         return String(p == null ? '' : p).replace(/[¥￥]/g, '').trim();
     }
+    // 景点/美食详情页链接
+    function detailLink(kind, n) {
+        var p = new URLSearchParams();
+        p.set('type', kind);
+        p.set('name', n);
+        if (name) p.set('city', name);
+        p.set('back', location.pathname + location.search);
+        return 'spot-detail.html?' + p.toString();
+    }
     // 桌面/平板多列网格最后一行常留空位，补同底色占位块，避免出现深色缺口
     function fillGrid(id) {
         var grid = document.getElementById(id);
@@ -709,7 +718,8 @@
         if (s.ticket) meta.push('<span>门票 ' + esc(priceText(s.ticket)) + '</span>');
         if (s.coord) meta.push('<span>地图可定位</span>');
         return '<article class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '" role="button" tabindex="0" aria-label="在地图查看' + esc(s.name) + '">' +
-            '<div class="cg-spot-media">' + photoImg(s.name, 'spot', name + s.name + '实景') + '<span class="n">' + s.idx + '</span></div>' +
+            '<div class="cg-spot-media"><a class="cg-media-link" href="' + detailLink('spot', s.name) + '" aria-label="查看' + esc(s.name) + '详细介绍">' +
+            photoImg(s.name, 'spot', name + s.name + '实景') + '</a><span class="n">' + s.idx + '</span></div>' +
             '<div class="cg-spot-body"><span class="cg-spot-tag">' + esc(s.type) + '</span>' +
             '<h3>' + esc(s.name) + '</h3>' +
             '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></article>';
@@ -868,10 +878,12 @@
             }
         }
         $('cgSpotGrid').addEventListener('click', function (e) {
+            if (e.target.closest('a')) return;
             locateSpot(e.target.closest('.cg-spot'));
         });
         $('cgSpotGrid').addEventListener('keydown', function (e) {
             if (e.key !== 'Enter' && e.key !== ' ') return;
+            if (e.target.closest('a')) return;
             e.preventDefault();
             locateSpot(e.target.closest('.cg-spot'));
         });
@@ -885,7 +897,8 @@
         : '站内暂未收录这座城市的具体美食清单，可以先从本地小吃、老字号和夜市入手。';
     if (foods.length) {
         $('cgFoodGrid').innerHTML = foods.slice(0, 9).map(function (f) {
-            return '<article class="cg-food"><div class="cg-food-media">' + photoImg(f.name, 'food', name + f.name) + '</div>' +
+            return '<article class="cg-food"><div class="cg-food-media"><a class="cg-media-link" href="' + detailLink('food', f.name) + '" aria-label="查看' + esc(f.name) + '详细介绍">' +
+                photoImg(f.name, 'food', name + f.name) + '</a></div>' +
                 '<div class="cg-food-body"><div class="top"><h3>' + esc(f.name) + '</h3>' +
                 (f.price ? '<span class="price">' + esc(f.price) + '</span>' : '') + '</div>' +
                 (f.desc ? '<p>' + esc(f.desc) + '</p>' : '<p>' + esc(name) + '的具体地方风味，点菜时可直接报菜名，优先选择本地人常去的餐馆。</p>') + '</div></article>';

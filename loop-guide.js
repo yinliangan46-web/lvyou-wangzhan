@@ -25,6 +25,14 @@
             (eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"') +
             ' onerror="this.onerror=null;this.src=\'' + esc(fallback) + '\'">';
     }
+    function detailHref(kind, n) {
+        var p = new URLSearchParams();
+        p.set('type', kind);
+        p.set('name', n);
+        p.set('loop', key);
+        p.set('back', location.pathname + location.search);
+        return 'spot-detail.html?' + p.toString();
+    }
 
     /* ---------- 主题与文档信息 ---------- */
     document.documentElement.style.setProperty('--accent', g.accent || '#b45309');
@@ -85,8 +93,9 @@
     /* ---------- 05 美食 ---------- */
     $('lgFoodGrid').innerHTML = (g.foods || []).map(function (f, i) {
         return '<article class="lg-card">' +
-            '<div class="lg-card-media">' + imgTag(f.q, g.name + ' · ' + f.n, 'images/food-fallback.jpg') +
-            '<span class="lg-num">' + String(i + 1).padStart(2, '0') + '</span></div>' +
+            '<div class="lg-card-media"><a class="lg-media-link" href="' + detailHref('food', f.n) + '" aria-label="查看' + esc(f.n) + '详细介绍">' +
+            imgTag(f.q, g.name + ' · ' + f.n, 'images/food-fallback.jpg') +
+            '</a><span class="lg-num">' + String(i + 1).padStart(2, '0') + '</span></div>' +
             '<div class="lg-card-body"><h3>' + esc(f.n) + '</h3><p>' + esc(f.d) + '</p>' +
             '<div class="lg-card-meta"><span><i class="fas fa-location-dot"></i>' + esc(f.w || '沿途') + '</span></div></div></article>';
     }).join('');
@@ -94,8 +103,9 @@
     /* ---------- 06 景点 ---------- */
     $('lgSpotGrid').innerHTML = (g.spots || []).map(function (s, i) {
         return '<article class="lg-card">' +
-            '<div class="lg-card-media">' + imgTag(s.q, g.name + ' · ' + s.n, 'images/city-fallback.jpg') +
-            '<span class="lg-num">' + String(i + 1).padStart(2, '0') + '</span></div>' +
+            '<div class="lg-card-media"><a class="lg-media-link" href="' + detailHref('spot', s.n) + '" aria-label="查看' + esc(s.n) + '详细介绍">' +
+            imgTag(s.q, g.name + ' · ' + s.n, 'images/city-fallback.jpg') +
+            '</a><span class="lg-num">' + String(i + 1).padStart(2, '0') + '</span></div>' +
             '<div class="lg-card-body"><h3>' + esc(s.n) + '</h3><p>' + esc(s.d) + '</p>' +
             '<div class="lg-card-meta"><span><i class="fas fa-location-dot"></i>' + esc(s.loc || '沿线') + '</span>' +
             '<span><i class="fas fa-ticket"></i>' + esc(s.ticket || '以景区公告为准') + '</span></div></div></article>';
