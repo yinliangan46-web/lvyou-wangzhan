@@ -1446,7 +1446,7 @@ function openProvinceModal(provinceKey) {
     // 城市 grid（有坐标的都能点进详情）
     const citiesHtml = (provData.cities || []).map(c => {
         const coordOk = !!_cc(c);
-        const cityImg = window.CITY_IMG_COLLIDE[c.name] ? window.cityHeroImage('', c.name) : ((c.img && !/text_to_image/.test(c.img)) ? c.img : '');
+        const cityImg = window.CITY_IMG_COLLIDE[c.name] || ((c.img && !/text_to_image/.test(c.img)) ? c.img : '');
         return `
         <div class="dest-card china-card prov-city-card" onclick="openProvinceCityModal('${c.key}','${c.name}','${provData.name}')" style="cursor:pointer" title="${coordOk ? '查看详情' : '坐标加载中'}">
             ${cityImg ? `<div class="dest-img"><img src="${cityImg}" alt="${c.name}" loading="lazy"></div>` : ''}
@@ -1637,8 +1637,14 @@ function showProvinceOptionDetail(optionId) {
 
 
 // ========== 动态城市富数据生成器（与青甘大环线同标准） ==========
-// 拼音重名：这些城市与同名拼音城市共用一张图，改用对应城市的生成图
-window.CITY_IMG_COLLIDE = { '宿州': 1, '台州': 1, '抚州': 1, '玉林': 1, '宜春': 1 };
+// 拼音重名：这些城市与同名拼音城市共用一张图，改用站内独立实景图
+window.CITY_IMG_COLLIDE = {
+    '宿州': 'images/cities/suzhou-anhui.jpg',
+    '台州': 'images/cities/taizhou-zhejiang.jpg',
+    '抚州': 'images/cities/fuzhou-jiangxi.jpg',
+    '玉林': 'images/cities/yulin-guangxi.jpg',
+    '宜春': 'images/cities/yichun-jiangxi.jpg'
+};
 
 // ========== 城市实景图：优先站内 309 座城市实景，缺失时用生成图 ==========
 window.cityHeroImage = function (key, name) {
@@ -1931,8 +1937,8 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
     }
 
     // === 基础字段 ===
-    const baseImg = (provCity && provCity.img && !window.CITY_IMG_COLLIDE[cityName]) ? provCity.img
-        : (dd && dd.img) || window.cityHeroImage('', cityName);
+    const baseImg = window.CITY_IMG_COLLIDE[cityName]
+        || ((provCity && provCity.img) ? provCity.img : ((dd && dd.img) || window.cityHeroImage('', cityName)));
     const baseRating = (dd && dd.rating) || (provCity && provCity.rating) || 4.5;
     const baseDays = (dd && dd.days) || '2天1晚';
     const basePrice = (dd && dd.price) || '¥1,299起';
