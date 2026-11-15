@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#111827" />
+    <meta name="theme-color" content="#101722" />
     <title>景点 / 美食详情 | MYL 旅行</title>
-    <meta name="description" content="MYL 旅行详情页：景点与美食的多维度介绍，包含看点、玩法、实用信息与周边推荐。" />
+    <meta name="description" content="MYL 旅行详情页：景点与美食的多维度介绍。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://tse1-mm.cn.bing.net" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="spot-detail.css?v=20261119a" />
+    <link rel="stylesheet" href="spot-detail.css?v=20261120a" />
 </head>
 <body>
 <div class="sd-progress"><span id="sdProgress"></span></div>
@@ -20,7 +20,7 @@
     <a class="sd-brand" href="index.html" aria-label="返回 MYL 旅行">
         <strong>MYL</strong><span>Travel Note</span>
     </a>
-    <div class="sd-tabs" id="sdTabs" role="tablist"></div>
+    <div class="sd-links" id="sdLinks"></div>
     <button class="sd-share" id="sdShare" type="button" aria-label="复制本页链接">
         <i class="fas fa-link"></i><span>复制链接</span>
     </button>
@@ -31,12 +31,9 @@
     <div class="sd-hero-shade"></div>
     <div class="sd-hero-inner">
         <p class="sd-kicker" id="sdKicker"></p>
-        <div class="sd-title-row">
-            <span class="sd-type" id="sdType"></span>
-            <h1 id="sdTitle"></h1>
-        </div>
-        <p class="sd-sub" id="sdSub"></p>
-        <div class="sd-quick" id="sdQuick"></div>
+        <h1 id="sdTitle"></h1>
+        <p class="sd-slogan" id="sdSlogan"></p>
+        <div class="sd-meta" id="sdMeta"></div>
         <div class="sd-hero-actions">
             <a class="sd-btn sd-btn-primary" id="sdBack" href="index.html"><i class="fas fa-arrow-left"></i> 返回百科</a>
             <button class="sd-btn" id="sdExpand" type="button"><i class="fas fa-up-right-and-down-left-from-center"></i> 看大图</button>
@@ -44,18 +41,13 @@
     </div>
 </header>
 
-<main class="sd-main">
-    <section class="sd-panel in" id="panel-overview" role="tabpanel"></section>
-    <section class="sd-panel" id="panel-play" role="tabpanel"></section>
-    <section class="sd-panel" id="panel-info" role="tabpanel"></section>
-    <section class="sd-panel" id="panel-nearby" role="tabpanel"></section>
-</main>
+<main class="sd-main" id="sdMain"></main>
 
 <footer class="sd-foot">
     <div class="sd-foot-inner">
         <div>
             <b>MYL 旅行</b>
-            <p>景点与美食的多维度速览，出发前 3 分钟建立整体印象。</p>
+            <p>把景点与美食讲清楚，出发前几分钟建立整体印象。</p>
         </div>
         <a class="sd-btn" id="sdFootBack" href="index.html"><i class="fas fa-arrow-left"></i> 返回百科</a>
     </div>
@@ -71,6 +63,6 @@
 <script src="city-data.js"></script>
 <script src="province-data-all.js"></script>
 <script src="loop-guide-data.js"></script>
-<script src="spot-detail.js?v=20261119a"></script>
+<script src="spot-detail.js?v=20261120a"></script>
 </body>
 </html>

@@ -21,8 +21,8 @@
             '&w=' + (w || 720) + '&h=' + (h || 480) + '&c=7&rs=1&p=0&dpr=1.5&pid=1.7';
     }
     function imgTag(q, alt, fallback, eager) {
-        return '<img src="' + esc(photo(q)) + '" alt="' + esc(alt) + '"' +
-            (eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"') +
+        return '<img src="' + esc(photo(q)) + '" alt="' + esc(alt) + '" width="800" height="500"' +
+            (eager ? ' fetchpriority="high"' : ' decoding="async"') +
             ' onerror="this.onerror=null;this.src=\'' + esc(fallback) + '\'">';
     }
     function detailHref(kind, n) {
