@@ -119,6 +119,37 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
     .sd-links a { padding: 7px 9px; font-size: 12px; }
     .sd-share span { display: none; }
 }
+/* ---------- 冷知识 / 顺路推荐 / 打卡清单 ---------- */
+.sd-fact { margin-top: 18px; padding: 16px 18px; background: var(--sd-card); border: 1px solid var(--sd-line); border-left: 2px solid var(--sd-accent); }
+.sd-fact b { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .16em; color: var(--sd-accent); font-weight: 500; }
+.sd-fact p { margin-top: 8px; font-size: 13.5px; line-height: 1.9; color: var(--sd-ink2); }
+.sd-fact button { margin-top: 12px; font-size: 12px; color: var(--sd-accent); display: inline-flex; align-items: center; gap: 6px; }
+.sd-fact button:hover { opacity: .75; }
+
+.sd-rel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.sd-rel-card { display: block; background: var(--sd-card); border: 1px solid var(--sd-line); border-radius: 2px; overflow: hidden; transition: transform .22s ease, box-shadow .22s ease; }
+.sd-rel-card:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(20, 32, 48, .1); }
+.sd-rel-card img { width: 100%; height: 118px; object-fit: cover; background: #eef1f4; }
+.sd-rel-card div { padding: 10px 12px; }
+.sd-rel-card b { display: block; font-size: 13px; font-weight: 500; }
+.sd-rel-card span { display: block; margin-top: 3px; font-size: 10.5px; letter-spacing: .08em; color: var(--sd-muted); }
+
+.sd-check { border: 1px solid var(--sd-line); background: var(--sd-card); padding: 16px 18px; }
+.sd-check-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12.5px; }
+.sd-check-head b { font-weight: 500; font-family: var(--sd-serif); font-size: 14px; }
+.sd-check-head em { font-style: normal; font-size: 11px; color: var(--sd-muted); }
+.sd-check ul { list-style: none; margin-top: 10px; display: grid; gap: 8px; }
+.sd-check li label { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--sd-ink2); line-height: 1.7; cursor: pointer; }
+.sd-check input { margin-top: 4px; accent-color: var(--sd-accent); width: 14px; height: 14px; flex: none; }
+.sd-check li.on label { color: var(--sd-muted); text-decoration: line-through; }
+.sd-check-bar { margin-top: 12px; height: 3px; background: #eceff3; }
+.sd-check-bar span { display: block; height: 100%; width: 0; background: var(--sd-accent); transition: width .3s ease; }
+
+.sd-btn.on { background: #fff; color: #b4443a; border-color: #fff; }
+
+@media (max-width: 700px) {
+    .sd-rel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 600px) {
     .sd-hero { min-height: 86svh; }
     .sd-brand span { display: none; }
@@ -129,3 +160,4 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
     .sd-flavor { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .sd-sec { padding: 24px 0; }
 }
+

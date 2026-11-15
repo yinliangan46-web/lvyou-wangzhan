@@ -2829,3 +2829,9 @@ a.hotel-card-link:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rg
     .rich-photo-card img { height: 120px; }
     .rich-food-grid { grid-template-columns: 1fr; }
 }
+
+/* 景点 / 美食卡片：点击进入详情页 */
+.rich-link { display: block; color: inherit; text-decoration: none; height: 100%; }
+.rich-link figure, .rich-link .rich-food-card { margin: 0; height: 100%; transition: transform .22s ease, box-shadow .22s ease; }
+.rich-link:hover figure, .rich-link:hover .rich-food-card { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(15, 23, 42, .12); }
+.rich-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }

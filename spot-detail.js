@@ -21,6 +21,8 @@
     var info = { name: NAME, city: CITY, region: '', loopName: '', desc: '', ticket: '', price: '', q: '', loc: '', tip: '' };
     var detail = null;
     var nextSpot = '';
+    var relSpots = [];
+    var relFoods = [];
 
     function provinceOf(cityName, fallback) {
         var provs = window.PROVINCES_ALL || [];
@@ -54,10 +56,21 @@
             }
         });
         if (!IS_FOOD && peers[0]) nextSpot = txt(peers[0].n);
+        if (!IS_FOOD) {
+            relSpots = peers.slice(0, 4).map(function (x) { return txt(x.n); }).filter(Boolean);
+            relFoods = (g.foods || []).slice(0, 3).map(function (x) { return txt(x.name || x.n); }).filter(Boolean);
+        } else {
+            relFoods = peers.slice(0, 4).map(function (x) { return txt(x.name || x.n); }).filter(Boolean);
+        }
     }
 
     var CD = window.CITY_DETAIL || {};
-    if (CITY && CD[CITY]) detail = CD[CITY];
+    var cityByName = {};
+    Object.keys(CD).forEach(function (k) {
+        var d = CD[k];
+        if (d && d.name) cityByName[d.name] = d;
+    });
+    if (CITY && (CD[CITY] || cityByName[CITY])) detail = CD[CITY] || cityByName[CITY];
     if (!detail) {
         Object.keys(CD).forEach(function (k) {
             var d = CD[k];
@@ -89,10 +102,23 @@
                     info.price = info.price || txt(f.price || f.p);
                 }
             });
+            if (!relFoods.length) {
+                relFoods = (detail.foods || []).map(function (f) { return f && f.name; })
+                    .filter(function (n) { return n && n !== NAME; }).slice(0, 4);
+            }
         } else {
             var pins = detail.routePins || [];
             var at = pins.indexOf(NAME);
             if (at >= 0 && pins[at + 1] && !nextSpot) nextSpot = pins[at + 1];
+            if (!relSpots.length) {
+                relSpots = pins.filter(function (p) {
+                    return p && p !== NAME && !/自由活动|抵达|返程|退房|前往|出发|入住|午餐|晚餐|早餐|机场|车站|高铁|火车站|地铁|酒店|民宿|客栈|集合/.test(p);
+                }).slice(0, 5);
+            }
+            if (!relFoods.length) {
+                relFoods = (detail.foods || []).map(function (f) { return f && f.name; })
+                    .filter(Boolean).slice(0, 3);
+            }
             (detail.itinerary || []).forEach(function (day) {
                 (day.timeline || []).forEach(function (t) {
                     if (String(t.activity || '').indexOf(NAME) < 0) return;
@@ -280,11 +306,81 @@
         }).join('') + '</div>';
     }
 
+    var FACTS = {
+        nature: [
+            '湖水的蓝并非染料，而是水深与矿物质对光线的选择性吸收。',
+            '高原湖一天里会换三次颜色：清晨偏灰、正午偏蓝、日落偏金。',
+            '“天空之镜”需要无风、浅水和一个够低的机位同时成立。',
+            '山口的风通常比湖边大两级，拍照前先护住帽子和镜头。'
+        ],
+        heritage: [
+            '老建筑的木构件多靠榫卯咬合，可以不用一颗铁钉。',
+            '屋檐下的斗拱既是装饰，也是实打实的承重结构。',
+            '不少殿宇的朝向会顺着山势或水口微调，并非严格正南。',
+            '碑刻上的字，往往比建筑本身更能确定确切年代。'
+        ],
+        museum: [
+            '展柜多用低反射玻璃，镜头斜一点就能避开倒影。',
+            '一级文物未必最大，年代与稀缺性才是关键。',
+            '不少镇馆之宝长期轮换展出，出发前先查官网。',
+            '讲解器里的推荐路线，通常比随便逛省一半时间。'
+        ],
+        street: [
+            '老街的门面常翻新，真正的老墙多半藏在巷子深处。',
+            '夜市最热闹的是 19:30-21:00，摊主状态也最好。',
+            '排队最长的不一定最好吃，本地人打包带走的才是。',
+            '同一条街白天和夜里是两种气质，值得走两遍。'
+        ],
+        landmark: [
+            '地标的高度常被误记，真正的观景点反而在远处。',
+            '亮灯时间随季节调整，日落后 15-30 分钟是最佳窗口。',
+            '隔一条街拍同一栋楼，线条往往更完整。',
+            '地标周边的老街区，常常比地标本身更好逛。'
+        ],
+        food: [
+            '同一道菜，早餐店和夜宵摊的做法常常完全不同。',
+            '本地人点单会说“少辣”“走青”，是行话也是暗号。',
+            '很多招牌菜的最佳赏味期，只有出锅后的十分钟。',
+            '看一家店好不好，先看本地人打包带走的是什么。'
+        ]
+    };
+
+    function relHref(name, kind) {
+        var qs = 'type=' + kind + '&name=' + encodeURIComponent(name);
+        qs += LOOP ? '&loop=' + encodeURIComponent(LOOP) : '&city=' + encodeURIComponent(info.city);
+        qs += '&back=' + encodeURIComponent(BACK);
+        return 'spot-detail.html?' + qs;
+    }
+    function relCard(name, kind) {
+        var q = (info.city || '') + ' ' + name + (kind === 'food' ? ' 美食 实拍' : ' 景点 实景');
+        return '<a class="sd-rel-card" href="' + relHref(name, kind) + '">' +
+            '<img src="' + photo(q) + '" alt="' + esc(name) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' +
+            (kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg') + '\'">' +
+            '<div><b>' + esc(name) + '</b><span>' + (kind === 'food' ? '美食 · 查看详情' : '景点 · 查看详情') + '</span></div></a>';
+    }
+    function factBlock(kind) {
+        return '<div class="sd-fact" data-kind="' + kind + '">' +
+            '<b><i class="fas fa-lightbulb"></i> 冷知识</b>' +
+            '<p id="sdFactText">' + esc(FACTS[kind][0]) + '</p>' +
+            '<button type="button" id="sdFactBtn"><i class="fas fa-arrows-rotate"></i> 换一条</button></div>';
+    }
+    function checkBlock(items) {
+        return '<div class="sd-check" id="sdCheck">' +
+            '<div class="sd-check-head"><b>出发前打卡清单</b><em id="sdCheckCount">0/' + items.length + '</em></div>' +
+            '<ul>' + items.map(function (t, i) {
+                return '<li><label><input type="checkbox" data-i="' + i + '">' + esc(t) + '</label></li>';
+            }).join('') + '</ul>' +
+            '<div class="sd-check-bar"><span id="sdCheckBar"></span></div></div>';
+    }
+
     var html = '';
 
     if (!IS_FOOD) {
         // 位置交通
-        var locText = '位于' + (info.city || info.region) + (info.loc ? '，' + info.loc : '') + '。';
+        var locBase = info.loc
+            ? (/环线|自驾/.test(info.city) ? info.loc : info.city + '，' + info.loc)
+            : (info.city || info.region);
+        var locText = '位于' + locBase + '。';
         var routeText = '从市区出发，打车约 20-40 分钟；公交可到景区门口，自驾建议提前确认停车位。'
             + (nextSpot ? '与「' + nextSpot + '」串成半日线，路线更顺。' : '把周边点位安排在同一段步行范围内，能省下不少来回。');
         var loc2 = '建议把' + NAME + '安排在' + bestTime[cat] + '，光线和人流都更友好。';
@@ -297,7 +393,7 @@
         // 文化故事
         var story1 = info.desc || (NAME + '是' + (info.city || info.region) + '很有代表性的一站，'
             + '它的价值不只在画面，也在它和这座城的关系。');
-        html += sec('story', '03', '文化故事', 'Story', p(story1) + p(STORY[cat]));
+        html += sec('story', '03', '文化故事', 'Story', p(story1) + p(STORY[cat]) + factBlock(cat));
 
         // 打卡贴士
         html += sec('tips', '04', '打卡贴士', 'Tips', list(TIPS[cat]));
@@ -310,11 +406,20 @@
             + '</p>';
         html += sec('who', '05', '适配人群', 'Who', whoBody)
             + '<p class="sd-note">门票、开放时间与预约政策以景区当日公告为准。</p>';
+
+        var relList = relSpots.slice(0, 3).map(function (n) { return relCard(n, 'spot'); })
+            .concat(relFoods.slice(0, 2).map(function (n) { return relCard(n, 'food'); }));
+        if (relList.length) {
+            html += sec('nearby', '06', '顺路再去', 'Nearby',
+                '<div class="sd-rel-grid">' + relList.join('') + '</div>');
+        }
+        html += sec('check', relList.length ? '07' : '06', '打卡清单', 'Checklist',
+            checkBlock(['到现场拍一张构图舒展的照片', '走完主线，找到一处自己的私藏机位', '在周边吃一顿本地味道']));
     } else {
         // 原料工艺
         var craft = info.desc || (NAME + '是' + info.city + '很有代表性的本地味道，核心在于食材新鲜和火候准确。');
         html += sec('craft', '01', '原料工艺', 'Craft',
-            p(craft) + p('以本地常见食材为主，讲究现做现吃；调味不复杂，火候和出锅时间才是成败关键。'));
+            p(craft) + p('以本地常见食材为主，讲究现做现吃；调味不复杂，火候和出锅时间才是成败关键。') + factBlock('food'));
 
         // 口感
         var fl = { name: '本地风味', score: 74 };
@@ -343,6 +448,14 @@
             ['搭配', '配一杯本地茶饮或清汤，整顿饭的节奏更舒服。']
         ];
         html += sec('tips', '04', '本地小贴士', 'Tips', list(tipsFood));
+
+        var relFood = relFoods.slice(0, 4).map(function (n) { return relCard(n, 'food'); });
+        if (relFood.length) {
+            html += sec('nearby', '05', '顺路再去', 'Nearby',
+                '<div class="sd-rel-grid">' + relFood.join('') + '</div>');
+        }
+        html += sec('check', relFood.length ? '06' : '05', '打卡清单', 'Checklist',
+            checkBlock(['按本地默认吃法先尝原味', '找到一家本地人排队的店', '记住这一口的味道']));
     }
 
     $('sdMain').innerHTML = html;
@@ -370,6 +483,67 @@
     }
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
+    /* ---------- 冷知识轮换 ---------- */
+    var factIdx = 0;
+    var factBtn = $('sdFactBtn');
+    if (factBtn) {
+        factBtn.addEventListener('click', function () {
+            var list = FACTS[IS_FOOD ? 'food' : cat] || [];
+            if (!list.length) return;
+            factIdx = (factIdx + 1) % list.length;
+            var node = $('sdFactText');
+            node.style.opacity = 0;
+            setTimeout(function () { node.textContent = list[factIdx]; node.style.opacity = 1; }, 140);
+        });
+    }
+
+    /* ---------- 心愿单 ---------- */
+    var WISH_KEY = 'myl_wishlist';
+    var wishId = TYPE + '|' + NAME + '|' + (LOOP || info.city);
+    function readWish() {
+        try { return JSON.parse(localStorage.getItem(WISH_KEY) || '[]') || []; } catch (e) { return []; }
+    }
+    function paintWish(on) {
+        var b = $('sdWish');
+        if (!b) return;
+        b.classList.toggle('on', on);
+        b.querySelector('i').className = (on ? 'fas' : 'far') + ' fa-heart';
+        b.querySelector('span').textContent = on ? '已加入心愿单' : '加入心愿单';
+    }
+    paintWish(readWish().indexOf(wishId) >= 0);
+    $('sdWish').addEventListener('click', function () {
+        var arr = readWish();
+        var at = arr.indexOf(wishId);
+        if (at >= 0) { arr.splice(at, 1); paintWish(false); toast('已从心愿单移除'); }
+        else { arr.push(wishId); paintWish(true); toast('已加入心愿单，可在本机查看'); }
+        try { localStorage.setItem(WISH_KEY, JSON.stringify(arr)); } catch (e) {}
+    });
+
+    /* ---------- 打卡清单 ---------- */
+    var CHECK_KEY = 'myl_check_' + TYPE + '_' + NAME;
+    var checkBoxes = Array.prototype.slice.call(document.querySelectorAll('#sdCheck input'));
+    function readCheck() {
+        try { return JSON.parse(localStorage.getItem(CHECK_KEY) || '{}') || {}; } catch (e) { return {}; }
+    }
+    function paintCheck() {
+        var done = checkBoxes.filter(function (c) { return c.checked; }).length;
+        $('sdCheckCount').textContent = done + '/' + checkBoxes.length;
+        $('sdCheckBar').style.width = (checkBoxes.length ? (done / checkBoxes.length) * 100 : 0) + '%';
+        checkBoxes.forEach(function (c) {
+            c.closest('li').classList.toggle('on', c.checked);
+        });
+    }
+    var savedCheck = readCheck();
+    checkBoxes.forEach(function (c) {
+        c.checked = !!savedCheck[c.getAttribute('data-i')];
+        c.addEventListener('change', function () {
+            savedCheck[c.getAttribute('data-i')] = c.checked;
+            try { localStorage.setItem(CHECK_KEY, JSON.stringify(savedCheck)); } catch (e) {}
+            paintCheck();
+        });
+    });
+    paintCheck();
 
     /* ---------- 大图 ---------- */
     function openLightbox(src) {

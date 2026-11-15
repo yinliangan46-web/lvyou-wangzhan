@@ -7491,9 +7491,37 @@ window.LOOP_ROUTES = [
         
         // 交通
         const transport = (data.transport || []).map(t => `<div class="transport-item"><div class="label">${safe(t.label)}</div><div class="value">${safe(t.value)}</div></div>`).join('');
-        const foods = (data.foods || []).map(f => `<li><strong>${safe(f.name)}</strong> — ${safe(f.desc)} <em style="color:var(--primary);font-weight:600">${safe(f.price)}</em></li>`).join('');
         const tips = (data.tips || []).map(t => `<li>${safe(t)}</li>`).join('');
         const budget = (data.budget || []).map(b => `<div class="budget-item"><div class="label">${safe(b.label)}</div><div class="value">${safe(b.value)}</div></div>`).join('');
+
+        // 景点 / 美食图片卡（可点开详情页）
+        const loopPhoto = (q, kind) => 'https://tse1-mm.cn.bing.net/th?q=' +
+            encodeURIComponent(q + (kind === 'food' ? ' 地道菜品 美食' : ' 景点 实景')) +
+            '&w=960&h=640&c=7&rs=1&p=0&dpr=1.5&pid=1.7';
+        const loopBack = encodeURIComponent('index.html#loops');
+        const spotImgs = (data.coverages || []).filter(s => String(s || '').trim());
+        const spotGallery = spotImgs.length ? `
+            <div class="modal-section rich-photo-section">
+                <h3><i class="fas fa-camera-retro"></i> 必游景点</h3>
+                <div class="rich-photo-grid">${spotImgs.map(s => `
+                    <a class="rich-link" href="spot-detail.html?type=spot&name=${encodeURIComponent(s)}&loop=${encodeURIComponent(data.id)}&back=${loopBack}" title="查看 ${safe(s)} 详情">
+                        <figure class="rich-photo-card">
+                            <img src="${loopPhoto(s, 'spot')}" alt="${safe(s)}实景" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'">
+                            <figcaption><strong>${safe(s)}</strong><span>查看详情</span></figcaption>
+                        </figure>
+                    </a>`).join('')}</div>
+            </div>` : '';
+        const foodGallery = (data.foods || []).length ? `
+            <div class="modal-section rich-photo-section">
+                <h3><i class="fas fa-utensils"></i> 必吃美食</h3>
+                <div class="rich-food-grid">${(data.foods || []).slice(0, 6).map(f => `
+                    <a class="rich-link" href="spot-detail.html?type=food&name=${encodeURIComponent(f.name)}&loop=${encodeURIComponent(data.id)}&back=${loopBack}" title="查看 ${safe(f.name)} 详情">
+                        <div class="rich-food-card">
+                            <img src="${loopPhoto(f.name, 'food')}" alt="${safe(f.name)}" loading="lazy" onerror="this.onerror=null;this.src='images/food-fallback.jpg'">
+                            <div class="rich-food-info"><strong>${safe(f.name)}</strong><p>${safe(f.desc)}</p><em>${safe(f.price)}</em></div>
+                        </div>
+                    </a>`).join('')}</div>
+            </div>` : '';
         
         // 标签
         const tagHtml = (data.tags || []).filter(t => String(t||'').trim()).map(t => `<span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:12px;font-size:.75rem;margin-right:6px">${safe(t)}</span>`).join('');
@@ -7503,16 +7531,13 @@ window.LOOP_ROUTES = [
         return `
             ${bannerHtml}
             ${mapHtml}
-            ${hlHtml ? `<div style="margin-bottom:12px">${hlHtml}</div>` : ''}
             ${tagHtml ? `<div style="margin-bottom:12px">${tagHtml}</div>` : ''}
             <div class="modal-section"><h3><i class="fas fa-info-circle"></i> 行程简介</h3><p>${safe(data.description)}</p><p style="color:var(--text-light);font-size:.85rem;margin-top:8px"><i class="fas fa-calendar-check"></i> 最佳出行时间：${safe(data.bestTime || '')}</p></div>
             <div class="modal-section"><h3><i class="fas fa-plane"></i> 大交通方案</h3>${makeFlightCard(data.flights)}${makeTrainCard(data.trains)}${transport ? `<div class="info-grid"><div class="info-card"><h5><i class="fas fa-bus"></i> 本地交通</h5>${transport}</div></div>` : ''}</div>
             <div class="modal-section"><h3><i class="fas fa-calendar-day"></i> 每日行程（共${(data.itinerary||[]).length}天）</h3>${itin}</div>
             <div class="modal-section"><h3><i class="fas fa-hotel"></i> 沿途住宿推荐</h3>${hotels}</div>
-            <div class="info-grid">
-                <div class="info-card"><h5><i class="fas fa-utensils"></i> 必吃美食</h5><ul>${foods}</ul></div>
-                ${(data.coverages||[]).length ? `<div class="info-card"><h5><i class="fas fa-star"></i> 必游景点</h5>${hlHtml}</div>` : ''}
-            </div>
+            ${spotGallery}
+            ${foodGallery}
             <div class="tips-warn"><h5><i class="fas fa-exclamation-triangle"></i> 避坑/安全提示</h5><ul>${tips}</ul></div>
             <div class="budget-bar"><h5><i class="fas fa-calculator"></i> 预算参考（人均）</h5><div class="budget-items">${budget}</div></div>
         `;
@@ -8912,10 +8937,13 @@ if (!data.itinerary || !data.itinerary.length) return;
             '<h3><i class="fas fa-camera-retro"></i> 必游景点实景</h3>' +
             '<div class="rich-photo-grid">' + spots.map(function (s) {
                 var meta = spotMeta(data, s);
-                return '<figure class="rich-photo-card">' +
+                return '<a class="rich-link" href="spot-detail.html?type=spot&name=' + encodeURIComponent(s) +
+                    '&city=' + encodeURIComponent(data.name || '') +
+                    '&back=' + encodeURIComponent('index.html') + '" title="查看 ' + safe(s) + ' 详情">' +
+                    '<figure class="rich-photo-card">' +
                     '<img src="' + photoUrl(data.name || '', s, 'spot') + '" alt="' + safe(s) + '实景" loading="lazy" onerror="this.onerror=null;this.src=\'images/city-fallback.jpg\'">' +
-                    '<figcaption><strong>' + safe(s) + '</strong>' + (meta ? '<span>' + safe(meta) + '</span>' : '') + '</figcaption>' +
-                    '</figure>';
+                    '<figcaption><strong>' + safe(s) + '</strong>' + (meta ? '<span>' + safe(meta) + '</span>' : '<span>查看详情</span>') + '</figcaption>' +
+                    '</figure></a>';
             }).join('') + '</div></div>';
     }
 
@@ -8925,10 +8953,13 @@ if (!data.itinerary || !data.itinerary.length) return;
             '<h3><i class="fas fa-utensils"></i> 美食推荐</h3>' +
             '<div class="rich-food-grid">' + foods.slice(0, 5).map(function (f) {
                 var meta = foodMeta(data, f);
-                return '<div class="rich-food-card">' +
+                return '<a class="rich-link" href="spot-detail.html?type=food&name=' + encodeURIComponent(f) +
+                    '&city=' + encodeURIComponent(data.name || '') +
+                    '&back=' + encodeURIComponent('index.html') + '" title="查看 ' + safe(f) + ' 详情">' +
+                    '<div class="rich-food-card">' +
                     '<img src="' + photoUrl(data.name || '', f, 'food') + '" alt="' + safe(f) + '" loading="lazy" onerror="this.onerror=null;this.src=\'images/food-fallback.jpg\'">' +
                     '<div class="rich-food-info"><strong>' + safe(f) + '</strong><p>' + safe(meta.desc) + '</p><em>' + safe(meta.price) + '</em></div>' +
-                    '</div>';
+                    '</div></a>';
             }).join('') + '</div></div>';
     }
 
