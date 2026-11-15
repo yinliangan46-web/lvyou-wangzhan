@@ -8,6 +8,11 @@
 
 .cr-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 
+/* 城市百科页：容器本身是旧的三列卡网格，这里改为整行承载新线路组件 */
+.cg-plan-cards { display: block !important; background: none !important; border: 0 !important; }
+.cg-plan-cards .cr-wrap { width: 100%; }
+.cg-plan-cards .cr-card { height: 100%; }
+
 .cr-card {
     position: relative;
     background: #fff;

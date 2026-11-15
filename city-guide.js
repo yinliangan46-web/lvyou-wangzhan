@@ -1028,9 +1028,10 @@
     }
 
     // 三条线路：三种走法，每条只保留 早餐→景点→午餐→景点→晚餐
+    var ch = window.CITY_HISTORY && window.CITY_HISTORY[name];
     var routePlans = window.buildCityRoutePlans ? window.buildCityRoutePlans({
         name: name,
-        tag: (cityRec && cityRec.tag) || '',
+        tag: (cityRec && cityRec.tag) || (ch && ch.alias) || '',
         spots: pins,
         foods: foods
     }) : [];
