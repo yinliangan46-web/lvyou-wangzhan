@@ -58,6 +58,7 @@
         }).filter(function (f) {
             var n = f && String(f.name || '').trim();
             if (!n || n.length > 18) return false;
+            if (/招牌菜|特色菜|特色小吃|必喝饮品|当地特色|本地风味|当季本地|必吃|美食$/.test(n)) return false;
             if (seen[n]) return false;
             seen[n] = 1;
             return true;

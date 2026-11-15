@@ -9109,7 +9109,7 @@ window.renderRichDetail = function(data) {
                     spots: (data.routePins || []).concat(
                         window.citySpotsFromDays ? window.citySpotsFromDays(data.itinerary) : []
                     ),
-                    foods: data.foods
+                    foods: (window.CITY_FOODS && window.CITY_FOODS[data.name]) || data.foods
                 }));
             } catch (e) { return ''; }
         })();
