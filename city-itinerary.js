@@ -39,7 +39,12 @@
         var seen = {};
         return (list || []).map(function (s) { return String(s || '').trim(); }).filter(function (s) {
             if (!s || s === city) return false;
-            if (/机场|车站|高铁|火车站|抵达|返程|送站|接站|入住|退房|酒店|民宿|自由活动|集合|解散|午餐|晚餐|早餐|夜宵/.test(s)) return false;
+            if (/机场|车站|高铁|火车站|汽车站|客运站|站$|抵达|返程|送站|接站|入住|退房|酒店|民宿|自由活动|集合|解散|午餐|晚餐|早餐|夜宵/.test(s)) return false;
+            // 近义去重：已有「双塔」时不再收「双塔寺」，已有「宽窄巷子」时不再收「宽窄巷」
+            var near = Object.keys(seen).filter(function (k) {
+                return k !== s && (k.indexOf(s) === 0 || s.indexOf(k) === 0);
+            })[0];
+            if (near) return false;
             if (seen[s]) return false;
             seen[s] = 1;
             return true;
@@ -65,10 +70,46 @@
         return f || { name: fallbackName, desc: '', price: '' };
     }
 
+    // 从原有逐日行程里补充可游览地点（柳巷、食品街、汾河公园这类），
+    // 让三条线路有足够素材，同时过滤掉餐饮、交通和住宿节点。
+    window.citySpotsFromDays = function (days) {
+        var out = [], seen = {};
+        var tail = /(街|巷|公园|广场|博物馆|美术馆|纪念馆|书院|古镇|古城|城墙|楼|宫|园|谷|峡|岛|湿地|村|祠|寺|塔|山|湖|河|桥|湾|林|寺)$/;
+        (days || []).forEach(function (d) {
+            (d.timeline || []).forEach(function (it) {
+                var a = String(it.activity || '').trim();
+                a = a.replace(/^(游览|前往|参观|逛|打卡|夜游|漫步|登|看|去|走进)\s*/, '');
+                a.split(/[+·、/]|→|—/).forEach(function (s) {
+                    s = s.replace(/[（(].*?[)）]/g, '').replace(/^\s*[：:]\s*/, '').trim();
+                    if (!s || s.length > 12) return;
+                    if (/机场|车站|高铁|火车|酒店|民宿|客栈|入住|退房|返程|抵达|出发|午餐|晚餐|早餐|夜宵|自由活动|集合|解散|味道|美食|小吃/.test(s)) return;
+                    if (!tail.test(s)) return;
+                    if (seen[s]) return;
+                    seen[s] = 1;
+                    out.push(s);
+                });
+            });
+        });
+        return out.slice(0, 8);
+    };
+
+    // 站内景点库（script.js 的 _knownLandmarks / city-landmarks.js）作为补充，
+    // 让三类走法尽量用上不同地点，避免三条线路反复出现同一个景点。
+    function extraSpots(city) {
+        var pools = [window.CITY_EXTRA_SPOTS, window._knownLandmarks, window.CITY_LANDMARKS];
+        for (var i = 0; i < pools.length; i++) {
+            var d = pools[i];
+            if (!d) continue;
+            var list = d[city] || d[city + '市'];
+            if (list && list.length) return list;
+        }
+        return [];
+    }
+
     window.buildCityRoutePlans = function (input) {
         input = input || {};
         var city = cleanName(input.name) || '这座城';
-        var spots = cleanSpots(input.spots, city);
+        var spots = cleanSpots((input.spots || []).concat(extraSpots(city)), city);
         var foods = cleanFoods(input.foods);
         var tag = String(input.tag || '').replace(/^[^·]*·/, '').trim();
 
@@ -76,25 +117,108 @@
         if (spots.length < 2) spots.push(spots[0]);
         if (!foods.length) foods = [{ name: '本地早餐' }, { name: '招牌菜' }, { name: '夜市小吃' }];
 
-        function spot(i) { return spots[i % spots.length]; }
-        function fd(i) { return food(foods[i % foods.length], '本地味道'); }
+        // 按“适不适合这一餐”挑菜，而不是死板轮转（避免元宵、烤鸭、口味虾当早餐）
+        var BF_RE = /可颂|面包|吐司|咖啡|粥|豆浆|油条|包子|汤包|蒸饺|馄饨|烧麦|烧卖|肠粉|糁|胡辣汤|锅巴菜|豆花|米粉|米线|面|粉|饼|馍|粑|川|头脑|杂割|麦片|酸奶|果汁|蛋|早茶|茶/;
+        var BF_BAD = /虾|蟹|火锅|烤鸭|烤鸡|蜗牛|鸭|鸡|酒|醋|鱼/;
+        var LUNCH_RE = /面|粉|饺|饭|米|小吃|馍|饼|包|馄饨|杂割|汤|粑/;
+        var DINNER_RE = /菜|火锅|烤|卤|炖|烧|肉|鱼|鸭|鸡|虾|蟹|杂割|煲|锅|酒|宴/;
+        var DINNER_BAD = /马卡龙|可颂|奶茶|冰淇淋|甜品|蛋糕/;
+        function idxPool(re) {
+            var out = [];
+            foods.forEach(function (f, i) { if (re.test(f.name)) out.push(i); });
+            return out;
+        }
+        var bfPool = idxPool(BF_RE).filter(function (i) { return !BF_BAD.test(foods[i].name); });
+        var lunchPool = idxPool(LUNCH_RE);
+        var dinnerPool = idxPool(DINNER_RE).filter(function (i) { return !DINNER_BAD.test(foods[i].name); });
+        var globalUse = {};
+        // 同类菜品在三条线路间尽量轮换，避免三张卡片的晚餐一模一样
+        function pickFood(pref, used, seed, allowWide, avoid) {
+            function lowest(list) {
+                var min = Infinity, top = [];
+                list.forEach(function (i) {
+                    var c = globalUse[i] || 0;
+                    if (c < min) { min = c; top = [i]; }
+                    else if (c === min) top.push(i);
+                });
+                return top[seed % top.length];
+            }
+            function bump(i) {
+                globalUse[i] = (globalUse[i] || 0) + 1;
+                return i;
+            }
+            function remain() {
+                var list = [];
+                foods.forEach(function (f, i) {
+                    if (used[i]) return;
+                    if (avoid && avoid.test(f.name)) return;
+                    list.push(i);
+                });
+                return list;
+            }
+            var cand = pref.filter(function (i) { return !used[i]; });
+            if (cand.length) {
+                var hit = lowest(cand);
+                if (!allowWide || !globalUse[hit]) return bump(hit);
+                var alt = remain();
+                return bump(alt.length ? lowest(alt) : hit);
+            }
+            var all = remain();
+            return bump(all.length ? lowest(all) : (seed % foods.length));
+        }
+        function mealOf(i) {
+            var used = {};
+            var bi = pickFood(bfPool, used, i, false, BF_BAD); used[bi] = 1;
+            var li = pickFood(lunchPool, used, i); used[li] = 1;
+            var di = pickFood(dinnerPool, used, i, true, DINNER_BAD);
+            return [food(foods[bi], '本地早餐'), food(foods[li], '本地午饭'), food(foods[di], '本地晚饭')];
+        }
 
-        var pairs = [
-            [spot(0), spot(1)],
-            [spot(2), spot(3)],
-            [spot(4), spot(5)]
-        ];
+        // 按线路气质分配景点：烟火线优先街巷/夜市，慢行线优先公园/山水，初见线留给城市名片
+        var used = {};
+        function takeBy(re, n) {
+            var out = [];
+            spots.forEach(function (s) {
+                if (out.length < n && !used[s] && re.test(s)) { out.push(s); used[s] = 1; }
+            });
+            return out;
+        }
+        var r1spots = [];
+        while (r1spots.length < 2) {
+            var top = spots.filter(function (s) { return !used[s]; })[0];
+            if (!top) break;
+            used[top] = 1;
+            r1spots.push(top);
+        }
+        var r3spots = takeBy(/街|巷|夜市|市场|古城|古镇|老街|小吃|市集|胡同/, 2);
+        var r2spots = takeBy(/公园|湖|山|河|湿地|植物园|动物园|寺|塔|园林|园|岛|湾|林/, 2);
+        function fill(list) {
+            while (list.length < 2) {
+                var hit = spots.filter(function (s) { return !used[s]; })[0];
+                if (!hit) {
+                    // 景点不够时允许跨线路复用，但同一条线路内不出现重复
+                    hit = spots.filter(function (s) { return list.indexOf(s) < 0; })[0] || spots[0];
+                }
+                used[hit] = 1;
+                list.push(hit);
+            }
+        }
+        fill(r1spots); fill(r3spots); fill(r2spots);
+
+        var pairs = [r1spots, r2spots, r3spots];
+        var meals = [mealOf(0), mealOf(1), mealOf(2)];
+        var nickname = tag || city;
 
         var titles = [
-            (tag ? tag + '初见' : city + '初见'),
-            '慢行 · 半日人间',
-            '烟火 · 从早市到夜宵'
+            nickname + '初见',
+            nickname + '慢行 · 半日人间',
+            nickname + '烟火 · 从早市到夜宵'
         ];
         var poems = [
             '第一次来' + city + '，先把最有代表性的地方走一遍：' + pairs[0][0] + '、' + pairs[0][1] + '，' +
                 '地铁串起来，一天就够。',
             '不追景点数量，从' + pairs[1][0] + '慢慢走到' + pairs[1][1] + '，把半天交给街巷、公园和一杯茶。',
-            '从' + fd(0).name + '开场，到' + fd(2).name + '收尾，中间用' + pairs[2][0] + '与' +
+            '从' + meals[2][0].name + '开场，到' + meals[2][2].name + '收尾，中间用' + pairs[2][0] + '与' +
                 pairs[2][1] + '消食。吃是主线，风景是配菜。'
         ];
 
@@ -130,7 +254,7 @@
             var t = times[i];
             var m = mealDetail[i];
             var s = spotDetail[i];
-            var b = fd(i), l = fd(i + 1), d = fd(i + 2);
+            var b = meals[i][0], l = meals[i][1], d = meals[i][2];
 
             function mealNode(type, icon, hh, f, detail) {
                 var price = f.price ? ('人均 ' + f.price) : '';

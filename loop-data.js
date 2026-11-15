@@ -9106,7 +9106,9 @@ window.renderRichDetail = function(data) {
                 return window.renderCityRoutePlans(window.buildCityRoutePlans({
                     name: data.name,
                     tag: data.tag || (h && h.alias) || '',
-                    spots: data.routePins,
+                    spots: (data.routePins || []).concat(
+                        window.citySpotsFromDays ? window.citySpotsFromDays(data.itinerary) : []
+                    ),
                     foods: data.foods
                 }));
             } catch (e) { return ''; }

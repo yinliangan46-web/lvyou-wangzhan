@@ -1032,7 +1032,7 @@
     var routePlans = window.buildCityRoutePlans ? window.buildCityRoutePlans({
         name: name,
         tag: (cityRec && cityRec.tag) || (ch && ch.alias) || '',
-        spots: pins,
+        spots: pins.concat(window.citySpotsFromDays ? window.citySpotsFromDays(days) : []),
         foods: foods
     }) : [];
     $('cgPlanCards').innerHTML = window.renderCityRoutePlans
