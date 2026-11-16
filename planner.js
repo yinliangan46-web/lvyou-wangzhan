@@ -2228,12 +2228,22 @@
                     reply = '已按你的要求更新行程。';
                 }
                 if (!aiCards && Array.isArray(res && res.cards)) aiCards = res.cards.slice(0, 8);
+                // 强制重渲染：地图 + 行程列表 + 保存
+                state.plan = buildPlan();
+                renderAll();
+                if (state.plan) renderResult();
+                saveLocal();
                 pushMsg('ai', reply + (changedAi && !useLocalRerender ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards);
             } catch (e) {
                 state.msgs.pop();
                 var fb = localReply(text);
                 var ch = applyActions(fb.actions);
                 var hint = '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">⚠️ ' + esc(formatCallError(e)) + '</div>';
+                // AI 挂了走 localReply，一样要重渲染
+                state.plan = buildPlan();
+                renderAll();
+                if (state.plan) renderResult();
+                saveLocal();
                 pushMsg('ai', (fb.reply || '已按你的要求更新行程。') +
                     (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hint, null, fb.cards);
             } finally {
@@ -2245,6 +2255,11 @@
                 var fb = localReply(text);
                 var changed = applyActions(fb.actions);
                 var out = fb.reply || '已按你的要求更新行程。';
+                // 关键修复：改完 state 后强制重新构建 plan + 渲染地图 + 保存
+                state.plan = buildPlan();
+                renderAll();
+                if (state.plan) renderResult();
+                saveLocal();
                 if (changed) out += '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changed) + '</div>';
                 pushMsg('ai', out, null, fb.cards);
                 state.busy = false;
