@@ -1669,10 +1669,14 @@
             // —— 复合自由查询（带地点 + 天数 + 规划/路线/酒店/交通意图）
             //  例："大理旅居七天，期间要去玉龙雪山，你给我规划详细的路线以及酒店交通"
             var citiesIn = cityListInText(text);
-            var dayMatch = text.match(/(\d{1,2})\s*天/);
+            // 天数：同时匹配"5天"和"5日"（"五日游"/"七日之旅"）
+            var dayMatch = text.match(/(\d{1,2})\s*[天日]/) || text.match(/(\d{1,2})\s*晚/) || text.match(/(\d{1,2})\s*夜/);
             var wantFullPlan = /规划|规划一下|规划一下路线|帮我规划|安排|行程|路线|攻略|怎么玩/.test(text) ||
-                /酒店|住|交通|高铁|飞机|票|费用|预算|多少钱/.test(text);
-            if (citiesIn.length && wantFullPlan) {
+                /酒店|住|交通|高铁|飞机|票|费用|预算|多少钱/.test(text) ||
+                /\d\s*[天日晚夜]\s*(游|之旅|旅行|行程)?/.test(text) ||  // "5天游"/"五日游"/"七日之旅"
+                /去.{0,8}\d/.test(text) ||                            // "去大理5天"
+                /\d.{0,4}(天|日).{0,6}(去|到|玩|游)/.test(text);     // "5天去北京"
+            if (citiesIn.length && (wantFullPlan || dayMatch)) {
                 // 扫描所有用户提到的景点，把跨城景点所属的城市也补进来（如"大理+玉龙雪山"→大理+丽江）
                 var allPois = findAllPoisInText(text);
                 allPois.forEach(function (p) {
