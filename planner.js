@@ -1266,6 +1266,27 @@
         return best;
     }
 
+    // 把中文数字字符串转成阿拉伯数字（支持"五"/"十"/"十五"/"二十"）
+    function cnToNum(s) {
+        var map = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+        if (/^\d+$/.test(s)) return parseInt(s, 10);
+        if (s === '十') return 10;
+        if (s.charAt(0) === '十') return 10 + (map[s.charAt(1)] || 0);
+        if (s.charAt(s.length - 1) === '十') return (map[s.charAt(0)] || 1) * 10;
+        if (s.indexOf('十') > 0) return (map[s.charAt(0)] || 1) * 10 + (map[s.charAt(2)] || 0);
+        return map[s] || null;
+    }
+
+    // 从文本中提取天数，支持 "5天"/"5日"/"五日"/"七天"/"十晚" 等
+    function extractDays(text) {
+        var m = text.match(/(\d{1,2}|[一二三四五六七八九十]{1,3})\s*[天日晚夜]/);
+        if (m) return cnToNum(m[1]);
+        // 兜底："X天游"/"X日游" 不带量词
+        m = text.match(/(\d{1,2}|[一二三四五六七八九十]{1,3})\s*[天日晚夜]?\s*(游|之旅|旅行|行程|假期)/);
+        if (m) return cnToNum(m[1]);
+        return null;
+    }
+
     function dayNoFrom(text) {
         var m = text.match(/第\s*([一二三四五六七八九十\d]+)\s*天/);
         if (!m) return 0;
@@ -1669,24 +1690,24 @@
             // —— 复合自由查询（带地点 + 天数 + 规划/路线/酒店/交通意图）
             //  例："大理旅居七天，期间要去玉龙雪山，你给我规划详细的路线以及酒店交通"
             var citiesIn = cityListInText(text);
-            // 天数：同时匹配"5天"和"5日"（"五日游"/"七日之旅"）
-            var dayMatch = text.match(/(\d{1,2})\s*[天日]/) || text.match(/(\d{1,2})\s*晚/) || text.match(/(\d{1,2})\s*夜/);
+            // 天数：同时匹配"5天"/"5日"/"五日"/"七天"/"十晚"（中文+阿拉伯）
+            var dayNum = extractDays(text);
             var wantFullPlan = /规划|规划一下|规划一下路线|帮我规划|安排|行程|路线|攻略|怎么玩/.test(text) ||
                 /酒店|住|交通|高铁|飞机|票|费用|预算|多少钱/.test(text) ||
-                /\d\s*[天日晚夜]\s*(游|之旅|旅行|行程)?/.test(text) ||  // "5天游"/"五日游"/"七日之旅"
-                /去.{0,8}\d/.test(text) ||                            // "去大理5天"
-                /\d.{0,4}(天|日).{0,6}(去|到|玩|游)/.test(text);     // "5天去北京"
-            if (citiesIn.length && (wantFullPlan || dayMatch)) {
+                /[一二三四五六七八九十\d]\s*[天日晚夜]\s*(游|之旅|旅行|行程)?/.test(text) ||
+                /去.{0,8}[一二三四五六七八九十\d]/.test(text) ||
+                /[一二三四五六七八九十\d].{0,4}(天|日).{0,6}(去|到|玩|游)/.test(text);
+            if (citiesIn.length && (wantFullPlan || dayNum)) {
                 // 扫描所有用户提到的景点，把跨城景点所属的城市也补进来（如"大理+玉龙雪山"→大理+丽江）
                 var allPois = findAllPoisInText(text);
                 allPois.forEach(function (p) {
                     if (citiesIn.indexOf(p.city) < 0 && citiesIn.length < 4) citiesIn.push(p.city);
                 });
 
-                var dayNum = dayMatch ? parseInt(dayMatch[1], 10) : Math.max(2, citiesIn.length);
+                var d = dayNum || Math.max(2, citiesIn.length);
                 // 把 state 切到这套城市/天数，并抽取用户说的特定景点
                 state.cities = citiesIn.slice(0, 4);
-                state.days = Math.min(dayNum, 20);
+                state.days = Math.min(d, 20);
                 state.picks = {};
                 citiesIn.forEach(function (c) {
                     state.picks[c] = [];
