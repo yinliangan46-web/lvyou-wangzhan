@@ -2682,10 +2682,15 @@
             var ky = $('plAiKey'); if (ky) ky.value = state.aiCfg.key || '';
         }
 
-        // 恢复上次 / 首次示例
+        // 恢复上次 / 首次空状态（让用户自己选城市）
         var restored = loadLocal();
-        if (!restored) loadDemo(true);
-        else {
+        if (!restored) {
+            // 首次打开：空状态，不预填任何城市，等用户自己选
+            state.cities = [];
+            state.picks = {};
+            state.plan = null;
+            renderAll();
+        } else {
             renderAll();
             if (state.cities.length) {
                 state.plan = buildPlan();
