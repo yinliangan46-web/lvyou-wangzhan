@@ -1756,7 +1756,7 @@
         var title = (plan.cities || []).join(' → ') + ' · ' + plan.days + ' 天' + (plan.days - 1) + ' 晚';
         var lines = ['<b>' + esc(title) + '</b>', '把每天的安排顺一遍：'];
         (plan.daysList || []).forEach(function (d) {
-            line = '· 第 ' + d.dayNo + ' 天 · ' + esc(d.city);
+            var line = '· 第 ' + d.dayNo + ' 天 · ' + esc(d.city);
             if (d.cityChange) line += '（' + esc(d.cityChange.from) + ' → ' + esc(d.cityChange.to) + '，' + esc(d.cityChange.mode) + '约 ' + d.cityChange.hours.toFixed(1) + ' 小时，¥' + Math.round(d.cityChange.cost) + '）';
             line += '：' + (d.pois || []).map(function (p) { return esc(p.name); }).join(' → ') +
                 (d.tip ? ' · ' + esc(d.tip) : '');
