@@ -28,24 +28,9 @@
     var AI_PRESETS = {
         site: { label: '站点 AI（已接入豆包 / DeepSeek，无需填 Key）', endpoint: '/api/chat', model: 'auto' },
         builtin: { label: '内置规划引擎（无需配置，推荐）', endpoint: '', model: '' },
-        doubao: { label: '豆包 · 火山方舟（直连，填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-2-1-lite-260915' },
-        deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat', needsCORSProxy: true },
-        kimi: { label: 'Kimi · 月之暗面（填自己的 Key）', endpoint: 'https://api.moonshot.cn/v1/chat/completions', model: 'moonshot-v1-8k', needsCORSProxy: true },
-        glm: { label: '智谱 GLM（填自己的 Key）', endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-4-flash', needsCORSProxy: true },
-        ollama: { label: '本地 Ollama 开源大模型（无需 Key）', endpoint: 'http://localhost:11434/v1/chat/completions', model: 'qwen2.5:7b', needsCORSProxy: true },
-        proxy: { label: '站点云端 AI（Worker 代理 · 豆包）', endpoint: '', model: '', isProxy: true, target: 'https://ark.cn-beijing.volces.com/api/v3' },
+        doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615' },
+        deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat' },
         custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
-    };
-
-    // 站点默认 AI：直连火山方舟（该接口支持浏览器 CORS，国内网络可直连，不需要 Worker 代理）
-    // API Key 不入库（公开仓库会泄露）：用户在本机 ⚙️ 填一次即可，只存 localStorage
-    var ARK_ENDPOINT = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
-    var ARK_MODEL = 'doubao-seed-2-1-lite-260915';
-    var DEFAULT_AI_CFG = {
-        provider: 'doubao',
-        endpoint: ARK_ENDPOINT,
-        model: ARK_MODEL,
-        key: ''
     };
 
     var TIER1 = ['北京', '上海', '广州', '深圳'];
@@ -56,7 +41,6 @@
     /* 门票估算（按名称子串匹配，取最长命中） */
     var TICKETS = {
         '故宫': 60, '八达岭长城': 40, '颐和园': 30, '天坛': 15, '圆明园': 10, '鸟巢': 50,
-        '总统府': 40, '明孝陵': 70, '牛首山': 98, '大报恩寺': 90,
         '秦始皇兵马俑': 120, '兵马俑': 120, '大雁塔': 50, '华清池': 120, '华山': 160,
         '鼓浪屿': 35, '拙政园': 80, '虎丘': 60, '周庄': 100, '乌镇': 150, '西塘': 100, '南浔': 100,
         '灵山大佛': 210, '黄山': 190, '千岛湖': 130, '西溪湿地': 80, '宋城': 300, '雷峰塔': 40,
@@ -80,15 +64,8 @@
         '上下九', '北京路', '户部巷', '太平老街', '橘子洲', '大理古城', '丽江古城', '阳朔西街',
         '栈桥', '八大关', '五四广场', '东关街', '观前街', '平江路', '老门东', '曾厝垵',
         '南锣鼓巷', '翠湖', '大鹏所城', '车公庙', '鼓楼', '昙华林', '武大樱花园', '南普陀寺',
-        '白堤', '苏堤', '中山陵', '夫子庙', '玄武湖', '雨花台', '老门东', '金鸡湖',
-        '同里古镇', '山塘街', '西湖文化广场', '黄浦江', '南京路', '王府井', '三里屯', '南长街',
-        /* 免费开放的博物馆/纪念馆（多数需预约但不收门票） */
-        '南京博物院', '上海博物馆', '国家博物馆', '中国国家博物馆', '陕西历史博物馆', '湖北省博物馆',
-        '苏州博物馆', '首都博物馆', '湖南博物院', '河南博物院', '浙江省博物馆', '广东省博物馆',
-        '四川博物院', '三峡博物馆', '天津博物馆', '河北博物院', '山西博物院', '辽宁省博物馆',
-        '安徽省博物院', '安徽博物院', '福建博物院', '江西省博物馆', '贵州省博物馆', '云南省博物馆',
-        '甘肃省博物馆', '青海省博物馆', '宁夏博物馆', '新疆博物馆', '西藏博物馆', '中国美术馆',
-        '南京大屠杀', '侵华日军', '南京长江大桥', '天安门广场', '五四广场', '奥林匹克公园'];
+        '白堤', '苏堤', '中山陵', '夫子庙', '总统府', '玄武湖', '雨花台', '老门东', '金鸡湖',
+        '同里古镇', '山塘街', '西湖文化广场', '黄浦江', '南京路', '王府井', '三里屯', '南长街'];
 
     /* ==================== 小工具 ==================== */
     function esc(s) {
@@ -145,12 +122,12 @@
     function classify(name) {
         var tags = [];
         if (/山|湖|海|岛|湾|林|湿地|草原|沙漠|峡谷|瀑布|溪|洞|泉|江|河|滩|峰|岭|谷|冰川|梯田|地质/.test(name)) tags.push('nature');
-        if (/古镇|古城|寺|塔|宫|陵|博物|纪念馆|遗址|长城|祠|庙|府|关|楼|阁|园|书院|书店|书城|书房|图书馆|大佛|石窟|庙|城墙|皇陵|帅府|故居/.test(name)) tags.push('history');
+        if (/古镇|古城|寺|塔|宫|陵|博物|纪念馆|遗址|长城|祠|庙|府|关|楼|阁|园|书院|大佛|石窟|庙|城墙|皇陵|帅府|故居/.test(name)) tags.push('history');
         if (/街|夜市|小吃|美食|巷|集市|老城|食|吊锅|粑粑|瓜片|板栗|米酒/.test(name)) tags.push('food');
         if (/锦里|宽窄巷子|回民街|户部巷|太平老街|曾厝垵|南锣鼓巷|夫子庙|观前街|东关街/.test(name) && tags.indexOf('food') < 0) tags.push('food');
         if (/乐园|海洋|动物|欢乐谷|方特|迪士尼|世界之窗|科技馆|水族|儿童|锦绣中华|极地|游乐园|影视城/.test(name)) tags.push('family');
         if (/景|湾|海|日落|观景|塔|峰|湖|岛|夜游|夜景/.test(name)) tags.push('photo');
-        if (/温泉|古镇|湖|公园|度假|庄园|茶园|湿地|草原|书店|书城|书房|图书馆/.test(name)) tags.push('relax');
+        if (/温泉|古镇|湖|公园|度假|庄园|茶园|湿地|草原/.test(name)) tags.push('relax');
         return tags;
     }
 
@@ -233,13 +210,13 @@
     };
     /* 上面的补充景点尽量给真实经纬度，地图上不会全挤在市中心 */
     var CITY_EXTRA_COORDS = {
-        '六安·天堂寨': [115.772, 31.106], '六安·万佛湖': [116.735, 31.288],
-        '六安·大别山主峰': [116.186, 31.114], '六安·燕子河大峡谷': [115.95, 31.28],
-        '六安·皖西大裂谷': [116.41, 31.43], '六安·大别山石窟': [116.42, 31.53],
-        '六安·佛子岭水库': [116.301, 31.295], '六安·铜锣寨': [116.02, 31.20],
+        '六安·天堂寨': [115.77, 31.08], '六安·万佛湖': [116.99, 31.30],
+        '六安·大别山主峰': [116.10, 31.11], '六安·燕子河大峡谷': [115.95, 31.28],
+        '六安·皖西大裂谷': [116.38, 31.44], '六安·大别山石窟': [116.42, 31.53],
+        '六安·佛子岭水库': [116.28, 31.39], '六安·铜锣寨': [116.02, 31.20],
         '六安·九公寨': [116.30, 31.62], '六安·六安瓜片茶园': [116.27, 31.66],
         '六安·独山革命旧址群': [116.29, 31.60], '六安·皖西博物馆': [116.51, 31.75],
-        '六安·皋陶墓': [116.50, 31.76], '六安·月亮岛': [116.479, 31.765],
+        '六安·皋陶墓': [116.50, 31.76], '六安·月亮岛': [116.49, 31.76],
         '六安·万佛山': [116.60, 31.20], '六安·龙井沟': [116.35, 31.72]
     };
 
@@ -294,181 +271,6 @@
         '凉皮': '米皮配醋辣，夏天必吃'
     };
 
-    /* 各城市代表美食，用于每日「吃」板块 */
-    var CITY_FOOD = {
-        '北京': ['北京烤鸭', '炸酱面', '铜锅涮肉', '卤煮火烧', '豆汁焦圈', '宫廷奶酪'],
-        '上海': ['生煎', '南翔小笼', '本帮红烧肉', '葱油拌面', '排骨年糕', '蟹壳黄'],
-        '天津': ['狗不理包子', '煎饼果子', '耳朵眼炸糕', '锅巴菜', '十八街麻花', '嘎巴菜'],
-        '重庆': ['重庆火锅', '重庆小面', '毛血旺', '酸辣粉', '豆花饭', '山城汤圆'],
-        '哈尔滨': ['锅包肉', '哈尔滨红肠', '马迭尔冰棍', '杀猪菜', '大列巴', '烤冷面'],
-        '长春': ['锅包肉', '朝鲜冷面', '东北烤串', '雪衣豆沙', '鸡汤豆腐串', '鼎丰真糕点'],
-        '沈阳': ['老边饺子', '李连贵熏肉大饼', '沈阳鸡架', '西塔冷面', '马家烧麦', '雪绵豆沙'],
-        '大连': ['海鲜焖子', '铁板鱿鱼', '咸鱼饼子', '海肠捞饭', '烤扇贝', '蚬子面'],
-        '呼和浩特': ['手把肉', '烧麦', '莜面', '羊杂碎', '奶茶', '焙子'],
-        '石家庄': ['驴肉火烧', '牛肉罩饼', '缸炉烧饼', '正定八大碗', '崩肝', '熏肉'],
-        '太原': ['刀削面', '莜面栲栳栳', '过油肉', '头脑', '剔尖', '碗托'],
-        '济南': ['把子肉', '甜沫', '油旋', '九转大肠', '糖醋鲤鱼', '甏肉干饭'],
-        '青岛': ['辣炒蛤蜊', '鲅鱼水饺', '海菜凉粉', '排骨米饭', '流亭猪蹄', '青岛啤酒'],
-        '郑州': ['烩面', '胡辣汤', '灌汤包', '葛记焖饼', '烩羊肉', '炒凉粉'],
-        '西安': ['肉夹馍', '羊肉泡馍', '凉皮', 'biangbiang面', '葫芦头', '甑糕'],
-        '兰州': ['兰州牛肉面', '酿皮', '灰豆子', '甜醅子', '手抓羊肉', '牛奶鸡蛋醪糟'],
-        '西宁': ['手抓羊肉', '酿皮', '青海酸奶', '尕面片', '羊肠面', '甜醅'],
-        '银川': ['手抓羊肉', '羊杂碎', '辣糊糊', '蒿子面', '烩小吃', '羊肉臊子面'],
-        '乌鲁木齐': ['大盘鸡', '烤包子', '手抓饭', '馕', '羊肉串', '拉条子'],
-        '拉萨': ['藏面', '甜茶', '牦牛肉', '酥油茶', '糌粑', '藏式火锅'],
-        '成都': ['四川火锅', '串串香', '担担面', '龙抄手', '钟水饺', '甜水面'],
-        '昆明': ['过桥米线', '汽锅鸡', '烧饵块', '鲜花饼', '小锅米线', '炸洋芋'],
-        '贵阳': ['丝娃娃', '肠旺面', '酸汤鱼', '恋爱豆腐果', '牛肉粉', '烙锅'],
-        '南宁': ['老友粉', '柠檬鸭', '卷筒粉', '酸嘢', '粉饺', '螺蛳粉'],
-        '桂林': ['桂林米粉', '阳朔啤酒鱼', '田螺酿', '荔浦芋扣肉', '油茶', '马蹄糕'],
-        '海口': ['海南粉', '清补凉', '椰子饭', '文昌鸡', '老爸茶', '海鲜'],
-        '三亚': ['椰子鸡', '清补凉', '文昌鸡', '和乐蟹', '抱罗粉', '海鲜烧烤'],
-        '广州': ['早茶虾饺', '烧鹅', '肠粉', '云吞面', '煲仔饭', '双皮奶'],
-        '深圳': ['光明乳鸽', '沙井蚝', '潮汕牛肉火锅', '椰子鸡', '肠粉', '糖水'],
-        '珠海': ['横琴蚝', '斗门重壳蟹', '白蕉海鲈', '艇仔粥', '虾饺', '双皮奶'],
-        '厦门': ['沙茶面', '海蛎煎', '土笋冻', '花生汤', '烧肉粽', '姜母鸭'],
-        '福州': ['佛跳墙', '福州鱼丸', '锅边糊', '荔枝肉', '肉燕', '芋泥'],
-        '南昌': ['瓦罐汤', '南昌拌粉', '藜蒿炒腊肉', '白糖糕', '炒粉', '糊羹'],
-        '长沙': ['臭豆腐', '口味虾', '糖油粑粑', '剁椒鱼头', '长沙米粉', '茶颜悦色'],
-        '武汉': ['热干面', '三鲜豆皮', '鸭脖', '糊汤粉', '面窝', '排骨藕汤'],
-        '合肥': ['庐州烤鸭', '李鸿章大杂烩', '包公鱼', '三河米饺', '鸭油烧饼', '吴山贡鹅'],
-        '黄山': ['臭鳜鱼', '毛豆腐', '黄山烧饼', '刀板香', '石耳炖鸡', '问政山笋'],
-        '南京': ['盐水鸭', '鸭血粉丝汤', '牛肉锅贴', '皮肚面', '梅花糕', '小笼包'],
-        '苏州': ['松鼠桂鱼', '响油鳝糊', '苏式汤面', '生煎', '酒酿饼', '蟹壳黄'],
-        '无锡': ['无锡排骨', '小笼馒头', '油面筋塞肉', '玉兰饼', '银丝面', '梁溪脆鳝'],
-        '常州': ['银丝面', '天目湖鱼头', '大麻糕'],
-        '扬州': ['扬州炒饭', '蟹粉狮子头', '大煮干丝', '三丁包', '文思豆腐', '翡翠烧卖'],
-        '徐州': ['地锅鸡', '把子肉', '烙馍'],
-        '杭州': ['西湖醋鱼', '东坡肉', '片儿川', '龙井虾仁', '定胜糕', '葱包桧'],
-        '宁波': ['宁波汤圆', '红膏炝蟹', '雪菜大黄鱼', '油赞子', '年糕', '苔菜小方烤'],
-        '温州': ['温州鱼丸', '糯米饭', '灯盏糕', '江蟹生', '瘦肉丸', '猪脏粉'],
-        '绍兴': ['绍兴臭豆腐', '梅干菜扣肉', '茴香豆', '酱鸭', '糟鸡', '黄酒'],
-        '嘉兴': ['粽子', '南湖菱', '糟蛋'],
-        '湖州': ['千张包子', '太湖蟹', '安吉白茶'],
-        '舟山': ['海鲜面', '沈家门海鲜', '呛蟹'],
-        '金华': ['金华火腿', '酥饼', '东河肉饼'],
-        '台州': ['食饼筒', '姜汤面', '三门青蟹'],
-        '丽水': ['缙云烧饼', '敲肉羹', '山粉饺'],
-        '衢州': ['三头一掌', '麻饼', '龙游发糕'],
-        '泉州': ['面线糊', '土笋冻', '姜母鸭', '润饼', '牛肉羹', '石花膏'],
-        '洛阳': ['洛阳水席', '牛肉汤', '不翻汤', '浆面条', '牡丹燕菜', '锅贴'],
-        '开封': ['灌汤包', '鲤鱼焙面', '羊肉炕馍'],
-        '大同': ['刀削面', '羊杂', '浑源凉粉'],
-        '晋中': ['平遥牛肉', '莜面栲栳栳', '碗托'],
-        '敦煌': ['驴肉黄面', '杏皮水', '羊肉粉汤', '胡羊焖饼', '沙葱牛肉饼', '泡儿油糕'],
-        '张掖': ['搓鱼子', '羊肉粉汤', '炒炮'],
-        '嘉峪关': ['烤羊肉', '糊锅', '粉皮'],
-        '喀什': ['烤全羊', '抓饭', '馕'],
-        '伊宁': ['烤包子', '手抓饭', '马肠子'],
-        '大理': ['乳扇', '酸辣鱼', '喜洲粑粑', '烤饵块', '白族三道茶', '凉鸡米线'],
-        '丽江': ['腊排骨火锅', '鸡豆凉粉', '丽江粑粑', '纳西烤鱼', '米灌肠', '酥油茶'],
-        '香格里拉': ['牦牛火锅', '酥油茶', '青稞饼'],
-        '遵义': ['羊肉粉', '豆花面', '折耳根炒腊肉'],
-        '唐山': ['麻糖', '棋子烧饼', '万里香烧鸡'],
-        '承德': ['鲜花玫瑰饼', '碗坨', '羊汤'],
-        '秦皇岛': ['四条包子', '皮皮虾', '回记绿豆糕'],
-        '汕头': ['牛肉火锅', '牛肉丸', '蚝烙', '粿条汤', '卤鹅', '甘草水果'],
-        '潮州': ['潮州牛肉丸', '卤鹅', '蚝烙', '砂锅粥', '春卷', '鸭母捻'],
-        '张家界': ['土家三下锅', '土家腊肉', '酸鱼', '葛根粉', '社饭', '血豆腐'],
-        '保定': ['驴肉火烧', '牛肉罩饼', '白运章包子', '锅贴饼子', '熏肉', '糖葫芦']
-    };
-
-    var FOOD_GENERIC = ['老字号早点', '本地人常去的苍蝇馆子', '老城夜市小吃街', '人气商圈餐厅', '当地招牌农家菜', '特色面馆'];
-    /* 合并城市专属菜名，午餐、晚餐和每日美食区共用同一份当日清单。 */
-    function foodsFor(city) {
-        var out = [], seen = {};
-        function foodKey(n) {
-            var key = String(n || '').replace(/\s+/g, '');
-            var re = new RegExp('^老?' + String(city).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-            key = key.replace(re, '');
-            return key === '嘎巴菜' ? '锅巴菜' : key;
-        }
-        function add(arr) {
-            (arr || []).forEach(function (f) {
-                var n = typeof f === 'string' ? f : (f && f.name);
-                var key = foodKey(n);
-                if (n && key && !seen[key] && !/招牌菜|特色小吃|必喝饮品/.test(n)) {
-                    seen[key] = 1;
-                    out.push(n);
-                }
-            });
-        }
-        add(CITY_FOOD[city]);
-        add((window.CITY_FOODS || {})[city]);
-        var details = window.CITY_DETAIL || {};
-        Object.keys(details).forEach(function (k) {
-            if (details[k] && details[k].name === city) add(details[k].foods);
-        });
-        return out.length ? out : FOOD_GENERIC.map(function (g) { return city + g; });
-    }
-    function foodSlotsPerDay(city) {
-        var totalDays = clamp((state && state.days) || 1, 1, 20);
-        var count = foodsFor(city).length;
-        return count >= totalDays * 4 ? 4 : (count >= totalDays * 2 ? 2 : 1);
-    }
-    function pickFood(city, start, n) {
-        var arr = foodsFor(city), out = [];
-        start = Math.max(0, Number(start) || 0);
-        for (var i = 0; i < (n || 1); i++) {
-            if (arr[start + i]) out.push(arr[start + i]);
-        }
-        return out;
-    }
-    function dayFoods(d) {
-        var slots = foodSlotsPerDay(d.city);
-        var cityDay = d.cityDay || d.dayNo || 1;
-        return pickFood(d.city, Math.max(0, cityDay - 1) * slots, slots);
-    }
-
-
-    /* 需要实名/提前预约的热门景区（命中即提示） */
-    var RESERVE_POIS = ['故宫', '莫高窟', '布达拉宫', '九寨沟', '兵马俑', '秦始皇', '泰山', '黄山',
-        '张家界', '迪士尼', '环球影城', '长白山', '敦煌', '龙门石窟', '云冈石窟', '乐山大佛',
-        '都江堰', '峨眉山', '华山', '普陀山', '灵隐寺', '拙政园', '上海博物馆', '国家博物馆',
-        '陕西历史博物馆', '南京博物院', '湖北省博物馆', '苏州博物馆', '三星堆',
-        '湖南省博物馆', '湖南博物院', '河南博物院', '浙江省博物馆', '广东省博物馆', '四川博物院',
-        '三峡博物馆', '天津博物馆', '河北博物院', '山西博物院', '辽宁省博物馆', '安徽博物院',
-        '福建博物院', '江西省博物馆', '云南省博物馆', '甘肃省博物馆', '青海省博物馆',
-        '宁夏博物馆', '西藏博物馆', '新疆博物馆', '首都博物馆', '中国美术馆', '南京大屠杀',
-        '大运河博物馆', '金沙遗址', '六朝博物馆', '扬州博物馆',
-        '中山陵', '明孝陵', '天安门广场', '毛主席纪念堂', '人民大会堂', '国家大剧院'];
-
-    function cityFoods(city) {
-        return foodsFor(city);
-    }
-
-    function needReserve(name) {
-        for (var i = 0; i < RESERVE_POIS.length; i++) {
-            if (name.indexOf(RESERVE_POIS[i]) >= 0) return true;
-        }
-        return false;
-    }
-
-    /* 景点名归一：去掉「步行街/景区/博物院/公园」等通用后缀，用于识别同义重复 */
-    function poiCore(n) {
-        return String(n || '').replace(/(旅游度假区|风景区|景区|步行街|风光带|历史文化街区|历史街区|博物院|博物馆|纪念馆|音乐台|公园|广场|老街)$/g, '').trim();
-    }
-    /* 同一城市内去掉「夫子庙 / 夫子庙秦淮河 / 秦淮河 / 夫子庙步行街」这类重复：
-       核心名互相包含时只保留信息更全的那个，等长则保留先出现的 */
-    function dedupePois(list) {
-        var arr = (list || []).filter(Boolean).map(function (n) { return String(n).trim(); });
-        var cores = arr.map(poiCore);
-        var keep = [];
-        for (var i = 0; i < arr.length; i++) {
-            var ci = cores[i] || arr[i];
-            if (ci.length < 2) { keep.push(arr[i]); continue; }
-            var dup = false;
-            for (var j = 0; j < arr.length; j++) {
-                if (i === j) continue;
-                var cj = cores[j] || arr[j];
-                if (cj.length < 2 || cj.indexOf(ci) < 0) continue;
-                if (cj.length > ci.length || (cj.length === ci.length && j < i)) { dup = true; break; }
-            }
-            if (!dup) keep.push(arr[i]);
-        }
-        return keep;
-    }
-
     function buildCatalog() {
         var src = window._knownDict || {};
         var known = {};
@@ -480,47 +282,17 @@
         });
         var R = window.REAL_POI_COORDS || {};
         var centers = window.ALL_CITY_COORDS || {};
-        /* 全国景点补全：REAL_POI_COORDS 里尚未被城市收录的景点，按最近城市挂载，
-           保证「搜景点」覆盖全国 1500+ 个有真实坐标的景点 */
-        var usedPoi = {};
-        Object.keys(known).forEach(function (c) {
-            (known[c] || []).forEach(function (n) { usedPoi[n] = 1; });
-        });
-        Object.keys(R).forEach(function (k) {
-            var pp = k.split('·');
-            var city = pp.length > 1 ? pp[0] : '';
-            var nm = pp.length > 1 ? pp.slice(1).join('·') : k;
-            var cc0 = R[k];
-            if (!nm || !cc0 || !isFinite(cc0[0]) || !isFinite(cc0[1])) return;
-            // 带城市前缀的真实地点允许不同城市使用相同名称（如新华书店），仅在本地目录内去重。
-            if (usedPoi[nm] && pp.length === 1) return;
-            if (!city) {
-                var bd = 1e9;
-                Object.keys(centers).forEach(function (cn) {
-                    var cc = centers[cn];
-                    if (!cc || !isFinite(cc[0])) return;
-                    var d = distKm(cc0, cc);
-                    if (d < bd) { bd = d; city = cn; }
-                });
-                if (!city || bd > 300) return;
-            }
-            if (!known[city]) known[city] = [];
-            if (known[city].indexOf(nm) >= 0) return;
-            known[city].push(nm);
-            usedPoi[nm] = 1;
-            if (!R[city + '·' + nm]) R[city + '·' + nm] = cc0;
-        });
         var out = {};
         Object.keys(known).forEach(function (city) {
             var center = centers[city];
             if (!center || !isFinite(center[0])) return;
             var items = [], seen = {};
-            dedupePois(known[city] || []).forEach(function (name, idx) {
+            (known[city] || []).forEach(function (name, idx) {
                 if (!name || seen[name]) return;
                 var extra = CITY_EXTRA_COORDS[city + '·' + name];
                 var c = R[city + '·' + name] || R[name] || extra;
                 if (c && (!isFinite(c[0]) || !isFinite(c[1]))) c = null;
-                if (c && distKm(c, center) > 600) c = null;   // 超过 600km 视为脏数据；敦煌/羌塘等远景点保留
+                if (c && distKm(c, center) > 400) c = null;
                 if (!c) c = approxCoord(name, center, idx);   // 没有精确坐标：按城市范围近似，保证可搜索可排线
                 seen[name] = 1;
                 items.push({
@@ -539,10 +311,9 @@
             if (!d || !d.name || out[d.name] || centers[d.name]) return;
             var coords = routeCoords[key] || [];
             var items = [], seen2 = {};
-            var keptPins = dedupePois(d.routePins || []);
             (d.routePins || []).forEach(function (p, i) {
                 var c = coords[i];
-                if (!c || !isFinite(c[0]) || seen2[p] || keptPins.indexOf(p) < 0) return;
+                if (!c || !isFinite(c[0]) || seen2[p]) return;
                 seen2[p] = 1;
                 items.push({ name: p, city: d.name, lng: +c[0], lat: +c[1], idx: i, cat: classify(p) });
             });
@@ -698,16 +469,15 @@
     }
 
     function ticketOf(name) {
-        var n = String(name || '');
-        for (var i = 0; i < FREE_POI.length; i++) {
-            if (n.indexOf(FREE_POI[i]) >= 0) return 0;
-        }
-        /* 博物馆/博物院/纪念馆/公园/街区类默认免费开放 */
-        if (/博物馆|博物院|纪念馆|美术馆|公园|广场|步行街|老街|古街|小吃街|夜市|码头|观景台$/.test(n)) return 0;
         var best = -1, price = 60;
         Object.keys(TICKETS).forEach(function (k) {
-            if (n.indexOf(k) >= 0 && k.length > best) { best = k.length; price = TICKETS[k]; }
+            if (name.indexOf(k) >= 0 && k.length > best) { best = k.length; price = TICKETS[k]; }
         });
+        if (best < 0) {
+            for (var i = 0; i < FREE_POI.length; i++) {
+                if (name.indexOf(FREE_POI[i]) >= 0) { price = 0; break; }
+            }
+        }
         return price;
     }
 
@@ -813,9 +583,9 @@
                         desc: poiDesc(city, p),
                         poi: p
                     });
-                    if (i === 0) blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city, di + 1) });
+                    if (i === 0) blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city) });
                 });
-                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city, di + 1) });
+                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city) });
                 var lastPoi = poiArr[poiArr.length - 1];
                 blocks.push({
                     time: '21:00', type: 'hotel',
@@ -830,8 +600,7 @@
                             time: '10:00', type: 'free', title: city + '深度漫游 · 自由活动',
                             desc: '睡到自然醒，逛老城 / 咖啡馆 / 补拍照片' + (spare ? '；如果还想玩，可以去「' + spare.name + '」' : '')
                         },
-                        { time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city, di + 1) },
-                        { time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city, di + 1) },
+                        { time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city) },
                         { time: '21:00', type: 'hotel', title: '入住 · ' + city + '市中心', hotelCity: city }
                     ];
                 }
@@ -839,7 +608,6 @@
                 if (dayNo < nDays) hotelNights++;
                 daysList.push({
                     dayNo: dayNo,
-                    cityDay: di + 1,
                     city: city,
                     cityChange: leg ? { from: prevCity, to: city, mode: leg.mode, hours: leg.hours, km: leg.km, cost: leg.cost } : null,
                     theme: poiArr.length ? poiArr.slice(0, 3).map(function (p) { return p.name; }).join(' · ') : city + '自由活动',
@@ -1040,17 +808,15 @@
         return bits.join(' · ');
     }
 
-    function lunchName(city, dayIdx) {
-        var slots = foodSlotsPerDay(city);
-        if (slots === 1) return '老城家常餐（午餐自理） · 人均 ¥35-55';
-        var dishes = pickFood(city, Math.max(0, (dayIdx || 1) - 1) * slots, slots === 4 ? 2 : 1);
-        return (dishes.length ? dishes.join('、') : '当季本地风味（今日自理）') + ' · 人均 ¥45-70';
+    function lunchName(city) {
+        var cat = CATALOG[city];
+        var food = cat ? cat.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; })[0] : null;
+        return (food ? food.name + '一带' : city + '老城区') + ' · 人均 ¥45-70';
     }
-    function dinnerName(city, dayIdx) {
-        var slots = foodSlotsPerDay(city);
-        var offset = slots === 4 ? 2 : (slots === 2 ? 1 : 0);
-        var dishes = pickFood(city, Math.max(0, (dayIdx || 1) - 1) * slots + offset, slots === 4 ? 2 : 1);
-        return (dishes.length ? dishes.join('、') : '当季本地风味（今日自理）') + ' · 人均 ¥60-100';
+    function dinnerName(city) {
+        var cat = CATALOG[city];
+        var food = cat ? cat.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; })[0] : null;
+        return (food ? food.name : city + '特色小吃街') + ' · 人均 ¥60-100';
     }
 
     /* ==================== 推荐/自动挑选 ==================== */
@@ -1207,18 +973,6 @@
             var ico = b.type === 'meal' ? 'fa-utensils' : (b.type === 'hotel' ? 'fa-hotel' : (b.type === 'free' ? 'fa-mug-hot' : 'fa-location-dot'));
             var cls = b.type === 'meal' ? ' is-meal' : (b.type === 'hotel' ? ' is-hotel' : '');
             var link = b.hotelCity ? ' <a href="https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(b.hotelCity) + '" target="_blank" rel="noopener" style="color:#2563eb;font-size:.76rem;text-decoration:none">携程查房价 →</a>' : '';
-            if (b.type === 'poi') {
-                var kw = encodeURIComponent(b.title);
-                if (needReserve(b.title) && window._wechatReserveBtn) {
-                    /* 需预约：只给微信小程序入口，不再给携程/抖音 */
-                    link += ' ' + window._wechatReserveBtn(b.title);
-                } else {
-                    link += ' <a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener" ' +
-                        'style="display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:#eef4ff;color:#2563eb;font-size:.72rem;text-decoration:none">携程购票</a>' +
-                        ' <a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener" ' +
-                        'style="display:inline-block;margin-left:4px;padding:1px 7px;border-radius:9px;background:#fff0f6;color:#fe2c55;font-size:.72rem;text-decoration:none">抖音看票</a>';
-                }
-            }
             return '<div class="pl-tl-item' + cls + '"><div class="pl-tl-time">' + esc(b.time) + '</div>' +
                 '<div class="pl-tl-body"><div class="pl-tl-title"><i class="fas ' + ico + ' pl-tl-ico"></i>' + esc(b.title) + link + '</div>' +
                 (b.desc ? '<div class="pl-tl-desc">' + esc(b.desc) + '</div>' : '') + '</div></div>';
@@ -1235,65 +989,13 @@
                 '<a href="' + url + '" target="_blank" rel="noopener">携程订票 →</a></div>';
         }
 
-        var extraHtml = dayExtraHtml(d);
-
         return '<div class="pl-day">' +
             '<div class="pl-day-head"><span class="pl-day-badge" style="background:' + color + '">Day ' + d.dayNo + '</span>' +
             '<span class="pl-day-city">' + esc(d.city) + '</span>' +
             '<span class="pl-day-theme">' + esc(d.theme) + '</span>' +
             '<span class="pl-day-meta"><span><i class="fas fa-route"></i> ' + d.km + ' km</span>' +
             '<span><i class="fas fa-ticket"></i> ¥' + d.ticket + '</span></span></div>' +
-            legHtml + '<div class="pl-timeline">' + blocks + '</div>' + extraHtml + '</div>';
-    }
-
-    /* 每日配套：门票预约 / 当地美食 / 道路交通 */
-    function dayExtraHtml(d) {
-        var pois = (d.blocks || []).filter(function (b) { return b.type === 'poi'; });
-
-        var ticketRows = pois.map(function (b) {
-            var kw = encodeURIComponent(b.title);
-            var wx = window._wechatReserveBtn ? window._wechatReserveBtn(b.title) : '';
-            /* 需预约的只给微信入口，不再给携程/抖音 */
-            var free = ticketOf(b.title) <= 0 && !needReserve(b.title);
-            var buy = (free || wx) ? '' :
-                '<a href="https://you.ctrip.com/searchsite/scenic/?query=' + kw + '" target="_blank" rel="noopener">携程票</a>' +
-                '<a href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') + '" target="_blank" rel="noopener">抖音票</a>';
-            return '<div class="pl-ex-row"><span class="pl-ex-name">' + esc(b.title) +
-                (ticketOf(b.title) > 0 ? '<em class="pl-ex-fee">¥' + ticketOf(b.title) + '</em>' : '<em class="pl-ex-free">免费</em>') +
-                (needReserve(b.title) ? '<em class="pl-ex-tag">需预约</em>' : '') + '</span>' +
-                buy + wx + '</div>';
-        }).join('');
-
-        var reserveTips = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });
-        var ticketNote = reserveTips.length
-            ? '<div class="pl-ex-note">⚠ ' + esc(reserveTips.slice(0, 3).join('、')) + ' 需实名预约，建议出行前 1-3 天在景区微信小程序或携程预约时段。</div>'
-            : '<div class="pl-ex-note">热门景区旺季可能限流，建议出发前在携程或景区公众号确认余票。</div>';
-
-        var cityKw = encodeURIComponent(d.city);
-        var dailyFoods = dayFoods(d);
-        var foodChips = dailyFoods.map(function (f) {
-            return '<a class="pl-ex-chip" href="https://www.dianping.com/search/keyword/0/0_' + encodeURIComponent(d.city + f) +
-                '" target="_blank" rel="noopener">' + esc(f) + '</a>';
-        }).join('') || '<span class="pl-ex-chip">当季本地风味（今日自理）</span>';
-
-        var km = d.km || 0;
-        var taxi = Math.round(km * 2.4 + 12);
-        var roadText = '市内移动约 ' + km + ' km，打车约 ¥' + taxi + '；景区之间建议网约车或景区直通车。' +
-            (d.cityChange ? '城际段见上方「' + esc(d.cityChange.from) + ' → ' + esc(d.cityChange.to) + '」，建议提前 1-3 天订票。' : '') +
-            '节假日高峰请预留 30-60 分钟堵车时间。';
-
-        return '<div class="pl-extra">' +
-            '<div class="pl-ex-col"><div class="pl-ex-h"><i class="fas fa-ticket"></i> 门票 · 预约</div>' +
-            (ticketRows || '<div class="pl-ex-note">今日以免费景点为主，无需购票。</div>') + ticketNote + '</div>' +
-            '<div class="pl-ex-col"><div class="pl-ex-h"><i class="fas fa-utensils"></i> 当地美食</div>' +
-            '<div class="pl-ex-chips">' + foodChips + '</div>' +
-            '<div class="pl-ex-note">点菜名看附近餐厅：<a href="https://www.dianping.com/search/keyword/0/0_' + cityKw +
-            encodeURIComponent('美食') + '" target="_blank" rel="noopener">大众点评</a> · ' +
-            '<a href="https://www.douyin.com/search/' + cityKw + encodeURIComponent(' 美食 探店') +
-            '" target="_blank" rel="noopener">抖音探店</a></div></div>' +
-            '<div class="pl-ex-col"><div class="pl-ex-h"><i class="fas fa-car"></i> 道路交通</div>' +
-            '<div class="pl-ex-note" style="margin-top:2px">' + roadText + '</div></div>' +
-            '</div>';
+            legHtml + '<div class="pl-timeline">' + blocks + '</div></div>';
     }
 
     /* ==================== 地图 ==================== */
@@ -1303,23 +1005,10 @@
         if (state.map) { try { state.map.remove(); } catch (e) { } state.map = null; }
         var map = L.map(el, { scrollWheelZoom: false, zoomControl: true });
         state.map = map;
-        // 行程包含境外城市时高德底图无境外细节（会是一片空白），改用 OSM 全球底图
-        var hasAbroad = false;
-        plan.daysList.forEach(function (d) {
-            (d.pois || []).forEach(function (p) {
-                if (p.lng < 72 || p.lng > 137.9 || p.lat < 0.5 || p.lat > 55.5) hasAbroad = true;
-            });
-        });
-        if (hasAbroad) {
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                { maxZoom: 19, minZoom: 2, attribution: '&copy; OpenStreetMap' }).addTo(map);
-        } else {
-            L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-                { subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 3, attribution: '&copy; 高德地图' }).addTo(map);
-        }
+        L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+            { subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 3, attribution: '&copy; 高德地图' }).addTo(map);
 
         var bounds = [], globalNo = 0, legend = [];
-        var prevPt = null;
         plan.daysList.forEach(function (d, di) {
             var color = DAY_COLORS[di % DAY_COLORS.length];
             var pts = [];
@@ -1327,16 +1016,9 @@
                 var g = wgs2gcj(p.lng, p.lat);
                 pts.push([g[1], g[0]]);
             });
-            // 跨天衔接：把上一天最后一个点和今天第一个点连起来（虚线），保证整条路线连续
-            if (prevPt && pts.length) {
-                L.polyline([prevPt, pts[0]], {
-                    color: color, weight: 3, opacity: .7, dashArray: '7 8', lineJoin: 'round'
-                }).addTo(map);
-            }
             if (pts.length > 1) {
                 L.polyline(pts, { color: color, weight: 4, opacity: .88, lineJoin: 'round' }).addTo(map);
             }
-            if (pts.length) prevPt = pts[pts.length - 1];
             d.pois.forEach(function (p, i) {
                 globalNo++;
                 var ll = pts[i];
@@ -1410,13 +1092,6 @@
             d.blocks.forEach(function (b) {
                 lines.push('  ' + b.time + '  ' + b.title + (b.desc ? '（' + b.desc + '）' : ''));
             });
-            var pois = d.blocks.filter(function (b) { return b.type === 'poi'; });
-            var needR = pois.filter(function (b) { return needReserve(b.title); }).map(function (b) { return b.title; });
-            if (pois.length) lines.push('  门票：' + pois.map(function (b) { return b.title; }).join('、') + '（携程/抖音可查票）');
-            if (needR.length) lines.push('  预约：' + needR.join('、') + ' 需实名预约，提前 1-3 天在景区公众号或携程预约');
-            var dailyFoods = dayFoods(d);
-            lines.push('  美食：' + (dailyFoods.length ? dailyFoods.join('、') : '当季本地风味（今日自理）'));
-            lines.push('  交通：市内约 ' + d.km + ' km，打车约 ¥' + Math.round((d.km || 0) * 2.4 + 12));
             lines.push('');
         });
         lines.push('费用估算（人均）：住宿 ¥' + num(Math.round(plan.totals.hotels / plan.people)) +
@@ -1498,26 +1173,11 @@
     }
     function loadAiCfg() {
         var raw = null;
-        var def = {
-            provider: DEFAULT_AI_CFG.provider,
-            endpoint: DEFAULT_AI_CFG.endpoint,
-            model: DEFAULT_AI_CFG.model,
-            target: DEFAULT_AI_CFG.target,
-            key: DEFAULT_AI_CFG.key
-        };
         try {
             raw = localStorage.getItem(LS_AI);
-            state.aiCfg = raw ? JSON.parse(raw) : def;
+            state.aiCfg = raw ? JSON.parse(raw) : { provider: 'builtin', endpoint: '', model: '', key: '' };
         } catch (e) {
-            state.aiCfg = def;
-        }
-        // 旧配置迁移：Ollama(localhost) / Worker(workers.dev) 在手机上都连不通，自动切到火山方舟直连
-        if (state.aiCfg && (state.aiCfg.provider === 'ollama' || state.aiCfg.provider === 'proxy')) {
-            state.aiCfg = { provider: 'doubao', endpoint: ARK_ENDPOINT, model: ARK_MODEL, key: state.aiCfg.key || '' };
-        }
-        if (state.aiCfg && state.aiCfg.provider === 'doubao') {
-            if (!state.aiCfg.endpoint || state.aiCfg.endpoint.indexOf('workers.dev') >= 0) state.aiCfg.endpoint = ARK_ENDPOINT;
-            if (!state.aiCfg.model || state.aiCfg.model === 'doubao-seed-1-6-250615') state.aiCfg.model = ARK_MODEL;
+            state.aiCfg = { provider: 'builtin', endpoint: '', model: '', key: '' };
         }
         if (!raw) probeSiteAI();
     }
@@ -1536,7 +1196,6 @@
 
     /* ==================== 生成 / 重新生成 ==================== */
     function regenerate() {
-        if (!state.cities.length && !state.loop) { toast('先选一个城市，再生成行程'); return; }
         state.plan = buildPlan();
         renderResult();
         saveLocal();
@@ -1563,15 +1222,6 @@
         }).join('') + '</div>';
     }
 
-    function tripDraftHtml(d) {
-        if (!d) return '';
-        var cs = (d.cities || []).join('|');
-        var dy = parseInt(d.days, 10) || 1;
-        return '<div style="margin-top:9px;display:flex;gap:8px;flex-wrap:wrap">' +
-            '<button class="pl-btn-primary pl-trip-confirm" data-cities="' + esc(cs) + '" data-days="' + dy + '">✅ 确认生成行程</button>' +
-            '<button class="pl-btn-ghost pl-trip-cancel">先不生成</button></div>';
-    }
-
     function renderMsgs() {
         var body = $('plAgentBody');
         if (!body) return;
@@ -1579,7 +1229,7 @@
             if (m.role === 'user') {
                 return '<div class="pl-msg user"><div class="bubble">' + esc(m.text) + '</div></div>';
             }
-            return '<div class="pl-msg' + (m.typing ? ' typing' : '') + '"><div class="who">AI</div><div class="bubble">' + m.text + cardsHtml(m.cards) + tripDraftHtml(m.extra) + '</div></div>';
+            return '<div class="pl-msg' + (m.typing ? ' typing' : '') + '"><div class="who">AI</div><div class="bubble">' + m.text + cardsHtml(m.cards) + '</div></div>';
         }).join('');
         body.scrollTop = body.scrollHeight;
     }
@@ -1640,86 +1290,24 @@
         return names;
     }
 
-    /* ---------- 一日游 / N 日游 意图解析 ---------- */
-    var CN_NUM = { '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
-    // 从全国省市库里找句子里提到的省
-    function provinceInText(text) {
-        var names = {};
-        Object.keys(CITY_PROV).forEach(function (c) { if (CITY_PROV[c]) names[CITY_PROV[c]] = 1; });
-        var hit = null;
-        Object.keys(names).forEach(function (full) {
-            var short = full.replace(/省$|市$|壮族自治区|回族自治区|维吾尔自治区|自治区|特别行政区/g, '');
-            if (short && text.indexOf(short) >= 0) hit = full;
-        });
-        return hit;
-    }
-    // 少数知名城市/景区不在省级地级市清单里，手工补上省份归属
-    var PROV_EXTRA = {
-        '大理': '云南省', '西双版纳': '云南省', '敦煌': '甘肃省',
-        '黄果树': '贵州省', '九寨沟': '四川省',
-        '北京': '北京市', '上海': '上海市', '重庆': '重庆市'
-    };
-    // 该省的城市，优先"有真实景点数据"的，其次地级市兜底
-    function citiesOfProvince(full) {
-        var p = (window.PROVINCES_ALL || []).filter(function (x) { return x.name === full; })[0];
-        var out = [];
-        if (p) {
-            (p.cities || []).forEach(function (pc) {
-                var n = pc.name || '';
-                var hit = Object.keys(CATALOG).filter(function (c) {
-                    return c === n || (CITY_PROV[c] === full && n.indexOf(c) === 0);
-                })[0];
-                if (hit && out.indexOf(hit) < 0) out.push(hit);
+    /* 扫描用户文本中提到的所有景点，返回 [{poi, city}] （长名称优先匹配，避免"中山"匹配到"中山路"） */
+    function findAllPoisInText(text) {
+        text = String(text || '');
+        var matches = [];
+        Object.keys(CATALOG).forEach(function (city) {
+            (CATALOG[city].items || []).forEach(function (it) {
+                if (findTextHit(text, it.name)) matches.push({ poi: it.name, city: city, len: it.name.length });
             });
-        }
-        Object.keys(PROV_EXTRA).forEach(function (c) {
-            if (PROV_EXTRA[c] === full && CATALOG[c] && out.indexOf(c) < 0) out.push(c);
         });
-        return out;
-    }
-    function provTopCities(full) {
-        var list = citiesOfProvince(full);
-        var rich = list.filter(function (c) { return CATALOG[c] && !CATALOG[c].generic && CATALOG[c].items.length >= 3; });
-        rich.sort(function (a, b) { return CATALOG[b].items.length - CATALOG[a].items.length; });
-        // 只要有真实景点数据的城市，就只用它们（避免把「六安/亳州」这种只有 1 个兜底景点的城市排进行程）
-        return rich.length ? rich : list;
-    }
-    function cnNum(s) {
-        if (!s) return 0;
-        if (/^\d+$/.test(s)) return parseInt(s, 10);
-        if (s.length === 1) return CN_NUM[s] || 0;
-        if (s.charAt(0) === '十') return 10 + (CN_NUM[s.charAt(1)] || 0);
-        if (s.charAt(1) === '十') return (CN_NUM[s.charAt(0)] || 1) * 10 + (CN_NUM[s.charAt(2)] || 0);
-        return CN_NUM[s.charAt(0)] || 0;
-    }
-    // 识别「一日游 / 三日游 / 北京玩 5 天 / 安徽 4 日游」这类"从零生成行程"的请求
-    function parseTripRequest(text) {
-        // 排除"改行程"类指令（加一天、减一天、第三天太赶…）
-        if (/(加|多|少|减|延长|缩短|太赶|太累|改成|换成|第\s*[一二两三四五六七八九十\d]+\s*天)/.test(text)) return null;
-        var days = 0;
-        var m = text.match(/([0-9]{1,2}|[一二两三四五六七八九十]{1,3})\s*(?:日游|日\s*[0-9一二两三四五六七八九十]*\s*夜)/);
-        if (m) days = cnNum(m[1]);
-        if (!days) {
-            var hasVerb = /(帮我|给我|生成|规划|安排|做个|来条|来一个|去|玩|怎么玩|想要|打算|准备)/.test(text);
-            var hasPlace = cityListInText(text).length > 0 || !!provinceInText(text);
-            if (hasVerb || hasPlace) {
-                m = text.match(/([0-9]{1,2}|[一二两三四五六七八九十]{1,3})\s*天/);
-                if (m) days = cnNum(m[1]);
-            }
-        }
-        if (!days && /一日游|一天游/.test(text)) days = 1;
-        if (!days || days < 1 || days > 20) return null;
-
-        var cities = cityListInText(text).slice(0, 4);
-        if (!cities.length) {
-            var fullProv = provinceInText(text);
-            if (fullProv) cities = provTopCities(fullProv).slice(0, 4);
-        }
-        if (!cities.length) cities = state.cities.slice(0, 4);
-        // 天数不够分给每座城时，砍掉多余城市，保证每城至少 1 天
-        if (cities.length > days) cities = cities.slice(0, days);
-        if (!cities.length) return { days: days, cities: [], needCity: true };
-        return { days: days, cities: cities };
+        // 长名称优先（"玉龙雪山冰川公园" 优先于 "玉龙雪山" 优先于 "雪山"）
+        matches.sort(function (a, b) { return b.len - a.len; });
+        // 去掉被更长名称包含的短名称（比如已有"玉龙雪山冰川公园"就不要"玉龙雪山"）
+        var kept = [];
+        matches.forEach(function (m) {
+            var contained = kept.some(function (k) { return k.poi.indexOf(m.poi) >= 0 || m.poi.indexOf(k.poi) >= 0; });
+            if (!contained) kept.push(m);
+        });
+        return kept;
     }
 
     function localReply(raw) {
@@ -1747,24 +1335,6 @@
         if (/(清空|重新开始|全部删掉|重来)/.test(text)) {
             actions.push({ type: 'clear' });
             return { reply: '好的，已清空，我们重新开始。先告诉我这次想去哪几座城市？', actions: actions };
-        }
-
-        /* ---- 一日游 / N 日游：一键生成，并在结果区地图上画出路线 ---- */
-        var tripReq = parseTripRequest(text);
-        if (tripReq && tripReq.needCity) {
-            return {
-                reply: '好，给你排 <b>' + tripReq.days + ' 天</b>行程——告诉我去哪座城市或哪个省？<br>' +
-                    '例如「杭州一日游」「安徽 4 日游」「成都玩 3 天」「云南 5 天」。',
-                actions: actions
-            };
-        }
-        if (tripReq) {
-            return {
-                reply: '行程草稿已排好：<b>' + esc(tripReq.cities.join(' → ')) + ' · ' + tripReq.days + ' 天</b><br>' +
-                    '点下面的<b>「确认生成行程」</b>，我就在上方排出完整时间线，并在地图上按顺序画出路线。',
-                actions: actions,
-                tripDraft: tripReq
-            };
         }
 
         /* ---- 环线一键生成 ---- */
@@ -1816,8 +1386,7 @@
                     var foodI = catI.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; }).slice(0, 2);
                     var intro = '<b>' + esc(cityI) + '</b> 一共收录了 ' + catI.items.length + ' 个值得去的地方，先给你挑 8 个：<br>' +
                         topI.map(function (p) { return '· ' + esc(p.name); }).join('<br>');
-                    var localDishes = foodsFor(cityI).slice(0, 4);
-                    if (foodI.length || localDishes.length) intro += '<br>本地吃：' + (localDishes.length ? localDishes.join('、') : foodI.map(function (f) { return esc(f.name); }).join('、'));
+                    if (foodI.length) intro += '<br>本地吃：' + foodI.map(function (f) { return esc(f.name); }).join('、');
                     intro += '<br>想直接排进行程，说「' + esc(cityI) + ' 玩 3 天」或「加上' + esc(topI[0] ? topI[0].name : cityI) + '」。';
                     return { reply: intro, actions: actions };
                 }
@@ -1940,94 +1509,38 @@
             return { reply: reply, actions: actions };
         }
 
-        /* ---- 指定两地：航班 / 高铁 / 酒店 / 美食（国内外通用） ---- */
-        var _cs2 = cityListInText(text);
-        var _routeAsk = _cs2.length >= 2 || /(从|由).{1,12}(到|去|飞|前往)/.test(text);
-        if (_routeAsk && !/(哪个|还是|比较|值得|好玩|推荐哪个)/.test(text)) {
-            var from = _cs2[0] || state.cities[0];
-            var to = _cs2[1] || (state.cities.length > 1 ? state.cities[1] : null);
+        /* ---- 指定两地：航班 / 高铁查询 ---- */
+        if (/(怎么去|怎么到|坐什么|查.*(航班|机票|高铁|动车|车票|票))|((航班|机票|高铁|动车|火车).*(多少钱|价格|几小时))/.test(text)) {
+            var cs2 = cityListInText(text);
+            var from = cs2[0] || state.cities[0];
+            var to = cs2[1] || (cs2.length ? null : state.cities[1]);
             if (!from || !to) {
-                return { reply: '告诉我「从哪到哪」，比如「从长沙到伦敦」，我给你航班、酒店和当地美食。', actions: actions };
+                return { reply: '告诉我「从哪到哪」，比如「杭州到敦煌怎么去」，我给你高铁/航班的时长、价格和订票入口。', actions: actions };
             }
-            if (from === to) return { reply: '出发地和目的地一样啦，换一个目的地试试。', actions: actions };
-
             var leg = intercity(from, to);
-            var _first = function (c) { var it = CATALOG[c] && CATALOG[c].items && CATALOG[c].items[0]; return it || null; };
-            var _inCN = function (c) { var it = _first(c); return !it || (it.lng > 72 && it.lng < 138 && it.lat > 17 && it.lat < 54.5); };
-            var isCN = _inCN(from) && _inCN(to);
-            var IATA = {
-                '北京': 'BJS', '上海': 'SHA', '广州': 'CAN', '深圳': 'SZX', '成都': 'CTU', '杭州': 'HGH', '南京': 'NKG', '武汉': 'WUH',
-                '西安': 'XIY', '重庆': 'CKG', '青岛': 'TAO', '厦门': 'XMN', '昆明': 'KMG', '天津': 'TSN', '郑州': 'CGO', '沈阳': 'SHE',
-                '大连': 'DLC', '哈尔滨': 'HRB', '济南': 'TNA', '乌鲁木齐': 'URC', '长沙': 'CSX', '福州': 'FOC', '南宁': 'NNG',
-                '伦敦': 'LON', '巴黎': 'PAR', '东京': 'TYO', '纽约': 'NYC', '迪拜': 'DXB', '曼谷': 'BKK', '新加坡': 'SIN', '首尔': 'SEL',
-                '洛杉矶': 'LAX', '旧金山': 'SFO', '悉尼': 'SYD', '罗马': 'ROM', '巴塞罗那': 'BCN', '阿姆斯特丹': 'AMS',
-                '法兰克福': 'FRA', '莫斯科': 'MOW', '伊斯坦布尔': 'IST', '香港': 'HKG', '台北': 'TPE', '巴厘岛': 'DPS'
-            };
-            var _code = function (c) { return IATA[c] || null; };
-            var flyLink = (_code(from) && _code(to))
-                ? 'https://flights.ctrip.com/online/list/oneway-' + _code(from).toLowerCase() + '-' + _code(to).toLowerCase()
-                : 'https://flights.ctrip.com/online/channel/international';
-            var hotelLink = 'https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(to);
-            var foodLink = 'https://you.ctrip.com/searchsite/food/?query=' + encodeURIComponent(to);
-
-            // 目的地资料（酒店/美食/提示）
-            var det = null;
-            try {
-                Object.keys(window.CITY_DETAIL || {}).forEach(function (k) {
-                    var d = window.CITY_DETAIL[k];
-                    if (d && d.name === to) det = d;
-                });
-            } catch (e) { }
-            var foods = (det && det.foods || []).slice(0, 3);
-            var foodTxt = foods.length
-                ? foods.map(function (f) { return esc(f.name) + (f.price ? '（' + esc(f.price) + '）' : ''); }).join('、')
-                : '当地招牌菜、特色小吃和夜市';
-            var hotelTxt = det && det.hotels && det.hotels.length
-                ? det.hotels.slice(0, 2).map(function (h) { return esc(h.name || h); }).join('、')
-                : (isCN ? '市中心连锁酒店 ¥300-600/晚' : '市中心 4 星 ¥700-1500/晚');
-
-            if (isCN) {
-                var flyH = leg.km / 700 + 2.2, trainH = leg.km / 230 + 0.6;
-                var flyC = Math.round(leg.km * 0.55 + 180), trainC = Math.round(leg.km * 0.46 + 15);
-                var trainLink = 'https://trains.ctrip.com/TrainBooking/SearchTrain.aspx?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
-                reply = '<b>' + esc(from) + ' → ' + esc(to) + '</b>，约 ' + num(leg.km) + ' km：<br>' +
-                    '· ✈️ 飞机：约 ' + flyH.toFixed(1) + ' 小时（含往返机场），参考 ¥' + num(flyC) + ' · ' +
-                    '<a href="' + flyLink + '" target="_blank" rel="noopener">携程查航班 →</a><br>' +
-                    '· 🚄 高铁：约 ' + trainH.toFixed(1) + ' 小时，参考 ¥' + num(trainC) + ' · ' +
-                    '<a href="' + trainLink + '" target="_blank" rel="noopener">携程查高铁 →</a><br>' +
-                    '· 🏨 酒店：' + hotelTxt + ' · <a href="' + hotelLink + '" target="_blank" rel="noopener">携程查酒店 →</a><br>' +
-                    '· 🍜 美食：' + foodTxt + ' · <a href="' + foodLink + '" target="_blank" rel="noopener">携程找餐厅 →</a><br>' +
-                    (leg.km > 900 ? '距离较远，建议飞机，能省 4 小时以上。' : '距离不远，高铁更省心，市区到市区不用提前值机。');
-                return {
-                    reply: reply, actions: actions,
-                    cards: [
-                        { type: 'flight', title: from + ' → ' + to + ' · 飞机', meta: '约 ' + flyH.toFixed(1) + ' 小时（含往返机场）· 每日多班', price: '¥' + num(flyC) + ' 起', link: flyLink, linkText: '携程查航班', apply: 'flight' },
-                        { type: 'train', title: from + ' → ' + to + ' · 高铁', meta: '约 ' + trainH.toFixed(1) + ' 小时 · 建议选上午班次', price: '¥' + num(trainC) + ' 起', link: trainLink, linkText: '携程查高铁', apply: 'train' },
-                        { type: 'hotel', title: to + ' · 酒店', meta: hotelTxt, price: isCN ? '¥300 起/晚' : '¥700 起/晚', link: hotelLink, linkText: '携程查酒店' },
-                        { type: 'food', title: to + ' · 必吃美食', meta: foodTxt, price: '人均 ¥50-150', link: foodLink, linkText: '携程找餐厅' }
-                    ]
-                };
-            }
-
-            // 跨国/境外：只有航班，另配酒店与美食（用直线距离估算，避免陆路系数放大）
-            var _ca = CATALOG[from] && CATALOG[from].center;
-            var _cb = CATALOG[to] && CATALOG[to].center;
-            var gcKm = (_ca && _cb) ? Math.round(distKm(_ca, _cb)) : Math.round(leg.km / 1.28);
-            var flyH2 = gcKm / 850 + 2.0;
-            var flyC2 = Math.round(Math.max(2600, gcKm * 0.5) / 100) * 100;
-            var tips = det && det.tips && det.tips.length ? esc(det.tips[0]) : '需护照+签证，建议提前 1-2 个月订票';
-            reply = '<b>' + esc(from) + ' → ' + esc(to) + '</b>，约 ' + num(gcKm) + ' km（直线），跨国行程：<br>' +
-                '· ✈️ 航班：直飞/中转约 ' + flyH2.toFixed(1) + ' 小时，参考 ¥' + num(flyC2) + ' · ' +
+            var flyH = leg.km / 700 + 2.2, trainH = leg.km / 230 + 0.6;
+            var flyC = Math.round(leg.km * 0.55 + 180), trainC = Math.round(leg.km * 0.46 + 15);
+            var flyLink = 'https://flights.ctrip.com/online/list/oneway-' + encodeURIComponent(from) + '-' + encodeURIComponent(to);
+            var trainLink = 'https://trains.ctrip.com/TrainBooking/SearchTrain.aspx?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
+            reply = '<b>' + esc(from) + ' → ' + esc(to) + '</b>，约 ' + num(leg.km) + ' km：<br>' +
+                '· ✈️ 飞机：约 ' + flyH.toFixed(1) + ' 小时（含往返机场），参考 ¥' + num(flyC) + ' · ' +
                 '<a href="' + flyLink + '" target="_blank" rel="noopener">携程查航班 →</a><br>' +
-                '· 🏨 酒店：' + hotelTxt + ' · <a href="' + hotelLink + '" target="_blank" rel="noopener">携程查酒店 →</a><br>' +
-                '· 🍜 美食：' + foodTxt + ' · <a href="' + foodLink + '" target="_blank" rel="noopener">携程找餐厅 →</a><br>' +
-                '· 📌 ' + tips + '。';
+                '· 🚄 高铁：约 ' + trainH.toFixed(1) + ' 小时，参考 ¥' + num(trainC) + ' · ' +
+                '<a href="' + trainLink + '" target="_blank" rel="noopener">携程查高铁 →</a><br>' +
+                (leg.km > 900 ? '距离较远，建议飞机，能省 4 小时以上。' : '距离不远，高铁更省心，市区到市区不用提前值机。');
             return {
                 reply: reply, actions: actions,
                 cards: [
-                    { type: 'flight', title: from + ' → ' + to + ' · 国际航班', meta: '约 ' + flyH2.toFixed(1) + ' 小时 · 直飞或一次中转', price: '¥' + num(flyC2) + ' 起', link: flyLink, linkText: '携程查航班' },
-                    { type: 'hotel', title: to + ' · 酒店', meta: hotelTxt, price: '¥700 起/晚', link: hotelLink, linkText: '携程查酒店' },
-                    { type: 'food', title: to + ' · 必吃美食', meta: foodTxt, price: '人均 ¥80-200', link: foodLink, linkText: '携程找餐厅' }
+                    {
+                        type: 'flight', title: from + ' → ' + to + ' · 飞机',
+                        meta: '约 ' + flyH.toFixed(1) + ' 小时（含往返机场）· 每日多班',
+                        price: '¥' + num(flyC) + ' 起', link: flyLink, linkText: '携程查航班', apply: 'flight'
+                    },
+                    {
+                        type: 'train', title: from + ' → ' + to + ' · 高铁',
+                        meta: '约 ' + trainH.toFixed(1) + ' 小时 · 建议选上午班次',
+                        price: '¥' + num(trainC) + ' 起', link: trainLink, linkText: '携程查高铁', apply: 'train'
+                    }
                 ]
             };
         }
@@ -2077,18 +1590,19 @@
             if (!cs.length) cs = selected.length ? selected : [state.cities[0] || '杭州'];
             var foodCards = [];
             reply = '按城市给你标了几处吃的：<br>' + cs.map(function (c) {
-                var dishes = foodsFor(c).slice(0, 4);
-                dishes.forEach(function (d) {
+                var cat = CATALOG[c];
+                var foods = cat ? cat.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; }).slice(0, 2) : [];
+                foods.forEach(function (f) {
                     foodCards.push({
                         type: 'food',
-                        title: c + ' · ' + d,
-                        meta: FOOD_DESC[d] || ('本地招牌，人均 ¥40-80'),
+                        title: c + ' · ' + f.name,
+                        meta: FOOD_DESC[f.name] || ('本地人气店，人均 ¥40-80'),
                         price: '¥40-80/人',
-                        link: ctripFood(c + ' ' + d),
+                        link: ctripFood(c + ' ' + f.name),
                         linkText: '携程美食林'
                     });
                 });
-                return '· <b>' + esc(c) + '</b>：' + esc(dishes.join('、')) + '（人均 ¥40-80）';
+                return '· <b>' + esc(c) + '</b>：' + (foods.length ? foods.map(function (f) { return esc(f.name); }).join('、') : '本地老城区小吃街') + '（人均 ¥40-80）';
             }).join('<br>') + '<br>想吃特色菜可以直接问「六安吃什么」这种带城市名的问题。';
             return { reply: reply, actions: actions, cards: foodCards };
         }
@@ -2132,70 +1646,47 @@
             return { reply: reply || '告诉我目的地和大概天数，我来排一条顺路的路线。', actions: actions };
         }
 
-        if (!actions.length) {
-            // 问候语 → 友好引导
-            if (/^(你好|您好|hi|hello|嗨|在吗|嗯|ok|好的|谢谢|多谢|早|晚安)/i.test(text)) {
-                return { reply: '你好呀 👋 我是 AI 行程助手。现在还差一步：在下方「接入大模型」里把豆包 Key 粘进去并保存，我就能回答任何问题（行程、生活、知识都行）。<br>' +
-                    '· 还没填 Key 时，我也能用内置引擎帮你规划：说「给我生成青甘大环线」「川西环线」→ 一键出完整行程<br>' +
-                    '· 选完城市后问「预算 5000」「住好点」「加一天」→ 调细节', actions: actions };
-            }
-            // 通用"XX 环线/路线"请求 → 自动识别省名/城市名做串联
-            if (/环线|路线|线路|行程|攻略/.test(text)) {
-                // 尝试从文本里提取省份或城市名
-                var provNames = ['安徽','浙江','江苏','广东','四川','云南','贵州','山东','河南','河北','山西','陕西','甘肃','青海','新疆','西藏','内蒙古','黑龙江','吉林','辽宁','湖南','湖北','江西','福建','广西','海南','宁夏','重庆','北京','上海','天津','香港','澳门','台湾'];
-                var hitProv = provNames.find(function (p) { return text.indexOf(p) >= 0; });
-                var cityNames = Object.keys(CATALOG);
-                var hitCities = cityNames.filter(function (c) { return text.indexOf(c) >= 0; }).slice(0, 4);
-                if (hitProv || hitCities.length) {
-                    var citiesPlan = hitCities.length ? hitCities.join('、') : hitProv + '主要城市';
-                    actions.push({ type: 'clear' });
-                    hitCities.forEach(function (c) { actions.push({ type: 'addCity', city: c }); });
-                    // 如果只识别到省没识别到具体城市，默认选几个知名的
-                    if (!hitCities.length && hitProv) {
-                        var provTop = {
-                            '安徽': ['黄山','徽州','九华山','天柱山'],
-                            '浙江': ['杭州','乌镇','雁荡山','普陀山'],
-                            '江苏': ['南京','苏州','无锡','镇江'],
-                            '广东': ['广州','深圳','珠海','肇庆'],
-                            '四川': ['成都','九寨沟','都江堰','稻城'],
-                            '云南': ['昆明','大理','丽江','香格里拉'],
-                            '贵州': ['贵阳','黄果树','西江千户苗寨','梵净山'],
-                            '山东': ['济南','青岛','泰安','曲阜'],
-                            '河南': ['郑州','洛阳','开封','少林寺'],
-                            '河北': ['石家庄','保定','承德','秦皇岛'],
-                            '山西': ['太原','平遥','大同','壶口瀑布'],
-                            '陕西': ['西安','华山','延安','咸阳'],
-                            '甘肃': ['兰州','敦煌','张掖','嘉峪关'],
-                            '青海': ['西宁','青海湖','茶卡盐湖','祁连山'],
-                            '新疆': ['乌鲁木齐','喀纳斯','赛里木湖','独库公路'],
-                            '西藏': ['拉萨','林芝','纳木错','日喀则'],
-                            '内蒙古': ['呼和浩特','呼伦贝尔','响沙湾','成吉思汗陵'],
-                            '黑龙江': ['哈尔滨','雪乡','五大连池','漠河'],
-                            '吉林': ['长春','长白山','雾凇岛','吉林'],
-                            '辽宁': ['沈阳','大连','鞍山','丹东'],
-                            '湖南': ['长沙','张家界','凤凰古城','衡山'],
-                            '湖北': ['武汉','恩施','神农架','武当山'],
-                            '江西': ['南昌','庐山','婺源','三清山'],
-                            '福建': ['福州','厦门','武夷山','泉州'],
-                            '广西': ['桂林','阳朔','龙脊梯田','北海'],
-                            '海南': ['海口','三亚','蜈支洲岛','五指山'],
-                            '宁夏': ['银川','贺兰山','水洞沟','中卫']
-                        };
-                        var defaults = provTop[hitProv] || [];
-                        defaults.forEach(function (c) { actions.push({ type: 'addCity', city: c }); });
-                        citiesPlan = defaults.length ? defaults.join('、') : hitProv;
+        if (!actions.length && !reply) {
+            // —— 复合自由查询（带地点 + 天数 + 规划/路线/酒店/交通意图）
+            //  例："大理旅居七天，期间要去玉龙雪山，你给我规划详细的路线以及酒店交通"
+            var citiesIn = cityListInText(text);
+            var dayMatch = text.match(/(\d{1,2})\s*天/);
+            var wantFullPlan = /规划|规划一下|规划一下路线|帮我规划|安排|行程|路线|攻略|怎么玩/.test(text) ||
+                /酒店|住|交通|高铁|飞机|票|费用|预算|多少钱/.test(text);
+            if (citiesIn.length && wantFullPlan) {
+                // 扫描所有用户提到的景点，把跨城景点所属的城市也补进来（如"大理+玉龙雪山"→大理+丽江）
+                var allPois = findAllPoisInText(text);
+                allPois.forEach(function (p) {
+                    if (citiesIn.indexOf(p.city) < 0 && citiesIn.length < 4) citiesIn.push(p.city);
+                });
+
+                var dayNum = dayMatch ? parseInt(dayMatch[1], 10) : Math.max(2, citiesIn.length);
+                // 把 state 切到这套城市/天数，并抽取用户说的特定景点
+                state.cities = citiesIn.slice(0, 4);
+                state.days = Math.min(dayNum, 20);
+                state.picks = {};
+                citiesIn.forEach(function (c) {
+                    state.picks[c] = [];
+                });
+                // 先把精确匹配的景点加进去（跨城景点也能进对应城市）
+                allPois.forEach(function (p) {
+                    if (state.picks[p.city] && state.picks[p.city].indexOf(p.poi) < 0) {
+                        state.picks[p.city].push(p.poi);
                     }
-                    actions.push({ type: 'setDays', days: Math.max(6, (hitCities.length || defaults.length) * 1.5 | 0) });
-                    return { reply: '好的，给你规划<b>' + esc(citiesPlan) + '</b>这条线，地图上已排好路线。接着可以说「预算多少」「住好点」「加一天」来调整。', actions: actions };
+                });
+                // 剩下的城市补自动挑选
+                citiesIn.forEach(function (c) {
+                    if (!state.picks[c].length && CATALOG[c]) state.picks[c] = autoPickCity(c, 4);
+                });
+                var plan = buildPlan();
+                if (plan) {
+                    var full = summarizePlan(plan, text);
+                    return { reply: full.reply, actions: full.actions, cards: full.cards };
                 }
             }
-            // 任何其他输入 → 给点有建设性的引导，不说"没理解"
-            var sampleCities = ['杭州','成都','西安','三亚','大理'];
+
             return {
-                reply: '明白，不过我需要多点线索来帮你 😊 试试这样说：<br>' +
-                    '· 「给我生成川西环线」 「青甘大环线」<br>' +
-                    '· 「杭州+苏州 3 天怎么玩」 「' + sampleCities[Math.floor(Math.random()*sampleCities.length)] + '有什么好玩」<br>' +
-                    '· 「预算 6000 去云南」 「查从北京到成都的机票」',
+                reply: '我暂时没理解这句。可以这样说：<br>· 「大理 7 天，加玉龙雪山」· 「去杭州住好点，预算 4000」<br>· 「第三天太赶了」· 「加一天」· 「查酒店」',
                 actions: actions
             };
         }
@@ -2203,12 +1694,98 @@
         return { reply: reply, actions: actions };
     }
 
+    function findTextHit(text, name) {
+        text = text.toLowerCase(); name = String(name).toLowerCase();
+        if (text.indexOf(name) >= 0) return true;
+        // 模糊：核心词命中，比如用户说"玉龙雪山"，库里是"玉龙雪山冰川公园"
+        var core = name.replace(/景区|风景区|公园|遗址|博物馆|纪念馆|广场|步行街|古村|古镇$/g, '');
+        return core.length >= 2 && text.indexOf(core) >= 0;
+    }
+
+    /* 把完整 plan 渲染成一段给用户看的文字 + 携程卡片
+       text: 用户原始问题，用来挑回答里要不要写酒店/交通/门票 */
+    function summarizePlan(plan, text) {
+        var wantsHotel = /酒店|住|住宿|民宿/.test(text);
+        var wantsTransport = /交通|怎么去|高铁|飞机|自驾|汽车/.test(text);
+        var wantsTicket = /门票|票价|多少钱|费用/.test(text);
+
+        var title = (plan.cities || []).join(' → ') + ' · ' + plan.days + ' 天' + (plan.days - 1) + ' 晚';
+        var lines = ['<b>' + esc(title) + '</b>', '把每天的安排顺一遍：'];
+        (plan.daysList || []).forEach(function (d) {
+            line = '· 第 ' + d.dayNo + ' 天 · ' + esc(d.city);
+            if (d.cityChange) line += '（' + esc(d.cityChange.from) + ' → ' + esc(d.cityChange.to) + '，' + esc(d.cityChange.mode) + '约 ' + d.cityChange.hours.toFixed(1) + ' 小时，¥' + Math.round(d.cityChange.cost) + '）';
+            line += '：' + (d.pois || []).map(function (p) { return esc(p.name); }).join(' → ') +
+                (d.tip ? ' · ' + esc(d.tip) : '');
+            lines.push(line);
+        });
+
+        var cards = [];
+        var allCities = (plan.cities || []).slice();
+
+        // 酒店卡：每座城市按"舒适档"推荐 2 个不同地段，直接带携程搜索
+        if (wantsHotel || /规划|路线|攻略/.test(text)) {
+            lines.push('', '<b>住宿建议</b>（人均每晚，携程可直接订）：');
+            allCities.forEach(function (c) {
+                var base = hotelPrice(c);
+                var center = TIER1.indexOf(c) >= 0 ? '核心商圈（近主要景点）' : '市中心商圈';
+                var suburb = '地铁沿线非核心区（性价比更高）';
+                lines.push('· <b>' + esc(c) + '</b>：' + esc(center) + ' ¥' + base + '/晚 · ' + esc(suburb) + ' ¥' + Math.round(base * 0.7) + '/晚');
+                cards.push({
+                    type: 'hotel',
+                    title: c + ' · ' + center,
+                    meta: '步行 15 分钟到主要景点 · 含早参考 ¥' + base + ' · 旺季涨 30%-60%',
+                    price: '¥' + Math.round(base * 0.9) + ' 起',
+                    link: 'https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(c + ' ' + center.replace(/（.*?）/g, '')),
+                    linkText: '携程订酒店'
+                });
+            });
+        }
+
+        // 城际交通卡
+        if (wantsTransport || (plan.daysList || []).some(function (d) { return d.cityChange; })) {
+            lines.push('', '<b>城际交通</b>（参考价，携程可直接订）：');
+            (plan.daysList || []).forEach(function (d) {
+                if (!d.cityChange) return;
+                var c = d.cityChange;
+                lines.push('· ' + esc(c.from) + ' → ' + esc(c.to) + '：' + esc(c.mode) + '约 ' + c.hours.toFixed(1) + ' 小时，¥' + Math.round(c.cost));
+                var isFlight = c.mode === '飞机';
+                cards.push({
+                    type: isFlight ? 'flight' : 'train',
+                    title: c.from + ' → ' + c.to,
+                    meta: isFlight ? '约 ' + c.hours.toFixed(1) + ' 小时 · 不含行李餐食' : '约 ' + c.hours.toFixed(1) + ' 小时 · 二等座',
+                    price: '¥' + Math.round(c.cost),
+                    link: isFlight
+                        ? 'https://flights.ctrip.com/online/list/oneway-' + encodeURIComponent(c.from) + '-' + encodeURIComponent(c.to)
+                        : 'https://trains.ctrip.com/TrainBooking/SearchTrain.aspx?from=' + encodeURIComponent(c.from) + '&to=' + encodeURIComponent(c.to),
+                    linkText: isFlight ? '携程订机票' : '携程订高铁'
+                });
+            });
+        }
+
+        // 门票参考
+        if (wantsTicket) {
+            var ticketSum = Math.round(plan.totals && plan.totals.tickets ? plan.totals.tickets : 0);
+            lines.push('', '<b>门票参考</b>：本行程合计约 ¥' + ticketSum + '，热门门票（玉龙雪山、莫高窟、布达拉宫等）建议在"丽江旅游集团/官方公众号"提前 3-7 天实名预约。');
+        }
+
+        lines.push('', '<b>预算汇总</b>：人均约 ¥' + Math.round((plan.totals && plan.totals.total ? plan.totals.total : 0) / plan.people) +
+            '（住宿 ¥' + Math.round((plan.totals && plan.totals.hotels || 0) / plan.people) + ' · 餐饮 ¥' +
+            Math.round((plan.totals && plan.totals.meals || 0) / plan.people) + ' · 市内交通 ¥' +
+            Math.round((plan.totals && plan.totals.local || 0) / plan.people) + '）');
+
+        return {
+            reply: lines.join('<br>'),
+            actions: [],
+            cards: cards.slice(0, 6)
+        };
+    }
+
     /* ---------- 执行动作 ---------- */
     function applyActions(actions, silent) {
         var notes = [];
         var exitLoopTypes = {
             addCity: 1, removeCity: 1, addPoi: 1, removePoi: 1, replacePoi: 1, setDays: 1,
-            startCity: 1, movePoiTo: 1, addByPref: 1, dropPaid: 1, refreshPois: 1, clear: 1, planTrip: 1
+            startCity: 1, movePoiTo: 1, addByPref: 1, dropPaid: 1, refreshPois: 1, clear: 1
         };
         actions.forEach(function (a) {
             if (!a || !a.type) return;
@@ -2223,28 +1800,6 @@
                         state.days = lp.itinerary.length;
                         notes.push('已生成「' + lp.name + '」' + lp.itinerary.length + ' 天环线');
                     }
-                    break;
-                }
-                case 'planTrip': {
-                    var tCs = (a.cities || []).filter(function (c) { return !!CATALOG[c]; }).slice(0, 4);
-                    if (!tCs.length) { notes.push('没识别到可规划的城市'); break; }
-                    var tDays = Math.max(1, parseInt(a.days, 10) || 1);
-                    if (tCs.length > tDays) tCs = tCs.slice(0, tDays);
-                    state.loop = null;
-                    state.cities = tCs;
-                    state.picks = {};
-                    // 天数按城市均分，剩下的给前面的城市；每城按天数挑景点（每天约 2-3 个）
-                    var perBase = Math.floor(tDays / tCs.length), perExtra = tDays % tCs.length;
-                    var cap = state.pace === 'relaxed' ? 2 : (state.pace === 'packed' ? 4 : 3);
-                    tCs.forEach(function (c, i) {
-                        var d = perBase + (i < perExtra ? 1 : 0);
-                        if (d < 1) d = 1;
-                        var totalPoi = CATALOG[c].items.length;
-                        var want = Math.min(totalPoi, Math.max(2, d * cap));
-                        state.picks[c] = autoPickCity(c, want);
-                    });
-                    state.days = tDays;
-                    notes.push('已生成 ' + tCs.join(' → ') + ' · ' + tDays + ' 天行程');
                     break;
                 }
                 case 'addCity':
@@ -2432,17 +1987,6 @@
             }
             renderAll();
             if (state.plan) saveLocal();
-            // 新生成行程（一日游/多日游）后，把结果卡片滚到视野内，让地图直接可见
-            var askedTrip = false;
-            actions.forEach(function (a) { if (a && a.type === 'planTrip') askedTrip = true; });
-            if (askedTrip && state.plan) {
-                setTimeout(function () {
-                    var rc = $('plResultCard');
-                    if (!rc) return;
-                    try { rc.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-                    catch (e3) { rc.scrollIntoView(); }
-                }, 150);
-            }
         }
         return notes.join('；');
     }
@@ -2467,7 +2011,7 @@
                 .slice(0, 12).map(function (i) { return i.name; });
         });
         return [
-            '你是一个通用 AI 助手，也是 MYL 旅行网站的资深旅行规划师，中文回答。用户什么问题都能问你：旅行/签证/交通/美食/预算/路线/住宿/攻略，也可以是编程/生活/学习/娱乐/闲聊/知识问答/翻译/写作等任何话题。',
+            '你是 MYL 旅行网站的 AI 行程助手，也是资深旅行规划师，中文回答。你什么旅行问题都能答：目的地推荐、签证、季节、交通、美食、预算、路线优化等。',
             '当前行程 JSON：' + JSON.stringify(compact || {}),
             '偏好：住宿=' + (state.hotelTier || 'comfort') + '，城际偏好=' + (state.transport || 'auto') + '，人均预算=' + (state.budget || '不限'),
             '可加入的候选景点（按城市）：' + JSON.stringify(candidates),
@@ -2475,7 +2019,7 @@
             '现成环线：' + (window.LOOP_ROUTES || []).map(function (l) { return l.id + '=' + l.name; }).join('；'),
             '用户可能只是提问（不必改行程），也可能要求生成/修改行程。请只输出一个 JSON 对象，不要 markdown 代码块。格式：',
             '{"reply":"给用户看的中文回复，可用<br>换行","actions":[],"cards":[{"type":"flight|train|hotel|food","title":"标题","meta":"说明","price":"¥xxx","link":"https://...","linkText":"携程查价"}]}',
-            'actions 可选：planTrip{cities:[城市1,城市2],days:天数}（用户说"N日游/玩N天"时用于从零生成行程，会自动挑景点并在地图出路线）、addCity{city}、removeCity{city}、addPoi{city,poi}、removePoi{city,poi}、replacePoi{city,poi}、setDays{days}、setPace{pace:relaxed|normal|packed}、setHotelTier{tier:budget|comfort|luxury}、setTransport{value:auto|train|flight}、setBudget{amount}、startCity{city}、movePoiTo{city,poi,day}、addByPref{pref:nature|history|food|family|photo}、dropPaid、refreshPois、loadLoop{id}、clear。',
+            'actions 可选：addCity{city}、removeCity{city}、addPoi{city,poi}、removePoi{city,poi}、replacePoi{city,poi}、setDays{days}、setPace{pace:relaxed|normal|packed}、setHotelTier{tier:budget|comfort|luxury}、setTransport{value:auto|train|flight}、setBudget{amount}、startCity{city}、movePoiTo{city,poi,day}、addByPref{pref:nature|history|food|family|photo}、dropPaid、refreshPois、loadLoop{id}、clear。',
             '需要用户可以点选航班/高铁/酒店/美食时，用 cards 返回 2-6 张卡，链接使用携程搜索页。',
             '约束：城市最多 4 座；改行程时尽量只使用候选景点或可选城市中的名字；纯知识问答可直接回答，不要硬塞 action。回复要具体、像真人规划师。'
         ].join('\n');
@@ -2484,35 +2028,16 @@
     function callAI(userText) {
         var cfg = state.aiCfg || {};
         var preset = AI_PRESETS[cfg.provider] || {};
+        var endpoint = cfg.endpoint || preset.endpoint;
         var model = cfg.model || preset.model;
-        var isProxy = preset.isProxy;
-        // proxy 模式：endpoint 就是 Worker URL（不带路径），自动拼默认后端
-        var endpoint;
-        if (isProxy) {
-            endpoint = (cfg.endpoint || DEFAULT_AI_CFG.endpoint || '').replace(/\/+$/, '');
-            if (!endpoint) throw new Error('请先在 ⚙️ 里填 Cloudflare Worker 地址（部署一次后长期用）');
-            // 转发目标：cfg.target → 预设 target → 豆包
-            var target = (cfg.target || preset.target || 'https://ark.cn-beijing.volces.com/api/v3').replace(/\/+$/, '');
-            // Worker 内部逻辑：去掉路径的 /api 前缀后拼到 target 后面
-            endpoint = endpoint + '/api/chat/completions?target=' + encodeURIComponent(target);
-            model = model || 'doubao-seed-1-6-250615';
-        } else {
-            endpoint = cfg.endpoint || preset.endpoint;
-            if (!endpoint) throw new Error('未填写接口地址');
-        }
+        if (!endpoint) throw new Error('未填写接口地址');
         var isSite = cfg.provider === 'site' || endpoint === '/api/chat';
-        var isOllama = cfg.provider === 'ollama' || (endpoint && endpoint.indexOf('ollama') >= 0) || isProxy;
         var headers = { 'Content-Type': 'application/json' };
-        // proxy 模式：如果用户填了 key 就带上（转发给后端），没填就不带
-        if (!isSite && !isOllama && cfg.key) headers['Authorization'] = 'Bearer ' + cfg.key;
-        if (isProxy && cfg.key) headers['Authorization'] = 'Bearer ' + cfg.key;
-
-        // 用 Promise.race 加 60s 超时
-        var fetchPromise = fetch(endpoint, {
+        if (!isSite) headers['Authorization'] = 'Bearer ' + (cfg.key || '');
+        return fetch(endpoint, {
             method: 'POST',
             headers: headers,
             credentials: 'same-origin',
-            mode: isSite ? 'cors' : 'cors',
             body: JSON.stringify({
                 model: model,
                 provider: isSite ? 'auto' : undefined,
@@ -2522,52 +2047,21 @@
                     { role: 'user', content: userText }
                 ]
             })
-        });
-        var timeoutPromise = new Promise(function (_, reject) {
-            setTimeout(function () { reject(new Error('TIMEOUT')); }, 60000);
-        });
-
-        return Promise.race([fetchPromise, timeoutPromise]).then(function (r) {
+        }).then(function (r) {
             if (!r.ok) {
                 return r.text().then(function (t) {
-                    var msg = 'HTTP ' + r.status, apiCode = '';
-                    try {
-                        var ej = JSON.parse(t);
-                        if (ej && ej.error) { apiCode = ej.error.code || ''; msg = ej.error.message || apiCode || msg; }
-                    } catch (e2) {}
-                    var err = new Error(msg);
-                    err.code = 'HTTP_' + r.status;
-                    err.apiCode = apiCode;
-                    throw err;
+                    var msg = 'HTTP ' + r.status;
+                    try { msg = (JSON.parse(t).error || msg); } catch (e2) {}
+                    throw new Error(msg);
                 });
             }
             return r.json();
         }).then(function (j) {
             var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
             content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-            // 先尝试找 JSON 对象
             var start = content.indexOf('{'), end = content.lastIndexOf('}');
-            if (start >= 0 && end > start) {
-                try {
-                    var obj = JSON.parse(content.slice(start, end + 1));
-                    // 有 reply 字段 → 标准 JSON 格式
-                    if (obj.reply !== undefined) return obj;
-                    // 没有 reply → 当作纯文本 reply 处理
-                } catch (e) { /* JSON 解析失败，走纯文本 */ }
-            }
-            // 纯文本回复：包装成 { reply: ... }
-            return { reply: content };
-        }).catch(function (e) {
-            // 错误分类：让上层能给出针对性引导
-            var isCORS = e && (e.name === 'TypeError' || e.message === 'Failed to fetch' || e.message.indexOf('NetworkError') >= 0);
-            var isTimeout = e && e.message === 'TIMEOUT';
-            var err = e instanceof Error ? e : new Error(String(e));
-            err.isCORS = !!isCORS;
-            err.isTimeout = !!isTimeout;
-            err.provider = cfg.provider;
-            err.model = model;
-            err.endpoint = endpoint;
-            throw err;
+            var obj = JSON.parse(content.slice(start, end + 1));
+            return obj;
         });
     }
 
@@ -2582,12 +2076,9 @@
         if (input) input.value = '';
 
         var cfg = state.aiCfg || {};
-        var preset = AI_PRESETS[cfg.provider] || {};
-        var endpoint = cfg.endpoint || preset.endpoint || (cfg.provider === 'proxy' ? DEFAULT_AI_CFG.endpoint : '');
-        var needsKey = cfg.provider !== 'site' && cfg.provider !== 'ollama' && cfg.provider !== 'proxy';
-        var hasKey = cfg.key || !needsKey;
         var useAi = cfg.provider && cfg.provider !== 'builtin' &&
-            hasKey && !!endpoint;
+            (cfg.provider === 'site' || !!cfg.key) &&
+            (cfg.endpoint || (AI_PRESETS[cfg.provider] || {}).endpoint);
 
         state.busy = true;
         state.msgs.push({ role: 'ai', text: '', typing: true });
@@ -2599,58 +2090,16 @@
                 state.msgs.pop();
                 var reply = (res && res.reply) ? sanitizeAi(res.reply) : '';
                 var acts = Array.isArray(res && res.actions) ? res.actions.slice(0, 8) : [];
-                var draftAi = null, actsRest = [];
-                acts.forEach(function (a) {
-                    if (a && a.type === 'planTrip') draftAi = { cities: a.cities || [], days: a.days || 1 };
-                    else actsRest.push(a);
-                });
-                var changedAi = applyActions(actsRest);
+                var changedAi = applyActions(acts);
                 var aiCards = Array.isArray(res && res.cards) ? res.cards.slice(0, 8) : null;
                 if (!reply) reply = '已按你的要求更新行程。';
-                pushMsg('ai', reply + (changedAi ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), draftAi, aiCards);
+                pushMsg('ai', reply + (changedAi ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards);
             } catch (e) {
                 state.msgs.pop();
                 var fb = localReply(text);
                 var ch = applyActions(fb.actions);
-                var hint = '';
-                if (e.isCORS) {
-                    if (e.provider === 'ollama') {
-                        hint = '浏览器无法直接访问 localhost（跨域+CORS限制）。<br>' +
-                            '<b>解决方法</b>：在电脑启动 Ollama 时设置 CORS：<br>' +
-                            'Mac/Linux: <code>OLLAMA_ORIGINS="*" ollama serve</code><br>' +
-                            'Windows: <code>$env:OLLAMA_ORIGINS="*"; ollama serve</code><br>' +
-                            '⚠ 手机上无法用 Ollama（手机 localhost ≠ 电脑），请用豆包/DeepSeek 云端 API';
-                    } else if (e.provider === 'site') {
-                        hint = '站点代理暂不可用。改用 Ollama（需本地启动）或豆包/DeepSeek 填自己的 Key。';
-                    } else if (e.provider === 'proxy') {
-                        hint = '连不上 Worker（<code>*.workers.dev</code> 在国内常被 DNS 污染 / 屏蔽）。<br>' +
-                            '<b>处理</b>：① 换 Wi-Fi / 手机流量再试；② 强烈建议在 Cloudflare 给 Worker 绑定自己的域名（Workers → Settings → Domains & Routes → Add custom domain），之后在 ⚙️ 把接口地址换成该域名。';
-                    } else {
-                        hint = '云端 AI API 不支持浏览器跨域直连。<br>' +
-                            '<b>简单方案</b>：用 Ollama 本地模型（需启动并设置 <code>OLLAMA_ORIGINS="*"</code>）<br>' +
-                            '<b>正规方案</b>：搭个免费 Cloudflare Worker 转发请求（2分钟部署），选「自定义代理」填 Worker URL<br>' +
-                            '<b>临时方案</b>：换个 API endpoint 试试，有些镜像站允许跨域';
-                    }
-                } else if (e.isTimeout) {
-                    hint = '请求超时（60s），大模型可能在忙。可以换个模型或稍后再试。';
-                } else if (e.apiCode === 'ModelNotOpen') {
-                    hint = '豆包账号还没开通模型 <code>' + esc(e.model || '') + '</code>：打开火山方舟控制台 →「开通管理」→ 找到该模型点「开通」（有免费额度），然后重试。<br>' +
-                        '<a href="https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement" target="_blank" rel="noopener">→ 去开通</a>';
-                } else if (e.apiCode === 'InvalidEndpointOrModel.NotFound') {
-                    hint = '模型 ID 不存在或没有权限：在控制台「开通管理」复制可用模型 ID，填到 ⚙️ 的「模型」栏。';
-                } else if (e.code === 'HTTP_401' || e.code === 'HTTP_403') {
-                    hint = e.provider === 'proxy'
-                        ? 'Worker 端还没有可用 Key：Cloudflare → 你的 Worker → Settings → Variables → 添加密钥 <code>ARK_API_KEY</code>；或在 ⚙️ 里填 Key（只存本机）。'
-                        : 'API Key 无效或权限不足。请在 ⚙️ 设置里检查 Key 是否正确粘贴。';
-                } else if (e.code === 'HTTP_404') {
-                    hint = e.provider === 'proxy'
-                        ? '模型名不对：豆包一般是 <code>doubao-seed-1-6-250615</code>，或在火山方舟控制台用你的推理接入点 ID（ep-xxx）。'
-                        : '接口地址或模型名不对。检查 endpoint 和 model 字段。';
-                } else {
-                    hint = '调用失败：' + esc(e.message || '') + '。检查接口地址和 Key 是否正确。';
-                }
-                var hintHtml = hint ? '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">' + hint + '</div>' : '';
-                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hintHtml, fb.tripDraft || null, fb.cards);
+                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') +
+                    '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">接口调用失败（' + esc(e.message) + '，可能是浏览器跨域限制），已改用内置引擎处理。</div>', null, fb.cards);
             } finally {
                 state.busy = false;
             }
@@ -2661,12 +2110,7 @@
                 var changed = applyActions(fb.actions);
                 var out = fb.reply || '已按你的要求更新行程。';
                 if (changed) out += '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changed) + '</div>';
-                // 云端 AI 未填 Key 时，提示一步即通
-                var _c = state.aiCfg || {};
-                if (_c.provider && _c.provider !== 'builtin' && !_c.key && _c.provider !== 'site' && _c.provider !== 'proxy') {
-                    out += '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">想让我什么都能答：在下方「接入大模型」粘贴豆包 Key → 保存（只存你手机，不会上传）。</div>';
-                }
-                pushMsg('ai', out, fb.tripDraft || null, fb.cards);
+                pushMsg('ai', out, null, fb.cards);
                 state.busy = false;
             }, 320);
         }
@@ -2852,8 +2296,7 @@
             var card = $('plResultCard');
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
             pushMsg('ai', '行程已生成：<b>' + esc(state.plan.title || (state.plan.cities.join(' → ') + ' · ' + state.plan.days + ' 天')) +
-                '</b>。每天的「门票·预约 / 当地美食 / 道路交通」都放在行程卡里了，景点旁点「携程票 / 抖音票」可直接查票。' +
-                '想改哪里直接跟我说，比如「第三天太赶了」「住好点」「加一天」「推荐美食」。');
+                '</b>。想改哪里直接跟我说，比如「第三天太赶了」「住好点」「加一天」「推荐美食」。');
         });
 
         // 助手
@@ -2861,29 +2304,6 @@
         var input = $('plAgentInput');
         var agBody = $('plAgentBody');
         if (agBody) agBody.addEventListener('click', function (e) {
-            var tripBtn = e.target.closest('.pl-trip-confirm');
-            if (tripBtn) {
-                var cs = (tripBtn.getAttribute('data-cities') || '').split('|').filter(Boolean);
-                var dy = parseInt(tripBtn.getAttribute('data-days'), 10) || 1;
-                applyActions([{ type: 'planTrip', cities: cs, days: dy }]);
-                state.plan = buildPlan();
-                renderResult();
-                saveLocal();
-                tripBtn.disabled = true;
-                tripBtn.textContent = '✅ 已生成，看上方行程';
-                toast('行程已生成，地图上已画出路线');
-                setTimeout(function () {
-                    var rc = $('plResultCard');
-                    if (rc) { try { rc.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (err) { rc.scrollIntoView(); } }
-                }, 120);
-                return;
-            }
-            var cancelBtn = e.target.closest('.pl-trip-cancel');
-            if (cancelBtn) {
-                var wrap = cancelBtn.parentNode;
-                if (wrap) wrap.innerHTML = '<span style="font-size:.76rem;color:#94a3b8">已取消，想生成时再说一次就好</span>';
-                return;
-            }
             var pickBtn = e.target.closest('[data-cardapply]');
             if (!pickBtn) return;
             var v = pickBtn.getAttribute('data-cardapply');
@@ -2912,33 +2332,14 @@
             if (b) sendAgent(b.getAttribute('data-chip'));
         });
 
-        // 接入设置（只有站长设备能改：首次点齿轮需输入管理口令，口令正确后本机记住）
-        var ADMIN_CODE = 'myl2026';
-        var LS_ADMIN = 'myl_admin_ok';
-        var isAdminDevice = function () {
-            try { return localStorage.getItem(LS_ADMIN) === '1'; } catch (e) { return false; }
-        };
+        // 接入设置
         var gear = $('plAgentSettings');
         var panel = $('plAiPanel');
         if (gear && panel) gear.addEventListener('click', function () {
-            if (!isAdminDevice()) {
-                var code = window.prompt('模型设置仅站长可改，请输入管理口令：');
-                if (code === null) return;
-                if (String(code).trim() !== ADMIN_CODE) { toast('口令不正确，无法修改模型设置'); return; }
-                try { localStorage.setItem(LS_ADMIN, '1'); } catch (e) { }
-                toast('已解锁模型设置（仅本设备有效）');
-            }
             if (window.innerWidth <= 640) {
                 var ag = document.querySelector('.pl-agent');
                 if (ag) { ag.classList.add('pl-agent-open'); document.body.classList.add('pl-agent-expanded'); }
             }
-            // 打开时把当前配置回填到表单，避免看到空字段
-            var cur = state.aiCfg || {};
-            var pv = AI_PRESETS[cur.provider] || AI_PRESETS.doubao;
-            if (provSel && cur.provider) provSel.value = cur.provider;
-            if ($('plAiEndpoint')) $('plAiEndpoint').value = cur.endpoint || pv.endpoint || '';
-            if ($('plAiModel')) $('plAiModel').value = cur.model || pv.model || '';
-            if ($('plAiKey')) $('plAiKey').value = cur.key || '';
             panel.classList.toggle('open');
         });
 
@@ -3073,8 +2474,7 @@
             el.textContent = state.siteAiReady ? '站点 AI · 豆包 / DeepSeek 已接入' : '站点 AI · 待管理员配置 Key';
         } else if (cfg.provider && cfg.provider !== 'builtin') {
             var label = (AI_PRESETS[cfg.provider] || {}).label || cfg.provider;
-            var ready = cfg.key || cfg.provider === 'site' || cfg.provider === 'proxy' || cfg.provider === 'ollama';
-            el.textContent = label + (cfg.model ? ' · ' + cfg.model : '') + (ready ? ' 已接入' : ' · 待填 Key');
+            el.textContent = label + (cfg.model ? ' · ' + cfg.model : '') + ' 已接入';
         } else {
             el.textContent = '内置规划引擎 · 实时可用';
         }
@@ -3115,21 +2515,17 @@
             '    <div class="pl-agent-input"><textarea id="plAgentInput" rows="1" placeholder="想怎么改？例如：帮我生成川西环线"></textarea><button id="plAgentSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button></div>',
             '    <div class="pl-ai-panel" id="plAiPanel">',
             '      <h4>接入大模型</h4>',
-            '      <p class="hint">接入大模型后可以<b>什么问题都能答</b>（旅行、生活、知识、写作都行）。Key 只存在你自己的浏览器，不上传服务器。<br>豆包直连可用（国内网络），只需填一次 Key。</p>',
+            '      <p class="hint">站点已内置 AI 代理：管理员在 Vercel 环境变量配置 DEEPSEEK_API_KEY 或 ARK_API_KEY 后，所有访客无需填 Key 即可使用豆包 / DeepSeek。也可以填自己的 Key（只存本机浏览器）。</p>',
             '      <div class="pl-ai-field"><label>服务商</label><select id="plAiProvider">',
-            '        <option value="doubao">豆包 · 火山方舟（直连，推荐）</option>',
-            '        <option value="builtin">内置规划引擎（适合简单改行程）</option>',
-            '        <option value="site">站点 AI（需管理员配置）</option>',
-            '        <option value="proxy">Cloudflare Worker 代理（workers.dev 国内可能被墙）</option>',
-            '        <option value="ollama">本地 Ollama 开源大模型（无需 Key，电脑上跑）</option>',
-            '        <option value="deepseek">DeepSeek（自己的 Key，需代理）</option>',
-            '        <option value="kimi">Kimi · 月之暗面（自己的 Key，需代理）</option>',
-            '        <option value="glm">智谱 GLM（自己的 Key，需代理）</option>',
+            '        <option value="site">站点 AI（豆包 / DeepSeek，无需填 Key）</option>',
+            '        <option value="builtin">内置规划引擎（无需配置）</option>',
+            '        <option value="doubao">豆包 · 火山方舟（自己的 Key）</option>',
+            '        <option value="deepseek">DeepSeek（自己的 Key）</option>',
             '        <option value="custom">自定义 OpenAI 兼容接口 / 代理</option>',
             '      </select></div>',
-            '      <div class="pl-ai-field"><label>接口地址</label><input id="plAiEndpoint" type="text" placeholder="豆包：https://ark.cn-beijing.volces.com/api/v3/chat/completions"></div>',
-            '      <div class="pl-ai-field"><label>模型 ID</label><input id="plAiModel" type="text" placeholder="豆包：doubao-seed-2-1-lite-260915"></div>',
-            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="粘贴火山方舟 API Key（ark- 开头），只存本机" autocomplete="off"></div>',
+            '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="https://ark.cn-beijing.volces.com/api/v3/chat/completions"></div>',
+            '      <div class="pl-ai-field"><label>模型 / 推理接入点 ID</label><input id="plAiModel" type="text" placeholder="doubao-seed-1-6-250615"></div>',
+            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="只存本机 localStorage" autocomplete="off"></div>',
             '      <div class="pl-ai-btns"><button class="pl-btn-primary" id="plAiSave">保存</button><button class="pl-btn-ghost" id="plAiClear">清除</button></div>',
             '    </div>',
             '  </aside>',
@@ -3150,14 +2546,10 @@
             var ky = $('plAiKey'); if (ky) ky.value = state.aiCfg.key || '';
         }
 
-        // 恢复上次 / 首次进入不预设行程，让用户自己选城市
+        // 恢复上次 / 首次示例
         var restored = loadLocal();
-        if (!restored) {
-            state.cities = [];
-            state.picks = {};
-            state.plan = null;
-            renderAll();
-        } else {
+        if (!restored) loadDemo(true);
+        else {
             renderAll();
             if (state.cities.length) {
                 state.plan = buildPlan();
@@ -3210,9 +2602,6 @@
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
     else boot();
-
-    // 供主站行程/预算复用同一套门票数据
-    window.MYL_TICKET_DB = { prices: TICKETS, free: FREE_POI };
 
     // 供调试/外部调用
     window.MYLPlanner = {
