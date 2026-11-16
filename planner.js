@@ -1320,6 +1320,25 @@
         var city = findCityInText(text);
         var nDay = dayNoFrom(text);
 
+        /* ---- 问候 / 闲聊 ---- */
+        if (/^(你好|您好|hi|hello|在吗|在不在|嗨|哈喽|哈喽|早|晚安|早上好|晚上好|下午好|hey|yo|你好呀|hiya)$/i.test(text) ||
+            text.length <= 3 && /[你您hi哈喽早晚安]/.test(text)) {
+            return {
+                reply: '你好👋 我是你的旅行规划师，可以：<br>' +
+                    '· 直接告诉我「想去大理 7 天，顺带玉龙雪山」，我给你出完整路线 + 酒店 + 交通<br>' +
+                    '· 也可以说「帮我生成川西大环线」「查杭州酒店」「加一天」<br>' +
+                    '想规划哪趟？',
+                actions: actions
+            };
+        }
+        if (/^(谢谢|感谢|多谢|thx|thanks|多谢啦|谢谢你|好的|ok|好嘞|行|没问题|了解|知道了|明白)$/i.test(text) ||
+            text.length <= 4 && /[谢谢多谢感谢好嘞ok行没问题]/.test(text)) {
+            return { reply: '不客气！随时可以改行程、加景点、查酒店～', actions: actions };
+        }
+        if (/^[。，！？、\.\!\,\?\s]+$/.test(text)) {
+            return { reply: '想说点什么？直接告诉我目的地和计划就好～', actions: actions };
+        }
+
         if (/怎么用|帮助|能做什么|你会什么|介绍.*自己/.test(text)) {
             return {
                 reply: '我不只会改行程，还能当你的旅行规划师：<br>' +
@@ -2025,6 +2044,40 @@
         ].join('\n');
     }
 
+    /* 公共 CORS 代理列表（按顺序尝试），浏览器直连第三方 API 被 CORS 拦截时自动走代理 */
+    var CORS_PROXIES = [
+        'https://corsproxy.io/?',             // 免费、稳定、支持 POST
+        'https://api.allorigins.win/raw?url=', // 备选
+        'https://cors.eu.org/'                // 备选
+    ];
+
+    /* 智能错误信息：区分 CORS / Key 无效 / 限流 / 服务异常，返回可行动的提示 */
+    function formatCallError(err) {
+        if (!err) return '未知错误';
+        var msg = (err.message || String(err) || '');
+        var lower = msg.toLowerCase();
+        if (lower.indexOf('typeerror') >= 0 || lower.indexOf('failed to fetch') >= 0 ||
+            lower.indexOf('networkerror') >= 0 || lower.indexOf('cors') >= 0) {
+            return '浏览器跨域被拦截（CORS），AI 服务在浏览器里无法直接调用。请选「站点 AI」或在豆包控制台把当前域名加入 CORS 白名单。';
+        }
+        if (msg.indexOf('401') >= 0 || lower.indexOf('unauthorized') >= 0 || lower.indexOf('invalid.*key') >= 0) {
+            return 'API Key 无效或已过期，请在设置里重新粘贴豆包 / DeepSeek 的 Key。';
+        }
+        if (msg.indexOf('429') >= 0 || msg.indexOf('rate limit') >= 0 || lower.indexOf('too many') >= 0) {
+            return '请求太频繁，AI 服务暂时限流，请稍后再试。';
+        }
+        if (msg.indexOf('503') >= 0 || msg.indexOf('502') >= 0 || msg.indexOf('500') >= 0 || msg.indexOf('upstream')) {
+            return 'AI 服务暂时异常或上游超时，请稍后重试，或切换内置规划引擎。';
+        }
+        if (msg.indexOf('503') >= 0 || lower.indexOf('未配置') >= 0 || lower.indexOf('not configured') >= 0) {
+            return '站点 AI 未部署后端代理（/api/chat）。如果你是站长，请在 Vercel 上部署本项目并配置 ARK_API_KEY 环境变量。';
+        }
+        if (msg.indexOf('timeout') >= 0 || msg.indexOf('超时') >= 0) {
+            return 'AI 响应超时，请稍后重试。';
+        }
+        return 'AI 调用失败：' + msg;
+    }
+
     function callAI(userText) {
         var cfg = state.aiCfg || {};
         var preset = AI_PRESETS[cfg.provider] || {};
@@ -2032,36 +2085,73 @@
         var model = cfg.model || preset.model;
         if (!endpoint) throw new Error('未填写接口地址');
         var isSite = cfg.provider === 'site' || endpoint === '/api/chat';
-        var headers = { 'Content-Type': 'application/json' };
-        if (!isSite) headers['Authorization'] = 'Bearer ' + (cfg.key || '');
-        return fetch(endpoint, {
-            method: 'POST',
-            headers: headers,
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                model: model,
-                provider: isSite ? 'auto' : undefined,
-                temperature: 0.3,
-                messages: [
-                    { role: 'system', content: buildSystemPrompt() },
-                    { role: 'user', content: userText }
-                ]
-            })
-        }).then(function (r) {
-            if (!r.ok) {
-                return r.text().then(function (t) {
-                    var msg = 'HTTP ' + r.status;
-                    try { msg = (JSON.parse(t).error || msg); } catch (e2) {}
-                    throw new Error(msg);
-                });
+        var key = cfg.key || '';
+
+        var payload = {
+            model: model,
+            provider: isSite ? 'auto' : undefined,
+            temperature: 0.3,
+            messages: [
+                { role: 'system', content: buildSystemPrompt() },
+                { role: 'user', content: userText }
+            ]
+        };
+
+        /* 真正发请求：一次直连 + CORS 失败时自动代理重试（仅对非 site 外部 API） */
+        function doFetch(finalUrl, useCorsProxy) {
+            var headers = { 'Content-Type': 'application/json' };
+            if (!isSite) headers['Authorization'] = 'Bearer ' + key;
+            var fetchUrl = finalUrl;
+            var proxyUsed = null;
+            if (useCorsProxy) {
+                proxyUsed = CORS_PROXIES[0];
+                fetchUrl = proxyUsed + encodeURIComponent(finalUrl);
+                // CORS 代理转发后，浏览器不再收到原始响应的 Content-Type
+                // 保留 headers（包括 Authorization），corsproxy.io 会原样转发
             }
-            return r.json();
-        }).then(function (j) {
-            var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
-            content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-            var start = content.indexOf('{'), end = content.lastIndexOf('}');
-            var obj = JSON.parse(content.slice(start, end + 1));
-            return obj;
+            var opts = {
+                method: 'POST',
+                headers: headers,
+                credentials: 'omit',
+                body: JSON.stringify(payload)
+            };
+            return fetch(fetchUrl, opts).then(function (r) {
+                if (!r.ok) {
+                    return r.text().then(function (t) {
+                        var msg = 'HTTP ' + r.status;
+                        try {
+                            var parsed = JSON.parse(t);
+                            if (parsed && parsed.error) {
+                                if (typeof parsed.error === 'string') msg = parsed.error;
+                                else if (parsed.error.message) msg = parsed.error.message;
+                            }
+                        } catch (e2) {}
+                        var err = new Error(msg);
+                        err.status = r.status;
+                        throw err;
+                    });
+                }
+                return r.text().then(function (t) {
+                    // corsproxy.io 会用 text/plain 包裹 JSON，这里处理一下
+                    try { return JSON.parse(t); }
+                    catch (e3) { throw new Error('AI 返回了非 JSON 内容'); }
+                });
+            }).then(function (j) {
+                var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
+                content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+                var start = content.indexOf('{'), end = content.lastIndexOf('}');
+                if (start < 0 || end < 0) throw new Error('AI 未返回有效 JSON');
+                return JSON.parse(content.slice(start, end + 1));
+            });
+        }
+
+        return doFetch(endpoint, false).catch(function (e) {
+            // 非 site 的外部 API，TypeError 通常意味着 CORS 拦截，自动走代理
+            if (!isSite && !e.status && (e.message === 'Failed to fetch' ||
+                String(e).indexOf('TypeError') >= 0)) {
+                return doFetch(endpoint, true);
+            }
+            throw e;
         });
     }
 
@@ -2098,8 +2188,9 @@
                 state.msgs.pop();
                 var fb = localReply(text);
                 var ch = applyActions(fb.actions);
-                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') + (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') +
-                    '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">接口调用失败（' + esc(e.message) + '，可能是浏览器跨域限制），已改用内置引擎处理。</div>', null, fb.cards);
+                var hint = '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">⚠️ ' + esc(formatCallError(e)) + '</div>';
+                pushMsg('ai', (fb.reply || '已按你的要求更新行程。') +
+                    (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hint, null, fb.cards);
             } finally {
                 state.busy = false;
             }
