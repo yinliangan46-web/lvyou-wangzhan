@@ -2181,9 +2181,29 @@
                 var reply = (res && res.reply) ? sanitizeAi(res.reply) : '';
                 var acts = Array.isArray(res && res.actions) ? res.actions.slice(0, 8) : [];
                 var changedAi = applyActions(acts);
-                var aiCards = Array.isArray(res && res.cards) ? res.cards.slice(0, 8) : null;
-                if (!reply) reply = '已按你的要求更新行程。';
-                pushMsg('ai', reply + (changedAi ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards);
+
+                /* 关键修复：AI 的 actions 通常准确（有 prompt 约束），但 reply 文字容易瞎编。
+                   只要 state 被 AI 有效修改了（changedAi 非空），就丢弃 AI 的 reply 和 cards，
+                   改用本地 buildPlan + summarizePlan 重新渲染 100% 准确的完整回复。
+                   这样不管 AI 瞎编"杭州"还是"上海"，本地引擎都是基于真实的 state 生成 */
+                var useLocalRerender = !!changedAi;
+                var aiCards = null;
+
+                if (useLocalRerender) {
+                    var plan = buildPlan();
+                    if (plan) {
+                        var full = summarizePlan(plan, text);
+                        reply = full.reply;
+                        aiCards = full.cards;
+                    } else {
+                        reply = '已按你的要求更新行程：' + changedAi +
+                            '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">AI 执行了修改，但本地引擎未能生成完整行程，请手动调整。</div>';
+                    }
+                } else if (!reply) {
+                    reply = '已按你的要求更新行程。';
+                }
+                if (!aiCards && Array.isArray(res && res.cards)) aiCards = res.cards.slice(0, 8);
+                pushMsg('ai', reply + (changedAi && !useLocalRerender ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards);
             } catch (e) {
                 state.msgs.pop();
                 var fb = localReply(text);
