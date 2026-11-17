@@ -528,3 +528,486 @@ function resetBucket() {
         renderBucketMarkers(); updateBucketStats();
     }
 }
+
+// ============================================================
+//  剧游 —— 展开线路 + AI路书
+// ============================================================
+const dramaData = [
+    { title: '《去有风的地方》', tag: '热播剧', loc: '云南 · 大理',
+      img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80',
+      desc: '许红豆在大理洱海边的民宿里治愈了自己。如果你也累了，去有风的地方走走吧。',
+      spots: ['洱海生态廊道','喜洲古镇','沙溪古镇','凤阳邑'],
+      route: { name: '大理治愈 5 日线路', days: [
+          { d: 'Day1', t: '大理古城入住 → 人民路闲逛 → 黄昏洋人街' },
+          { d: 'Day2', t: '洱海生态廊道骑行 → 喜洲稻田 → 海舌公园日落' },
+          { d: 'Day3', t: '沙溪古镇 → 寺登街 → 先锋书局 → 石宝山' },
+          { d: 'Day4', t: '凤阳邑茶马古道 → 无为寺 → 咖啡馆发呆' },
+          { d: 'Day5', t: '苍山洗马潭索道 → 寂照庵吃素斋 → 返程' }
+      ]},
+      ai: { budget: '¥2,500-4,000/人（5天含住）', transport: '大理站/机场打车，环洱海租电动车', hotel: '古城内/才村洱海边民宿', bestTime: '3-5月或9-11月', tips: '洱海骑行选海西生态廊道；紫外线极强；节假日环海路堵车建议早出发。' }
+    },
+    { title: '《漫长的季节》', tag: '爆款', loc: '辽宁 · 沈阳',
+      img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80',
+      desc: '"往前看，别回头。"东北老工业基地的秋天，有一种苍凉的浪漫。',
+      spots: ['铁西区','沈阳故宫','北陵公园','西塔街'],
+      route: { name: '沈阳怀旧 3 日线路', days: [
+          { d: 'Day1', t: '铁西区工业博物馆 → 1905文创园 → 西塔街吃烤肉' },
+          { d: 'Day2', t: '沈阳故宫 → 张氏帅府 → 中街 → 老边饺子馆' },
+          { d: 'Day3', t: '北陵公园昭陵 → 辽宁省博物馆 → 返程' }
+      ]},
+      ai: { budget: '¥1,500-2,500/人（3天含住）', transport: '地铁+打车，市区景点集中', hotel: '中街/太原街附近', bestTime: '9-10月（秋景）或12-1月（冰雪）', tips: '西塔街朝鲜族烤肉正宗；东北菜分量大两人点三个菜够；冬天零下20度注意保暖。' }
+    },
+    { title: '《繁花》', tag: '年代剧', loc: '上海',
+      img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+      desc: '黄河路的烟火气，至真园的本帮菜，90年代上海的繁华一梦。',
+      spots: ['黄河路','外滩','和平饭店','永康路'],
+      route: { name: '上海繁花 3 日线路', days: [
+          { d: 'Day1', t: '黄河路（至真园取景地）→ 国际饭店西饼屋 → 外滩夜游' },
+          { d: 'Day2', t: '和平饭店下午茶 → 永康路咖啡馆 → 武康路 → 思南公馆' },
+          { d: 'Day3', t: '上海博物馆 → 豫园城隍庙 → 老正兴本帮菜 → 返程' }
+      ]},
+      ai: { budget: '¥2,500-4,000/人（3天含住）', transport: '地铁全覆盖，打车起步价14元', hotel: '南京西路/外滩附近', bestTime: '3-5月或9-11月', tips: '和平饭店下午茶提前预约；本帮菜偏甜；武康路大楼拍照人多排队；豫园老街比城隍庙便宜。' }
+    },
+    { title: '《灌篮高手》', tag: '日剧圣地', loc: '日本 · 镰仓',
+      img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80',
+      desc: '樱木花道挥手的那个路口，是多少人的青春回忆。',
+      spots: ['镰仓高校前站','江之岛','湘南海岸','鹤冈八幡宫'],
+      route: { name: '镰仓青春 2 日线路', days: [
+          { d: 'Day1', t: '东京出发 → 镰仓高校前站打卡 → 湘南海岸骑行 → 江之岛日落' },
+          { d: 'Day2', t: '鹤冈八幡宫 → 小町通商店街 → 镰仓大佛 → 返东京' }
+      ]},
+      ai: { budget: '¥6,000-9,000/人（含东京住宿分摊）', transport: '东京藤泽站坐江之电，一日券800日元', hotel: '东京市区住，镰仓当日往返', bestTime: '3-4月樱花或11月红叶', tips: '镰仓高校前站路口拍照注意交通安全；江之电末班车18:00左右；海水浴场7-8月开放。' }
+    },
+    { title: '《卧虎藏龙》', tag: '电影', loc: '安徽 · 宏村',
+      img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80',
+      desc: '李慕白和玉娇龙在竹海间飞来飞去，水墨丹青般的徽派古村。',
+      spots: ['宏村','西递','木坑竹海','塔川'],
+      route: { name: '宏村水墨 3 日线路', days: [
+          { d: 'Day1', t: '宏村全天 → 南湖书院 → 月沼 → 承志堂 → 住民宿看星空' },
+          { d: 'Day2', t: '木坑竹海（电影取景地）→ 塔川秋色 → 西递古村' },
+          { d: 'Day3', t: '黄山一日游 → 迎客松→光明顶→西海大峡谷 → 返程' }
+      ]},
+      ai: { budget: '¥1,500-2,500/人（3天含住）', transport: '黄山北站大巴到宏村（1小时）', hotel: '宏村内徽派民宿', bestTime: '11月（塔川秋色）或3-4月（油菜花）', tips: '宏村早上6点没人适合拍照；黄山索道提前买；徽州臭鳜鱼闻着臭吃着香；民宿通常含早餐。' }
+    },
+    { title: '《小森林》', tag: '治愈系', loc: '日本 · 秋田',
+      img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80',
+      desc: '一年四季，稻田、木屋、手作料理。这是理想中的乡村生活。',
+      spots: ['横手市','羽後町','奥州平泉','秋田内陆线'],
+      route: { name: '秋田治愈 4 日线路', days: [
+          { d: 'Day1', t: '东京→秋田 → 横手市 → 入住乡村民宿' },
+          { d: 'Day2', t: '羽後町稻田散步 → 手作料理体验 → 秋田内陆线小火车' },
+          { d: 'Day3', t: '奥州平泉 → 中尊寺 → 毛越寺庭园 → 白鹭温泉' },
+          { d: 'Day4', t: '乳头高原 → 乳头温泉乡 → 返东京' }
+      ]},
+      ai: { budget: '¥8,000-12,000/人（含机票+JR Pass）', transport: '东京新干线到秋田（3小时），当地坐内陆线', hotel: '乡村民宿+温泉旅馆', bestTime: '9-10月（稻田金黄）或1-2月（雪景）', tips: '秋田内陆线班次少提前查时刻表；民宿体验料理需提前预约；温泉旅馆建议住一晚含怀石料理。' }
+    }
+];
+
+function renderDrama() {
+    let html = '';
+    dramaData.forEach((d, i) => {
+        const aiIdx = aiGuideStore.length;
+        aiGuideStore.push(d.ai);
+        html += `<div class="drama-card"><div class="drama-img" style="background-image:url('${d.img}')" onclick="toggleDramaRoute(${i})"><span class="drama-tag">${d.tag}</span><span class="drama-expand-hint">${d.route.name} ▾</span></div><div class="drama-body"><h3 onclick="toggleDramaRoute(${i})">${d.title}</h3><div class="drama-loc"><i class="fas fa-map-marker-alt"></i> ${d.loc}</div><p>${d.desc}</p><div class="drama-spots">${d.spots.map(s => `<span class="drama-spot">${s}</span>`).join('')}</div><div class="drama-route-detail" id="dramaRoute${i}"><h5>🗺️ ${d.route.name}</h5>${d.route.days.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'dramaGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="dramaGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleDramaRoute(${i})" id="dramaToggle${i}">展开线路行程 ▾</button></div></div>`;
+    });
+    document.getElementById('dramaGrid').innerHTML = html;
+}
+function toggleDramaRoute(i) {
+    const detail = document.getElementById('dramaRoute' + i);
+    const btn = document.getElementById('dramaToggle' + i);
+    detail.classList.toggle('open');
+    btn.textContent = detail.classList.contains('open') ? '收起线路 ▴' : '展开线路行程 ▾';
+}
+
+// ============================================================
+//  Solo —— 展开行程 + AI路书（全部补图）
+// ============================================================
+const soloData = [
+    { city: '成都 · 美食 Solo 之旅', img: 'https://images.unsplash.com/photo-1565992441121-4367c29671e2?w=600&q=80',
+      desc: '一个人也能吃火锅！串串、冒菜、担担面，美食之都最适合独自觅食。',
+      tags: ['🍜 美食友好','🚇 地铁方便','💰 消费低'],
+      itinerary: [
+          { d: 'Day1', t: '宽窄巷子 → 奎星楼街冒椒火辣（坐吧台）→ 锦里夜市' },
+          { d: 'Day2', t: '大熊猫基地（早去）→ 建设巷小吃街 → 春熙路IFS' },
+          { d: 'Day3', t: '人民公园鹤鸣茶社 → 玉林路小酒馆 → 地道串串香' },
+          { d: 'Day4', t: '文殊院 → 洞子口张老二凉粉 → 返程' }
+      ],
+      safety: '成都安全指数高，夜市热闹但注意随身物品。一个人吃火锅可以选小火锅店或坐吧台。',
+      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: '地铁+打车，无需租车', hotel: '春熙路/太古里附近', bestTime: '3-6月或9-11月', tips: '火锅提前大众点评取号；兔头谨慎尝试；熊猫基地7点前到。' }
+    },
+    { city: '厦门 · 文艺 Solo 之旅', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+      desc: '鼓浪屿的小巷、曾厝垵的咖啡馆，适合一个人散步发呆的慢生活城市。',
+      tags: ['☕ 咖啡馆多','🌊 海边散步','🛡️ 安全'],
+      itinerary: [
+          { d: 'Day1', t: '中山路骑楼 → 八市吃海鲜 → 沙坡尾艺术西区' },
+          { d: 'Day2', t: '鼓浪屿全天 → 菽庄花园 → 日光岩日落 → 咖啡馆发呆' },
+          { d: 'Day3', t: '曾厝垵 → 环岛路骑行 → 黄厝海滩看日出' },
+          { d: 'Day4', t: '南普陀寺 → 厦大校园 → 返程' }
+      ],
+      safety: '厦门非常安全，适合女生 solo。鼓浪屿晚上人少，建议天黑前返回市区。',
+      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: 'BRT+打车+鼓浪屿轮渡', hotel: '思明区/沙坡尾设计民宿', bestTime: '10月-4月', tips: '鼓浪屿船票提前公众号买；厦大需预约；八市海鲜找加工店注意称重。' }
+    },
+    { city: '重庆 · 魔幻 Solo 之旅', img: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600&q=80',
+      desc: '8D 魔幻城市，一个人坐轻轨穿楼、过江索道，探索感拉满。',
+      tags: ['🌶️ 火锅之都','🎮 探索感强','💰 消费低'],
+      itinerary: [
+          { d: 'Day1', t: '解放碑 → 洪崖洞夜景 → 千厮门大桥散步' },
+          { d: 'Day2', t: '李子坝轻轨穿楼 → 鹅岭二厂 → 南山一棵树看夜景' },
+          { d: 'Day3', t: '长江索道 → 磁器口古镇 → 地道老火锅' },
+          { d: 'Day4', t: '武隆天生三桥一日游 → 返程' }
+      ],
+      safety: '重庆地形复杂，导航经常"骗人"，跟着问路人更靠谱。晚上走梯坎注意脚下。',
+      ai: { budget: '¥1,500-2,800/人（4天含住）', transport: '轨道交通+打车', hotel: '解放碑/洪崖洞附近', bestTime: '3-6月或9-11月', tips: '导航在重庆经常不准；长江索道提前在公众号买；洪崖洞夜景亮灯到22:00；武隆一日游报当地团。' }
+    },
+    { city: '大理 · 治愈 Solo 之旅', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80',
+      desc: '洱海边骑车、在人民路发呆，大理是 solo 旅行者的天堂，容易认识朋友。',
+      tags: ['👥 容易认识人','🚲 骑行友好','🧘 治愈'],
+      itinerary: [
+          { d: 'Day1', t: '古城入住青旅 → 人民路闲逛 → 青旅拼饭' },
+          { d: 'Day2', t: '洱海生态廊道骑行 → 喜洲古镇 → 海舌公园日落' },
+          { d: 'Day3', t: '沙溪古镇一日游 → 认识旅伴 → 咖啡馆发呆' },
+          { d: 'Day4', t: '苍山徒步 → 寂照庵 → 返程' }
+      ],
+      safety: '大理 solo 氛围极好，青旅经常组局。注意防晒，紫外线很强。',
+      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: '大理站打车到古城，环洱海租电动车', hotel: '古城青旅（多人间便宜）', bestTime: '3-5月或9-11月', tips: '青旅多人间床位50-80/晚；拼饭在人民路找搭子；环洱海电动车满电约80km；防晒必备。' }
+    },
+    { city: '镰仓 · 青春 Solo 之旅', img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80',
+      desc: '跟着灌篮高手的脚步，在湘南海岸骑车，一个人也能很热血。',
+      tags: ['🚃 电车文化','🌅 看海','📸 出片'],
+      itinerary: [
+          { d: 'Day1', t: '东京出发 → 镰仓高校前站打卡 → 湘南海岸骑行 → 江之岛日落' },
+          { d: 'Day2', t: '鹤冈八幡宫 → 小町通商店街 → 镰仓大佛 → 返东京' }
+      ],
+      safety: '日本治安极好，适合 solo。电车班次固定，提前查好末班车时间。',
+      ai: { budget: '¥6,000-9,000/人（含东京住）', transport: '东京藤泽站江之电一日券', hotel: '东京市区住当日往返', bestTime: '3-4月或11月', tips: '江之电一日券800日元；高校前路口拍照注意车；末班车18:00左右；江之岛海鲜丼必吃。' }
+    },
+    { city: '曼谷 · 美食 Solo 之旅', img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600&q=80',
+      desc: '街头美食天堂，一个人逛街边摊、逛夜市，泰国是 solo 旅行者的入门首选。',
+      tags: ['🍜 街头美食','💊 签证简单','💰 消费低'],
+      itinerary: [
+          { d: 'Day1', t: '考山路夜市 → 芒果糯米饭 → 冬阴功汤 → 青旅认识旅伴' },
+          { d: 'Day2', t: '恰图恰周末市场 → 泰式按摩 → 唐人街吃海鲜' },
+          { d: 'Day3', t: '大皇宫 → 卧佛寺 → 湄南河游船 → 夜市' },
+          { d: 'Day4', t: '安帕瓦水上市场 → 萤火虫夜游 → 返程' }
+      ],
+      safety: '曼谷 solo 友好，但注意防晒和补水。夜市看好手机，突突车砍价对半砍。',
+      ai: { budget: '¥3,500-5,000/人（4天含机票）', transport: 'BTS+湄南河快船+突突车', hotel: '考山路/Sukhumvit青旅', bestTime: '11月-2月凉季', tips: '路边摊认准本地人多的；肠胃药必带；曼谷堵车坐BTS；突突车砍价对半；大皇宫着装要求长裤。' }
+    }
+];
+
+function renderSolo() {
+    let html = '';
+    soloData.forEach((s, i) => {
+        const aiIdx = aiGuideStore.length;
+        aiGuideStore.push(s.ai);
+        html += `<div class="solo-card"><div class="solo-card-img" style="background-image:url('${s.img}')" onclick="toggleSoloRoute(${i})"></div><div class="solo-card-body"><h4 onclick="toggleSoloRoute(${i})">${s.city}</h4><p>${s.desc}</p><div class="solo-tags">${s.tags.map(t => `<span class="solo-tag">${t}</span>`).join('')}</div><div class="solo-route-detail" id="soloRoute${i}">${s.itinerary.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<div class="solo-safety"><strong>🛡️ Solo 安全提示</strong>${s.safety}</div><button class="ai-guide-btn" onclick="toggleAIGuide(this,'soloGuide${aiIdx}',${aiIdx})" style="margin-top:12px">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="soloGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleSoloRoute(${i})" id="soloToggle${i}">展开专属行程 ▾</button></div></div>`;
+    });
+    document.getElementById('soloGrid').innerHTML = html;
+}
+function toggleSoloRoute(i) {
+    const detail = document.getElementById('soloRoute' + i);
+    const btn = document.getElementById('soloToggle' + i);
+    detail.classList.toggle('open');
+    btn.textContent = detail.classList.contains('open') ? '收起行程 ▴' : '展开专属行程 ▾';
+}
+
+// ============================================================
+//  最佳时节 —— 12个月 + 点击展开详细线路/美食/景点/交通
+// ============================================================
+const seasonData = [
+    { month: '1月', color: 'linear-gradient(135deg,#6366f1,#8b5cf6)', icon: '❄️', dests: [
+        { emoji: '🏔️', name: '哈尔滨冰雪大世界', reason: '一年一度冰雪童话，冰雕世界2月前结束',
+          itinerary: ['Day1: 中央大街 → 索菲亚教堂 → 松花江冰上活动','Day2: 冰雪大世界全天 → 兆麟公园冰灯','Day3: 太阳岛雪博会 → 东北虎林园 → 返程'],
+          food: ['锅包肉','铁锅炖大鹅','红肠','马迭尔冰棍'],
+          spots: ['冰雪大世界','中央大街','索菲亚教堂','太阳岛雪博会'],
+          transport: '太平机场大巴/地铁，市区公交+打车',
+          budget: '¥2,500-4,000/人（5天含住）' },
+        { emoji: '🌴', name: '三亚避冬', reason: '全国唯一冬天还能穿短袖的地方',
+          itinerary: ['Day1: 亚龙湾海滩 → 酒店度假','Day2: 蜈支洲岛一日游 → 潜水/摩托艇','Day3: 天涯海角 → 南山寺 → 第一市场吃海鲜','Day4: 海棠湾免税店 → 返程'],
+          food: ['清补凉','椰子鸡','和乐蟹','抱罗粉'],
+          spots: ['亚龙湾','蜈支洲岛','南山寺','天涯海角'],
+          transport: '凤凰机场打车，市区公交+打车',
+          budget: '¥3,000-5,000/人（5天含住）' },
+        { emoji: '🇯🇵', name: '北海道滑雪', reason: '粉雪天堂，新千岁机场直达',
+          itinerary: ['Day1: 札幌落地 → 薄野欢乐街 → 螃蟹宴','Day2: 二世古滑雪全天 → 温泉酒店','Day3: 小樽运河 → 白色恋人公园 → 札幌','Day4: 旭川动物园 → 返程'],
+          food: ['螃蟹宴','成吉思汗烤羊肉','汤咖喱','白色恋人'],
+          spots: ['二世古滑雪场','小樽运河','旭川动物园','札幌'],
+          transport: '新千岁机场JR，北海道铁路周游券',
+          budget: '¥8,000-12,000/人（含机票）' }
+    ]},
+    { month: '2月', color: 'linear-gradient(135deg,#f43f5e,#fb7185)', icon: '🏮', dests: [
+        { emoji: '🌸', name: '云南罗平油菜花', reason: '中国最早的春天，80万亩花海',
+          itinerary: ['Day1: 罗平县城 → 金鸡峰丛日落','Day2: 九龙瀑布群 → 螺丝田油菜花','Day3: 多依河风景区 → 返程'],
+          food: ['五色花米饭','布依酸笋鱼','罗平烟熏肉'],
+          spots: ['金鸡峰丛','九龙瀑布','螺丝田','多依河'],
+          transport: '昆明大巴/高铁到罗平，县城打车',
+          budget: '¥1,500-2,500/人（3天含住）' },
+        { emoji: '🏮', name: '北京春节庙会', reason: '地坛/厂甸庙会，老北京年味',
+          itinerary: ['Day1: 地坛庙会 → 雍和宫祈福 → 南锣鼓巷','Day2: 故宫 → 景山公园 → 什刹海滑冰','Day3: 八达岭长城 → 返程'],
+          food: ['北京烤鸭','涮羊肉','驴打滚','豌豆黄'],
+          spots: ['地坛庙会','故宫','八达岭长城','什刹海'],
+          transport: '地铁全覆盖，公交方便',
+          budget: '¥2,500-4,000/人（5天含住）' },
+        { emoji: '🇯🇵', name: '东京河津樱', reason: '2月底河津樱抢先开',
+          itinerary: ['Day1: 东京 → 河津町 → 河畔樱并木散步','Day2: 下田海岸 → 城崎温泉 → 返东京','Day3: 浅草寺 → 秋叶原 → 返程'],
+          food: ['寿司','拉面','天妇罗','抹茶甜品'],
+          spots: ['河津樱并木','下田海岸','浅草寺'],
+          transport: '东京JR东ikawa站到河津，巴士',
+          budget: '¥6,000-9,000/人（含机票）' }
+    ]},
+    { month: '3月', color: 'linear-gradient(135deg,#ec4899,#f472b6)', icon: '🌸', dests: [
+        { emoji: '🌸', name: '京都樱花', reason: '3月底满开，哲学之道/圆山公园',
+          itinerary: ['Day1: 清水寺 → 二年坂三年坂 → 祇园花见小路','Day2: 金阁寺 → 龙安寺 → 哲学之道夜樱','Day3: 岚山竹林 → 天龙寺 → 渡月桥','Day4: 伏见稻荷 → 宇治平等院 → 返程'],
+          food: ['怀石料理','抹茶甜品','汤豆腐','京风咖喱'],
+          spots: ['清水寺','哲学之道','岚山','伏见稻荷'],
+          transport: '关西机场Haruka+京都巴士一日券',
+          budget: '¥6,000-9,000/人（含机票+JR Pass）' },
+        { emoji: '🌺', name: '林芝桃花', reason: '西藏江南，雪山下的桃花沟',
+          itinerary: ['Day1: 拉萨 → 林芝 → 尼洋河风光','Day2: 索松村桃花 → 南迦巴瓦峰观景','Day3: 鲁朗林海 → 鲁朗石锅鸡 → 返程'],
+          food: ['鲁朗石锅鸡','酥油茶','青稞酒','藏面'],
+          spots: ['索松村','尼洋河','鲁朗林海','南迦巴瓦'],
+          transport: '拉萨飞林芝（1小时），当地包车',
+          budget: '¥4,000-6,000/人（5天含住）' },
+        { emoji: '🌷', name: '无锡鼋头渚', reason: '中国最美樱花胜地，3月中满开',
+          itinerary: ['Day1: 鼋头渚樱花谷全天 → 太湖仙岛','Day2: 灵山大佛 → 拈花湾小镇 → 返程'],
+          food: ['无锡酱排骨','小笼包','清水油面筋','太湖三白'],
+          spots: ['鼋头渚','灵山大佛','拈花湾'],
+          transport: '上海高铁到无锡（30分钟），公交+打车',
+          budget: '¥1,500-2,500/人（3天含住）' }
+    ]},
+    { month: '4月', color: 'linear-gradient(135deg,#10b981,#34d399)', icon: '🌿', dests: [
+        { emoji: '⛰️', name: '新疆伊犁杏花沟', reason: '中世纪遗留野杏林，4月初最盛',
+          itinerary: ['Day1: 伊宁集合 → 吐尔根杏花沟','Day2: 那拉提草原 → 新源县','Day3: 赛里木湖 → 果子沟大桥 → 返程'],
+          food: ['手抓饭','烤包子','大盘鸡','马奶子'],
+          spots: ['吐尔根杏花沟','那拉提','赛里木湖'],
+          transport: '伊宁包车SUV，全程约800km',
+          budget: '¥4,000-6,000/人（5天含住）' },
+        { emoji: '🍃', name: '江南采茶', reason: '杭州龙井/苏州碧螺春开采季',
+          itinerary: ['Day1: 杭州龙井村采茶体验 → 西湖漫步','Day2: 九溪烟树徒步 → 梅家坞喝茶','Day3: 苏州东山碧螺春村 → 返程'],
+          food: ['西湖醋鱼','龙井虾仁','碧螺春茶','松鼠桂鱼'],
+          spots: ['龙井村','九溪烟树','东山碧螺春村'],
+          transport: '杭州地铁+公交，苏州地铁',
+          budget: '¥2,000-3,500/人（4天含住）' },
+        { emoji: '🏯', name: '西安春游', reason: '城墙骑行+大唐不夜城，不冷不热',
+          itinerary: ['Day1: 兵马俑 → 华清宫 → 长恨歌演出','Day2: 西安城墙骑行 → 回民街 → 大唐不夜城','Day3: 陕西历史博物馆 → 大雁塔 → 返程'],
+          food: ['肉夹馍','羊肉泡馍','biangbiang面','甑糕'],
+          spots: ['兵马俑','西安城墙','大唐不夜城','陕博'],
+          transport: '地铁+打车，景点集中',
+          budget: '¥2,000-3,500/人（4天含住）' }
+    ]},
+    { month: '5月', color: 'linear-gradient(135deg,#f59e0b,#fbbf24)', icon: '☀️', dests: [
+        { emoji: '🏞️', name: '稻城亚丁', reason: '积雪初融，牛奶海开始化冰',
+          itinerary: ['Day1: 成都 → 新都桥 → 雅江','Day2: 香格里拉镇 → 亚丁景区 → 冲古寺','Day3: 牛奶海 → 五色海 → 洛绒牛场','Day4: 稻城 → 理塘 → 成都返程'],
+          food: ['酥油茶','糌粑','牦牛肉火锅','青稞饼'],
+          spots: ['牛奶海','五色海','洛绒牛场','新都桥'],
+          transport: '成都包车SUV，全程约1500km',
+          budget: '¥5,000-7,000/人（6天含住）' },
+        { emoji: '🎒', name: '川西线开放', reason: '雨季前最后的窗口期',
+          itinerary: ['Day1: 成都 → 四姑娘山','Day2: 丹巴藏寨 → 塔公草原','Day3: 新都桥 → 稻城亚丁','Day4: 亚丁景区 → 理塘','Day5: 康定 → 成都返程'],
+          food: ['牦牛肉火锅','酥油茶','藏餐','成都火锅'],
+          spots: ['四姑娘山','塔公草原','新都桥','亚丁'],
+          transport: '成都包车SUV，5天约2000km',
+          budget: '¥4,500-6,500/人（6天含住）' },
+        { emoji: '🏖️', name: '厦门海边', reason: '避开暑期人潮，水温刚好',
+          itinerary: ['Day1: 中山路 → 八市 → 沙坡尾','Day2: 鼓浪屿全天 → 日光岩日落','Day3: 曾厝垵 → 环岛路骑行 → 黄厝日出','Day4: 南普陀 → 厦大 → 返程'],
+          food: ['沙茶面','海蛎煎','土笋冻','花生汤'],
+          spots: ['鼓浪屿','环岛路','沙坡尾','南普陀'],
+          transport: 'BRT+打车+鼓浪屿轮渡',
+          budget: '¥2,000-3,500/人（4天含住）' }
+    ]},
+    { month: '6月', color: 'linear-gradient(135deg,#06b6d4,#22d3ee)', icon: '🌧️', dests: [
+        { emoji: '🍄', name: '云南菌子季', reason: '雨季开始，松茸/鸡枞/见手青上市',
+          itinerary: ['Day1: 昆明 → 木水花野生菌市场','Day2: 大理 → 大理古城 → 洱海边','Day3: 丽江 → 束河古镇 → 菌子火锅','Day4: 香格里拉 → 普达措 → 返程'],
+          food: ['松茸炖鸡','见手青炒肉','鸡枞油','腊排骨火锅'],
+          spots: ['木水花市场','大理古城','束河古镇','普达措'],
+          transport: '昆明动车到大理，大理大巴到丽江',
+          budget: '¥3,500-5,500/人（6天含住）' },
+        { emoji: '🏔️', name: '青海湖油菜花', reason: '7月最盛但6月人少价低',
+          itinerary: ['Day1: 西宁 → 塔尔寺 → 青海湖','Day2: 青海湖环湖骑行 → 茶卡镇','Day3: 茶卡盐湖 → 翡翠湖 → 返程'],
+          food: ['手抓羊肉','青海老酸奶','糌粑','尕面片'],
+          spots: ['青海湖','茶卡盐湖','翡翠湖','塔尔寺'],
+          transport: '西宁包车SUV，3天约800km',
+          budget: '¥2,500-4,000/人（4天含住）' },
+        { emoji: '☔', name: '江南梅雨', reason: '雨中乌镇/西塘，人少如包场',
+          itinerary: ['Day1: 乌镇西栅全天 → 夜景','Day2: 西塘古镇 → 烟雨长廊 → 返程'],
+          food: ['乌镇酱鸭','定胜糕','钱塘人家酒','南湖蟹粉'],
+          spots: ['乌镇西栅','西塘古镇'],
+          transport: '上海大巴到乌镇（1.5小时）',
+          budget: '¥1,200-2,000/人（2天含住）' }
+    ]},
+    { month: '7月', color: 'linear-gradient(135deg,#ef4444,#f87171)', icon: '🏕️', dests: [
+        { emoji: '🌻', name: '青海湖环湖', reason: '油菜花+蓝湖+雪山，中国最美夏天',
+          itinerary: ['Day1: 西宁 → 塔尔寺 → 青海湖','Day2: 青海湖日出 → 茶卡盐湖 → 德令哈','Day3: 翡翠湖 → 水上雅丹 → 大柴旦','Day4: 祁连大草原 → 门源油菜花 → 返西宁'],
+          food: ['手抓羊肉','青海老酸奶','牦牛肉串','青稞酒'],
+          spots: ['青海湖','茶卡盐湖','翡翠湖','门源油菜花'],
+          transport: '西宁包车SUV，4天约1500km',
+          budget: '¥3,500-5,000/人（5天含住）' },
+        { emoji: '🏔️', name: '甘南草原', reason: '扎尕那/郎木寺，避暑天堂',
+          itinerary: ['Day1: 兰州 → 拉卜楞寺 → 夏河','Day2: 桑科草原 → 郎木寺','Day3: 扎尕那徒步 → 花湖','Day4: 若尔盖 → 返兰州'],
+          food: ['藏包','手抓羊肉','酥油茶','牦牛酸奶'],
+          spots: ['拉卜楞寺','郎木寺','扎尕那','花湖'],
+          transport: '兰州包车SUV，4天约1200km',
+          budget: '¥3,000-4,500/人（5天含住）' },
+        { emoji: '🌊', name: '威海/青岛', reason: '北方海滨，25度的夏天',
+          itinerary: ['Day1: 青岛八大关 → 栈桥 → 啤酒博物馆','Day2: 崂山一日游 → 台东夜市','Day3: 威海刘公岛 → 国际海水浴场','Day4: 成山头看日出 → 返程'],
+          food: ['青岛啤酒','海鲜大咖','鲅鱼水饺','威海大馅饺子'],
+          spots: ['八大关','崂山','刘公岛','成山头'],
+          transport: '高铁+公交+打车',
+          budget: '¥2,500-4,000/人（5天含住）' }
+    ]},
+    { month: '8月', color: 'linear-gradient(135deg,#f97316,#fb923c)', icon: '🌊', dests: [
+        { emoji: '🏄', name: '巴厘岛旱季末', reason: '旱季末尾雨水少，冲浪最佳',
+          itinerary: ['Day1: 库塔海滩 → 冲浪课 → 日落','Day2: 乌布梯田 → 猴林 → 皇宫','Day3: 蓝梦岛浮潜 → 恶魔的眼泪','Day4: 水明漾咖啡馆 → 海滩俱乐部','Day5: 金巴兰海滩日落晚餐 → 返程'],
+          food: ['脏鸭餐','沙嗲肉串','椰浆饭','烤乳猪'],
+          spots: ['库塔海滩','乌布梯田','蓝梦岛','水明漾'],
+          transport: '机场接机+Grab打车',
+          budget: '¥4,500-7,000/人（含机票）' },
+        { emoji: '🏔️', name: '西藏', reason: '含氧量最高的季节，适合第一次去',
+          itinerary: ['Day1: 拉萨落地 → 布达拉宫广场','Day2: 布达拉宫 → 大昭寺 → 八廓街','Day3: 羊卓雍措 → 卡若拉冰川 → 江孜','Day4: 纳木错 → 返程'],
+          food: ['藏面','酥油茶','甜茶','牦牛肉火锅'],
+          spots: ['布达拉宫','大昭寺','羊卓雍措','纳木错'],
+          transport: '拉萨包车，机场大巴',
+          budget: '¥5,000-8,000/人（7天含住）' },
+        { emoji: '🌾', name: '呼伦贝尔大草原', reason: '草最绿的时候，7-8月最佳',
+          itinerary: ['Day1: 海拉尔 → 莫日格勒河 → 金帐汗部落','Day2: 额尔古纳 → 白桦林 → 恩和俄罗斯族乡','Day3: 室韦 → 九卡七卡边境公路 → 黑山头骑马','Day4: 满洲里 → 国门景区 → 返程'],
+          food: ['烤全羊','手把肉','俄式列巴','奶茶'],
+          spots: ['莫日格勒河','白桦林','室韦','黑山头','满洲里'],
+          transport: '海拉尔包车SUV，4天约1000km',
+          budget: '¥3,500-5,500/人（5天含住）' }
+    ]},
+    { month: '9月', color: 'linear-gradient(135deg,#8b5cf6,#a78bfa)', icon: '🍂', dests: [
+        { emoji: '🍁', name: '北疆喀纳斯', reason: '9月中金秋，中国最美秋天',
+          itinerary: ['Day1: 乌鲁木齐 → 布尔津','Day2: 喀纳斯湖 → 观鱼台 → 三湾徒步','Day3: 禾木村晨雾 → 图瓦人家访','Day4: 白哈巴村 → 五彩滩日落 → 返程'],
+          food: ['大盘鸡','烤羊肉串','手抓饭','馕'],
+          spots: ['喀纳斯湖','禾木村','白哈巴','五彩滩'],
+          transport: '乌鲁木齐包车SUV，4天约1200km',
+          budget: '¥5,000-8,000/人（6天含住）' },
+        { emoji: '🍇', name: '新疆吐鲁番', reason: '葡萄成熟季，避开7月酷暑',
+          itinerary: ['Day1: 乌鲁木齐 → 葡萄沟 → 坎儿井','Day2: 火焰山 → 交河故城 → 苏公塔','Day3: 库木塔格沙漠 → 返程'],
+          food: ['烤全羊','抓饭','葡萄','馕坑肉'],
+          spots: ['葡萄沟','火焰山','交河故城','库木塔格'],
+          transport: '乌鲁木齐动车到吐鲁番（1小时）',
+          budget: '¥1,500-2,500/人（3天含住）' },
+        { emoji: '🏔️', name: '牛背山/四姑娘山', reason: '雨季结束，看到云海概率最高',
+          itinerary: ['Day1: 成都 → 雅安 → 牛背山星云帐篷','Day2: 牛背山日出云海 → 下山','Day3: 四姑娘山双桥沟 → 返程'],
+          food: ['雅安雅鱼','藏式火锅','牦牛肉串','酥油茶'],
+          spots: ['牛背山','四姑娘山双桥沟'],
+          transport: '成都包车SUV，3天约600km',
+          budget: '¥2,500-4,000/人（4天含住）' }
+    ]},
+    { month: '10月', color: 'linear-gradient(135deg,#dc2626,#ef4444)', icon: '🎑', dests: [
+        { emoji: '🍁', name: '九寨沟', reason: '10月中秋叶最彩，水最蓝',
+          itinerary: ['Day1: 成都 → 九寨沟口','Day2: 九寨沟全天：树正沟→日则沟→则查洼沟','Day3: 黄龙景区 → 返程'],
+          food: ['藏式火锅','牦牛肉','青稞饼','酥油茶'],
+          spots: ['九寨沟','黄龙','树正群海','五花海'],
+          transport: '成都飞九寨（1小时）或大巴（8小时）',
+          budget: '¥3,500-5,500/人（5天含住）' },
+        { emoji: '🏯', name: '额济纳胡杨林', reason: '一年只黄20天，10月初最佳',
+          itinerary: ['Day1: 银川 → 额济纳旗','Day2: 胡杨林一道桥→八道桥全天','Day3: 黑城遗址 → 怪树林日落','Day4: 居延海日出 → 返程'],
+          food: ['手抓羊肉','居廷蜜瓜','骆驼肉','奶酪'],
+          spots: ['胡杨林','黑城','怪树林','居延海'],
+          transport: '银川包车SUV，4天约1500km',
+          budget: '¥4,000-6,000/人（5天含住）' },
+        { emoji: '🌾', name: '皖南秋色', reason: '塔川/宏村/篁岭晒秋',
+          itinerary: ['Day1: 黄山北站 → 宏村','Day2: 塔川秋色 → 木坑竹海 → 西递','Day3: 篁岭晒秋 → 返程'],
+          food: ['臭鳜鱼','毛豆腐','黄山烧饼','石耳炖鸡'],
+          spots: ['宏村','塔川','篁岭','西递'],
+          transport: '黄山北站大巴到宏村（1小时）',
+          budget: '¥2,000-3,500/人（4天含住）' }
+    ]},
+    { month: '11月', color: 'linear-gradient(135deg,#78716c,#a8a29e)', icon: '🍁', dests: [
+        { emoji: '⛩️', name: '京都红叶', reason: '11月底红叶满开，比樱花人少',
+          itinerary: ['Day1: 清水寺 → 二年坂三年坂 → 祇园','Day2: 金阁寺 → 龙安寺 → 妙心寺','Day3: 岚山红叶 → 天龙寺 → 渡月桥','Day4: 哲学之道 → 南禅寺 → 返程'],
+          food: ['怀石料理','汤豆腐','抹茶甜品','京风渍物'],
+          spots: ['清水寺','金阁寺','岚山','哲学之道'],
+          transport: '关西机场Haruka+京都巴士一日券',
+          budget: '¥6,000-9,000/人（含机票+JR Pass）' },
+        { emoji: '🦢', name: '鄱阳湖/盐城丹顶鹤', reason: '候鸟迁徙季，观鸟胜地',
+          itinerary: ['Day1: 南昌 → 鄱阳湖湿地公园','Day2: 吴城古镇观鸟 → 返程'],
+          food: ['鄱阳湖大闸蟹','粉蒸肉','瓦罐汤','拌粉'],
+          spots: ['鄱阳湖湿地公园','吴城古镇'],
+          transport: '南昌大巴到吴城（2小时）',
+          budget: '¥1,000-1,800/人（2天含住）' },
+        { emoji: '🌴', name: '泰国凉季开始', reason: '11月泰国降温，旅游最佳季',
+          itinerary: ['Day1: 曼谷 → 大皇宫 → 卧佛寺','Day2: 清迈 → 古城 → 周日夜市','Day3: 素贴山双龙寺 → 宁曼路','Day4: 大象保护营 → 返程'],
+          food: ['冬阴功','芒果糯米饭','泰式奶茶','船面'],
+          spots: ['大皇宫','清迈古城','素贴山','宁曼路'],
+          transport: '曼谷飞清迈（1.5小时）',
+          budget: '¥3,500-5,000/人（含机票）' }
+    ]},
+    { month: '12月', color: 'linear-gradient(135deg,#1e40af,#3b82f6)', icon: '🎄', dests: [
+        { emoji: '🌌', name: '冰岛极光', reason: '极夜开始，极光概率最高',
+          itinerary: ['Day1: 雷克雅未克 → 蓝湖温泉','Day2: 黄金圈 → 间歇泉 → 黄金瀑布','Day3: 南岸瀑布 → 黑沙滩 → 追极光','Day4: 冰河湖 → 钻石沙滩 → 追极光','Day5: 返雷克雅未克 → 返程'],
+          food: ['冰岛龙虾汤','羊肉汤','热狗','Skyr酸奶'],
+          spots: ['蓝湖温泉','黄金圈','黑沙滩','冰河湖'],
+          transport: '雷克雅未克租车自驾',
+          budget: '¥18,000-25,000/人（含机票+租车）' },
+        { emoji: '🎿', name: '东北雪乡', reason: '12月雪最厚，雪蘑菇成型',
+          itinerary: ['Day1: 哈尔滨 → 雪乡','Day2: 雪乡全天 → 雪韵大街 → 棒槌山观景','Day3: 雪乡 → 亚布力滑雪 → 哈尔滨返程'],
+          food: ['铁锅炖','杀猪菜','冻梨冻柿子','马迭尔冰棍'],
+          spots: ['雪乡雪韵大街','棒槌山','亚布力滑雪场'],
+          transport: '哈尔滨大巴到雪乡（5小时）',
+          budget: '¥2,500-4,000/人（4天含住）' },
+        { emoji: '🌅', name: '澳大利亚/新西兰', reason: '我们的冬天是他们的夏天',
+          itinerary: ['Day1: 悉尼 → 歌剧院 → 海港大桥','Day2: 蓝山国家公园 → 三姐妹峰','Day3: 邦迪海滩 → 皇家植物园','Day4: 墨尔本 → 大洋路一日游','Day5: 返程'],
+          food: ['澳洲龙虾','和牛',' Meat Pie','Flat White咖啡'],
+          spots: ['悉尼歌剧院','蓝山','邦迪海滩','大洋路'],
+          transport: '悉尼/墨尔本城市内火车+公交',
+          budget: '¥15,000-20,000/人（含机票）' }
+    ]}
+];
+
+function renderSeason() {
+    let html = '';
+    seasonData.forEach((s, mi) => {
+        html += `<div class="season-card"><div class="season-card-header" style="background:${s.color}"><span>${s.icon} ${s.month}</span><span style="font-size:.8rem;opacity:.8">最佳出行月</span></div><div class="season-card-body">`;
+        s.dests.forEach((d, di) => {
+            html += `<div class="season-dest" id="seasonDest-${mi}-${di}" onclick="toggleSeasonDest(${mi},${di})"><div class="season-dest-header"><div class="season-dest-emoji">${d.emoji}</div><div class="season-dest-info"><h5>${d.name}</h5><p>${d.reason}</p></div><i class="fas fa-chevron-down season-dest-arrow"></i></div><div class="season-dest-detail"><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-map"></i> 详细线路</div>${d.itinerary.map(day => `<div class="season-detail-text" style="margin-bottom:6px">📅 ${day}</div>`).join('')}</div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-utensils"></i> 必吃美食</div><div class="season-detail-food">${d.food.map(f => `<span class="food-tag">${f}</span>`).join('')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-camera"></i> 主要景点</div><div class="season-detail-text">${d.spots.join(' · ')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-car"></i> 交通建议</div><div class="season-detail-text">${d.transport}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-yen-sign"></i> 预估预算</div><div class="season-detail-text" style="font-weight:700;color:var(--primary)">${d.budget}</div></div></div></div>`;
+        });
+        html += `</div></div>`;
+    });
+    document.getElementById('seasonGrid').innerHTML = html;
+}
+
+function toggleSeasonDest(mi, di) {
+    const el = document.getElementById('seasonDest-' + mi + '-' + di);
+    el.classList.toggle('open');
+}
+
+// ============================================================
+//  预算测算器
+// ============================================================
+const budgetData = {
+    domestic: { flight: 1500, ticket: 800, food: 150, transport: 100, label: '国内长线' },
+    domestic_short: { flight: 800, ticket: 400, food: 120, transport: 60, label: '国内短线' },
+    sea: { flight: 2000, ticket: 600, food: 150, transport: 100, label: '海岛游' },
+    jp: { flight: 2500, ticket: 800, food: 200, transport: 80, label: '日本/韩国' },
+    eu: { flight: 5000, ticket: 1000, food: 300, transport: 150, label: '欧洲长线' },
+    seaasia: { flight: 1500, ticket: 500, food: 100, transport: 60, label: '东南亚' }
+};
+
+function calcBudget() {
+    const dest = document.getElementById('budgDest').value;
+    const days = parseInt(document.getElementById('budgDays').value);
+    const ppl = document.getElementById('budgPpl').value;
+    const hotel = document.getElementById('budgHotel').value;
+    const b = budgetData[dest];
+    const hotelPerNight = hotel === 'budget' ? 200 : hotel === 'comfort' ? 400 : 800;
+    const nights = days - 1;
+    const flight = b.flight;
+    const hotelTotal = hotelPerNight * nights;
+    const food = b.food * days;
+    const ticket = b.ticket;
+    const transport = b.transport * days;
+    const total = flight + hotelTotal + food + ticket + transport;
+    const pplMult = ppl === '1' ? 1 : ppl === '2' ? 1.1 : 1.15;
+    const perPerson = Math.round(total * pplMult);
+    document.getElementById('budgetBreakdown').innerHTML = `<div class="budget-item"><div class="label">✈️ 往返机票</div><div class="value">¥${flight}</div></div><div class="budget-item"><div class="label">🏨 住宿（${nights}晚）</div><div class="value">¥${hotelTotal}</div></div><div class="budget-item"><div class="label">🍜 餐饮（${days}天）</div><div class="value">¥${food}</div></div><div class="budget-item"><div class="label">🎫 门票/活动</div><div class="value">¥${ticket}</div></div><div class="budget-item"><div class="label">🚗 当地交通</div><div class="value">¥${transport}</div></div><div class="budget-item"><div class="label">👥 人数系数</div><div class="value">${pplMult}x</div></div>`;
+    document.getElementById('budgetTotal').textContent = '¥' + perPerson.toLocaleString();
+    document.getElementById('budgetResult').classList.add('open');
+}
+
+// 初始化
+renderDrama();
+renderSolo();
+renderSeason();
