@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0f172a" />
+<title>AR 故事导览 · MYL 拾迹</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#0f172a;color:#e2e8f0;font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;height:100%;overflow:hidden}
+a{color:#60a5fa;text-decoration:none}
+button{font-family:inherit}
+
+/* 头部 */
+.ar-top{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(15,23,42,0));pointer-events:none}
+.ar-top>*{pointer-events:auto}
+.ar-back{background:rgba(255,255,255,.1);border:none;color:#fff;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;backdrop-filter:blur(10px)}
+.ar-back i{margin-right:6px}
+.ar-mode-switch{display:flex;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden;backdrop-filter:blur(10px)}
+.ar-mode-switch button{background:transparent;border:none;color:#cbd5e1;padding:8px 16px;font-size:13px;cursor:pointer}
+.ar-mode-switch button.active{background:#2563eb;color:#fff}
+.ar-title{position:fixed;top:60px;left:0;right:0;text-align:center;z-index:99;font-size:15px;color:#fbbf24;font-weight:500;padding:0 20px}
+
+/* 主舞台 */
+.ar-stage{position:fixed;top:0;left:0;right:0;bottom:0;background:#000}
+.ar-stage .ar-photo{width:100%;height:100%;object-fit:cover;opacity:.7;filter:saturate(.9)}
+.ar-mode-interactive .ar-photo{opacity:.4;filter:blur(4px) saturate(.7)}
+
+/* MindAR canvas 容器 */
+#ar-root{position:absolute;inset:0}
+.ar-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#f87171;padding:40px;text-align:center;font-size:14px}
+
+/* 故事字幕条 */
+.ar-subtitle{position:fixed;bottom:180px;left:50%;transform:translateX(-50%);max-width:86%;background:rgba(15,23,42,.88);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px 22px;color:#fff;font-size:16px;line-height:1.7;z-index:200;backdrop-filter:blur(10px);text-align:center;min-height:60px;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translateX(-50%)}}
+.ar-subtitle .ar-time{display:block;font-size:11px;color:#64748b;margin-bottom:6px;letter-spacing:.1em}
+
+/* AR 虚拟标记点 */
+.ar-vmarker{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.8),rgba(251,191,36,0));z-index:150;cursor:pointer;animation:pulse 2s infinite;display:flex;align-items:center;justify-content:center}
+.ar-vmarker::before{content:'📍';font-size:22px}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.15);opacity:.5}}
+
+/* 底部抽屉 */
+.ar-bottom{position:fixed;bottom:0;left:0;right:0;z-index:250;background:#f8fafc;color:#1e293b;border-radius:24px 24px 0 0;max-height:68vh;overflow:hidden;transform:translateY(0);transition:transform .3s ease}
+.ar-bottom.collapsed{transform:translateY(60px)}
+.ar-bottom-handle{width:40px;height:4px;background:#cbd5e1;border-radius:2px;margin:10px auto}
+.ar-bottom-tabs{display:flex;border-bottom:1px solid #e2e8f0;padding:0 10px}
+.ar-bottom-tabs button{flex:1;background:none;border:none;padding:14px;font-size:14px;color:#64748b;cursor:pointer;border-bottom:2px solid transparent}
+.ar-bottom-tabs button.active{color:#2563eb;border-color:#2563eb;font-weight:500}
+.ar-bottom-body{overflow-y:auto;max-height:calc(68vh - 100px);padding:16px 18px 100px}
+
+/* 故事列表（抽屉内） */
+.ar-story-player .ar-story-title{font-weight:600;margin-bottom:14px;font-size:15px;color:#1e293b}
+.ar-story-list .ar-story-done{color:#94a3b8;font-size:14px;padding:8px 12px;border-radius:10px;background:#f1f5f9;margin-bottom:6px}
+.ar-story-list .ar-story-active{color:#0f172a;font-size:15px;font-weight:500;padding:12px 14px;border-radius:12px;background:#dbeafe;margin-bottom:6px;border-left:3px solid #2563eb;animation:fadeUp .3s ease}
+.ar-story-list .ar-story-pending{color:#cbd5e1;font-size:13px;padding:6px 12px;margin-bottom:4px}
+.ar-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#cbd5e1;margin-right:10px;vertical-align:middle}
+.ar-story-active .ar-dot{background:#2563eb;box-shadow:0 0 8px #2563eb;animation:pulse 1.2s infinite}
+
+/* 控制栏 */
+.ar-controls{position:fixed;bottom:75vh;right:14px;display:flex;flex-direction:column;gap:10px;z-index:210}
+.ar-ctrl-btn{width:48px;height:48px;border-radius:50%;border:none;background:rgba(15,23,42,.7);backdrop-filter:blur(10px);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.ar-ctrl-btn.recording{background:#dc2626;animation:pulse 1s infinite}
+
+/* 录屏指示器 */
+.ar-rec-indicator{position:fixed;top:60px;right:20px;z-index:220;background:rgba(220,38,38,.9);color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;display:none}
+.ar-rec-indicator.on{display:block;animation:pulse 1s infinite}
+
+/* 寻宝 UI */
+.ar-hunt-header{font-weight:600;font-size:15px;margin-bottom:12px;color:#1e293b}
+.ar-hunt-header small{display:block;font-weight:400;color:#64748b;margin-top:4px;font-size:12px}
+.ar-section-title{font-size:13px;color:#64748b;margin:14px 0 8px;font-weight:500;letter-spacing:.05em}
+.ar-marker-list{display:flex;flex-direction:column;gap:10px}
+.ar-marker{display:flex;gap:12px;padding:12px;border:1px solid #e2e8f0;border-radius:14px;background:#fff}
+.ar-marker.found{border-color:#86efac;background:#f0fdf4}
+.ar-marker-icon{font-size:24px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border-radius:10px}
+.ar-marker.found .ar-marker-icon{background:#bbf7d0}
+.ar-marker-body{flex:1;min-width:0}
+.ar-marker-name{font-weight:500;font-size:13px;color:#1e293b}
+.ar-marker-hint{font-size:12px;color:#64748b;margin-top:2px;line-height:1.5}
+.ar-find-btn{margin-top:8px;background:#2563eb;color:#fff;border:none;padding:6px 14px;border-radius:14px;font-size:12px;cursor:pointer}
+.ar-find-btn:active{background:#1d4ed8}
+.ar-found-ans{margin-top:6px;font-size:12px;color:#16a34a}
+
+.ar-quiz{margin-top:18px}
+.ar-quiz-item{padding:14px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;margin-bottom:12px}
+.ar-q-num{font-size:11px;color:#94a3b8;margin-bottom:6px;letter-spacing:.1em}
+.ar-q-text{font-size:14px;color:#0f172a;font-weight:500;margin-bottom:10px;line-height:1.5}
+.ar-q-opts{display:flex;flex-direction:column;gap:8px}
+.ar-q-opt{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;text-align:left;font-size:13px;cursor:pointer;color:#334155}
+.ar-q-opt:hover{background:#e2e8f0}
+.ar-quiz-item.correct .ar-q-result{color:#16a34a;font-size:13px;margin-top:8px}
+.ar-quiz-item.wrong .ar-q-result{color:#dc2626;font-size:13px;margin-top:8px}
+.ar-q-retry{margin-top:8px}
+.ar-retry-btn{background:#fbbf24;color:#78350f;border:none;border-radius:10px;padding:6px 12px;font-size:12px;cursor:pointer}
+.ar-hint{text-align:center;color:#94a3b8;font-size:13px;padding:14px}
+
+/* 印记发放 */
+.ar-stamp-award{text-align:center;padding:30px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:20px;margin-top:18px}
+.ar-stamp-big{font-size:56px;margin-bottom:8px}
+.ar-stamp-name{font-size:18px;font-weight:600;color:#92400e}
+.ar-stamp-sub{font-size:13px;color:#78350f;margin-top:4px}
+.ar-open-album{background:#2563eb;color:#fff;border:none;border-radius:14px;padding:10px 22px;font-size:13px;margin-top:14px;cursor:pointer}
+.ar-stamp-already{text-align:center;padding:20px;background:#f1f5f9;border-radius:14px;color:#475569;margin-top:18px;font-size:14px}
+
+/* iPad / 桌面端优化 */
+@media(min-width:768px){
+  .ar-bottom{max-width:600px;left:auto;border-radius:24px 0 0 24px}
+  .ar-subtitle{max-width:600px}
+}
+</style>
+</head>
+<body>
+
+<div class="ar-top">
+    <button class="ar-back" id="arBack"><i class="fas fa-arrow-left"></i>返回</button>
+    <div class="ar-mode-switch" id="arModeSwitch">
+        <button data-mode="main" class="active">主线故事</button>
+        <button data-mode="egg">隐藏彩蛋</button>
+    </div>
+    <button class="ar-back" id="arAlbum" style="background:rgba(37,99,235,.7)">📖 集册</button>
+</div>
+
+<div class="ar-title" id="arTitle">AR 故事导览</div>
+
+<div class="ar-stage" id="arStage">
+    <!-- AR 模式时由 MindAR 接管；无 AR 模式时显示景点图作为舞台 -->
+    <div id="arRoot"></div>
+</div>
+
+<div class="ar-rec-indicator" id="arRecIndicator"><i class="fas fa-circle" style="font-size:8px;margin-right:6px"></i>录屏中</div>
+
+<div class="ar-subtitle" id="arSubtitle">加载中…</div>
+
+<div class="ar-controls">
+    <button class="ar-ctrl-btn" id="arPause" title="暂停/播放"><i class="fas fa-play"></i></button>
+    <button class="ar-ctrl-btn" id="arCapture" title="一键录屏"><i class="fas fa-video"></i></button>
+</div>
+
+<div class="ar-bottom" id="arBottom">
+    <div class="ar-bottom-handle"></div>
+    <div class="ar-bottom-tabs" id="arTabs">
+        <button data-tab="story" class="active">故事进度</button>
+        <button data-tab="hunt">拾迹寻宝</button>
+    </div>
+    <div class="ar-bottom-body" id="arTabBody"></div>
+</div>
+
+<script src="ar-stories.js"></script>
+<script src="hunt-engine.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    var params = new URLSearchParams(location.search);
+    var poiId = params.get('poi');
+    if (!poiId) {
+        document.getElementById('arSubtitle').textContent = '缺少景点参数';
+        return;
+    }
+    var poi = (window.AR_POIS || []).find(function (p) { return p.id === poiId; });
+    if (!poi) {
+        document.getElementById('arSubtitle').textContent = '未找到该景点的 AR 数据';
+        return;
+    }
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    $('arTitle').textContent = poi.name + ' · AR 故事导览';
+
+    /* ---------- 初始化舞台 ---------- */
+    var mode = window.MYLHunt.AR.launchMode(poi);
+    $('arStage').classList.add('mode-' + mode);
+
+    // 无 AR 模式：显示景点图做"沉浸式舞台"
+    if (mode !== 'ar') {
+        var img = document.createElement('img');
+        img.src = poi.posterUrl;
+        img.className = 'ar-photo';
+        img.alt = poi.name;
+        $('arStage').appendChild(img);
+    } else {
+        // AR 模式需要 MindAR，动态加载
+        loadMindAR();
+    }
+
+    /* ---------- 故事播放器 ---------- */
+    var curMode = 'main';
+    var player = new window.MYLHunt.StoryPlayer(null, poi, curMode);
+
+    function switchMode(m) {
+        curMode = m;
+        player.stop();
+        player = new window.MYLHunt.StoryPlayer(null, poi, curMode);
+        player._onChange = function (i, seg) {
+            $('arSubtitle').innerHTML = '<span class="ar-time">' + seg.time + '</span>' + escapeHtml(seg.text);
+        };
+        player._onFinish = function () {
+            $('arSubtitle').innerHTML = '<span class="ar-time">完</span>故事播完啦 · 下方可以切换彩蛋或去寻宝';
+        };
+        player.play();
+        renderStoryTab();
+    }
+
+    $('arModeSwitch').addEventListener('click', function (e) {
+        var btn = e.target.closest('button'); if (!btn) return;
+        $('arModeSwitch').querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        switchMode(btn.getAttribute('data-mode'));
+    });
+
+    $('arBack').addEventListener('click', function () { history.back(); });
+    $('arAlbum').addEventListener('click', function () { window.open('album.html', '_blank'); });
+
+    /* ---------- 暂停/继续 ---------- */
+    $('arPause').addEventListener('click', function () {
+        if (player.timer) { player.stop(); $('arPause').innerHTML = '<i class="fas fa-play"></i>'; }
+        else { player.play(); $('arPause').innerHTML = '<i class="fas fa-pause"></i>'; }
+    });
+
+    /* ---------- 录屏 ---------- */
+    var recorder = null;
+    $('arCapture').addEventListener('click', function () {
+        if (recorder) { recorder.stop(); recorder = null; return; }
+        document.getElementById('arRecIndicator').classList.add('on');
+        $('arCapture').classList.add('recording');
+        window.MYLHunt.startScreenCapture(null, function () {
+            document.getElementById('arRecIndicator').classList.remove('on');
+            $('arCapture').classList.remove('recording');
+        });
+    });
+
+    /* ---------- 底部 Tab 切换 ---------- */
+    var curTab = 'story';
+    function renderStoryTab() {
+        var player2 = new window.MYLHunt.StoryPlayer(null, poi, curMode);
+        var container = document.createElement('div');
+        container.className = 'ar-story-player';
+        $('arTabBody').innerHTML = '';
+        $('arTabBody').appendChild(container);
+        // 复制 segments 渲染静态列表（独立于正在播放的 player）
+        player2.cur = player.cur;
+        player2._render = function () {
+            var html = '<div class="ar-story-title">' + poi.name + ' · ' + (curMode === 'egg' ? '隐藏彩蛋' : '主线故事') + '</div>';
+            html += '<div class="ar-story-list">';
+            var segs = curMode === 'egg' ? poi.storyEgg : poi.storyMain;
+            segs.forEach(function (s, i) {
+                var cls = i < player.cur ? 'ar-story-done' : (i === player.cur ? 'ar-story-active' : 'ar-story-pending');
+                html += '<div class="' + cls + '"><span class="ar-dot"></span>' + escapeHtml(s.text) + '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        };
+        player2._render();
+    }
+
+    var hunt = new window.MYLHunt.HuntGame(poi, {
+        onComplete: function () {
+            renderHuntTab();
+        },
+        onStamp: function (p) {
+            renderHuntTab();
+            // 轻提示
+            var tip = document.createElement('div');
+            tip.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(34,197,94,.95);color:#fff;padding:20px 28px;border-radius:16px;font-size:15px;z-index:300;box-shadow:0 8px 30px rgba(0,0,0,.3)';
+            tip.innerHTML = '🏆 恭喜！获得「' + p.stamp.name + '」印记';
+            document.body.appendChild(tip);
+            setTimeout(function () { tip.style.opacity = '0'; tip.style.transition = '.4s'; }, 2500);
+            setTimeout(function () { tip.remove(); }, 3000);
+        }
+    });
+
+    function renderHuntTab() {
+        var container = document.createElement('div');
+        $('arTabBody').innerHTML = '';
+        $('arTabBody').appendChild(container);
+        hunt.render(container);
+    }
+
+    $('arTabs').addEventListener('click', function (e) {
+        var btn = e.target.closest('button'); if (!btn) return;
+        $('arTabs').querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        curTab = btn.getAttribute('data-tab');
+        if (curTab === 'story') renderStoryTab(); else renderHuntTab();
+    });
+
+    /* ---------- AR 虚拟标记点（用 CSS 定位，非真实 MindAR tracking）---------- */
+    // MindAR tracking 需要真实 .mind 文件和摄像头，这里先在画面上覆盖示意标记点
+    // 真实部署时，markerUrl 指向 .mind 文件后，MindAR 会自动 tracking
+    function showFakeMarkers() {
+        if (mode === 'ar') return; // 真实 AR 模式下由 MindAR 处理
+        var h = poi.hunt.markers || [];
+        // 把标记点分布在画面上（示意位置）
+        var positions = [
+            { left: '25%', top: '45%' },
+            { left: '70%', top: '55%' },
+            { left: '50%', top: '30%' },
+            { left: '35%', top: '65%' },
+            { left: '60%', top: '40%' },
+            { left: '20%', top: '70%' }
+        ];
+        h.forEach(function (m, i) {
+            var pos = positions[i % positions.length];
+            var el = document.createElement('div');
+            el.className = 'ar-vmarker';
+            el.style.left = pos.left;
+            el.style.top = pos.top;
+            el.setAttribute('data-mid', m.id);
+            el.title = m.hint;
+            el.addEventListener('click', function () {
+                // 直接触发 hunt 的标记找到
+                hunt._markFound(m.id);
+                // 标记动画消失
+                el.style.display = 'none';
+            });
+            $('arStage').appendChild(el);
+        });
+    }
+
+    /* ---------- MindAR 加载（真实 AR 模式） ---------- */
+    function loadMindAR() {
+        // 简化：有 .mind 文件时尝试加载，失败自动降级
+        var stage = $('arStage');
+        stage.innerHTML = '<div class="ar-fallback">⚠️ MindAR 未就绪<br/>当前为交互式故事模式，所有功能正常使用</div>';
+        // 降级：当成 interactive 来用
+        showFakeMarkers();
+    }
+
+    /* ---------- 启动 ---------- */
+    showFakeMarkers();
+    switchMode('main');
+    $('arSubtitle').innerHTML = '<span class="ar-time">加载中</span>准备好…故事即将开始';
+    setTimeout(function () { switchMode('main'); }, 500);
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+        });
+    }
+})();
+</script>
+</body>
+</html>

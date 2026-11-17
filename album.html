@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#4f46e5" />
+<title>拾迹集册 · MYL 旅行印记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-family:'Noto Sans SC',system-ui,sans-serif;background:linear-gradient(180deg,#eef2ff,#f8fafc);color:#1e293b;min-height:100vh}
+a{color:#4f46e5;text-decoration:none}
+button{font-family:inherit}
+
+/* 顶栏 */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(79,70,229,.1);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.topbar .brand{font-weight:700;color:#4f46e5;font-size:17px}
+.topbar .brand i{margin-right:6px}
+.topbar .stats{font-size:13px;color:#64748b}
+.topbar .stats b{color:#4f46e5;font-size:15px}
+
+/* Hero */
+.hero{padding:40px 20px;text-align:center}
+.hero h1{font-size:28px;font-weight:700;color:#1e1b4b;margin-bottom:8px}
+.hero p{color:#64748b;font-size:14px;max-width:500px;margin:0 auto}
+.hero .count-big{font-size:64px;font-weight:700;background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .count-sub{font-size:14px;color:#64748b;margin-top:-4px}
+.progress{max-width:320px;margin:20px auto 0;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:4px;transition:width .6s ease}
+
+/* 分区标题 */
+.sec-title{padding:20px 24px 10px;font-size:13px;color:#64748b;letter-spacing:.1em;font-weight:500}
+.sec-title b{color:#1e293b;font-size:16px;letter-spacing:0;margin-left:6px}
+
+/* 印记墙 */
+.stamp-wall{padding:0 20px 30px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:720px;margin:0 auto}
+@media(min-width:640px){.stamp-wall{grid-template-columns:repeat(4,1fr);gap:18px}}
+
+.stamp-card{position:relative;aspect-ratio:1;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease}
+.stamp-card.earned{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;box-shadow:0 10px 28px rgba(79,70,229,.25)}
+.stamp-card.locked{background:#f1f5f9;color:#cbd5e1;border:1px dashed #cbd5e1}
+.stamp-card:hover{transform:translateY(-3px)}
+.stamp-card.locked:hover{border-color:#94a3b8}
+.stamp-card .emoji{font-size:34px;line-height:1}
+.stamp-card.locked .emoji{opacity:.4}
+.stamp-card .name{margin-top:8px;font-size:12px;font-weight:500;text-align:center;padding:0 6px;line-height:1.3}
+.stamp-card .city{position:absolute;bottom:6px;font-size:10px;opacity:.85}
+.stamp-card .earned-badge{position:absolute;top:8px;right:8px;font-size:11px;opacity:.9}
+
+/* 海报墙 */
+.poster-wall{padding:0 20px 60px;display:flex;flex-direction:column;gap:18px;max-width:720px;margin:0 auto}
+.poster-card{border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.06);position:relative}
+.poster-bg{height:160px;background-size:cover;background-position:center;position:relative}
+.poster-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.65))}
+.poster-unlocked .poster-bg::after{background:linear-gradient(180deg,transparent 30%,rgba(79,70,229,.4))}
+.poster-locked .poster-bg::after{background:linear-gradient(180deg,rgba(100,116,139,.5),rgba(30,41,59,.85))}
+.poster-overlay{position:absolute;bottom:12px;left:16px;right:16px;color:#fff;z-index:2}
+.poster-overlay h3{font-size:18px;font-weight:700;margin-bottom:2px}
+.poster-overlay p{font-size:12px;opacity:.9}
+.poster-meta{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f1f5f9}
+.poster-need{font-size:12px;color:#64748b}
+.poster-need b{color:#4f46e5}
+.poster-locked .poster-need b{color:#dc2626}
+.poster-btn{background:#4f46e5;color:#fff;border:none;border-radius:12px;padding:8px 18px;font-size:13px;cursor:pointer}
+.poster-btn:disabled{background:#e2e8f0;color:#94a3b8;cursor:not-allowed}
+.poster-locked-badge{position:absolute;top:14px;right:14px;background:rgba(15,23,42,.7);color:#fff;padding:4px 10px;border-radius:14px;font-size:11px;z-index:2}
+.poster-unlocked-badge{position:absolute;top:14px;right:14px;background:rgba(34,197,94,.9);color:#fff;padding:4px 10px;border-radius:14px;font-size:11px;z-index:2}
+
+/* 解锁弹窗 */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.modal-backdrop.show{display:flex}
+.modal{background:#fff;border-radius:24px;overflow:hidden;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-poster{height:280px;background-size:cover;background-position:center;position:relative}
+.modal-poster::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(15,23,42,.95))}
+.modal-body{padding:24px;text-align:center}
+.modal-body h2{font-size:22px;color:#1e1b4b;margin-bottom:4px}
+.modal-body p{font-size:14px;color:#64748b;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:center}
+.modal-actions button{border:none;border-radius:12px;padding:10px 20px;font-size:14px;cursor:pointer}
+.modal-close{background:#e2e8f0;color:#475569}
+.modal-download{background:#4f46e5;color:#fff}
+
+/* 空状态 */
+.empty{text-align:center;padding:60px 20px;color:#94a3b8}
+.empty .empty-icon{font-size:48px;margin-bottom:14px}
+.empty h3{color:#475569;margin-bottom:6px;font-size:16px}
+.empty a{display:inline-block;margin-top:14px;background:#4f46e5;color:#fff;padding:10px 22px;border-radius:12px;font-size:13px}
+
+/* 页脚 */
+.foot{text-align:center;padding:30px;color:#94a3b8;font-size:12px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand"><i class="fas fa-scroll"></i>拾迹集册</div>
+    <div class="stats">已收集 <b id="stampCount">0</b> / <span id="stampTotal">0</span> 印记</div>
+    <a href="index.html">首页</a>
+</header>
+
+<section class="hero">
+    <div class="count-big" id="heroCount">0</div>
+    <div class="count-sub">枚旅行印记</div>
+    <div class="progress"><div class="progress-bar" id="heroBar" style="width:0%"></div></div>
+</section>
+
+<div class="sec-title"><i class="fas fa-stamp"></i> <b>我的印记</b></div>
+<div class="stamp-wall" id="stampWall"></div>
+
+<div class="sec-title"><i class="fas fa-image"></i> <b>纪念海报</b> · 集齐一组印记解锁</div>
+<div class="poster-wall" id="posterWall"></div>
+
+<div class="foot">印记保存在你的浏览器 · 建议定期导出备份<br/>去 <a href="ar-viewer.html">景点 AR 导览</a> 收集更多</div>
+
+<!-- 海报解锁弹窗 -->
+<div class="modal-backdrop" id="posterModal">
+    <div class="modal">
+        <div class="modal-poster" id="posterModalPoster"></div>
+        <div class="modal-body">
+            <h2 id="posterModalTitle">恭喜解锁纪念海报！</h2>
+            <p id="posterModalCaption"></p>
+            <div class="modal-actions">
+                <button class="modal-close" id="posterModalClose">关闭</button>
+                <button class="modal-download" id="posterModalDownload">下载高清图</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="ar-stories.js"></script>
+<script src="hunt-engine.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    var $ = function (id) { return document.getElementById(id); };
+    var stamps = window.MYLHunt.Storage.getStamps();
+    var allPois = window.AR_POIS || [];
+    var posters = window.MYLHunt.checkPosters();
+
+    var got = Object.keys(stamps).length;
+    var total = allPois.length;
+    $('stampCount').textContent = got;
+    $('stampTotal').textContent = total;
+    $('heroCount').textContent = got;
+    $('heroBar').style.width = (got / Math.max(1, total) * 100) + '%';
+
+    /* ---------- 印记墙 ---------- */
+    var wall = $('stampWall');
+    if (total === 0) {
+        wall.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><h3>暂无印记</h3><p>去景点详情页开启「拾迹寻宝」吧</p><a href="index.html">返回首页</a></div>';
+    } else {
+        wall.innerHTML = allPois.map(function (poi) {
+            var earned = !!stamps[poi.id];
+            var s = poi.stamp || {};
+            return '<div class="stamp-card ' + (earned ? 'earned' : 'locked') + '" data-poi="' + poi.id + '" data-earned="' + earned + '">' +
+                '<div class="emoji">' + (earned ? (s.emoji || '🏅') : '🔒') + '</div>' +
+                '<div class="name">' + escapeHtml(s.name || poi.name) + '</div>' +
+                '<div class="city">' + escapeHtml(poi.city) + '</div>' +
+                (earned ? '<div class="earned-badge">✓</div>' : '') +
+                '</div>';
+        }).join('');
+    }
+
+    wall.addEventListener('click', function (e) {
+        var card = e.target.closest('.stamp-card'); if (!card) return;
+        var poiId = card.getAttribute('data-poi');
+        var earned = card.getAttribute('data-earned') === 'true';
+        var poi = allPois.find(function (p) { return p.id === poiId; });
+        if (!poi) return;
+        if (!earned) {
+            if (confirm('要去「' + poi.name + '」收集这枚印记吗？')) {
+                location.href = 'ar-viewer.html?poi=' + poi.id;
+            }
+        } else {
+            // 已收集：弹窗展示 + 支持分享
+            alert('「' + poi.stamp.name + '」印记 · 来自「' + poi.city + ' ' + poi.name + '」\n已收集于 ' + new Date(stamps[poiId].earnedAt).toLocaleDateString());
+        }
+    });
+
+    /* ---------- 海报墙 ---------- */
+    var pw = $('posterWall');
+    if (posters.length === 0) {
+        pw.innerHTML = '<div class="empty"><div class="empty-icon">🖼️</div><h3>暂无海报组合</h3><p>收集更多印记解锁纪念海报</p></div>';
+    } else {
+        pw.innerHTML = posters.map(function (ps) {
+            return '<div class="poster-card ' + (ps.unlocked ? 'poster-unlocked' : 'poster-locked') + '">' +
+                '<div class="poster-bg" style="background-image:url(\'' + escapeHtml(ps.bg) + '\')">' +
+                    (ps.unlocked ? '<div class="poster-unlocked-badge">已解锁</div>' : '<div class="poster-locked-badge">🔒 ' + ps.got + '/' + ps.total + '</div>') +
+                    '<div class="poster-overlay"><h3>' + escapeHtml(ps.title) + '</h3><p>' + escapeHtml(ps.subtitle) + '</p></div>' +
+                '</div>' +
+                '<div class="poster-meta">' +
+                    '<div class="poster-need">需要 <b>' + ps.total + '</b> 枚印记 · 已集 <b>' + ps.got + '</b></div>' +
+                    '<button class="poster-btn" data-pid="' + ps.id + '" ' + (ps.unlocked ? '' : 'disabled') + '>' + (ps.unlocked ? '查看海报' : '继续收集') + '</button>' +
+                '</div>' +
+                '</div>';
+        }).join('');
+    }
+
+    pw.addEventListener('click', function (e) {
+        var btn = e.target.closest('.poster-btn'); if (!btn) return;
+        var pid = btn.getAttribute('data-pid');
+        var ps = posters.find(function (p) { return p.id === pid; });
+        if (!ps || !ps.unlocked) return;
+        $('posterModalPoster').style.backgroundImage = 'url(' + ps.bg + ')';
+        $('posterModalTitle').textContent = ps.title;
+        $('posterModalCaption').textContent = ps.caption || '';
+        $('posterModal').classList.add('show');
+    });
+
+    $('posterModalClose').addEventListener('click', function () {
+        $('posterModal').classList.remove('show');
+    });
+    $('posterModalDownload').addEventListener('click', function () {
+        var ps = posters.find(function (p) { return $('posterModalTitle').textContent === p.title; });
+        if (!ps) return;
+        var a = document.createElement('a');
+        a.href = ps.bg;
+        a.download = 'myl-poster-' + ps.id + '.jpg';
+        a.target = '_blank';
+        document.body.appendChild(a); a.click(); a.remove();
+    });
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+        });
+    }
+})();
+</script>
+</body>
+</html>

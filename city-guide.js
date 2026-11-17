@@ -721,11 +721,14 @@
         if (s.day) meta.push('<span>行程 线路' + s.day + '</span>');
         if (s.ticket) meta.push('<span>门票 ' + esc(priceText(s.ticket)) + '</span>');
         if (s.coord) meta.push('<span>地图可定位</span>');
+        // AR 故事入口
+        var arPoi = (window.AR_POIS || []).find(function (a) { return a.name === s.name || a.nameEn === s.name; });
+        var arBtn = arPoi ? '<a href="ar-viewer.html?poi=' + arPoi.id + '" class="cg-ar-btn" target="_blank" aria-label="' + esc(s.name) + ' 的 AR 故事导览 · 拾迹寻宝"><i class="fas fa-camera"></i> AR 拾迹</a>' : '';
         return '<article class="cg-spot" data-idx="' + s.idx + '" data-type="' + esc(s.type) + '" role="button" tabindex="0" aria-label="在地图查看' + esc(s.name) + '">' +
             '<div class="cg-spot-media"><a class="cg-media-link" href="' + detailLink('spot', s.name) + '" aria-label="查看' + esc(s.name) + '详细介绍">' +
             photoImg(s.name, 'spot', name + s.name + '实景') + '</a><span class="n">' + s.idx + '</span></div>' +
             '<div class="cg-spot-body"><span class="cg-spot-tag">' + esc(s.type) + '</span>' +
-            '<h3>' + esc(s.name) + '</h3>' +
+            '<h3>' + esc(s.name) + (arBtn ? ' ' + arBtn : '') + '</h3>' +
             '<p>' + esc(s.desc) + '</p>' + (meta.length ? '<div class="meta">' + meta.join('') + '</div>' : '') + '</div></article>';
     }).join('');
     fillGrid('cgSpotGrid');
