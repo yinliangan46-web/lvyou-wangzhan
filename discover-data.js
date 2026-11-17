@@ -402,3 +402,129 @@ function showResult() {
     html += `</div><button class="btn" onclick="startQuiz()">重新测试</button><a href="index.html#china" class="btn btn-outline" style="margin-left:8px">看看更多目的地</a></div>`;
     resultEl.innerHTML = html;
 }
+
+// ============================================================
+//  必去清单 —— 上传真实图片打卡
+// ============================================================
+let bucketMapInitialized = false, bucketMap;
+let bucketPhotos = JSON.parse(localStorage.getItem('myBucketPhotos') || '{}');
+
+const bucketList = [
+    { name: '冰岛·极光', lat: 64.96, lng: -19.02, icon: '🌌', route: '7天环岛，雷克雅未克→黄金圈→南岸→冰河湖→追极光' },
+    { name: '新西兰·皇后镇', lat: -45.03, lng: 168.66, icon: '🏔️', route: '10天南岛自驾，基督城→福克斯冰川→皇后镇→米尔福德峡湾' },
+    { name: '日本·京都', lat: 35.01, lng: 135.77, icon: '⛩️', route: '5天深度，清水寺→金阁寺→岚山→伏见稻荷→哲学之道' },
+    { name: '泰国·清迈', lat: 18.79, lng: 98.98, icon: '🛕', route: '6天慢城，古城→素贴山→烹饪课→大象营→拜县' },
+    { name: '巴厘岛·乌布', lat: -8.51, lng: 115.26, icon: '🌴', route: '6天，库塔冲浪→乌布梯田→蓝梦岛浮潜→水明漾' },
+    { name: '澳大利亚·大堡礁', lat: -18.29, lng: 147.70, icon: '🐠', route: '凯恩斯3天，大堡礁游船→库兰达热带雨林→棕榈湾' },
+    { name: '埃及·金字塔', lat: 29.98, lng: 31.13, icon: '🔺', route: '8天，开罗→金字塔→卢克索神庙→阿斯旺' },
+    { name: '肯尼亚·马赛马拉', lat: -1.48, lng: 35.14, icon: '🦁', route: '7天野生动物之旅，内罗毕→马赛马拉→安博塞利' },
+    { name: '土耳其·卡帕多奇亚', lat: 38.64, lng: 34.83, icon: '🎈', route: '热气球日出→地下城→格雷梅露天博物馆→日落ATV' },
+    { name: '法国·巴黎', lat: 48.86, lng: 2.35, icon: '🗼', route: '7天，埃菲尔铁塔→卢浮宫→塞纳河→凡尔赛宫→蒙马特' },
+    { name: '意大利·威尼斯', lat: 45.44, lng: 12.33, icon: '🚤', route: '3天主岛→彩色岛→玻璃岛→贡多拉夜游' },
+    { name: '西班牙·巴塞罗那', lat: 41.39, lng: 2.17, icon: '🏖️', route: '5天，圣家堂→古埃尔公园→兰布拉大道→海边' },
+    { name: '美国·纽约', lat: 40.71, lng: -74.01, icon: '🗽', route: '5天，曼哈顿→自由女神→中央公园→布鲁克林大桥' },
+    { name: '美国·大峡谷', lat: 36.11, lng: -112.11, icon: '🏜️', route: '拉斯维加斯出发3天，西峡→南峡→胡佛水坝' },
+    { name: '秘鲁·马丘比丘', lat: -13.16, lng: -72.55, icon: '⛰️', route: '7天，库斯科→神圣山谷→马丘比丘日出→的的喀喀湖' },
+    { name: '巴西·里约', lat: -22.91, lng: -43.17, icon: '🏖️', route: '5天，基督像→面包山→科帕卡巴纳海滩→塞勒隆阶梯' },
+    { name: '中国·西藏拉萨', lat: 29.65, lng: 91.14, icon: '🛕', route: '7天，布达拉宫→大昭寺→纳木错→羊卓雍措→林芝' },
+    { name: '中国·新疆喀什', lat: 39.47, lng: 75.99, icon: '🏜️', route: '8天南疆，喀什古城→帕米尔高原→塔县→盘龙古道' },
+    { name: '中国·云南大理', lat: 25.61, lng: 100.27, icon: '🌊', route: '5天，古城→洱海骑行→喜洲→沙溪→苍山' },
+    { name: '中国·四川稻城', lat: 28.44, lng: 100.33, icon: '🏔️', route: '6天，成都→新都桥→稻城亚丁→牛奶海→五色海' },
+    { name: '中国·甘肃敦煌', lat: 40.17, lng: 94.67, icon: '🏜️', route: '5天，莫高窟→鸣沙山月牙泉→玉门关→雅丹魔鬼城' },
+    { name: '中国·张家界', lat: 29.12, lng: 110.48, icon: '⛰️', route: '5天，国家森林公园→天门山→大峡谷玻璃桥→凤凰古城' },
+    { name: '中国·三亚', lat: 18.25, lng: 109.51, icon: '🏝️', route: '5天，亚龙湾→蜈支洲岛→天涯海角→南山寺→海棠湾' },
+    { name: '中国·哈尔滨', lat: 45.80, lng: 126.53, icon: '❄️', route: '5天冰雪季，中央大街→冰雪大世界→太阳岛→索菲亚教堂' },
+    { name: '韩国·首尔', lat: 37.57, lng: 126.98, icon: '🏯', route: '5天，景福宫→明洞→弘大→江南→北村韩屋村' },
+    { name: '新加坡', lat: 1.35, lng: 103.82, icon: '🏙️', route: '4天，滨海湾花园→圣淘沙→乌节路→克拉码头→Night Safari' },
+    { name: '瑞士·阿尔卑斯', lat: 46.52, lng: 6.57, icon: '🏔️', route: '8天少女峰线，日内瓦→蒙特勒→因特拉肯→少女峰→苏黎世' },
+    { name: '希腊·圣托里尼', lat: 36.39, lng: 25.46, icon: '⛪', route: '5天，伊亚日落→费拉小镇→红沙滩→火山温泉→Oia晚宴' },
+    { name: '加拿大·班夫', lat: 51.18, lng: -115.57, icon: '🏔️', route: '7天落基山，卡尔加里→班夫镇→露易丝湖→贾斯珀' },
+    { name: '南极', lat: -82.00, lng: 0.00, icon: '🐧', route: '15天邮轮，乌斯怀亚出发→德雷克海峡→南极半岛→企鹅栖息地' }
+];
+
+function initBucketMap() {
+    bucketMapInitialized = true;
+    bucketMap = L.map('bucketMap').setView([30, 10], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(bucketMap);
+    renderBucketMarkers();
+    updateBucketStats();
+}
+
+let pendingUploadIdx = null;
+function renderBucketMarkers() {
+    bucketMap.eachLayer(layer => { if (layer instanceof L.Marker) bucketMap.removeLayer(layer); });
+    bucketList.forEach((place, idx) => {
+        const hasPhoto = bucketPhotos[idx];
+        const icon = L.divIcon({
+            html: `<div style="font-size:24px;cursor:pointer;${hasPhoto ? '' : 'opacity:.5'}">${place.icon}</div>`,
+            className: 'bucket-marker', iconSize: [24, 24]
+        });
+        const marker = L.marker([place.lat, place.lng], { icon }).addTo(bucketMap);
+        marker.bindPopup(`<div style="text-align:center;min-width:180px"><div style="font-size:28px;margin-bottom:4px">${place.icon}</div><div style="font-weight:700;margin-bottom:6px">${place.name}</div>${hasPhoto ? `<img src="${hasPhoto}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px"/>` : ''}<div style="font-size:.78rem;color:#64748b;margin-bottom:8px;text-align:left;background:#f8fafc;padding:8px;border-radius:6px">🗺️ ${place.route}</div><button onclick="openUpload(${idx})" style="background:${hasPhoto ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;">${hasPhoto ? '✓ 已打卡 · 换照片' : '上传照片打卡'}</button></div>`);
+    });
+}
+
+function openUpload(idx) {
+    pendingUploadIdx = idx;
+    document.getElementById('uploadPlaceName').textContent = '上传你在「' + bucketList[idx].name + '」拍的真实照片';
+    document.getElementById('uploadModal').classList.add('open');
+    document.getElementById('uploadPreview').style.display = 'none';
+    document.getElementById('uploadInput').value = '';
+}
+function closeUpload() {
+    document.getElementById('uploadModal').classList.remove('open');
+    pendingUploadIdx = null;
+}
+
+document.getElementById('uploadInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxW = 300;
+            const scale = Math.min(1, maxW / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.6);
+            const preview = document.getElementById('uploadPreview');
+            preview.src = compressed;
+            preview.style.display = 'block';
+            window._uploadData = compressed;
+        };
+        img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+function confirmUpload() {
+    if (!window._uploadData || pendingUploadIdx === null) { alert('请先选择一张照片'); return; }
+    try {
+        bucketPhotos[pendingUploadIdx] = window._uploadData;
+        localStorage.setItem('myBucketPhotos', JSON.stringify(bucketPhotos));
+        renderBucketMarkers();
+        updateBucketStats();
+        closeUpload();
+    } catch(e) {
+        alert('照片太大了，存储空间不足。请压缩后再试。');
+    }
+    window._uploadData = null;
+}
+
+function updateBucketStats() {
+    const count = Object.keys(bucketPhotos).length;
+    document.getElementById('visitedCount').textContent = count;
+    document.getElementById('percentText').textContent = Math.round(count / bucketList.length * 100) + '%';
+}
+
+function resetBucket() {
+    if (confirm('确定要清空所有打卡照片吗？')) {
+        bucketPhotos = {};
+        localStorage.setItem('myBucketPhotos', '{}');
+        renderBucketMarkers(); updateBucketStats();
+    }
+}
