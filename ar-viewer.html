@@ -203,8 +203,16 @@ button{font-family:inherit}
 /* ============ 配置 ============ */
 var params = new URLSearchParams(location.search);
 var POI_ID = params.get('poi') || 'gugong';
-var POI = (window.STORIES && window.STORIES.find(function(p){ return p.id === POI_ID; })) ||
-          (window.STORIES && window.STORIES[0]);
+var POI = (window.AR_POIS && window.AR_POIS.find(function(p){ return p.id === POI_ID; })) ||
+          (window.AR_POIS && window.AR_POIS[0]);
+if (!POI) {
+  POI = { id: 'default', name: '3D 预览', plot: [], easterEggs: [], artifacts: [], stamp: { name: '拾迹者', icon: '✨' } };
+}
+// 统一便捷字段（兼容两种数据结构）
+POI._easterPlot = (POI.easterEggs && POI.easterEggs[0] && POI.easterEggs[0].plot) || POI._easterPlot || null;
+POI._easterIntro = (POI.easterEggs && POI.easterEggs[0] && POI.easterEggs[0].name) || POI._easterIntro || '发现了隐藏的秘密...';
+POI._stampName = (POI.stamp && POI.stamp.name) || POI._stampName || '拾迹印记';
+POI._stampIcon = (POI.stamp && POI.stamp.icon) || '🏛️';
 
 /* ============ 全局变量 ============ */
 var scene, camera, renderer, controls;
@@ -470,13 +478,13 @@ async function start() {
     setTimeout(function(){ playStory(POI.plot || []); }, 1200);
 
     // 彩蛋
-    if (POI.easterPlot) {
+    if (POI._easterPlot) {
       document.getElementById('tabEgg').addEventListener('click', function(){
         if (this.classList.contains('locked')) return;
         currentTab = 'egg';
         document.getElementById('tabMain').classList.remove('active');
         this.classList.add('active');
-        playStory(POI.easterPlot);
+        playStory(POI._easterPlot);
       });
       document.getElementById('tabMain').addEventListener('click', function(){
         currentTab = 'main';
@@ -500,7 +508,7 @@ async function start() {
       if (!voiceOn && window.speechSynthesis) window.speechSynthesis.cancel();
     });
     document.getElementById('btnStory').addEventListener('click', function(){
-      playStory(currentTab === 'main' ? (POI.plot || []) : (POI.easterPlot || []));
+      playStory(currentTab === 'main' ? (POI.plot || []) : (POI._easterPlot || []));
     });
 
     // 动画
@@ -550,10 +558,10 @@ function playStory(lines) {
 
     // 彩蛋触发
     if (ln.hint === 'egg' || ln.trigger === 'found_all') {
-      if (POI.easterPlot && !document.getElementById('tabEgg').classList.contains('locked')) {
+      if (POI._easterPlot && !document.getElementById('tabEgg').classList.contains('locked')) {
         // 已解锁过，不再弹窗
       } else {
-        document.getElementById('eggDesc').textContent = POI.easterIntro || POI.name + ' 里还藏着一个秘密...';
+        document.getElementById('eggDesc').textContent = POI._easterIntro || POI.name + ' 里还藏着一个秘密...';
         document.getElementById('modalEgg').classList.add('visible');
       }
     }
@@ -594,14 +602,21 @@ function checkProximity() {
       var el = document.querySelector('#huntList .artifact[data-id="' + a.id + '"]');
       if (el) el.classList.add('found');
       toast('✨ 发现线索：' + a.name);
-      // 隐藏（或缩小）
+      // 隐藏
       a.mesh.visible = false;
 
-      // 彩蛋触发检查
-      if (a.trigger && a.trigger.indexOf('found_artifact_') === 0) {
-        var targetN = parseInt(a.trigger.split('_').pop());
-        if (huntState.found.size >= targetN) {
-          document.getElementById('modalEgg').classList.add('visible');
+      // 彩蛋触发：从 POI.easterEggs 读取 trigger
+      if (POI.easterEggs && POI.easterEggs.length && !huntState.eggUnlocked) {
+        for (var ei = 0; ei < POI.easterEggs.length; ei++) {
+          var trig = POI.easterEggs[ei].trigger || '';
+          var m = trig.match(/found_artifact_(\d+)/);
+          if (m && huntState.found.size >= parseInt(m[1])) {
+            huntState.eggUnlocked = true;
+            document.getElementById('modalEgg').classList.add('visible');
+            document.getElementById('tabEgg').classList.remove('locked');
+            document.getElementById('tabEgg').textContent = '🎭 隐藏彩蛋';
+            break;
+          }
         }
       }
 
@@ -631,7 +646,7 @@ function huntComplete() {
   else if (POI.id === 'potala') stampEmoji = '🛕';
   document.getElementById('stampIcon').textContent = stampEmoji;
   document.getElementById('stampTitle').textContent = POI.name + ' · 拾迹印记已解锁！';
-  document.getElementById('stampDesc').textContent = '集齐了 ' + huntState.total + ' 件线索，获得「' + POI.stampName + '」印记';
+  document.getElementById('stampDesc').textContent = '集齐了 ' + huntState.total + ' 件线索，获得「' + POI._stampName + '」印记';
   setTimeout(function(){
     document.getElementById('modalStamp').classList.add('visible');
   }, 800);
