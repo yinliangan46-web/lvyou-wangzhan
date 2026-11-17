@@ -10,8 +10,6 @@
     <meta property="og:title" content="MYL旅行 - 探索世界之美" />
     <meta property="og:description" content="精选全球200+目的地，专业定制专属旅行线路" />
     <meta property="og:type" content="website" />
-
-    <!-- DNS 预解析 & 资源预连接 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
@@ -20,11 +18,8 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
-
-    <!-- 关键资源预加载 -->
     <link rel="preload" href="styles.css" as="style" />
     <link rel="preload" href="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" as="image" fetchpriority="high" />
-
     <link rel="stylesheet" href="styles.css?v=20261122a" />
     <link rel="stylesheet" href="city-plan.css?v=20261125a" />
     <link rel="stylesheet" href="planner.css?v=20261112q" />
@@ -34,8 +29,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet" />
 </head>
 <body>
-
-    <!-- ========== 导航栏 ========== -->
     <header class="header" id="header">
         <div class="container">
             <a href="#home" class="logo">
@@ -43,14 +36,14 @@
                 <span>MYL</span>
             </a>
             <nav class="nav" id="nav">
-                <a href="#home" class="active">首页</a>
+                <a href="discover.html" class="active">✨ 发现 MYL</a>
+                <a href="#home">首页</a>
                 <a href="#loops" class="nav-mobile-only">爆点环线</a>
                 <a href="#destinations">出境游</a>
                 <a href="#china">国内游</a>
                 <a href="#provinces">省级旅游地</a>
                 <a href="#routes">线路方案</a>
                 <a href="#planner">AI 定制</a>
-                <a href="discover.html">✨ 发现 MYL</a>
                 <a href="#tours">精选套餐</a>
                 <a href="#features">特色服务</a>
                 <a href="#visa"><i class="fas fa-passport"></i> 签证服务</a>
@@ -64,8 +57,6 @@
             </div>
         </div>
     </header>
-
-    <!-- ========== 首页 Hero ========== -->
     <section class="hero" id="home">
         <div class="hero-overlay"></div>
         <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80');"></div>
@@ -84,19 +75,13 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 🔥 爆点环线产品 ========== -->
     <section class="loops-section" id="loops">
         <div class="container">
             <h2>爆点环线 · 一生必走一次</h2>
             <p class="section-desc">国内/国外经典大环线，8-10天深度自驾，每一站都是世界级风景大片</p>
-            <div class="loop-grid" id="loopGrid">
-                <!-- JS 动态渲染 -->
-            </div>
+            <div class="loop-grid" id="loopGrid"></div>
         </div>
     </section>
-
-    <!-- ========== 目的地 ========== -->
     <section class="section" id="destinations">
         <div class="container">
             <div class="section-header">
@@ -198,8 +183,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 国内精选 ========== -->
     <section class="section china" id="china">
         <div class="container">
             <div class="section-header">
@@ -340,7 +323,6 @@
                     <div class="dest-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Zhuangli_Commercial_Street_5.jpg/960px-Zhuangli_Commercial_Street_5.jpg" alt="石家庄" loading="lazy" /><span class="dest-price">¥1,799起</span></div>
                     <div class="dest-info"><h3>石家庄</h3><p>燕赵风骨，红色记忆</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.3</span><span><i class="far fa-clock"></i> 3天</span></div></div>
                 </div>
-                <!-- 热门旅游城市 -->
                 <div class="dest-card china-card" onclick="openModal('suzhou')">
                     <div class="dest-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/%E4%B8%9C%E6%96%B9%E4%B9%8B%E9%97%A81.jpg/960px-%E4%B8%9C%E6%96%B9%E4%B9%8B%E9%97%A81.jpg" alt="苏州" loading="lazy" /><span class="dest-price">¥2,299起</span></div>
                     <div class="dest-info"><h3>苏州</h3><p>江南园林，水乡古韵</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.7</span><span><i class="far fa-clock"></i> 4天</span></div></div>
@@ -389,11 +371,9 @@
                     <div class="dest-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Panorama_of_Leshan_03.2025.jpg/960px-Panorama_of_Leshan_03.2025.jpg" alt="乐山" loading="lazy" /><span class="dest-price">¥1,899起</span></div>
                     <div class="dest-info"><h3>乐山</h3><p>世界最大石刻坐佛</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.6</span><span><i class="far fa-clock"></i> 3天</span></div></div>
                 </div>
-                                                                                            </div>
+            </div>
         </div>
     </section>
-
-        <!-- ========== MYL 中国省级旅游地 ========== -->
     <section class="section china" id="provinces" style="background:#fafafa">
         <div class="container">
             <div class="section-header">
@@ -522,11 +502,9 @@
                     <div class="dest-img"><img src="https://images.unsplash.com/photo-1758913313672-3c516325a45a?w=800&q=80&auto=format&fit=crop" alt="澳门特别行政区" loading="lazy" /><span class="dest-price">¥2,799起</span></div>
                     <div class="dest-info"><h3>澳门特别行政区</h3><p>海上花园·赌城风云</p><div class="dest-meta"><span><i class="fas fa-star"></i> 4.5</span><span><i class="far fa-clock"></i> 2-4天</span></div></div>
                 </div>
-            
+            </div>
         </div>
     </section>
-
-<!-- ========== 线路方案 ========== -->
     <section class="section routes" id="routes">
         <div class="container">
             <div class="section-header">
@@ -536,9 +514,7 @@
             </div>
             <div class="routes-list">
                 <div class="route-item" onclick="openModal('paris')">
-                    <div class="route-img">
-                        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80" alt="巴黎浪漫之旅" />
-                    </div>
+                    <div class="route-img"><img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80" alt="巴黎浪漫之旅" /></div>
                     <div class="route-content">
                         <div class="route-tag">热门推荐</div>
                         <h3>巴黎浪漫之旅 <span>7天6晚</span></h3>
@@ -555,9 +531,7 @@
                     </div>
                 </div>
                 <div class="route-item" onclick="openModal('tokyo')">
-                    <div class="route-img">
-                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80" alt="东京深度游" />
-                    </div>
+                    <div class="route-img"><img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80" alt="东京深度游" /></div>
                     <div class="route-content">
                         <div class="route-tag" style="background:#8b5cf6">精选推荐</div>
                         <h3>东京深度游 <span>6天5晚</span></h3>
@@ -574,9 +548,7 @@
                     </div>
                 </div>
                 <div class="route-item" onclick="openModal('bali')">
-                    <div class="route-img">
-                        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80" alt="巴厘岛休闲游" />
-                    </div>
+                    <div class="route-img"><img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80" alt="巴厘岛休闲游" /></div>
                     <div class="route-content">
                         <div class="route-tag" style="background:#0ea5e9">蜜月首选</div>
                         <h3>巴厘岛休闲度假 <span>5天4晚</span></h3>
@@ -598,8 +570,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== AI 定制行程 ========== -->
     <section class="section planner-section" id="planner">
         <div class="container">
             <div class="section-header">
@@ -607,13 +577,9 @@
                 <h2>选景点，自动生成路线图</h2>
                 <p>像点菜一样勾选想去的景点，自动按地理位置排成顺路行程；下方助手随时帮你加、减、换，全程不用返工</p>
             </div>
-            <div id="plannerApp">
-                <div class="pl-empty"><i class="fas fa-compass"></i>正在加载行程规划器…</div>
-            </div>
+            <div id="plannerApp"><div class="pl-empty"><i class="fas fa-compass"></i>正在加载行程规划器…</div></div>
         </div>
     </section>
-
-    <!-- ========== 旅游套餐 ========== -->
     <section class="section tours" id="tours">
         <div class="container">
             <div class="section-header">
@@ -624,9 +590,7 @@
             <div class="tour-grid">
                 <div class="tour-card" onclick="openTourModal('island')">
                     <div class="tour-badge">热销</div>
-                    <div class="tour-icon">
-                        <i class="fas fa-umbrella-beach"></i>
-                    </div>
+                    <div class="tour-icon"><i class="fas fa-umbrella-beach"></i></div>
                     <h3>海岛度假</h3>
                     <p class="tour-desc">马尔代夫、巴厘岛、普吉岛，享受最美海岛风光</p>
                     <ul class="tour-features">
@@ -640,9 +604,7 @@
                 </div>
                 <div class="tour-card featured" onclick="openTourModal('culture')">
                     <div class="tour-badge">推荐</div>
-                    <div class="tour-icon">
-                        <i class="fas fa-landmark"></i>
-                    </div>
+                    <div class="tour-icon"><i class="fas fa-landmark"></i></div>
                     <h3>文化探索</h3>
                     <p class="tour-desc">欧洲古城、日本神社、东南亚寺庙，深度文化之旅</p>
                     <ul class="tour-features">
@@ -656,9 +618,7 @@
                 </div>
                 <div class="tour-card" onclick="openTourModal('city')">
                     <div class="tour-badge">优惠</div>
-                    <div class="tour-icon">
-                        <i class="fas fa-city"></i>
-                    </div>
+                    <div class="tour-icon"><i class="fas fa-city"></i></div>
                     <h3>城市漫游</h3>
                     <p class="tour-desc">东京、首尔、曼谷、新加坡，感受都市脉动</p>
                     <ul class="tour-features">
@@ -672,9 +632,7 @@
                 </div>
                 <div class="tour-card" onclick="openTourModal('nanjing_tour')">
                     <div class="tour-badge">精选</div>
-                    <div class="tour-icon">
-                        <i class="fas fa-archway"></i>
-                    </div>
+                    <div class="tour-icon"><i class="fas fa-archway"></i></div>
                     <h3>南京古都游</h3>
                     <p class="tour-desc">六朝古都、秦淮风韵、中山陵、夫子庙，深度文化之旅</p>
                     <ul class="tour-features">
@@ -688,9 +646,7 @@
                 </div>
                 <div class="tour-card" onclick="openTourModal('luan_tour')">
                     <div class="tour-badge">特惠</div>
-                    <div class="tour-icon">
-                        <i class="fas fa-mountain"></i>
-                    </div>
+                    <div class="tour-icon"><i class="fas fa-mountain"></i></div>
                     <h3>六安·大别山游</h3>
                     <p class="tour-desc">天堂寨、万佛湖、大别山主峰，回归自然生态之旅</p>
                     <ul class="tour-features">
@@ -705,8 +661,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 特色服务 ========== -->
     <section class="section" id="features">
         <div class="container">
             <div class="section-header">
@@ -716,9 +670,7 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card feature-card-lg">
-                    <div class="feature-icon">
-                        <i class="fas fa-plane"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-plane"></i></div>
                     <h3>机票预订</h3>
                     <p>与全球 200+ 航空公司合作，为你提供最优惠的机票价格</p>
                     <ul class="feature-detail">
@@ -733,9 +685,7 @@
                     </div>
                 </div>
                 <div class="feature-card feature-card-lg">
-                    <div class="feature-icon">
-                        <i class="fas fa-hotel"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-hotel"></i></div>
                     <h3>酒店住宿</h3>
                     <p>精选全球优质酒店，从经济型到奢华型满足不同需求</p>
                     <ul class="feature-detail">
@@ -750,9 +700,7 @@
                     </div>
                 </div>
                 <div class="feature-card feature-card-lg">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
                     <h3>私人导游</h3>
                     <p>专业持证导游，中英文服务，带你深入了解当地文化</p>
                     <ul class="feature-detail">
@@ -767,9 +715,7 @@
                     </div>
                 </div>
                 <div class="feature-card feature-card-lg">
-                    <div class="feature-icon">
-                        <i class="fas fa-car"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-car"></i></div>
                     <h3>接送服务</h3>
                     <p>机场专车接送，让旅途从落地开始就轻松无忧</p>
                     <ul class="feature-detail">
@@ -784,9 +730,7 @@
                     </div>
                 </div>
                 <div class="feature-card feature-card-lg">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                     <h3>旅行保险</h3>
                     <p>全程旅行意外险覆盖，让每一次出行都安心有保障</p>
                     <ul class="feature-detail">
@@ -801,9 +745,7 @@
                     </div>
                 </div>
                 <div class="feature-card feature-card-lg">
-                    <div class="feature-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-headset"></i></div>
                     <h3>24小时客服</h3>
                     <p>全天候中文客服支持，遇到任何问题随时联系我们</p>
                     <ul class="feature-detail">
@@ -820,8 +762,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 签证服务 ========== -->
     <section class="section visa-section" id="visa">
         <div class="container">
             <div class="section-header">
@@ -879,85 +819,36 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 数据统计 ========== -->
     <section class="stats-section">
         <div class="container">
             <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-number" data-target="15">0</span>
-                    <span class="stat-suffix">年</span>
-                    <p>行业经验</p>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-target="200">0</span>
-                    <span class="stat-suffix">+</span>
-                    <p>覆盖目的地</p>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-target="15000">0</span>
-                    <span class="stat-suffix">+</span>
-                    <p>满意客户</p>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" data-target="98">0</span>
-                    <span class="stat-suffix">%</span>
-                    <p>客户好评率</p>
-                </div>
+                <div class="stat-item"><span class="stat-number" data-target="15">0</span><span class="stat-suffix">年</span><p>行业经验</p></div>
+                <div class="stat-item"><span class="stat-number" data-target="200">0</span><span class="stat-suffix">+</span><p>覆盖目的地</p></div>
+                <div class="stat-item"><span class="stat-number" data-target="15000">0</span><span class="stat-suffix">+</span><p>满意客户</p></div>
+                <div class="stat-item"><span class="stat-number" data-target="98">0</span><span class="stat-suffix">%</span><p>客户好评率</p></div>
             </div>
         </div>
     </section>
-
-    <!-- ========== 用户评价 ========== -->
     <section class="section testimonials">
         <div class="container">
-            <div class="section-header">
-                <span class="section-tag">客户评价</span>
-                <h2>听听他们怎么说</h2>
-            </div>
+            <div class="section-header"><span class="section-tag">客户评价</span><h2>听听他们怎么说</h2></div>
             <div class="testimonial-grid">
                 <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                     <p>"MYL 的行程安排非常合理，巴黎之旅超出预期！导游知识丰富，住宿条件也很好。下次旅行还会选择 MYL！"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="用户" />
-                        <div>
-                            <h4>张女士</h4>
-                            <span>巴厘岛之旅</span>
-                        </div>
-                    </div>
+                    <div class="testimonial-user"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="用户" /><div><h4>张女士</h4><span>巴厘岛之旅</span></div></div>
                 </div>
                 <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                     <p>"MYL 定制的欧洲文化之旅超出预期！行程非常贴心，还推荐了很多当地人才知道的美食店。强烈推荐！"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="用户" />
-                        <div>
-                            <h4>李先生</h4>
-                            <span>法国巴黎之旅</span>
-                        </div>
-                    </div>
+                    <div class="testimonial-user"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="用户" /><div><h4>李先生</h4><span>法国巴黎之旅</span></div></div>
                 </div>
                 <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                     <p>"带孩子去的东京，MYL 的行程非常亲子友好。导游很有耐心，孩子玩得特别开心。已经推荐给朋友们了！"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="用户" />
-                        <div>
-                            <h4>王女士</h4>
-                            <span>日本亲子之旅</span>
-                        </div>
-                    </div>
+                    <div class="testimonial-user"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="用户" /><div><h4>王女士</h4><span>日本亲子之旅</span></div></div>
                 </div>
             </div>
-
-            <!-- 发布评价 -->
             <div class="review-box">
                 <h3><i class="fas fa-pen-fancy"></i> 分享你的旅行故事</h3>
                 <p class="review-box-desc">真实体验由你来写，发布后将即时展示在上方评价区</p>
@@ -965,11 +856,7 @@
                     <div class="review-form-row">
                         <input type="text" id="reviewName" placeholder="你的昵称，如：李女士" maxlength="20" required />
                         <input type="text" id="reviewDest" placeholder="去了哪里？如：东京亲子之旅" maxlength="30" />
-                        <select id="reviewRating" aria-label="评分">
-                            <option value="5">★★★★★ 5星</option>
-                            <option value="4">★★★★ 4星</option>
-                            <option value="3">★★★ 3星</option>
-                        </select>
+                        <select id="reviewRating" aria-label="评分"><option value="5">★★★★★ 5星</option><option value="4">★★★★ 4星</option><option value="3">★★★ 3星</option></select>
                     </div>
                     <textarea id="reviewText" placeholder="写下你的真实旅行体验..." rows="4" maxlength="300" required></textarea>
                     <div class="review-form-footer">
@@ -980,57 +867,23 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 联系与订阅 ========== -->
     <section class="section contact" id="contact">
         <div class="container">
             <div class="contact-wrapper">
                 <div class="contact-info">
                     <h2>联系 MYL</h2>
                     <p>有任何问题或需要定制旅行方案？随时联系我们</p>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <h4>电话</h4>
-                            <span>17708491297</span>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h4>邮箱</h4>
-                            <span>2377411629@qq.com</span>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h4>地址</h4>
-                            <span>上海市浦东新区世纪大道100号</span>
-                        </div>
-                    </div>
-                    <div class="contact-social">
-                        <a href="#"><i class="fab fa-weixin"></i></a>
-                        <a href="#"><i class="fab fa-weibo"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                        <a href="mailto:2377411629@qq.com"><i class="fas fa-envelope"></i></a>
-                    </div>
+                    <div class="contact-item"><i class="fas fa-phone"></i><div><h4>电话</h4><span>17708491297</span></div></div>
+                    <div class="contact-item"><i class="fas fa-envelope"></i><div><h4>邮箱</h4><span>2377411629@qq.com</span></div></div>
+                    <div class="contact-item"><i class="fas fa-map-marker-alt"></i><div><h4>地址</h4><span>上海市浦东新区世纪大道100号</span></div></div>
+                    <div class="contact-social"><a href="#"><i class="fab fa-weixin"></i></a><a href="#"><i class="fab fa-weibo"></i></a><a href="#"><i class="fab fa-tiktok"></i></a><a href="mailto:2377411629@qq.com"><i class="fas fa-envelope"></i></a></div>
                 </div>
                 <div class="contact-form">
                     <h3>发送咨询</h3>
                     <form id="contactForm">
-                        <div class="form-row">
-                            <input type="text" placeholder="您的姓名" required />
-                            <input type="tel" placeholder="联系电话" />
-                        </div>
+                        <div class="form-row"><input type="text" placeholder="您的姓名" required /><input type="tel" placeholder="联系电话" /></div>
                         <input type="email" placeholder="电子邮箱" value="2377411629@qq.com" />
-                        <select>
-                            <option>选择咨询类型</option>
-                            <option>旅游套餐咨询</option>
-                            <option>定制旅行方案</option>
-                            <option>订单问题</option>
-                            <option>其他</option>
-                        </select>
+                        <select><option>选择咨询类型</option><option>旅游套餐咨询</option><option>定制旅行方案</option><option>订单问题</option><option>其他</option></select>
                         <textarea rows="4" placeholder="请输入您的留言..." required></textarea>
                         <button type="submit" class="btn btn-block">发送消息</button>
                     </form>
@@ -1038,55 +891,22 @@
             </div>
         </div>
     </section>
-
-    <!-- ========== 底部 ========== -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <a href="#home" class="logo">
-                        <i class="fas fa-compass"></i>
-                        <span>MYL</span>
-                    </a>
+                    <a href="#home" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
                     <p>MYL 旅行，探索世界，发现不一样的自己。<br />十年专注高品质旅行服务。</p>
                 </div>
-                <div class="footer-links">
-                    <h4>快速链接</h4>
-                    <a href="#">关于 MYL</a>
-                    <a href="#">旅游攻略</a>
-                    <a href="#">签证服务</a>
-                    <a href="#">常见问题</a>
-                </div>
-                <div class="footer-links">
-                    <h4>热门目的地</h4>
-                    <a href="#" onclick="openModal('paris');return false">巴黎</a>
-                    <a href="#" onclick="openModal('tokyo');return false">东京</a>
-                    <a href="#" onclick="openModal('bali');return false">巴厘岛</a>
-                    <a href="#" onclick="openModal('london');return false">伦敦</a>
-                </div>
-                <div class="footer-links">
-                    <h4>联系 MYL</h4>
-                    <a href="mailto:2377411629@qq.com"><i class="fas fa-envelope"></i> 2377411629@qq.com</a>
-                    <a href="#"><i class="fas fa-phone"></i> 17708491297</a>
-                    <a href="#">隐私政策</a>
-                    <a href="#">服务条款</a>
-                </div>
+                <div class="footer-links"><h4>快速链接</h4><a href="#">关于 MYL</a><a href="#">旅游攻略</a><a href="#">签证服务</a><a href="#">常见问题</a></div>
+                <div class="footer-links"><h4>热门目的地</h4><a href="#" onclick="openModal('paris');return false">巴黎</a><a href="#" onclick="openModal('tokyo');return false">东京</a><a href="#" onclick="openModal('bali');return false">巴厘岛</a><a href="#" onclick="openModal('london');return false">伦敦</a></div>
+                <div class="footer-links"><h4>联系 MYL</h4><a href="mailto:2377411629@qq.com"><i class="fas fa-envelope"></i> 2377411629@qq.com</a><a href="#"><i class="fas fa-phone"></i> 17708491297</a><a href="#">隐私政策</a><a href="#">服务条款</a></div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 MYL Travel. All rights reserved.</p>
-            </div>
+            <div class="footer-bottom"><p>&copy; 2026 MYL Travel. All rights reserved.</p></div>
         </div>
     </footer>
-
-    <!-- ========== 回到顶部 ========== -->
-    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <!-- ========== 手机菜单遮罩 ========== -->
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部"><i class="fas fa-chevron-up"></i></button>
     <div class="overlay" id="overlay"></div>
-
-    <!-- ========== 弹窗 ========== -->
     <div class="modal" id="destModal">
         <div class="modal-overlay" onclick="closeModal()"></div>
         <div class="modal-content" id="modalContent">
@@ -1094,26 +914,15 @@
             <div id="modalBody"></div>
         </div>
     </div>
-
-    <!-- ========== 智能客服：右下角动态头像 ========== -->
     <button type="button" class="cs-fab" id="csFab" aria-label="打开24小时智能客服">
         <span class="cs-fab-tip" id="csFabTip">有问题？随时问我</span>
-        <span class="cs-fab-avatar">
-            <i class="fas fa-headset"></i>
-            <span class="cs-fab-dot"></span>
-            <span class="cs-fab-badge" id="csBadge">0</span>
-        </span>
+        <span class="cs-fab-avatar"><i class="fas fa-headset"></i><span class="cs-fab-dot"></span><span class="cs-fab-badge" id="csBadge">0</span></span>
     </button>
-
-    <!-- ========== 智能客服：二级对话页面 ========== -->
     <div class="cs-page" id="csPage" aria-hidden="true">
         <div class="cs-shell" role="dialog" aria-modal="true" aria-label="MYL 智能客服">
             <div class="cs-head">
                 <div class="cs-head-avatar"><i class="fas fa-headset"></i></div>
-                <div class="cs-head-info">
-                    <h4>MYL 智能客服</h4>
-                    <span><i class="cs-live"></i> 24 小时在线 · 秒级响应</span>
-                </div>
+                <div class="cs-head-info"><h4>MYL 智能客服</h4><span><i class="cs-live"></i> 24 小时在线 · 秒级响应</span></div>
                 <button type="button" class="cs-head-btn" id="csHuman"><i class="fas fa-user-tie"></i> <span>人工客服</span></button>
                 <div class="cs-more-wrap">
                     <button type="button" class="cs-head-btn cs-more-btn" id="csMore" aria-label="更多"><i class="fas fa-ellipsis-vertical"></i></button>
@@ -1136,7 +945,6 @@
             </div>
         </div>
     </div>
-
     <script src="vendor/leaflet/leaflet.js?v=20261110za"></script>
     <script src="map-coords.js?v=20261125a"></script>
     <script src="city-data.js?v=20261116d"></script>
