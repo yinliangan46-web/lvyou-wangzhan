@@ -5,14 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
 <meta name="theme-color" content="#0a0a0a" />
 <title>拾迹集册 · 3D 景点博物馆</title>
-<script src="ar-lib/three.min.js"></script>
-<script src="touch-controls.js"></script>
 <script src="ar-stories.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif;color:#fff}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
-#arCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;touch-action:none}
+#scene{position:fixed;inset:0;width:100%;height:100%;z-index:1;touch-action:none}
+#labels{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
 #topBar{position:fixed;top:0;left:0;right:0;z-index:10;padding:max(14px,env(safe-area-inset-top)) 16px 14px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);display:flex;align-items:center;justify-content:space-between;pointer-events:none}
 #topBar>*{pointer-events:auto}
 .poi-title{font-weight:700;font-size:17px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
@@ -20,9 +19,9 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .top-btns{display:flex;gap:8px}
 .top-btns button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:7px 13px;font-size:13px;transition:.2s}
 .top-btns button:active{transform:scale(.95)}
-.hotspot-tag{position:fixed;z-index:5;width:36px;height:36px;margin:-18px 0 0 -18px;display:flex;align-items:center;justify-content:center;font-size:18px;background:radial-gradient(circle,#fbbf24 0%,#d97706 70%);border:2px solid #fff;border-radius:50%;box-shadow:0 0 20px rgba(251,191,36,.6);cursor:pointer;transition:transform .2s;animation:pulse-hs 2s infinite}
+.hotspot-tag{position:absolute;z-index:5;width:38px;height:38px;margin:-19px 0 0 -19px;display:flex;align-items:center;justify-content:center;font-size:18px;background:radial-gradient(circle at 30% 30%,#fde68a,#d97706 70%);border:2px solid #fff;border-radius:50%;box-shadow:0 0 20px rgba(251,191,36,.6),0 4px 12px rgba(0,0,0,.4);cursor:pointer;transition:transform .2s;animation:pulse-hs 2s infinite;pointer-events:auto}
 .hotspot-tag:active{transform:scale(1.2)}
-.hotspot-tag.visited{background:radial-gradient(circle,#22c55e 0%,#16a34a 70%);box-shadow:0 0 15px rgba(34,197,94,.5);animation:none}
+.hotspot-tag.visited{background:radial-gradient(circle at 30% 30%,#86efac,#16a34a 70%);box-shadow:0 0 15px rgba(34,197,94,.5);animation:none}
 @keyframes pulse-hs{0%,100%{box-shadow:0 0 15px rgba(251,191,36,.5)}50%{box-shadow:0 0 30px rgba(251,191,36,.9)}}
 #infoCard{position:fixed;left:16px;right:16px;bottom:20px;z-index:15;background:rgba(15,23,42,.95);backdrop-filter:blur(16px);border:1px solid rgba(251,191,36,.3);border-radius:16px;padding:18px;max-width:500px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translateY(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
 #infoCard.visible{transform:translateY(0)}
@@ -109,9 +108,18 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 #loading .text{font-size:14px;color:#94a3b8}
 @media (min-width:768px){#storyBubble,#infoCard,#gamePanel{max-width:500px}}
 </style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body>
-<canvas id="arCanvas"></canvas>
+<canvas id="scene"></canvas>
+<div id="labels"></div>
 <div id="topBar">
   <div>
     <div class="poi-title" id="poiTitle">景点</div>
@@ -150,7 +158,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 <div id="toast"></div>
 <div id="loading">
   <div class="spinner"></div>
-  <div class="text">正在加载 3D 模型...</div>
+  <div class="text">正在加载 3D 博物馆...</div>
 </div>
 <div class="modal-bg" id="modalStamp">
   <div class="modal">
@@ -169,327 +177,378 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
     <button onclick="document.getElementById('modalEgg').classList.remove('visible')">继续探索</button>
   </div>
 </div>
-<script>
-'use strict';
-var params = new URLSearchParams(location.search);
-var POI_ID = params.get('poi') || 'gugong';
-var POI = (window.AR_POIS && window.AR_POIS.find(function(p){ return p.id === POI_ID; })) ||
-          (window.AR_POIS && window.AR_POIS[0]);
-var HuntStorage = {
-  LS_STAMPS: 'myl_hunt_stamps_v3',
-  getStamps: function() { try { return JSON.parse(localStorage.getItem(this.LS_STAMPS) || '[]'); } catch(e) { return []; } },
-  addStamp: function(id) { var arr = this.getStamps(); if (arr.indexOf(id) < 0) { arr.push(id); localStorage.setItem(this.LS_STAMPS, JSON.stringify(arr)); } }
-};
-var scene, camera, renderer, controls;
-var poiGroup;
-var hotspotObjects = [];
-var visitedHotspots = new Set();
-var autoRotate = true;
-var gameState = { active: false, completed: false };
 
-function makeTex(drawFn, rx, ry) {
-  var c = document.createElement('canvas'); c.width = 256; c.height = 256;
-  var ctx = c.getContext('2d'); drawFn(ctx, 256);
-  var t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx || 2, ry || 2);
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const params = new URLSearchParams(location.search);
+const POI_ID = params.get('poi') || 'gugong';
+const POI = (window.AR_POIS && window.AR_POIS.find(p => p.id === POI_ID)) ||
+           (window.AR_POIS && window.AR_POIS[0]);
+
+const HuntStorage = {
+  LS: 'myl_hunt_stamps_v3',
+  get() { try { return JSON.parse(localStorage.getItem(this.LS) || '[]'); } catch(e) { return []; } },
+  add(id) { const a = this.get(); if (!a.includes(id)) { a.push(id); localStorage.setItem(this.LS, JSON.stringify(a)); } }
+};
+
+let scene, camera, renderer, controls, composer;
+let poiGroup;
+let hotspotObjects = [];
+const visitedHotspots = new Set();
+let autoRotate = true;
+const gameState = { active: false, completed: false };
+
+function makeTex(drawFn, rx=2, ry=2) {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const ctx = c.getContext('2d'); drawFn(ctx, 256);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry);
+  t.anisotropy = 8;
   return t;
 }
 function brickTex(base, line) {
-  return makeTex(function(ctx, s) {
+  return makeTex((ctx, s) => {
     ctx.fillStyle = base; ctx.fillRect(0, 0, s, s);
-    ctx.strokeStyle = line || 'rgba(0,0,0,.3)'; ctx.lineWidth = 2;
-    var bh = 32, bw = 64;
-    for (var y = 0; y < s; y += bh) {
-      var off = (y / bh) % 2 === 0 ? 0 : bw / 2;
-      for (var x = -bw; x < s + bw; x += bw) ctx.strokeRect(x + off, y, bw, bh);
+    ctx.strokeStyle = line || 'rgba(0,0,0,.25)'; ctx.lineWidth = 2;
+    const bh = 32, bw = 64;
+    for (let y = 0; y < s; y += bh) {
+      const off = ((y/bh)%2===0) ? 0 : bw/2;
+      for (let x = -bw; x < s+bw; x += bw) ctx.strokeRect(x+off, y, bw, bh);
     }
-    for (var i = 0; i < 150; i++) {
-      ctx.fillStyle = 'rgba(0,0,0,' + Math.random() * 0.08 + ')';
-      ctx.fillRect(Math.random() * s, Math.random() * s, 3, 3);
-    }
-  }, 3, 2);
-}
-function roofTex() {
-  return makeTex(function(ctx, s) {
-    for (var x = 0; x < s; x += 16) {
-      var grad = ctx.createLinearGradient(x, 0, x + 16, 0);
-      grad.addColorStop(0, '#a8821a'); grad.addColorStop(0.5, '#e6c24a'); grad.addColorStop(1, '#a8821a');
-      ctx.fillStyle = grad; ctx.fillRect(x, 0, 16, s);
+    for (let i = 0; i < 200; i++) {
+      ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.06})`;
+      ctx.fillRect(Math.random()*s, Math.random()*s, 3, 3);
     }
   }, 4, 2);
 }
-function stoneTex() {
-  return makeTex(function(ctx, s) {
-    ctx.fillStyle = '#d0ccc4'; ctx.fillRect(0, 0, s, s);
-    for (var i = 0; i < 200; i++) {
-      var v = 180 + Math.random() * 40;
-      ctx.fillStyle = 'rgba(' + v + ',' + v + ',' + v + ',.3)';
-      ctx.fillRect(Math.random() * s, Math.random() * s, 4, 4);
+function roofTileTex() {
+  return makeTex((ctx, s) => {
+    for (let x = 0; x < s; x += 16) {
+      const g = ctx.createLinearGradient(x, 0, x+16, 0);
+      g.addColorStop(0, '#9a7a15'); g.addColorStop(0.5, '#e6c24a'); g.addColorStop(1, '#9a7a15');
+      ctx.fillStyle = g; ctx.fillRect(x, 0, 16, s);
     }
-    ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.lineWidth = 1;
-    for (var y = 0; y < s; y += 64) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(s, y); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(0,0,0,.15)';
+    for (let y = 0; y < s; y += 32) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(s,y); ctx.stroke(); }
+  }, 6, 3);
+}
+function stoneTex() {
+  return makeTex((ctx, s) => {
+    ctx.fillStyle = '#d0ccc4'; ctx.fillRect(0, 0, s, s);
+    for (let i = 0; i < 300; i++) {
+      const v = 180 + Math.random()*40;
+      ctx.fillStyle = `rgba(${v},${v},${v},.3)`;
+      ctx.fillRect(Math.random()*s, Math.random()*s, 4, 4);
+    }
+    ctx.strokeStyle = 'rgba(0,0,0,.12)';
+    for (let y = 0; y < s; y += 64) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(s,y); ctx.stroke(); }
   }, 2, 2);
+}
+function woodTex(base) {
+  return makeTex((ctx, s) => {
+    ctx.fillStyle = base; ctx.fillRect(0, 0, s, s);
+    for (let i = 0; i < 50; i++) {
+      ctx.strokeStyle = `rgba(0,0,0,${Math.random()*0.1})`;
+      ctx.beginPath();
+      ctx.moveTo(0, Math.random()*s);
+      ctx.bezierCurveTo(s/3, Math.random()*s, s*2/3, Math.random()*s, s, Math.random()*s);
+      ctx.stroke();
+    }
+  }, 2, 1);
+}
+
+const MATS = {};
+function initMats() {
+  MATS.redWall = new THREE.MeshStandardMaterial({ map: brickTex('#9a1a1a','rgba(0,0,0,.2)'), roughness: .6, metalness: .1 });
+  MATS.goldRoof = new THREE.MeshStandardMaterial({ map: roofTileTex(), roughness: .25, metalness: .8, envMapIntensity: 1.2 });
+  MATS.whiteStone = new THREE.MeshStandardMaterial({ map: stoneTex(), roughness: .5, metalness: .05 });
+  MATS.darkStone = new THREE.MeshStandardMaterial({ color: 0x8a8680, roughness: .8 });
+  MATS.redPillar = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: .35, metalness: .15 });
+  MATS.goldDoor = new THREE.MeshStandardMaterial({ color: 0xd4a843, roughness: .3, metalness: .7, envMapIntensity: 1.5 });
+  MATS.clay = new THREE.MeshStandardMaterial({ color: 0xa08060, roughness: .85 });
+  MATS.clayDark = new THREE.MeshStandardMaterial({ color: 0x8a6f50, roughness: .9 });
+  MATS.water = new THREE.MeshStandardMaterial({ color: 0x2a6fa8, roughness: .1, metalness: .6, transparent: true, opacity: .8, envMapIntensity: 1.5 });
+  MATS.grass = new THREE.MeshStandardMaterial({ color: 0x4a7a3a, roughness: .9 });
+  MATS.rock = new THREE.MeshStandardMaterial({ color: 0x5a6578, roughness: .95 });
+  MATS.snow = new THREE.MeshStandardMaterial({ color: 0xf5f8fc, roughness: .3, metalness: .05 });
+  MATS.potalaWhite = new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: .45 });
+  MATS.potalaRed = new THREE.MeshStandardMaterial({ color: 0x8a1a1a, roughness: .5 });
+  MATS.gold = new THREE.MeshStandardMaterial({ color: 0xd4a843, roughness: .15, metalness: .95, envMapIntensity: 2 });
+  MATS.darkWood = new THREE.MeshStandardMaterial({ map: woodTex('#6b4423'), roughness: .7 });
 }
 
 function buildPOIModel(poi) {
-  var g = new THREE.Group();
-  var s = 1.0;
-  var wallTex = brickTex('#9a1a1a', 'rgba(0,0,0,.25)');
-  var goldTex = roofTex();
-  var stnTex = stoneTex();
-
+  const g = new THREE.Group();
+  initMats();
   switch(poi.id) {
-    case 'gugong': {
-      var stoneMat = new THREE.MeshStandardMaterial({ map: stnTex, roughness: 0.8 });
-      for (var i = 0; i < 3; i++) {
-        var w = (5 - i * 0.6) * s, d = (4 - i * 0.5) * s;
-        var base = new THREE.Mesh(new THREE.BoxGeometry(w, 0.35 * s, d), stoneMat);
-        base.position.y = i * 0.38 * s + 0.17 * s;
-        base.castShadow = true; base.receiveShadow = true;
-        g.add(base);
-        var railMat = new THREE.MeshStandardMaterial({ color: 0xe8e4de, roughness: 0.6 });
-        var rf = new THREE.Mesh(new THREE.BoxGeometry(w, 0.18 * s, 0.04 * s), railMat);
-        rf.position.set(0, (i * 0.38 + 0.44) * s, d/2); g.add(rf);
-        var rb = rf.clone(); rb.position.z = -d/2; g.add(rb);
-        var rl = new THREE.Mesh(new THREE.BoxGeometry(0.04 * s, 0.18 * s, d), railMat);
-        rl.position.set(-w/2, (i * 0.38 + 0.44) * s, 0); g.add(rl);
-        var rr = rl.clone(); rr.position.x = w/2; g.add(rr);
-      }
-      var stepMat = new THREE.MeshStandardMaterial({ color: 0xc0bcb4, roughness: 0.7 });
-      for (var i = 0; i < 5; i++) {
-        var step = new THREE.Mesh(new THREE.BoxGeometry(1.2 * s, 0.1 * s, 0.5 * s), stepMat);
-        step.position.set(0, i * 0.1 * s + 0.05 * s, (2 + i * 0.3) * s);
-        g.add(step);
-      }
-      var wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.5 });
-      var body = new THREE.Mesh(new THREE.BoxGeometry(3.5 * s, 2 * s, 2.5 * s), wallMat);
-      body.position.y = 1.15 * s + 1.14 * s;
-      body.castShadow = true; g.add(body);
-      var pillarMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.3, metalness: 0.1 });
-      for (var i = -2; i <= 2; i++) {
-        var p = new THREE.Mesh(new THREE.CylinderGeometry(0.08 * s, 0.08 * s, 2.2 * s, 12), pillarMat);
-        p.position.set(i * 0.65 * s, 1.15 * s + 1.14 * s, 1.3 * s);
-        p.castShadow = true; g.add(p);
-      }
-      var doorMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.6, roughness: 0.3 });
-      for (var i = -1.5; i <= 1.5; i += 1) {
-        var door = new THREE.Mesh(new THREE.BoxGeometry(0.6 * s, 1.5 * s, 0.05 * s), doorMat);
-        door.position.set(i * s, 1.15 * s + 1.14 * s, 1.26 * s);
-        g.add(door);
-      }
-      var roofMat = new THREE.MeshStandardMaterial({ map: goldTex, metalness: 0.7, roughness: 0.3 });
-      var roof1 = new THREE.Mesh(new THREE.ConeGeometry(2.8 * s, 0.9 * s, 4), roofMat);
-      roof1.rotation.y = Math.PI / 4;
-      roof1.position.y = 1.15 * s + 1.14 * s + 1.45 * s;
-      roof1.castShadow = true; g.add(roof1);
-      var roof2 = new THREE.Mesh(new THREE.ConeGeometry(2.2 * s, 0.8 * s, 4), roofMat);
-      roof2.rotation.y = Math.PI / 4;
-      roof2.position.y = roof1.position.y + 1.3 * s;
-      roof2.castShadow = true; g.add(roof2);
-      var beastMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.8, roughness: 0.2 });
-      for (var i = 0; i < 10; i++) {
-        var beast = new THREE.Mesh(new THREE.BoxGeometry(0.06 * s, 0.1 * s, 0.06 * s), beastMat);
-        beast.position.set(-1.1 * s + i * 0.24 * s, roof2.position.y + 0.35 * s, 0);
-        g.add(beast);
-      }
-      break;
-    }
-    case 'bingmayong': {
-      var pitMat = new THREE.MeshStandardMaterial({ color: 0x6b5344, roughness: 0.95 });
-      var pit = new THREE.Mesh(new THREE.BoxGeometry(6 * s, 0.4 * s, 4 * s), pitMat);
-      pit.position.y = 0.2 * s; pit.receiveShadow = true; g.add(pit);
-      var wallMat = new THREE.MeshStandardMaterial({ color: 0x5c4535, roughness: 0.95 });
-      for (var i = -1; i <= 1; i++) {
-        var wall = new THREE.Mesh(new THREE.BoxGeometry(6 * s, 0.5 * s, 0.15 * s), wallMat);
-        wall.position.set(0, 0.45 * s, i * 1.2 * s); g.add(wall);
-      }
-      var clayMat = new THREE.MeshStandardMaterial({ color: 0xa08060, roughness: 0.85 });
-      var clayDark = new THREE.MeshStandardMaterial({ color: 0x8a6f50, roughness: 0.9 });
-      var rows = [{ z: -1.5*s, type: 'nu', count: 8 }, { z: 0, type: 'bu', count: 8 }, { z: 1.5*s, type: 'che', count: 6 }];
-      rows.forEach(function(row) {
-        for (var i = 0; i < row.count; i++) {
-          var bx = (i - row.count/2) * 0.65 * s, bz = row.z;
-          var body = new THREE.Mesh(new THREE.CylinderGeometry(0.12*s, 0.18*s, 0.8*s, 8), clayMat);
-          body.position.set(bx, 0.8*s, bz); body.castShadow = true; g.add(body);
-          var armor = new THREE.Mesh(new THREE.CylinderGeometry(0.13*s, 0.14*s, 0.3*s, 8), clayDark);
-          armor.position.set(bx, 1.0*s, bz); g.add(armor);
-          var head = new THREE.Mesh(new THREE.SphereGeometry(0.1*s, 10, 8), clayMat);
-          head.position.set(bx, 1.3*s, bz); head.castShadow = true; g.add(head);
-          var topknot = new THREE.Mesh(new THREE.CylinderGeometry(0.03*s, 0.03*s, 0.08*s, 6), clayDark);
-          topknot.position.set(bx, 1.42*s, bz); g.add(topknot);
-          var leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.06*s, 0.4*s, 0.08*s), clayDark);
-          leg1.position.set(bx - 0.05*s, 0.5*s, bz); g.add(leg1);
-          var leg2 = leg1.clone(); leg2.position.x = bx + 0.05*s; g.add(leg2);
-          if (row.type === 'nu') {
-            var bow = new THREE.Mesh(new THREE.BoxGeometry(0.03*s, 0.4*s, 0.03*s), new THREE.MeshStandardMaterial({ color: 0x3a2a1a }));
-            bow.position.set(bx + 0.15*s, 0.9*s, bz - 0.1*s); g.add(bow);
-          } else if (row.type === 'bu') {
-            var sword = new THREE.Mesh(new THREE.BoxGeometry(0.02*s, 0.5*s, 0.02*s), new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.8, roughness: 0.2 }));
-            sword.position.set(bx + 0.15*s, 0.9*s, bz); g.add(sword);
-          }
-        }
-      });
-      var gBody = new THREE.Mesh(new THREE.CylinderGeometry(0.18*s, 0.25*s, 1*s, 8), clayMat);
-      gBody.position.y = 0.9*s; g.add(gBody);
-      var gHead = new THREE.Mesh(new THREE.SphereGeometry(0.13*s, 10, 8), clayMat);
-      gHead.position.y = 1.55*s; g.add(gHead);
-      break;
-    }
-    case 'xihu': {
-      var waterMat = new THREE.MeshStandardMaterial({ color: 0x2a5f8f, metalness: 0.6, roughness: 0.2, transparent: true, opacity: 0.85 });
-      var water = new THREE.Mesh(new THREE.CircleGeometry(5*s, 64), waterMat);
-      water.rotation.x = -Math.PI/2; water.position.y = 0; g.add(water);
-      var shoreMat = new THREE.MeshStandardMaterial({ color: 0x5a7a4a, roughness: 0.9 });
-      var shore = new THREE.Mesh(new THREE.RingGeometry(5*s, 6*s, 64), shoreMat);
-      shore.rotation.x = -Math.PI/2; shore.position.y = -0.02; g.add(shore);
-      var bridgeMat = new THREE.MeshStandardMaterial({ map: stnTex, roughness: 0.85 });
-      var bridgeBody = new THREE.Mesh(new THREE.BoxGeometry(4*s, 0.2*s, 0.6*s), bridgeMat);
-      bridgeBody.position.y = 0.4*s; bridgeBody.castShadow = true; g.add(bridgeBody);
-      var railMat = new THREE.MeshStandardMaterial({ color: 0xb8b4ac, roughness: 0.7 });
-      for (var i = -2; i <= 2; i++) {
-        var p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03*s, 0.03*s, 0.4*s, 6), railMat);
-        p1.position.set(i*0.8*s, 0.7*s, 0.3*s); g.add(p1);
-        var p2 = p1.clone(); p2.position.z = -0.3*s; g.add(p2);
-      }
-      var hr1 = new THREE.Mesh(new THREE.BoxGeometry(4*s, 0.05*s, 0.05*s), railMat);
-      hr1.position.set(0, 0.9*s, 0.3*s); g.add(hr1);
-      var hr2 = hr1.clone(); hr2.position.z = -0.3*s; g.add(hr2);
-      var towerGroup = new THREE.Group();
-      var tRed = new THREE.MeshStandardMaterial({ color: 0xaa3333, roughness: 0.6 });
-      var tRoof = new THREE.MeshStandardMaterial({ color: 0x882222, roughness: 0.5 });
-      for (var i = 0; i < 5; i++) {
-        var w = (0.8 - i*0.12)*s;
-        var tier = new THREE.Mesh(new THREE.BoxGeometry(w, 0.3*s, w), tRed);
-        tier.position.y = i*0.4*s + 0.15*s; towerGroup.add(tier);
-        var roof = new THREE.Mesh(new THREE.ConeGeometry(w*0.8, 0.2*s, 4), tRoof);
-        roof.rotation.y = Math.PI/4; roof.position.y = i*0.4*s + 0.35*s; towerGroup.add(roof);
-      }
-      var spire = new THREE.Mesh(new THREE.ConeGeometry(0.05*s, 0.4*s, 6), new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.8 }));
-      spire.position.y = 2.2*s; towerGroup.add(spire);
-      towerGroup.position.set(2.5*s, 0, -2*s); g.add(towerGroup);
-      var trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06*s, 0.08*s, 0.8*s, 8), new THREE.MeshStandardMaterial({ color: 0x6b4423 }));
-      trunk.position.set(-2*s, 0.4*s, 1*s); g.add(trunk);
-      var crown = new THREE.Mesh(new THREE.SphereGeometry(0.4*s, 12, 8), new THREE.MeshStandardMaterial({ color: 0x4a7a3a }));
-      crown.position.set(-2*s, 1*s, 1*s); crown.scale.y = 1.3; g.add(crown);
-      var umbrella = new THREE.Mesh(new THREE.ConeGeometry(0.3*s, 0.2*s, 16), new THREE.MeshStandardMaterial({ color: 0xf5f0e0, transparent: true, opacity: 0.9 }));
-      umbrella.position.set(0.5*s, 1*s, 0); g.add(umbrella);
-      break;
-    }
-    case 'zhongshan': {
-      var whiteMat = new THREE.MeshStandardMaterial({ map: stnTex, roughness: 0.6 });
-      var blueMat = new THREE.MeshStandardMaterial({ color: 0x1e4a7a, roughness: 0.4 });
-      var pillar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08*s, 0.08*s, 1.8*s, 8), whiteMat);
-      pillar1.position.set(-0.8*s, 0.9*s, 2.5*s); pillar1.castShadow = true; g.add(pillar1);
-      var pillar2 = pillar1.clone(); pillar2.position.x = 0.8*s; g.add(pillar2);
-      var beam = new THREE.Mesh(new THREE.BoxGeometry(2*s, 0.2*s, 0.15*s), whiteMat);
-      beam.position.set(0, 1.7*s, 2.5*s); g.add(beam);
-      var archRoof = new THREE.Mesh(new THREE.ConeGeometry(1.2*s, 0.4*s, 4), blueMat);
-      archRoof.rotation.y = Math.PI/4; archRoof.position.set(0, 2*s, 2.5*s); g.add(archRoof);
-      var stepMat = new THREE.MeshStandardMaterial({ color: 0xd0ccc4, roughness: 0.75 });
-      for (var i = 0; i < 20; i++) {
-        var step = new THREE.Mesh(new THREE.BoxGeometry(3*s, 0.08*s, 0.35*s), stepMat);
-        step.position.y = i*0.08*s + 0.04*s;
-        step.position.z = 2.2*s - i*0.32*s;
-        step.receiveShadow = true; g.add(step);
-      }
-      var hall = new THREE.Mesh(new THREE.BoxGeometry(2.5*s, 1.5*s, 1.8*s), whiteMat);
-      hall.position.set(0, 0.8*s + 19*0.08*s, -3.5*s); hall.castShadow = true; g.add(hall);
-      var hallRoof = new THREE.Mesh(new THREE.ConeGeometry(1.6*s, 0.8*s, 4), blueMat);
-      hallRoof.rotation.y = Math.PI/4;
-      hallRoof.position.set(0, 0.8*s + 19*0.08*s + 1.15*s, -3.5*s);
-      hallRoof.castShadow = true; g.add(hallRoof);
-      break;
-    }
-    case 'yulong': {
-      var rockMat = new THREE.MeshStandardMaterial({ color: 0x5a6578, roughness: 0.95 });
-      var snowMat = new THREE.MeshStandardMaterial({ color: 0xf5f8fc, roughness: 0.35 });
-      var peak = new THREE.Mesh(new THREE.ConeGeometry(2.5*s, 5*s, 8), rockMat);
-      peak.position.y = 2.5*s; peak.castShadow = true; g.add(peak);
-      var snowCap = new THREE.Mesh(new THREE.ConeGeometry(1*s, 2*s, 8), snowMat);
-      snowCap.position.y = 4*s; g.add(snowCap);
-      var peak2 = new THREE.Mesh(new THREE.ConeGeometry(1.5*s, 3*s, 8), rockMat);
-      peak2.position.set(2*s, 1.5*s, -0.5*s); peak2.castShadow = true; g.add(peak2);
-      var snowCap2 = new THREE.Mesh(new THREE.ConeGeometry(0.6*s, 1.2*s, 8), snowMat);
-      snowCap2.position.set(2*s, 2.4*s, -0.5*s); g.add(snowCap2);
-      var lake = new THREE.Mesh(new THREE.CircleGeometry(1.5*s, 32), new THREE.MeshStandardMaterial({ color: 0x4ab0d4, metalness: 0.5, roughness: 0.15, transparent: true, opacity: 0.8 }));
-      lake.rotation.x = -Math.PI/2; lake.position.set(-1.5*s, 0.02, 1.5*s); g.add(lake);
-      var stele = new THREE.Mesh(new THREE.BoxGeometry(0.4*s, 1*s, 0.15*s), new THREE.MeshStandardMaterial({ color: 0x5a4a3a }));
-      stele.position.set(-1.8*s, 0.5*s, 0.8*s); stele.castShadow = true; g.add(stele);
-      break;
-    }
-    case 'potala': {
-      var hillMat = new THREE.MeshStandardMaterial({ color: 0x7a5a4a, roughness: 0.95 });
-      var hill = new THREE.Mesh(new THREE.ConeGeometry(4*s, 2*s, 8), hillMat);
-      hill.position.y = 1*s; hill.receiveShadow = true; g.add(hill);
-      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: 0.5 });
-      var w1 = new THREE.Group();
-      for (var i = 0; i < 4; i++) {
-        var ww = (1.5 - i*0.15)*s;
-        var tier = new THREE.Mesh(new THREE.BoxGeometry(ww, 0.5*s, 1.2*s), whiteMat);
-        tier.position.y = i*0.5*s + 0.25*s; tier.castShadow = true; w1.add(tier);
-        for (var j = -1; j <= 1; j++) {
-          var win = new THREE.Mesh(new THREE.BoxGeometry(0.15*s, 0.2*s, 0.02*s), new THREE.MeshStandardMaterial({ color: 0x2a2a2a }));
-          win.position.set(j*0.3*s, i*0.5*s + 0.25*s, 0.61*s); w1.add(win);
-        }
-      }
-      w1.position.set(-1.5*s, 2*s, 0); g.add(w1);
-      var w2 = w1.clone(); w2.position.x = 1.5*s; g.add(w2);
-      var redMat = new THREE.MeshStandardMaterial({ color: 0x8a1a1a, roughness: 0.55 });
-      var redGroup = new THREE.Group();
-      for (var i = 0; i < 6; i++) {
-        var rw = (1.8 - i*0.1)*s;
-        var tier = new THREE.Mesh(new THREE.BoxGeometry(rw, 0.5*s, 1.5*s), redMat);
-        tier.position.y = i*0.5*s + 0.25*s; tier.castShadow = true; redGroup.add(tier);
-        for (var j = -1.5; j <= 1.5; j += 0.5) {
-          var win = new THREE.Mesh(new THREE.BoxGeometry(0.12*s, 0.18*s, 0.02*s), new THREE.MeshStandardMaterial({ color: 0x1a1a1a }));
-          win.position.set(j*0.3*s, i*0.5*s + 0.25*s, 0.76*s); redGroup.add(win);
-        }
-      }
-      redGroup.position.set(0, 2.5*s, 0); g.add(redGroup);
-      var goldMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.9, roughness: 0.15, emissive: 0x332200, emissiveIntensity: 0.3 });
-      var goldRoof = new THREE.Mesh(new THREE.BoxGeometry(2*s, 0.15*s, 1.6*s), goldMat);
-      goldRoof.position.set(0, 2.5*s + 3*s + 0.1*s, 0); g.add(goldRoof);
-      var gpos = [[-0.6,0],[0.6,0],[-0.6,0.6],[0.6,0.6]];
-      gpos.forEach(function(pos) {
-        var tower = new THREE.Mesh(new THREE.ConeGeometry(0.12*s, 0.35*s, 6), goldMat);
-        tower.position.set(pos[0]*s, 2.5*s + 3*s + 0.3*s, pos[1]*s - 0.3*s); g.add(tower);
-      });
-      break;
-    }
+    case 'gugong': g.add(buildGugong()); break;
+    case 'bingmayong': g.add(buildBingmayong()); break;
+    case 'xihu': g.add(buildXihu()); break;
+    case 'zhongshan': g.add(buildZhongshan()); break;
+    case 'yulong': g.add(buildYulong()); break;
+    case 'potala': g.add(buildPotala()); break;
   }
-  g.updateMatrixWorld();
-  var box = new THREE.Box3().setFromObject(g);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  const box = new THREE.Box3().setFromObject(g);
   g.position.x = -(box.min.x + box.max.x) / 2;
   g.position.z = -(box.min.z + box.max.z) / 2;
   g.position.y = -box.min.y;
   return g;
 }
 
+function buildGugong() {
+  const g = new THREE.Group();
+  for (let i = 0; i < 3; i++) {
+    const w = 5 - i*0.6, d = 4 - i*0.5;
+    const base = new THREE.Mesh(new THREE.BoxGeometry(w, .35, d), MATS.whiteStone);
+    base.position.y = i*.38 + .17;
+    g.add(base);
+    const railH = .18, railY = i*.38 + .44;
+    const rf = new THREE.Mesh(new THREE.BoxGeometry(w, railH, .04), MATS.whiteStone);
+    rf.position.set(0, railY, d/2); g.add(rf);
+    const rb = rf.clone(); rb.position.z = -d/2; g.add(rb);
+    const rl = new THREE.Mesh(new THREE.BoxGeometry(.04, railH, d), MATS.whiteStone);
+    rl.position.set(-w/2, railY, 0); g.add(rl);
+    const rr = rl.clone(); rr.position.x = w/2; g.add(rr);
+    for (let x = -w/2+.3; x < w/2; x += .5) {
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.15,6), MATS.whiteStone);
+      p.position.set(x, railY+.15, d/2); g.add(p);
+      const p2 = p.clone(); p2.position.z = -d/2; g.add(p2);
+    }
+  }
+  for (let i = 0; i < 5; i++) {
+    const step = new THREE.Mesh(new THREE.BoxGeometry(1.2, .1, .5), MATS.darkStone);
+    step.position.set(0, i*.1+.05, 2+i*.3);
+    g.add(step);
+  }
+  const body = new THREE.Mesh(new THREE.BoxGeometry(3.5, 2, 2.5), MATS.redWall);
+  body.position.y = 1.15 + 1.14;
+  g.add(body);
+  for (let i = -2; i <= 2; i++) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,2.2,12), MATS.redPillar);
+    p.position.set(i*.65, 1.15+1.14, 1.3);
+    g.add(p);
+  }
+  for (let i = -1.5; i <= 1.5; i += 1) {
+    const door = new THREE.Mesh(new THREE.BoxGeometry(.6, 1.5, .05), MATS.goldDoor);
+    door.position.set(i, 1.15+1.14, 1.26);
+    g.add(door);
+  }
+  const roofY = 1.15+1.14+1.45;
+  const roof1 = new THREE.Mesh(new THREE.ConeGeometry(2.8, .9, 4), MATS.goldRoof);
+  roof1.rotation.y = Math.PI/4;
+  roof1.position.y = roofY;
+  g.add(roof1);
+  const roof2 = new THREE.Mesh(new THREE.ConeGeometry(2.2, .8, 4), MATS.goldRoof);
+  roof2.rotation.y = Math.PI/4;
+  roof2.position.y = roofY + 1.3;
+  g.add(roof2);
+  for (let i = 0; i < 10; i++) {
+    const beast = new THREE.Mesh(new THREE.BoxGeometry(.06,.12,.06), MATS.gold);
+    beast.position.set(-1.1+i*.24, roofY+.4, 0);
+    g.add(beast);
+  }
+  const chiwen = new THREE.Mesh(new THREE.BoxGeometry(.15,.2,.1), MATS.gold);
+  chiwen.position.set(0, roofY+.45, 1.8); g.add(chiwen);
+  const chiwen2 = chiwen.clone(); chiwen2.position.z = -1.8; g.add(chiwen2);
+  return g;
+}
+
+function buildBingmayong() {
+  const g = new THREE.Group();
+  const pit = new THREE.Mesh(new THREE.BoxGeometry(6, .4, 4), new THREE.MeshStandardMaterial({color:0x6b5344, roughness:.95}));
+  pit.position.y = .2; g.add(pit);
+  for (let i = -1; i <= 1; i++) {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(6, .5, .15), new THREE.MeshStandardMaterial({color:0x5c4535, roughness:.95}));
+    wall.position.set(0, .45, i*1.2); g.add(wall);
+  }
+  const rows = [
+    { z: -1.5, type: 'nu', count: 8 },
+    { z: 0, type: 'bu', count: 8 },
+    { z: 1.5, type: 'che', count: 6 }
+  ];
+  rows.forEach(row => {
+    for (let i = 0; i < row.count; i++) {
+      const bx = (i - row.count/2) * .65, bz = row.z;
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(.12,.18,.8,8), MATS.clay);
+      body.position.set(bx, .8, bz); g.add(body);
+      const armor = new THREE.Mesh(new THREE.CylinderGeometry(.13,.14,.3,8), MATS.clayDark);
+      armor.position.set(bx, 1.0, bz); g.add(armor);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(.1,10,8), MATS.clay);
+      head.position.set(bx, 1.3, bz); g.add(head);
+      const topknot = new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.08,6), MATS.clayDark);
+      topknot.position.set(bx, 1.42, bz); g.add(topknot);
+      const leg1 = new THREE.Mesh(new THREE.BoxGeometry(.06,.4,.08), MATS.clayDark);
+      leg1.position.set(bx-.05, .5, bz); g.add(leg1);
+      const leg2 = leg1.clone(); leg2.position.x = bx+.05; g.add(leg2);
+      if (row.type === 'nu') {
+        const bow = new THREE.Mesh(new THREE.BoxGeometry(.03,.4,.03), new THREE.MeshStandardMaterial({color:0x3a2a1a}));
+        bow.position.set(bx+.15, .9, bz-.1); g.add(bow);
+      } else if (row.type === 'bu') {
+        const sword = new THREE.Mesh(new THREE.BoxGeometry(.02,.5,.02), new THREE.MeshStandardMaterial({color:0x888888, metalness:.8, roughness:.2}));
+        sword.position.set(bx+.15, .9, bz); g.add(sword);
+      }
+    }
+  });
+  const gBody = new THREE.Mesh(new THREE.CylinderGeometry(.18,.25,1,8), MATS.clay);
+  gBody.position.y = .9; g.add(gBody);
+  const gHead = new THREE.Mesh(new THREE.SphereGeometry(.13,10,8), MATS.clay);
+  gHead.position.y = 1.55; g.add(gHead);
+  return g;
+}
+
+function buildXihu() {
+  const g = new THREE.Group();
+  const water = new THREE.Mesh(new THREE.CircleGeometry(5, 64), MATS.water);
+  water.rotation.x = -Math.PI/2; g.add(water);
+  const shore = new THREE.Mesh(new THREE.RingGeometry(5, 6, 64), MATS.grass);
+  shore.rotation.x = -Math.PI/2; shore.position.y = -.02; g.add(shore);
+  const bridgeBody = new THREE.Mesh(new THREE.BoxGeometry(4, .2, .6), MATS.whiteStone);
+  bridgeBody.position.y = .4; g.add(bridgeBody);
+  for (let i = -2; i <= 2; i++) {
+    const p1 = new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.4,6), MATS.whiteStone);
+    p1.position.set(i*.8, .7, .3); g.add(p1);
+    const p2 = p1.clone(); p2.position.z = -.3; g.add(p2);
+  }
+  const hr1 = new THREE.Mesh(new THREE.BoxGeometry(4,.05,.05), MATS.whiteStone);
+  hr1.position.set(0, .9, .3); g.add(hr1);
+  const hr2 = hr1.clone(); hr2.position.z = -.3; g.add(hr2);
+  const towerGroup = new THREE.Group();
+  const tRed = new THREE.MeshStandardMaterial({color:0xaa3333, roughness:.6});
+  const tRoof = new THREE.MeshStandardMaterial({color:0x882222, roughness:.4});
+  for (let i = 0; i < 5; i++) {
+    const w = (.8 - i*.12);
+    const tier = new THREE.Mesh(new THREE.BoxGeometry(w, .3, w), tRed);
+    tier.position.y = i*.4 + .15; towerGroup.add(tier);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(w*.8, .2, 8), tRoof);
+    roof.position.y = i*.4 + .35; towerGroup.add(roof);
+  }
+  const spire = new THREE.Mesh(new THREE.ConeGeometry(.05,.4,6), MATS.gold);
+  spire.position.y = 2.2; towerGroup.add(spire);
+  towerGroup.position.set(2.5, 0, -2);
+  g.add(towerGroup);
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.06,.08,.8,8), MATS.darkWood);
+  trunk.position.set(-2, .4, 1); g.add(trunk);
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(.4,12,8), MATS.grass);
+  crown.position.set(-2, 1, 1); crown.scale.y = 1.3; g.add(crown);
+  return g;
+}
+
+function buildZhongshan() {
+  const g = new THREE.Group();
+  const pillar1 = new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,1.8,8), MATS.whiteStone);
+  pillar1.position.set(-.8, .9, 2.5); g.add(pillar1);
+  const pillar2 = pillar1.clone(); pillar2.position.x = .8; g.add(pillar2);
+  const beam = new THREE.Mesh(new THREE.BoxGeometry(2,.2,.15), MATS.whiteStone);
+  beam.position.set(0, 1.7, 2.5); g.add(beam);
+  const archRoof = new THREE.Mesh(new THREE.ConeGeometry(1.2,.4,4), new THREE.MeshStandardMaterial({color:0x1e4a7a, roughness:.4}));
+  archRoof.rotation.y = Math.PI/4; archRoof.position.set(0, 2, 2.5); g.add(archRoof);
+  for (let i = 0; i < 20; i++) {
+    const step = new THREE.Mesh(new THREE.BoxGeometry(3,.08,.35), MATS.whiteStone);
+    step.position.y = i*.08+.04;
+    step.position.z = 2.2 - i*.32;
+    g.add(step);
+  }
+  const hall = new THREE.Mesh(new THREE.BoxGeometry(2.5,1.5,1.8), MATS.whiteStone);
+  hall.position.set(0, .8+19*.08, -3.5); g.add(hall);
+  const hallRoof = new THREE.Mesh(new THREE.ConeGeometry(1.6,.8,4), new THREE.MeshStandardMaterial({color:0x1e4a7a, roughness:.4}));
+  hallRoof.rotation.y = Math.PI/4;
+  hallRoof.position.set(0, .8+19*.08+1.15, -3.5);
+  g.add(hallRoof);
+  return g;
+}
+
+function buildYulong() {
+  const g = new THREE.Group();
+  const peak = new THREE.Mesh(new THREE.ConeGeometry(2.5,5,8), MATS.rock);
+  peak.position.y = 2.5; g.add(peak);
+  const snowCap = new THREE.Mesh(new THREE.ConeGeometry(1,2,8), MATS.snow);
+  snowCap.position.y = 4; g.add(snowCap);
+  const peak2 = new THREE.Mesh(new THREE.ConeGeometry(1.5,3,8), MATS.rock);
+  peak2.position.set(2, 1.5, -.5); g.add(peak2);
+  const snowCap2 = new THREE.Mesh(new THREE.ConeGeometry(.6,1.2,8), MATS.snow);
+  snowCap2.position.set(2, 2.4, -.5); g.add(snowCap2);
+  const lake = new THREE.Mesh(new THREE.CircleGeometry(1.5,32), new THREE.MeshStandardMaterial({color:0x4ab0d4, metalness:.5, roughness:.15, transparent:true, opacity:.8}));
+  lake.rotation.x = -Math.PI/2; lake.position.set(-1.5, .02, 1.5); g.add(lake);
+  const stele = new THREE.Mesh(new THREE.BoxGeometry(.4,1,.15), new THREE.MeshStandardMaterial({color:0x5a4a3a}));
+  stele.position.set(-1.8, .5, .8); g.add(stele);
+  return g;
+}
+
+function buildPotala() {
+  const g = new THREE.Group();
+  const hill = new THREE.Mesh(new THREE.ConeGeometry(4,2,8), new THREE.MeshStandardMaterial({color:0x7a5a4a, roughness:.95}));
+  hill.position.y = 1; g.add(hill);
+  function buildWhiteSide(xPos) {
+    const side = new THREE.Group();
+    for (let i = 0; i < 4; i++) {
+      const w = (1.5 - i*.15);
+      const tier = new THREE.Mesh(new THREE.BoxGeometry(w,.5,1.2), MATS.potalaWhite);
+      tier.position.y = i*.5+.25; side.add(tier);
+      for (let j = -1; j <= 1; j++) {
+        const win = new THREE.Mesh(new THREE.BoxGeometry(.15,.2,.02), new THREE.MeshStandardMaterial({color:0x2a2a2a}));
+        win.position.set(j*.3, i*.5+.25, .61); side.add(win);
+      }
+    }
+    side.position.set(xPos, 2, 0);
+    return side;
+  }
+  g.add(buildWhiteSide(-1.5));
+  g.add(buildWhiteSide(1.5));
+  const redGroup = new THREE.Group();
+  for (let i = 0; i < 6; i++) {
+    const w = (1.8 - i*.1);
+    const tier = new THREE.Mesh(new THREE.BoxGeometry(w,.5,1.5), MATS.potalaRed);
+    tier.position.y = i*.5+.25; redGroup.add(tier);
+    for (let j = -1.5; j <= 1.5; j += .5) {
+      const win = new THREE.Mesh(new THREE.BoxGeometry(.12,.18,.02), new THREE.MeshStandardMaterial({color:0x1a1a1a}));
+      win.position.set(j*.3, i*.5+.25, .76); redGroup.add(win);
+    }
+  }
+  redGroup.position.set(0, 2.5, 0);
+  g.add(redGroup);
+  const goldRoof = new THREE.Mesh(new THREE.BoxGeometry(2,.15,1.6), MATS.gold);
+  goldRoof.position.set(0, 2.5+3+.1, 0); g.add(goldRoof);
+  [[-.6,0],[.6,0],[-.6,.6],[.6,.6]].forEach(pos => {
+    const tower = new THREE.Mesh(new THREE.ConeGeometry(.12,.35,6), MATS.gold);
+    tower.position.set(pos[0], 2.5+3+.3, pos[1]-.3); g.add(tower);
+  });
+  return g;
+}
+
 function createHotspots(poi) {
   hotspotObjects = [];
-  var hotspots = poi.hotspots || [];
+  const hotspots = poi.hotspots || [];
   document.getElementById('hsTotal').textContent = hotspots.length;
-  hotspots.forEach(function(hs) {
-    var anchor = new THREE.Object3D();
+  const labelsDiv = document.getElementById('labels');
+  hotspots.forEach(hs => {
+    const anchor = new THREE.Object3D();
     anchor.position.set(hs.position[0], hs.position[1], hs.position[2]);
     poiGroup.add(anchor);
-    var tag = document.createElement('div');
+    const tag = document.createElement('div');
     tag.className = 'hotspot-tag';
     tag.textContent = '📌';
     tag.dataset.hsId = hs.id;
-    tag.onclick = function() { showInfoCard(hs); };
-    document.body.appendChild(tag);
-    hotspotObjects.push({ anchor: anchor, tag: tag, data: hs });
+    tag.onclick = () => showInfoCard(hs);
+    labelsDiv.appendChild(tag);
+    hotspotObjects.push({ anchor, tag, data: hs });
   });
 }
 function updateHotspotPositions() {
-  var w = window.innerWidth, h = window.innerHeight;
-  hotspotObjects.forEach(function(hs) {
-    var worldPos = new THREE.Vector3();
+  const w = window.innerWidth, h = window.innerHeight;
+  hotspotObjects.forEach(hs => {
+    const worldPos = new THREE.Vector3();
     hs.anchor.getWorldPosition(worldPos);
-    var projected = worldPos.project(camera);
-    var x = (projected.x * 0.5 + 0.5) * w;
-    var y = (-projected.y * 0.5 + 0.5) * h;
+    const projected = worldPos.project(camera);
+    const x = (projected.x * .5 + .5) * w;
+    const y = (-projected.y * .5 + .5) * h;
     if (projected.z > 1) { hs.tag.style.display = 'none'; }
     else {
       hs.tag.style.display = 'flex';
@@ -501,7 +560,7 @@ function updateHotspotPositions() {
 function showInfoCard(hs) {
   visitedHotspots.add(hs.id);
   document.getElementById('hsSeen').textContent = visitedHotspots.size;
-  var tag = document.querySelector('.hotspot-tag[data-hs-id="' + hs.id + '"]');
+  const tag = document.querySelector(`.hotspot-tag[data-hs-id="${hs.id}"]`);
   if (tag) tag.classList.add('visited');
   document.getElementById('infoTitle').textContent = hs.title;
   document.getElementById('infoText').textContent = hs.text;
@@ -513,44 +572,44 @@ function closeInfoCard() {
   if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex';
 }
 
-var storyIdx = 0, storyLines = [], storyTimer = null;
+let storyIdx = 0, storyLines = [], storyTimer = null;
 function playStory(lines) { storyLines = lines || []; storyIdx = 0; showNextLine(); }
 function showNextLine() {
-  var bubble = document.getElementById('storyBubble');
+  const bubble = document.getElementById('storyBubble');
   if (storyIdx >= storyLines.length) {
     bubble.classList.remove('visible');
-    setTimeout(function() { if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex'; }, 600);
+    setTimeout(() => { if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex'; }, 600);
     return;
   }
-  var ln = storyLines[storyIdx];
+  const ln = storyLines[storyIdx];
   document.getElementById('bAv').textContent = ln.avatar || '👤';
   document.getElementById('bName').textContent = ln.speaker || '旁白';
   document.getElementById('bText').textContent = ln.text;
   bubble.classList.add('visible');
   clearTimeout(storyTimer);
-  storyTimer = setTimeout(function() { storyIdx++; showNextLine(); }, ln.duration || 4000);
+  storyTimer = setTimeout(() => { storyIdx++; showNextLine(); }, ln.duration || 4000);
 }
-document.getElementById('storyBubble').addEventListener('click', function() {
+document.getElementById('storyBubble').addEventListener('click', () => {
   clearTimeout(storyTimer); storyIdx++; showNextLine();
 });
 
-var _toastT;
+let _toastT;
 function toast(msg) {
-  var t = document.getElementById('toast');
+  const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('visible');
   clearTimeout(_toastT);
-  _toastT = setTimeout(function(){ t.classList.remove('visible'); }, 2200);
+  _toastT = setTimeout(() => t.classList.remove('visible'), 2200);
 }
 
-var GameEngine = {
+const GameEngine = {
   panel: null, content: null, progressBar: null, type: null, data: null, state: {},
-  init: function() {
+  init() {
     this.panel = document.getElementById('gamePanel');
     this.content = document.getElementById('gameContent');
     this.progressBar = document.getElementById('gameProgressBar');
-    document.getElementById('gameEntry').addEventListener('click', this.open.bind(this));
+    document.getElementById('gameEntry').addEventListener('click', () => this.open());
   },
-  open: function() {
+  open() {
     if (!POI.game) { toast('这个景点还没有游戏'); return; }
     this.type = POI.game.type;
     this.data = POI.game;
@@ -560,97 +619,93 @@ var GameEngine = {
     this.panel.classList.add('visible');
     document.getElementById('gameEntry').style.display = 'none';
     gameState.active = true;
-    var starters = {
+    const starters = {
       sort_puzzle: this.startSortPuzzle, placement: this.startPlacement,
       story_choice: this.startStoryChoice, quiz_climb: this.startQuizClimb,
       symbol_match: this.startSymbolMatch, rotate_align: this.startRotateAlign
     };
     if (starters[this.type]) starters[this.type].call(this);
   },
-  close: function() {
+  close() {
     this.panel.classList.remove('visible');
     gameState.active = false;
     if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex';
   },
-  setProgress: function(pct) { this.progressBar.style.width = pct + '%'; },
-  complete: function() {
+  setProgress(pct) { this.progressBar.style.width = pct + '%'; },
+  complete() {
     gameState.completed = true;
     this.panel.classList.remove('visible');
     document.getElementById('gameEntry').style.display = 'none';
     toast('🎉 挑战完成！');
-    if (POI.stamp) HuntStorage.addStamp(POI.stamp.id);
-    setTimeout(function() {
+    if (POI.stamp) HuntStorage.add(POI.stamp.id);
+    setTimeout(() => {
       document.getElementById('stampIcon').textContent = POI.stamp.icon;
       document.getElementById('stampTitle').textContent = POI.name + ' · 印记解锁！';
       document.getElementById('stampDesc').textContent = POI.stamp.desc;
       document.getElementById('modalStamp').classList.add('visible');
     }, 800);
     if (POI.easterEgg && POI.easterEgg.trigger === 'game_complete') {
-      setTimeout(function() {
+      setTimeout(() => {
         document.getElementById('eggDesc').textContent = POI.easterEgg.name + ' — ' + (POI.easterEgg.reward ? POI.easterEgg.reward.desc : '');
         document.getElementById('modalEgg').classList.add('visible');
       }, 2500);
     }
   },
-  startSortPuzzle: function() {
-    var items = this.data.items.slice();
-    for (var i = items.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
+  startSortPuzzle() {
+    const items = this.data.items.slice();
+    for (let i = items.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
       [items[i], items[j]] = [items[j], items[i]];
     }
-    var html = '<div class="sort-list">';
-    items.forEach(function(item, idx) {
-      html += '<div class="sort-item" data-id="' + item.id + '"><span style="color:#475569">⠿</span><span class="emoji">' + item.emoji + '</span><span class="name">' + item.name + '</span><button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',-1)">↑</button><button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',1)">↓</button></div>';
+    let html = '<div class="sort-list">';
+    items.forEach((item, idx) => {
+      html += `<div class="sort-item" data-id="${item.id}"><span style="color:#475569">⠿</span><span class="emoji">${item.emoji}</span><span class="name">${item.name}</span><button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(${idx},-1)">↑</button><button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(${idx},1)">↓</button></div>`;
     });
     html += '</div><button class="game-submit" onclick="GameEngine.checkSort()">确认排序</button>';
     this.content.innerHTML = html;
     this.setProgress(0);
   },
-  moveItem: function(idx, dir) {
-    var items = this.content.querySelectorAll('.sort-item');
-    var target = idx + dir;
+  moveItem(idx, dir) {
+    const items = this.content.querySelectorAll('.sort-item');
+    const target = idx + dir;
     if (target < 0 || target >= items.length) return;
-    if (dir > 0) items[idx].parentNode.insertBefore(items[idx + 1], items[idx]);
-    else items[idx].parentNode.insertBefore(items[idx], items[idx - 1]);
-    var newOrder = [];
-    this.content.querySelectorAll('.sort-item').forEach(function(el, i) {
-      el.dataset.idx = i; newOrder.push(el.dataset.id);
-    });
+    if (dir > 0) items[idx].parentNode.insertBefore(items[idx+1], items[idx]);
+    else items[idx].parentNode.insertBefore(items[idx], items[idx-1]);
   },
-  checkSort: function() {
-    var correct = this.data.correctOrder;
-    var correctCount = 0;
-    var items = this.content.querySelectorAll('.sort-item');
-    items.forEach(function(el, i) {
-      el.classList.remove('correct', 'wrong');
+  checkSort() {
+    const correct = this.data.correctOrder;
+    let correctCount = 0;
+    const items = this.content.querySelectorAll('.sort-item');
+    items.forEach((el, i) => {
+      el.classList.remove('correct','wrong');
       if (correct[i] === el.dataset.id) { el.classList.add('correct'); correctCount++; }
       else el.classList.add('wrong');
     });
     this.setProgress(Math.round(correctCount / correct.length * 100));
-    if (correctCount === correct.length) { var self = this; setTimeout(function() { self.complete(); }, 800); }
-    else toast('排对了 ' + correctCount + '/' + correct.length + '，继续调整');
+    if (correctCount === correct.length) setTimeout(() => this.complete(), 800);
+    else toast(`排对了 ${correctCount}/${correct.length}，继续调整`);
   },
-  startPlacement: function() {
-    var grid = this.data.grid, pieces = this.data.pieces.slice();
-    var html = '<div class="place-grid">';
-    for (var r = 0; r < grid.rows; r++) {
-      html += '<div class="place-row-label">' + grid.rowLabels[r] + '</div><div style="display:grid;grid-template-columns:repeat(' + grid.cols + ',1fr);gap:6px">';
-      for (var c = 0; c < grid.cols; c++) html += '<div class="place-cell" data-row="' + r + '" data-col="' + c + '"></div>';
+  startPlacement() {
+    const grid = this.data.grid, pieces = this.data.pieces.slice();
+    let html = '<div class="place-grid">';
+    for (let r = 0; r < grid.rows; r++) {
+      html += `<div class="place-row-label">${grid.rowLabels[r]}</div><div style="display:grid;grid-template-columns:repeat(${grid.cols},1fr);gap:6px">`;
+      for (let c = 0; c < grid.cols; c++) html += `<div class="place-cell" data-row="${r}" data-col="${c}"></div>`;
       html += '</div>';
     }
     html += '</div><div style="font-size:12px;color:#64748b;margin-bottom:6px">点击俑 → 点击位置：</div><div class="place-pool">';
-    pieces.forEach(function(p) { html += '<div class="place-piece" data-id="' + p.id + '" data-row="' + p.row + '">' + p.emoji + '</div>'; });
+    pieces.forEach(p => { html += `<div class="place-piece" data-id="${p.id}" data-row="${p.row}">${p.emoji}</div>`; });
     html += '</div><button class="game-submit" onclick="GameEngine.checkPlacement()">确认军阵</button>';
     this.content.innerHTML = html;
     this.setProgress(0);
-    var self = this, selectedPiece = null;
-    this.content.querySelectorAll('.place-piece').forEach(function(piece) {
+    const self = this; let selectedPiece = null;
+    this.content.querySelectorAll('.place-piece').forEach(piece => {
       piece.addEventListener('click', function() {
-        self.content.querySelectorAll('.place-piece').forEach(function(p){ p.style.borderColor = ''; });
+        self.content.querySelectorAll('.place-piece').forEach(p => p.style.borderColor = '');
         this.style.borderColor = '#fbbf24'; selectedPiece = this;
       });
     });
-    this.content.querySelectorAll('.place-cell').forEach(function(cell) {
+    this.content.querySelectorAll('.place-cell').forEach(cell => {
       cell.addEventListener('click', function() {
         if (!selectedPiece) { toast('先选一个俑'); return; }
         if (this.classList.contains('filled')) { toast('这里已经有俑了'); return; }
@@ -659,218 +714,246 @@ var GameEngine = {
         this.dataset.correctRow = selectedPiece.dataset.row;
         selectedPiece.style.display = 'none';
         selectedPiece = null;
-        self.content.querySelectorAll('.place-piece').forEach(function(p){ p.style.borderColor = ''; });
+        self.content.querySelectorAll('.place-piece').forEach(p => p.style.borderColor = '');
       });
     });
   },
-  checkPlacement: function() {
-    var self = this, correctCount = 0, total = this.data.pieces.length;
-    var cells = this.content.querySelectorAll('.place-cell.filled');
-    cells.forEach(function(cell) {
-      cell.classList.remove('correct', 'wrong');
+  checkPlacement() {
+    const self = this; let correctCount = 0;
+    const total = this.data.pieces.length;
+    this.content.querySelectorAll('.place-cell.filled').forEach(cell => {
+      cell.classList.remove('correct','wrong');
       if (parseInt(cell.dataset.row) === parseInt(cell.dataset.correctRow)) { cell.classList.add('correct'); correctCount++; }
       else cell.classList.add('wrong');
     });
     this.setProgress(Math.round(correctCount / total * 100));
-    if (correctCount === total) setTimeout(function() { self.complete(); }, 800);
-    else toast('放对了 ' + correctCount + '/' + total + '，看看哪排错了');
+    if (correctCount === total) setTimeout(() => self.complete(), 800);
+    else toast(`放对了 ${correctCount}/${total}，看看哪排错了`);
   },
-  startStoryChoice: function() { this.state.chapterIdx = 0; this.state.choices = []; this.showChapter(); },
-  showChapter: function() {
-    var chapters = this.data.chapters, idx = this.state.chapterIdx;
+  startStoryChoice() { this.state.chapterIdx = 0; this.state.choices = []; this.showChapter(); },
+  showChapter() {
+    const chapters = this.data.chapters, idx = this.state.chapterIdx;
     if (idx >= chapters.length) { this.showEnding(); return; }
-    var ch = chapters[idx];
+    const ch = chapters[idx];
     this.setProgress(Math.round(idx / chapters.length * 100));
-    var html = '<div class="story-scene"><b>【' + ch.scene + '】</b><br/>' + ch.text + '</div><div class="story-choices">';
-    ch.choices.forEach(function(choice) { html += '<button class="story-choice" data-next="' + choice.next + '">' + choice.text + '</button>'; });
+    let html = `<div class="story-scene"><b>【${ch.scene}】</b><br/>${ch.text}</div><div class="story-choices">`;
+    ch.choices.forEach(choice => { html += `<button class="story-choice" data-next="${choice.next}">${choice.text}</button>`; });
     html += '</div>';
     this.content.innerHTML = html;
-    var self = this;
-    this.content.querySelectorAll('.story-choice').forEach(function(btn) {
+    const self = this;
+    this.content.querySelectorAll('.story-choice').forEach(btn => {
       btn.addEventListener('click', function() {
         self.state.choices.push(this.dataset.next);
         self.state.chapterIdx++;
-        var next = this.dataset.next;
+        const next = this.dataset.next;
         if (next.indexOf('ending') >= 0 || next.indexOf('bad') >= 0 || next.indexOf('mid') >= 0) self.showEnding(next);
         else self.showChapter();
       });
     });
   },
-  showEnding: function(endingKey) {
-    var endings = this.data.endings, ending = endings.good_ending;
-    var lastChoice = this.state.choices[this.state.choices.length - 1];
+  showEnding() {
+    const endings = this.data.endings;
+    let ending = endings.good_ending;
+    const lastChoice = this.state.choices[this.state.choices.length - 1];
     if (lastChoice === 'good_ending') ending = endings.good_ending;
     else if (lastChoice === 'mid_ending') ending = endings.mid_ending;
     else if (lastChoice === 'bad_ending') ending = endings.bad_ending;
-    else { var fc = this.state.choices[0]; if (fc === 'ch2_bad') ending = endings.bad_ending; else if (fc === 'ch3_mid') ending = endings.mid_ending; }
     this.setProgress(100);
-    this.content.innerHTML = '<div class="story-ending"><div class="ending-title">' + ending.title + '</div><div class="ending-text">' + ending.text + '</div></div>';
-    var self = this;
-    setTimeout(function() { self.complete(); }, 2500);
+    this.content.innerHTML = `<div class="story-ending"><div class="ending-title">${ending.title}</div><div class="ending-text">${ending.text}</div></div>`;
+    setTimeout(() => this.complete(), 2500);
   },
-  startQuizClimb: function() { this.state.currentStep = 0; this.state.correct = 0; this.showQuestion(); },
-  showQuestion: function() {
-    var questions = this.data.questions, idx = this.state.currentStep;
+  startQuizClimb() { this.state.currentStep = 0; this.state.correct = 0; this.showQuestion(); },
+  showQuestion() {
+    const questions = this.data.questions, idx = this.state.currentStep;
     if (idx >= questions.length) { this.complete(); return; }
-    var q = questions[idx];
+    const q = questions[idx];
     this.setProgress(Math.round(idx / questions.length * 100));
-    var html = '<div class="quiz-step"><div class="step-num">' + (idx + 1) + '</div><div class="step-label">第 ' + q.step + ' 级台阶</div></div>';
-    html += '<div class="quiz-question">' + q.q + '</div><div class="quiz-options">';
-    q.options.forEach(function(opt, i) { html += '<button class="quiz-option" data-answer="' + i + '">' + opt + '</button>'; });
-    html += '</div><div class="quiz-hint" style="display:none">💡 ' + q.hint + '</div>';
+    let html = `<div class="quiz-step"><div class="step-num">${idx+1}</div><div class="step-label">第 ${q.step} 级台阶</div></div>`;
+    html += `<div class="quiz-question">${q.q}</div><div class="quiz-options">`;
+    q.options.forEach((opt, i) => { html += `<button class="quiz-option" data-answer="${i}">${opt}</button>`; });
+    html += `</div><div class="quiz-hint" style="display:none">💡 ${q.hint}</div>`;
     this.content.innerHTML = html;
-    var self = this;
-    this.content.querySelectorAll('.quiz-option').forEach(function(btn) {
+    const self = this;
+    this.content.querySelectorAll('.quiz-option').forEach(btn => {
       btn.addEventListener('click', function() {
-        var chosen = parseInt(this.dataset.answer), correct = q.answer;
-        self.content.querySelectorAll('.quiz-option').forEach(function(b, i) {
+        const chosen = parseInt(this.dataset.answer), correct = q.answer;
+        self.content.querySelectorAll('.quiz-option').forEach((b, i) => {
           if (i === correct) b.classList.add('correct');
           if (i === chosen && chosen !== correct) b.classList.add('wrong');
         });
         self.content.querySelector('.quiz-hint').style.display = 'block';
         if (chosen === correct) { self.state.correct++; toast('✅ 答对了，继续向上！'); }
         else toast('❌ 答错了，看看正确答案');
-        setTimeout(function() { self.state.currentStep++; self.showQuestion(); }, 1800);
+        setTimeout(() => { self.state.currentStep++; self.showQuestion(); }, 1800);
       });
     });
   },
-  startSymbolMatch: function() {
-    var pairs = this.data.pairs.slice();
+  startSymbolMatch() {
+    const pairs = this.data.pairs.slice();
     this.state.matched = 0; this.state.selectedLeft = null;
-    var rightItems = pairs.slice().sort(function(){ return Math.random() - 0.5; });
-    var html = '<div class="match-container"><div class="match-col">';
-    pairs.forEach(function(p) { html += '<div class="match-item" data-id="' + p.id + '" data-side="left">' + p.symbol + '</div>'; });
+    const rightItems = pairs.slice().sort(() => Math.random() - .5);
+    let html = '<div class="match-container"><div class="match-col">';
+    pairs.forEach(p => { html += `<div class="match-item" data-id="${p.id}" data-side="left">${p.symbol}</div>`; });
     html += '</div><div class="match-col">';
-    rightItems.forEach(function(p) { html += '<div class="match-item" data-id="' + p.id + '" data-side="right">' + p.meaning + '</div>'; });
+    rightItems.forEach(p => { html += `<div class="match-item" data-id="${p.id}" data-side="right">${p.meaning}</div>`; });
     html += '</div></div>';
     this.content.innerHTML = html;
     this.setProgress(0);
-    var self = this;
-    this.content.querySelectorAll('[data-side="left"]').forEach(function(el) {
+    const self = this;
+    this.content.querySelectorAll('[data-side="left"]').forEach(el => {
       el.addEventListener('click', function() {
-        self.content.querySelectorAll('[data-side="left"]').forEach(function(e){ e.classList.remove('active'); });
+        self.content.querySelectorAll('[data-side="left"]').forEach(e => e.classList.remove('active'));
         this.classList.add('active'); self.state.selectedLeft = this.dataset.id;
       });
     });
-    this.content.querySelectorAll('[data-side="right"]').forEach(function(el) {
+    this.content.querySelectorAll('[data-side="right"]').forEach(el => {
       el.addEventListener('click', function() {
         if (!self.state.selectedLeft) { toast('先选左边的象形文'); return; }
-        var rightId = this.dataset.id, leftId = self.state.selectedLeft;
+        const rightId = this.dataset.id, leftId = self.state.selectedLeft;
         if (leftId === rightId) {
           this.classList.add('matched');
-          self.content.querySelector('[data-side="left"][data-id="' + leftId + '"]').classList.add('matched');
+          self.content.querySelector(`[data-side="left"][data-id="${leftId}"]`).classList.add('matched');
           self.state.matched++;
           self.setProgress(Math.round(self.state.matched / pairs.length * 100));
           toast('✨ 匹配成功！');
           self.state.selectedLeft = null;
-          self.content.querySelectorAll('[data-side="left"]').forEach(function(e){ e.classList.remove('active'); });
-          if (self.state.matched === pairs.length) setTimeout(function() { self.complete(); }, 800);
+          self.content.querySelectorAll('[data-side="left"]').forEach(e => e.classList.remove('active'));
+          if (self.state.matched === pairs.length) setTimeout(() => self.complete(), 800);
         } else {
           this.classList.add('wrong');
-          var leftEl = self.content.querySelector('[data-side="left"][data-id="' + leftId + '"]');
+          const leftEl = self.content.querySelector(`[data-side="left"][data-id="${leftId}"]`);
           if (leftEl) leftEl.classList.add('wrong');
           toast('❌ 不对，再想想');
-          var lEl = leftEl;
-          (function(el, l) { setTimeout(function() { el.classList.remove('wrong'); if (l) l.classList.remove('wrong'); }, 600); })(this, lEl);
+          const lEl = leftEl; const el = this;
+          setTimeout(() => { el.classList.remove('wrong'); if (lEl) lEl.classList.remove('wrong'); }, 600);
         }
       });
     });
   },
-  startRotateAlign: function() { this.state.rotation = 0; this.state.round = 0; this.newRound(); },
-  newRound: function() {
-    var totalRounds = this.data.totalRounds;
+  startRotateAlign() { this.state.rotation = 0; this.state.round = 0; this.newRound(); },
+  newRound() {
+    const totalRounds = this.data.totalRounds;
     if (this.state.round >= totalRounds) { this.complete(); return; }
     this.state.targetRotation = Math.floor(Math.random() * 4) * 90;
     this.state.rotation = 0;
     this.setProgress(Math.round(this.state.round / totalRounds * 100));
-    var directions = ['北', '东', '南', '西'];
-    var html = '<div class="rotate-hint">第 ' + (this.state.round + 1) + '/' + totalRounds + ' 轮<br/>目标：让指针对准 <b style="color:#fbbf24">' + directions[this.state.targetRotation / 90] + '</b> 方</div>';
+    const directions = ['北','东','南','西'];
+    let html = `<div class="rotate-hint">第 ${this.state.round+1}/${totalRounds} 轮<br/>目标：让指针对准 <b style="color:#fbbf24">${directions[this.state.targetRotation/90]}</b> 方</div>`;
     html += '<div class="rotate-wheel"><div class="wheel-bg" id="wheelBg"></div><div class="wheel-pointer"></div>';
-    var pos = [{top:'5%',left:'50%'},{top:'50%',right:'5%'},{bottom:'5%',left:'50%'},{top:'50%',left:'5%'}];
-    var dirs = ['北','东','南','西'];
-    for (var i = 0; i < 4; i++) html += '<div class="wheel-label" style="top:' + pos[i].top + ';bottom:' + (pos[i].bottom||'') + ';left:' + pos[i].left + ';right:' + (pos[i].right||'') + '">' + dirs[i] + '</div>';
+    const pos = [{top:'5%',left:'50%'},{top:'50%',right:'5%'},{bottom:'5%',left:'50%'},{top:'50%',left:'5%'}];
+    const dirs = ['北','东','南','西'];
+    for (let i = 0; i < 4; i++) html += `<div class="wheel-label" style="top:${pos[i].top};bottom:${pos[i].bottom||''};left:${pos[i].left};right:${pos[i].right||''}">${dirs[i]}</div>`;
     html += '</div>';
     html += '<div class="rotate-btns"><button onclick="GameEngine.rotateWheel(-30)">↺</button><button onclick="GameEngine.rotateWheel(30)">↻</button></div>';
     html += '<button class="game-submit" onclick="GameEngine.checkRotate()">对齐！</button>';
     this.content.innerHTML = html;
   },
-  rotateWheel: function(deg) {
+  rotateWheel(deg) {
     this.state.rotation += deg;
-    var bg = document.getElementById('wheelBg');
-    if (bg) bg.style.transform = 'rotate(' + this.state.rotation + 'deg)';
+    const bg = document.getElementById('wheelBg');
+    if (bg) bg.style.transform = `rotate(${this.state.rotation}deg)`;
   },
-  checkRotate: function() {
-    var target = this.state.targetRotation;
-    var current = ((this.state.rotation % 360) + 360) % 360;
-    var diff = Math.abs(current - target);
+  checkRotate() {
+    const target = this.state.targetRotation;
+    const current = ((this.state.rotation % 360) + 360) % 360;
+    let diff = Math.abs(current - target);
     if (diff > 180) diff = 360 - diff;
     if (diff <= 15) {
       toast('✨ 对齐成功！佛光降临');
       this.state.round++;
-      var self = this;
-      setTimeout(function() { self.newRound(); }, 800);
-    } else toast('偏差 ' + Math.round(diff) + '°，再转转');
+      setTimeout(() => this.newRound(), 800);
+    } else toast(`偏差 ${Math.round(diff)}°，再转转`);
   }
 };
 
 function init() {
   document.getElementById('poiTitle').textContent = POI.name;
   document.getElementById('poiSub').textContent = POI.subtitle || '';
-  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('arCanvas'), antialias: true, alpha: true });
+
+  const canvas = document.getElementById('scene');
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0x0a0a0a, 1);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  var camPos = (POI.scene && POI.scene.cameraPos) || [0, 2.5, 6];
-  var lookAt = (POI.scene && POI.scene.cameraLookAt) || [0, 1.5, 0];
+  const camPos = (POI.scene && POI.scene.cameraPos) || [0, 2.5, 6];
+  const lookAt = (POI.scene && POI.scene.cameraLookAt) || [0, 1.5, 0];
   camera.position.set(camPos[0], camPos[1], camPos[2]);
   camera.lookAt(lookAt[0], lookAt[1], lookAt[2]);
+
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x0a0a0a, 8, 20);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  var sun = new THREE.DirectionalLight(0xffffff, 1.2);
+  scene.background = new THREE.Color(0x0a0a0a);
+  scene.fog = new THREE.Fog(0x0a0a0a, 10, 25);
+
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  const sun = new THREE.DirectionalLight(0xfff5e0, 2.0);
   sun.position.set(5, 8, 5);
   sun.castShadow = true;
-  sun.shadow.mapSize.width = 1024;
-  sun.shadow.mapSize.height = 1024;
+  sun.shadow.mapSize.width = sun.shadow.mapSize.height = 2048;
   sun.shadow.camera.near = 0.5;
   sun.shadow.camera.far = 30;
-  sun.shadow.camera.left = -8;
-  sun.shadow.camera.right = 8;
-  sun.shadow.camera.top = 8;
-  sun.shadow.camera.bottom = -8;
+  sun.shadow.camera.left = sun.shadow.camera.bottom = -8;
+  sun.shadow.camera.right = sun.shadow.camera.top = 8;
+  sun.shadow.bias = -0.001;
   scene.add(sun);
-  var fill = new THREE.DirectionalLight(0xa5b4fc, 0.3);
+  const fill = new THREE.DirectionalLight(0xa5b4fc, 0.4);
   fill.position.set(-3, 3, -5);
   scene.add(fill);
-  var rim = new THREE.DirectionalLight(0xffd700, 0.2);
+  const rim = new THREE.DirectionalLight(0xffd700, 0.5);
   rim.position.set(0, 5, -8);
   scene.add(rim);
+
   poiGroup = buildPOIModel(POI);
   scene.add(poiGroup);
-  var groundMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.9, metalness: 0 });
-  var ground = new THREE.Mesh(new THREE.CircleGeometry(10, 64), groundMat);
+
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.9, metalness: 0.1 });
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(10, 64), groundMat);
   ground.rotation.x = -Math.PI / 2;
-  ground.position.y = 0;
   ground.receiveShadow = true;
   scene.add(ground);
+
   createHotspots(POI);
-  controls = new TouchControls(renderer.domElement, camera, poiGroup);
-  window.addEventListener('resize', function() {
+
+  controls = new OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 2;
+  controls.maxDistance = 15;
+  controls.maxPolarAngle = Math.PI / 2.1;
+  controls.target.set(lookAt[0], lookAt[1], lookAt[2]);
+
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    0.3, 0.4, 0.85
+  );
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
+  window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
   });
+
   GameEngine.init();
-  document.getElementById('btnStory').addEventListener('click', function(){ playStory(POI.plot || []); });
+  document.getElementById('btnStory').addEventListener('click', () => playStory(POI.plot || []));
   document.getElementById('btnRotate').addEventListener('click', function() {
     autoRotate = !autoRotate;
     this.style.background = autoRotate ? 'rgba(251,191,36,.3)' : 'rgba(255,255,255,.15)';
   });
+
   document.getElementById('loading').style.display = 'none';
-  setTimeout(function(){ playStory(POI.plot || []); }, 600);
+  setTimeout(() => playStory(POI.plot || []), 600);
   animate();
 }
 
@@ -879,7 +962,7 @@ function animate() {
   if (poiGroup && autoRotate && !gameState.active) poiGroup.rotation.y += 0.003;
   if (controls) controls.update();
   updateHotspotPositions();
-  renderer.render(scene, camera);
+  composer.render();
 }
 
 init();
