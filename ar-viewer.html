@@ -4,37 +4,44 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
 <meta name="theme-color" content="#0a0a0a" />
-<title>拾迹集册 · AR 空间</title>
+<title>拾迹集册 · 3D 景点博物馆</title>
 <script src="ar-lib/three.min.js"></script>
 <script src="touch-controls.js"></script>
 <script src="ar-stories.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif;color:#fff}
+html,body{height:100%;overflow:hidden;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif;color:#fff}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
-#arVideo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transform:scaleX(-1)}
-#arCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:2;touch-action:none}
-#arTopBar{position:fixed;top:0;left:0;right:0;z-index:10;padding:max(14px,env(safe-area-inset-top)) 16px 14px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);display:flex;align-items:center;justify-content:space-between;pointer-events:none}
-#arTopBar>*{pointer-events:auto}
-.ar-title{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
-.ar-title .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px #22c55e;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ar-btns{display:flex;gap:8px}
-.ar-btns button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;padding:7px 13px;font-size:13px;transition:.2s}
-.ar-btns button:active{transform:scale(.95);background:rgba(255,255,255,.25)}
-#arLoading,#arError,#arNoCam{position:fixed;inset:0;z-index:30;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
-#arLoading .spinner{width:48px;height:48px;border:3px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#arLoading .text,#arError .text,#arNoCam .text{font-size:14px;color:#94a3b8;line-height:1.6}
-#arError button,#arNoCam button{background:#6366f1;color:#fff;border-radius:8px;padding:10px 24px;font-size:14px}
-#arBubble{position:fixed;left:16px;right:16px;bottom:20px;z-index:15;background:rgba(15,23,42,.9);backdrop-filter:blur(14px);border:1px solid rgba(99,102,241,.3);border-radius:16px;padding:16px 18px;max-width:600px;margin:0 auto;box-shadow:0 10px 40px rgba(99,102,241,.2);opacity:0;transform:translateY(20px);transition:opacity .35s,transform .35s;pointer-events:none}
-#arBubble.visible{opacity:1;transform:translateY(0);pointer-events:auto}
-#arBubble .speaker{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-#arBubble .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:16px}
-#arBubble .name{font-weight:600;font-size:14px;color:#a5b4fc}
-#arBubble .text{font-size:15px;line-height:1.7;color:#e2e8f0}
-#arBubble .next-hint{margin-top:10px;font-size:12px;color:#64748b;text-align:right}
-#gamePanel{position:fixed;left:16px;right:16px;bottom:20px;z-index:20;background:rgba(15,23,42,.95);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:18px;max-width:600px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:translateY(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+#arCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;touch-action:none}
+#topBar{position:fixed;top:0;left:0;right:0;z-index:10;padding:max(14px,env(safe-area-inset-top)) 16px 14px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+#topBar>*{pointer-events:auto}
+.poi-title{font-weight:700;font-size:17px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.poi-sub{font-size:12px;color:#fbbf24;margin-top:2px}
+.top-btns{display:flex;gap:8px}
+.top-btns button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:7px 13px;font-size:13px;transition:.2s}
+.top-btns button:active{transform:scale(.95)}
+.hotspot-tag{position:fixed;z-index:5;width:36px;height:36px;margin:-18px 0 0 -18px;display:flex;align-items:center;justify-content:center;font-size:18px;background:radial-gradient(circle,#fbbf24 0%,#d97706 70%);border:2px solid #fff;border-radius:50%;box-shadow:0 0 20px rgba(251,191,36,.6);cursor:pointer;transition:transform .2s;animation:pulse-hs 2s infinite}
+.hotspot-tag:active{transform:scale(1.2)}
+.hotspot-tag.visited{background:radial-gradient(circle,#22c55e 0%,#16a34a 70%);box-shadow:0 0 15px rgba(34,197,94,.5);animation:none}
+@keyframes pulse-hs{0%,100%{box-shadow:0 0 15px rgba(251,191,36,.5)}50%{box-shadow:0 0 30px rgba(251,191,36,.9)}}
+#infoCard{position:fixed;left:16px;right:16px;bottom:20px;z-index:15;background:rgba(15,23,42,.95);backdrop-filter:blur(16px);border:1px solid rgba(251,191,36,.3);border-radius:16px;padding:18px;max-width:500px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translateY(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+#infoCard.visible{transform:translateY(0)}
+#infoCard .card-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);color:#94a3b8;font-size:14px;display:flex;align-items:center;justify-content:center}
+#infoCard .card-title{font-size:17px;font-weight:700;color:#fbbf24;margin-bottom:10px;padding-right:30px}
+#infoCard .card-text{font-size:14px;line-height:1.8;color:#e2e8f0}
+#infoCard .card-tag{display:inline-block;margin-top:12px;padding:4px 10px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);border-radius:10px;font-size:11px;color:#fbbf24}
+#gameEntry{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:12;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:30px;padding:14px 28px;font-size:15px;font-weight:700;box-shadow:0 8px 30px rgba(245,158,11,.4);transition:.2s;display:flex;align-items:center;gap:8px;white-space:nowrap}
+#gameEntry:active{transform:translateX(-50%) scale(.96)}
+#hsCounter{position:fixed;top:max(60px,env(safe-area-inset-top) + 50px);right:16px;z-index:10;background:rgba(15,23,42,.8);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:8px 14px;font-size:12px;color:#94a3b8}
+#hsCounter b{color:#fbbf24;font-size:14px}
+#storyBubble{position:fixed;left:16px;right:16px;bottom:20px;z-index:14;background:rgba(15,23,42,.92);backdrop-filter:blur(14px);border:1px solid rgba(99,102,241,.3);border-radius:16px;padding:16px 18px;max-width:500px;margin:0 auto;box-shadow:0 10px 40px rgba(99,102,241,.2);opacity:0;transform:translateY(20px);transition:opacity .35s,transform .35s;pointer-events:none}
+#storyBubble.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+#storyBubble .speaker{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+#storyBubble .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:16px}
+#storyBubble .name{font-weight:600;font-size:14px;color:#a5b4fc}
+#storyBubble .text{font-size:15px;line-height:1.7;color:#e2e8f0}
+#storyBubble .next-hint{margin-top:10px;font-size:12px;color:#64748b;text-align:right}
+#gamePanel{position:fixed;left:16px;right:16px;bottom:20px;z-index:20;background:rgba(15,23,42,.97);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:18px;max-width:500px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translateY(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
 #gamePanel.visible{transform:translateY(0)}
 #gamePanel .game-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 #gamePanel .game-title{font-weight:700;font-size:16px;color:#fbbf24}
@@ -42,8 +49,8 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 #gamePanel .game-instruction{font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:14px}
 .game-progress{height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:14px;overflow:hidden}
 .game-progress>div{height:100%;background:linear-gradient(90deg,#f59e0b,#fbbf24);width:0;transition:width .3s}
-.sort-list{display:flex;flex-direction:column;gap:8px}
-.sort-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:12px;font-size:15px;transition:.2s;user-select:none}
+.sort-list{display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto}
+.sort-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:12px;font-size:15px;transition:.2s}
 .sort-item .emoji{font-size:22px}.sort-item .name{flex:1;font-weight:600}
 .sort-item.correct{border-color:#22c55e;background:rgba(34,197,94,.15)}
 .sort-item.wrong{border-color:#ef4444;background:rgba(239,68,68,.15);animation:shake .3s}
@@ -55,10 +62,10 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .place-cell.correct{border-color:#22c55e;background:rgba(34,197,94,.15)}
 .place-cell.wrong{border-color:#ef4444;background:rgba(239,68,68,.15)}
 .place-pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
-.place-piece{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:grab;transition:.2s}
+.place-piece{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;transition:.2s}
 .story-scene{font-size:14px;color:#e2e8f0;line-height:1.7;margin-bottom:16px;padding:12px;background:rgba(99,102,241,.1);border-radius:10px;border-left:3px solid #6366f1}
 .story-choices{display:flex;flex-direction:column;gap:8px}
-.story-choice{padding:12px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:14px;color:#e2e8f0;text-align:left;transition:.2s;line-height:1.5}
+.story-choice{padding:12px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:14px;color:#e2e8f0;text-align:left;line-height:1.5}
 .story-ending{text-align:center;padding:20px 0}
 .story-ending .ending-title{font-size:18px;font-weight:700;margin-bottom:12px;background:linear-gradient(90deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .story-ending .ending-text{font-size:14px;color:#94a3b8;line-height:1.7}
@@ -67,26 +74,26 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .quiz-step .step-label{font-size:12px;color:#64748b}
 .quiz-question{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.5}
 .quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.quiz-option{padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:13px;color:#e2e8f0;text-align:center;transition:.2s}
+.quiz-option{padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:13px;color:#e2e8f0;text-align:center}
 .quiz-option.correct{background:rgba(34,197,94,.2);border-color:#22c55e}
 .quiz-option.wrong{background:rgba(239,68,68,.2);border-color:#ef4444}
 .quiz-hint{margin-top:10px;font-size:12px;color:#64748b;text-align:center}
 .match-container{display:flex;justify-content:space-between;gap:16px}
 .match-col{flex:1;display:flex;flex-direction:column;gap:10px}
-.match-item{padding:12px;text-align:center;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;font-size:20px;transition:.2s}
+.match-item{padding:12px;text-align:center;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;font-size:20px}
 .match-item.active{border-color:#fbbf24;background:rgba(251,191,36,.15)}
 .match-item.matched{border-color:#22c55e;background:rgba(34,197,94,.15);opacity:.6}
 .match-item.wrong{border-color:#ef4444;background:rgba(239,68,68,.15);animation:shake .3s}
-.rotate-wheel{width:200px;height:200px;margin:0 auto 16px;position:relative}
+.rotate-wheel{width:180px;height:180px;margin:0 auto 16px;position:relative}
 .rotate-wheel .wheel-bg{width:100%;height:100%;border-radius:50%;background:conic-gradient(from 0deg,#c41e3a,#f4a460,#c41e3a,#f4a460,#c41e3a);position:absolute;transition:transform .1s}
 .rotate-wheel .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #fff;z-index:2}
-.rotate-wheel .wheel-label{position:absolute;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:18px;z-index:1}
+.rotate-wheel .wheel-label{position:absolute;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:1}
 .rotate-hint{text-align:center;font-size:13px;color:#94a3b8;margin-bottom:14px}
-.rotate-btns{display:flex;justify-content:center;gap:12px}
-.rotate-btns button{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:24px;color:#fff}
-.game-submit{width:100%;margin-top:14px;padding:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:12px;font-size:15px;font-weight:600;transition:.2s}
-#arToast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(15,23,42,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:10px 20px;font-size:14px;z-index:40;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
-#arToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+.rotate-btns{display:flex;justify-content:center;gap:12px;margin-bottom:10px}
+.rotate-btns button{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:22px;color:#fff}
+.game-submit{width:100%;margin-top:14px;padding:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:12px;font-size:15px;font-weight:600}
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(15,23,42,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:10px 20px;font-size:14px;z-index:40;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+#toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
 .modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(8px)}
 .modal-bg.visible{opacity:1;pointer-events:auto}
 .modal{background:linear-gradient(160deg,#1e1b4b,#0f172a);border:1px solid rgba(99,102,241,.4);border-radius:20px;padding:28px;text-align:center;max-width:360px;width:100%;box-shadow:0 30px 80px rgba(99,102,241,.3);transform:scale(.8);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
@@ -96,24 +103,27 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .modal .stamp{font-size:72px;margin:10px 0 6px;filter:drop-shadow(0 4px 20px rgba(251,191,36,.4))}
 .modal button{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;padding:12px 32px;font-size:15px;font-weight:600}
 .modal .hint{font-size:12px;color:#64748b;margin-top:10px}
-#gameEntry{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:12;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:30px;padding:14px 28px;font-size:15px;font-weight:700;box-shadow:0 8px 30px rgba(245,158,11,.4);transition:.2s;display:none;align-items:center;gap:8px}
-#gameEntry.visible{display:flex;animation:bounce 2s infinite}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
-@media (min-width:768px){#arBubble,#gamePanel{max-width:500px}}
+#loading{position:fixed;inset:0;z-index:30;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+#loading .spinner{width:48px;height:48px;border:3px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading .text{font-size:14px;color:#94a3b8}
+@media (min-width:768px){#storyBubble,#infoCard,#gamePanel{max-width:500px}}
 </style>
 </head>
 <body>
-<video id="arVideo" autoplay playsinline muted></video>
 <canvas id="arCanvas"></canvas>
-<div id="arTopBar">
-  <div class="ar-title"><span class="dot" id="dotCam"></span><span id="titleText">拾迹集册</span></div>
-  <div class="ar-btns">
+<div id="topBar">
+  <div>
+    <div class="poi-title" id="poiTitle">景点</div>
+    <div class="poi-sub" id="poiSub">副标题</div>
+  </div>
+  <div class="top-btns">
     <button id="btnStory">▶ 故事</button>
-    <button id="btnReset">↺</button>
-    <button id="btnMic">🔊</button>
+    <button id="btnRotate">🔄 旋转</button>
   </div>
 </div>
-<div id="arBubble">
+<div id="hsCounter">📌 知识点 <b id="hsSeen">0</b>/<span id="hsTotal">0</span></div>
+<div id="storyBubble">
   <div class="speaker">
     <div class="avatar" id="bAv">👤</div>
     <div class="name" id="bName">旁白</div>
@@ -121,25 +131,26 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
   <div class="text" id="bText">...</div>
   <div class="next-hint">点击继续 ▼</div>
 </div>
+<div id="infoCard">
+  <button class="card-close" onclick="closeInfoCard()">✕</button>
+  <div class="card-title" id="infoTitle"></div>
+  <div class="card-text" id="infoText"></div>
+  <div class="card-tag">📌 景点知识</div>
+</div>
 <button id="gameEntry">🎮 开始挑战</button>
 <div id="gamePanel">
   <div class="game-header">
     <div class="game-title" id="gameTitle">游戏</div>
-    <button class="game-close" id="gameClose">✕</button>
+    <button class="game-close" onclick="GameEngine.close()">✕</button>
   </div>
   <div class="game-instruction" id="gameInstruction"></div>
   <div class="game-progress"><div id="gameProgressBar"></div></div>
   <div id="gameContent"></div>
 </div>
-<div id="arToast"></div>
-<div id="arLoading">
+<div id="toast"></div>
+<div id="loading">
   <div class="spinner"></div>
-  <div class="text">启动拾迹空间中...<br /><span id="loadSub">请求摄像头权限</span></div>
-</div>
-<div id="arNoCam" style="display:none">
-  <div class="spinner" style="border-top-color:#8b5cf6"></div>
-  <div class="text"><b>预览模式</b><br />当前环境无法使用摄像头<br />已自动进入 3D 模型预览</div>
-  <button onclick="location.reload()">重新加载</button>
+  <div class="text">正在加载 3D 模型...</div>
 </div>
 <div class="modal-bg" id="modalStamp">
   <div class="modal">
@@ -155,7 +166,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
     <div class="stamp" style="font-size:56px">🎭</div>
     <h2>隐藏彩蛋已解锁！</h2>
     <p id="eggDesc">发现了一个隐藏的秘密...</p>
-    <button onclick="closeEggModal()">继续探索</button>
+    <button onclick="document.getElementById('modalEgg').classList.remove('visible')">继续探索</button>
   </div>
 </div>
 <script>
@@ -165,15 +176,16 @@ var POI_ID = params.get('poi') || 'gugong';
 var POI = (window.AR_POIS && window.AR_POIS.find(function(p){ return p.id === POI_ID; })) ||
           (window.AR_POIS && window.AR_POIS[0]);
 var HuntStorage = {
-  LS_STAMPS: 'myl_hunt_stamps_v2',
+  LS_STAMPS: 'myl_hunt_stamps_v3',
   getStamps: function() { try { return JSON.parse(localStorage.getItem(this.LS_STAMPS) || '[]'); } catch(e) { return []; } },
-  addStamp: function(stampId) { var arr = this.getStamps(); if (arr.indexOf(stampId) < 0) { arr.push(stampId); localStorage.setItem(this.LS_STAMPS, JSON.stringify(arr)); } return arr; },
-  hasStamp: function(id) { return this.getStamps().indexOf(id) >= 0; }
+  addStamp: function(id) { var arr = this.getStamps(); if (arr.indexOf(id) < 0) { arr.push(id); localStorage.setItem(this.LS_STAMPS, JSON.stringify(arr)); } }
 };
 var scene, camera, renderer, controls;
 var poiGroup;
-var voiceOn = true;
-var gameState = { active: false, completed: false, type: null };
+var hotspotObjects = [];
+var visitedHotspots = new Set();
+var autoRotate = true;
+var gameState = { active: false, completed: false };
 
 function buildPOIModel(poi) {
   var g = new THREE.Group();
@@ -271,10 +283,10 @@ function buildPOIModel(poi) {
     case 'zhongshan': {
       var whiteMat = new THREE.MeshStandardMaterial({ color: 0xe8e4de, roughness: 0.6 });
       var arch = new THREE.Mesh(new THREE.BoxGeometry(1.5 * s, 0.15 * s, 0.1 * s), whiteMat);
-      arch.position.set(0, 1.5 * s, 1.5 * s);
+      arch.position.set(0, 1.5 * s, 1.8 * s);
       g.add(arch);
       var pillarL = new THREE.Mesh(new THREE.CylinderGeometry(0.06 * s, 0.06 * s, 1.5 * s, 8), whiteMat);
-      pillarL.position.set(-0.65 * s, 0.75 * s, 1.5 * s);
+      pillarL.position.set(-0.65 * s, 0.75 * s, 1.8 * s);
       g.add(pillarL);
       var pillarR = pillarL.clone();
       pillarR.position.x = 0.65 * s;
@@ -282,7 +294,7 @@ function buildPOIModel(poi) {
       for (var i = 0; i < 10; i++) {
         var step = new THREE.Mesh(new THREE.BoxGeometry(2.5 * s, 0.12 * s, 0.4 * s), whiteMat);
         step.position.y = i * 0.12 * s + 0.06 * s;
-        step.position.z = 1.0 * s - i * 0.4 * s;
+        step.position.z = 1.3 * s - i * 0.4 * s;
         g.add(step);
       }
       var hall = new THREE.Mesh(new THREE.BoxGeometry(1.8 * s, 1.2 * s, 1.2 * s), whiteMat);
@@ -358,14 +370,64 @@ function buildPOIModel(poi) {
   return g;
 }
 
+function createHotspots(poi) {
+  hotspotObjects = [];
+  var hotspots = poi.hotspots || [];
+  document.getElementById('hsTotal').textContent = hotspots.length;
+  hotspots.forEach(function(hs) {
+    var anchor = new THREE.Object3D();
+    anchor.position.set(hs.position[0], hs.position[1], hs.position[2]);
+    poiGroup.add(anchor);
+    var tag = document.createElement('div');
+    tag.className = 'hotspot-tag';
+    tag.textContent = '📌';
+    tag.dataset.hsId = hs.id;
+    tag.onclick = function() { showInfoCard(hs); };
+    document.body.appendChild(tag);
+    hotspotObjects.push({ anchor: anchor, tag: tag, data: hs });
+  });
+}
+
+function updateHotspotPositions() {
+  var w = window.innerWidth, h = window.innerHeight;
+  hotspotObjects.forEach(function(hs) {
+    var worldPos = new THREE.Vector3();
+    hs.anchor.getWorldPosition(worldPos);
+    var projected = worldPos.project(camera);
+    var x = (projected.x * 0.5 + 0.5) * w;
+    var y = (-projected.y * 0.5 + 0.5) * h;
+    if (projected.z > 1) { hs.tag.style.display = 'none'; }
+    else {
+      hs.tag.style.display = 'flex';
+      hs.tag.style.left = x + 'px';
+      hs.tag.style.top = y + 'px';
+    }
+  });
+}
+
+function showInfoCard(hs) {
+  visitedHotspots.add(hs.id);
+  document.getElementById('hsSeen').textContent = visitedHotspots.size;
+  var tag = document.querySelector('.hotspot-tag[data-hs-id="' + hs.id + '"]');
+  if (tag) tag.classList.add('visited');
+  document.getElementById('infoTitle').textContent = hs.title;
+  document.getElementById('infoText').textContent = hs.text;
+  document.getElementById('infoCard').classList.add('visible');
+  document.getElementById('gameEntry').style.display = 'none';
+}
+
+function closeInfoCard() {
+  document.getElementById('infoCard').classList.remove('visible');
+  if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex';
+}
+
 var storyIdx = 0, storyLines = [], storyTimer = null;
 function playStory(lines) { storyLines = lines || []; storyIdx = 0; showNextLine(); }
 function showNextLine() {
-  var bubble = document.getElementById('arBubble');
+  var bubble = document.getElementById('storyBubble');
   if (storyIdx >= storyLines.length) {
     bubble.classList.remove('visible');
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-    setTimeout(function() { if (!gameState.completed) document.getElementById('gameEntry').classList.add('visible'); }, 600);
+    setTimeout(function() { if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex'; }, 600);
     return;
   }
   var ln = storyLines[storyIdx];
@@ -373,19 +435,16 @@ function showNextLine() {
   document.getElementById('bName').textContent = ln.speaker || '旁白';
   document.getElementById('bText').textContent = ln.text;
   bubble.classList.add('visible');
-  if (voiceOn && window.speechSynthesis) {
-    try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(ln.text); u.lang = 'zh-CN'; u.rate = 0.95; window.speechSynthesis.speak(u); } catch(e) {}
-  }
   clearTimeout(storyTimer);
-  storyTimer = setTimeout(function() { storyIdx++; showNextLine(); }, ln.duration || 3500);
+  storyTimer = setTimeout(function() { storyIdx++; showNextLine(); }, ln.duration || 4000);
 }
-document.getElementById('arBubble').addEventListener('click', function() {
+document.getElementById('storyBubble').addEventListener('click', function() {
   clearTimeout(storyTimer); storyIdx++; showNextLine();
 });
 
 var _toastT;
 function toast(msg) {
-  var t = document.getElementById('arToast');
+  var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('visible');
   clearTimeout(_toastT);
   _toastT = setTimeout(function(){ t.classList.remove('visible'); }, 2200);
@@ -397,7 +456,6 @@ var GameEngine = {
     this.panel = document.getElementById('gamePanel');
     this.content = document.getElementById('gameContent');
     this.progressBar = document.getElementById('gameProgressBar');
-    document.getElementById('gameClose').addEventListener('click', this.close.bind(this));
     document.getElementById('gameEntry').addEventListener('click', this.open.bind(this));
   },
   open: function() {
@@ -408,27 +466,25 @@ var GameEngine = {
     document.getElementById('gameTitle').textContent = '🎮 ' + this.data.title;
     document.getElementById('gameInstruction').textContent = this.data.instruction;
     this.panel.classList.add('visible');
-    document.getElementById('gameEntry').classList.remove('visible');
+    document.getElementById('gameEntry').style.display = 'none';
     gameState.active = true;
     var starters = {
-      sort_puzzle: this.startSortPuzzle,
-      placement: this.startPlacement,
-      story_choice: this.startStoryChoice,
-      quiz_climb: this.startQuizClimb,
-      symbol_match: this.startSymbolMatch,
-      rotate_align: this.startRotateAlign
+      sort_puzzle: this.startSortPuzzle, placement: this.startPlacement,
+      story_choice: this.startStoryChoice, quiz_climb: this.startQuizClimb,
+      symbol_match: this.startSymbolMatch, rotate_align: this.startRotateAlign
     };
     if (starters[this.type]) starters[this.type].call(this);
   },
   close: function() {
     this.panel.classList.remove('visible');
     gameState.active = false;
-    if (!gameState.completed) document.getElementById('gameEntry').classList.add('visible');
+    if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex';
   },
   setProgress: function(pct) { this.progressBar.style.width = pct + '%'; },
   complete: function() {
     gameState.completed = true;
     this.panel.classList.remove('visible');
+    document.getElementById('gameEntry').style.display = 'none';
     toast('🎉 挑战完成！');
     if (POI.stamp) HuntStorage.addStamp(POI.stamp.id);
     setTimeout(function() {
@@ -454,7 +510,7 @@ var GameEngine = {
     var html = '<div class="sort-list">';
     items.forEach(function(item, idx) {
       html += '<div class="sort-item" data-id="' + item.id + '" data-idx="' + idx + '">' +
-        '<span style="color:#475569;font-size:16px">⠿</span>' +
+        '<span style="color:#475569">⠿</span>' +
         '<span class="emoji">' + item.emoji + '</span>' +
         '<span class="name">' + item.name + '</span>' +
         '<button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',-1)">↑</button>' +
@@ -482,21 +538,16 @@ var GameEngine = {
     var correctCount = 0;
     var items = this.content.querySelectorAll('.sort-item');
     items.forEach(function(el, i) {
-      var id = el.dataset.id;
       el.classList.remove('correct', 'wrong');
-      if (correct[i] === id) { el.classList.add('correct'); correctCount++; }
+      if (correct[i] === el.dataset.id) { el.classList.add('correct'); correctCount++; }
       else el.classList.add('wrong');
     });
     this.setProgress(Math.round(correctCount / correct.length * 100));
-    if (correctCount === correct.length) {
-      var self = this;
-      setTimeout(function() { self.complete(); }, 800);
-    } else toast('排对了 ' + correctCount + '/' + correct.length + '，继续调整');
+    if (correctCount === correct.length) { var self = this; setTimeout(function() { self.complete(); }, 800); }
+    else toast('排对了 ' + correctCount + '/' + correct.length + '，继续调整');
   },
   startPlacement: function() {
-    var grid = this.data.grid;
-    var pieces = this.data.pieces.slice();
-    this.state.placed = {};
+    var grid = this.data.grid, pieces = this.data.pieces.slice();
     var html = '<div class="place-grid">';
     for (var r = 0; r < grid.rows; r++) {
       html += '<div class="place-row-label">' + grid.rowLabels[r] + '</div>';
@@ -504,23 +555,16 @@ var GameEngine = {
       for (var c = 0; c < grid.cols; c++) html += '<div class="place-cell" data-row="' + r + '" data-col="' + c + '"></div>';
       html += '</div>';
     }
-    html += '</div>';
-    html += '<div style="font-size:12px;color:#64748b;margin-bottom:6px">点击下方俑，再点击目标位置：</div>';
-    html += '<div class="place-pool">';
-    pieces.forEach(function(p) {
-      html += '<div class="place-piece" data-id="' + p.id + '" data-row="' + p.row + '" title="' + p.name + '">' + p.emoji + '</div>';
-    });
-    html += '</div>';
-    html += '<button class="game-submit" onclick="GameEngine.checkPlacement()">确认军阵</button>';
+    html += '</div><div style="font-size:12px;color:#64748b;margin-bottom:6px">点击俑 → 点击位置：</div><div class="place-pool">';
+    pieces.forEach(function(p) { html += '<div class="place-piece" data-id="' + p.id + '" data-row="' + p.row + '">' + p.emoji + '</div>'; });
+    html += '</div><button class="game-submit" onclick="GameEngine.checkPlacement()">确认军阵</button>';
     this.content.innerHTML = html;
     this.setProgress(0);
-    var self = this;
-    var selectedPiece = null;
+    var self = this, selectedPiece = null;
     this.content.querySelectorAll('.place-piece').forEach(function(piece) {
       piece.addEventListener('click', function() {
         self.content.querySelectorAll('.place-piece').forEach(function(p){ p.style.borderColor = ''; });
-        this.style.borderColor = '#fbbf24';
-        selectedPiece = this;
+        this.style.borderColor = '#fbbf24'; selectedPiece = this;
       });
     });
     this.content.querySelectorAll('.place-cell').forEach(function(cell) {
@@ -529,7 +573,6 @@ var GameEngine = {
         if (this.classList.contains('filled')) { toast('这里已经有俑了'); return; }
         this.textContent = selectedPiece.textContent;
         this.classList.add('filled');
-        this.dataset.pieceId = selectedPiece.dataset.id;
         this.dataset.correctRow = selectedPiece.dataset.row;
         selectedPiece.style.display = 'none';
         selectedPiece = null;
@@ -538,15 +581,11 @@ var GameEngine = {
     });
   },
   checkPlacement: function() {
-    var self = this;
-    var correctCount = 0;
-    var total = this.data.pieces.length;
+    var self = this, correctCount = 0, total = this.data.pieces.length;
     var cells = this.content.querySelectorAll('.place-cell.filled');
     cells.forEach(function(cell) {
-      var row = parseInt(cell.dataset.row);
-      var correctRow = parseInt(cell.dataset.correctRow);
       cell.classList.remove('correct', 'wrong');
-      if (row === correctRow) { cell.classList.add('correct'); correctCount++; }
+      if (parseInt(cell.dataset.row) === parseInt(cell.dataset.correctRow)) { cell.classList.add('correct'); correctCount++; }
       else cell.classList.add('wrong');
     });
     this.setProgress(Math.round(correctCount / total * 100));
@@ -554,19 +593,15 @@ var GameEngine = {
     else toast('放对了 ' + correctCount + '/' + total + '，看看哪排错了');
   },
   startStoryChoice: function() {
-    this.state.chapterIdx = 0;
-    this.state.choices = [];
-    this.showChapter();
+    this.state.chapterIdx = 0; this.state.choices = []; this.showChapter();
   },
   showChapter: function() {
-    var chapters = this.data.chapters;
-    var idx = this.state.chapterIdx;
+    var chapters = this.data.chapters, idx = this.state.chapterIdx;
     if (idx >= chapters.length) { this.showEnding(); return; }
     var ch = chapters[idx];
     this.setProgress(Math.round(idx / chapters.length * 100));
-    var html = '<div class="story-scene"><b>【' + ch.scene + '】</b><br/>' + ch.text + '</div>';
-    html += '<div class="story-choices">';
-    ch.choices.forEach(function(choice, i) {
+    var html = '<div class="story-scene"><b>【' + ch.scene + '】</b><br/>' + ch.text + '</div><div class="story-choices">';
+    ch.choices.forEach(function(choice) {
       html += '<button class="story-choice" data-next="' + choice.next + '">' + choice.text + '</button>';
     });
     html += '</div>';
@@ -583,48 +618,34 @@ var GameEngine = {
     });
   },
   showEnding: function(endingKey) {
-    var endings = this.data.endings;
-    var ending = endings.good_ending;
+    var endings = this.data.endings, ending = endings.good_ending;
     var lastChoice = this.state.choices[this.state.choices.length - 1];
     if (lastChoice === 'good_ending') ending = endings.good_ending;
     else if (lastChoice === 'mid_ending') ending = endings.mid_ending;
     else if (lastChoice === 'bad_ending') ending = endings.bad_ending;
-    else {
-      var firstChoice = this.state.choices[0];
-      if (firstChoice === 'ch2_bad') ending = endings.bad_ending;
-      else if (firstChoice === 'ch3_mid') ending = endings.mid_ending;
-    }
+    else { var fc = this.state.choices[0]; if (fc === 'ch2_bad') ending = endings.bad_ending; else if (fc === 'ch3_mid') ending = endings.mid_ending; }
     this.setProgress(100);
-    var html = '<div class="story-ending"><div class="ending-title">' + ending.title + '</div><div class="ending-text">' + ending.text + '</div></div>';
-    this.content.innerHTML = html;
+    this.content.innerHTML = '<div class="story-ending"><div class="ending-title">' + ending.title + '</div><div class="ending-text">' + ending.text + '</div></div>';
     var self = this;
     setTimeout(function() { self.complete(); }, 2500);
   },
   startQuizClimb: function() {
-    this.state.currentStep = 0;
-    this.state.correct = 0;
-    this.showQuestion();
+    this.state.currentStep = 0; this.state.correct = 0; this.showQuestion();
   },
   showQuestion: function() {
-    var questions = this.data.questions;
-    var idx = this.state.currentStep;
+    var questions = this.data.questions, idx = this.state.currentStep;
     if (idx >= questions.length) { this.complete(); return; }
     var q = questions[idx];
     this.setProgress(Math.round(idx / questions.length * 100));
     var html = '<div class="quiz-step"><div class="step-num">' + (idx + 1) + '</div><div class="step-label">第 ' + q.step + ' 级台阶</div></div>';
-    html += '<div class="quiz-question">' + q.q + '</div>';
-    html += '<div class="quiz-options">';
-    q.options.forEach(function(opt, i) {
-      html += '<button class="quiz-option" data-answer="' + i + '">' + opt + '</button>';
-    });
-    html += '</div>';
-    html += '<div class="quiz-hint" style="display:none">💡 ' + q.hint + '</div>';
+    html += '<div class="quiz-question">' + q.q + '</div><div class="quiz-options">';
+    q.options.forEach(function(opt, i) { html += '<button class="quiz-option" data-answer="' + i + '">' + opt + '</button>'; });
+    html += '</div><div class="quiz-hint" style="display:none">💡 ' + q.hint + '</div>';
     this.content.innerHTML = html;
     var self = this;
     this.content.querySelectorAll('.quiz-option').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        var chosen = parseInt(this.dataset.answer);
-        var correct = q.answer;
+        var chosen = parseInt(this.dataset.answer), correct = q.answer;
         self.content.querySelectorAll('.quiz-option').forEach(function(b, i) {
           if (i === correct) b.classList.add('correct');
           if (i === chosen && chosen !== correct) b.classList.add('wrong');
@@ -638,32 +659,26 @@ var GameEngine = {
   },
   startSymbolMatch: function() {
     var pairs = this.data.pairs.slice();
-    this.state.matched = 0;
-    this.state.selectedLeft = null;
+    this.state.matched = 0; this.state.selectedLeft = null;
     var rightItems = pairs.slice().sort(function(){ return Math.random() - 0.5; });
-    var html = '<div class="match-container">';
-    html += '<div class="match-col">';
+    var html = '<div class="match-container"><div class="match-col">';
     pairs.forEach(function(p) { html += '<div class="match-item" data-id="' + p.id + '" data-side="left">' + p.symbol + '</div>'; });
-    html += '</div>';
-    html += '<div class="match-col">';
+    html += '</div><div class="match-col">';
     rightItems.forEach(function(p) { html += '<div class="match-item" data-id="' + p.id + '" data-side="right">' + p.meaning + '</div>'; });
-    html += '</div>';
-    html += '</div>';
+    html += '</div></div>';
     this.content.innerHTML = html;
     this.setProgress(0);
     var self = this;
     this.content.querySelectorAll('[data-side="left"]').forEach(function(el) {
       el.addEventListener('click', function() {
         self.content.querySelectorAll('[data-side="left"]').forEach(function(e){ e.classList.remove('active'); });
-        this.classList.add('active');
-        self.state.selectedLeft = this.dataset.id;
+        this.classList.add('active'); self.state.selectedLeft = this.dataset.id;
       });
     });
     this.content.querySelectorAll('[data-side="right"]').forEach(function(el) {
       el.addEventListener('click', function() {
         if (!self.state.selectedLeft) { toast('先选左边的象形文'); return; }
-        var rightId = this.dataset.id;
-        var leftId = self.state.selectedLeft;
+        var rightId = this.dataset.id, leftId = self.state.selectedLeft;
         if (leftId === rightId) {
           this.classList.add('matched');
           self.content.querySelector('[data-side="left"][data-id="' + leftId + '"]').classList.add('matched');
@@ -678,17 +693,14 @@ var GameEngine = {
           var leftEl = self.content.querySelector('[data-side="left"][data-id="' + leftId + '"]');
           if (leftEl) leftEl.classList.add('wrong');
           toast('❌ 不对，再想想');
-          (function(el, lEl) {
-            setTimeout(function() { el.classList.remove('wrong'); if (lEl) lEl.classList.remove('wrong'); }, 600);
-          })(this, leftEl);
+          var lEl = leftEl;
+          (function(el, l) { setTimeout(function() { el.classList.remove('wrong'); if (l) l.classList.remove('wrong'); }, 600); })(this, lEl);
         }
       });
     });
   },
   startRotateAlign: function() {
-    this.state.rotation = 0;
-    this.state.round = 0;
-    this.newRound();
+    this.state.rotation = 0; this.state.round = 0; this.newRound();
   },
   newRound: function() {
     var totalRounds = this.data.totalRounds;
@@ -726,74 +738,58 @@ var GameEngine = {
   }
 };
 
-async function start() {
-  try {
-    var video = document.getElementById('arVideo');
-    try {
-      video.srcObject = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false
-      });
-      await video.play();
-      document.getElementById('dotCam').style.background = '#22c55e';
-    } catch(camErr) {
-      console.warn('摄像头启动失败（降级预览模式）:', camErr.message);
-      document.getElementById('arLoading').style.display = 'none';
-      document.getElementById('arNoCam').style.display = 'flex';
-      document.getElementById('arVideo').style.background = 'linear-gradient(135deg,#1e293b,#334155)';
-    }
-    document.getElementById('loadSub').textContent = '初始化 3D 空间';
-    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('arCanvas'), alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+function init() {
+  document.getElementById('poiTitle').textContent = POI.name;
+  document.getElementById('poiSub').textContent = POI.subtitle || '';
+  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('arCanvas'), antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x0a0a0a, 1);
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  var camPos = (POI.scene && POI.scene.cameraPos) || [0, 2.5, 6];
+  var lookAt = (POI.scene && POI.scene.cameraLookAt) || [0, 1.5, 0];
+  camera.position.set(camPos[0], camPos[1], camPos[2]);
+  camera.lookAt(lookAt[0], lookAt[1], lookAt[2]);
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0a0a0a, 8, 20);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  var sun = new THREE.DirectionalLight(0xffffff, 1.0);
+  sun.position.set(5, 8, 5);
+  scene.add(sun);
+  var fill = new THREE.DirectionalLight(0xa5b4fc, 0.4);
+  fill.position.set(-3, 3, -5);
+  scene.add(fill);
+  poiGroup = buildPOIModel(POI);
+  scene.add(poiGroup);
+  createHotspots(POI);
+  controls = new TouchControls(renderer.domElement, camera, poiGroup);
+  window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0);
-    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.set(0, 1.5, 5);
-    camera.lookAt(0, 1, 0);
-    scene = new THREE.Scene();
-    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
-    var sun = new THREE.DirectionalLight(0xffffff, 0.9);
-    sun.position.set(5, 8, 5);
-    scene.add(sun);
-    var fill = new THREE.DirectionalLight(0xa5b4fc, 0.3);
-    fill.position.set(-3, 2, -5);
-    scene.add(fill);
-    poiGroup = buildPOIModel(POI);
-    scene.add(poiGroup);
-    controls = new TouchControls(renderer.domElement, camera, poiGroup);
-    window.addEventListener('resize', function() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-    document.title = POI.name + ' · 拾迹';
-    document.getElementById('titleText').textContent = POI.name;
-    GameEngine.init();
-    document.getElementById('arLoading').style.display = 'none';
-    setTimeout(function(){ playStory(POI.plot || []); }, 800);
-    document.getElementById('btnReset').addEventListener('click', function() {
-      poiGroup.position.set(0, 0, 0); poiGroup.rotation.set(0, 0, 0); poiGroup.scale.setScalar(1);
-    });
-    document.getElementById('btnMic').addEventListener('click', function() {
-      voiceOn = !voiceOn; this.textContent = voiceOn ? '🔊' : '🔇';
-      if (!voiceOn && window.speechSynthesis) window.speechSynthesis.cancel();
-    });
-    document.getElementById('btnStory').addEventListener('click', function(){ playStory(POI.plot || []); });
-    animate();
-  } catch(e) {
-    console.error(e);
-    document.getElementById('loadSub').textContent = '初始化失败: ' + e.message;
-    document.getElementById('arLoading').querySelector('.spinner').style.borderTopColor = '#ef4444';
-  }
+  });
+  GameEngine.init();
+  document.getElementById('btnStory').addEventListener('click', function(){ playStory(POI.plot || []); });
+  document.getElementById('btnRotate').addEventListener('click', function() {
+    autoRotate = !autoRotate;
+    this.style.background = autoRotate ? 'rgba(251,191,36,.3)' : 'rgba(255,255,255,.15)';
+  });
+  document.getElementById('loading').style.display = 'none';
+  setTimeout(function(){ playStory(POI.plot || []); }, 600);
+  animate();
 }
-function closeEggModal() { document.getElementById('modalEgg').classList.remove('visible'); }
+
 function animate() {
   requestAnimationFrame(animate);
-  if (poiGroup && !gameState.active) poiGroup.rotation.y += 0.002;
+  if (poiGroup && autoRotate && !gameState.active) {
+    poiGroup.rotation.y += 0.003;
+  }
   if (controls) controls.update();
+  updateHotspotPositions();
   renderer.render(scene, camera);
 }
-start();
+
+init();
 </script>
 </body>
 </html>
