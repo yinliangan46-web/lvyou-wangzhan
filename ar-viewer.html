@@ -4,330 +4,349 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
 <meta name="theme-color" content="#0a0a0a" />
-<title>AR 空间 · 拾迹</title>
+<title>拾迹集册 · AR 空间</title>
 <script src="ar-lib/three.min.js"></script>
 <script src="touch-controls.js"></script>
 <script src="ar-stories.js"></script>
-<script src="hunt-engine.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif;color:#fff}
-button{font-family:inherit}
-
-/* ===== 摄像头背景 + Three.js 叠加 ===== */
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
 #arVideo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transform:scaleX(-1)}
 #arCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:2;touch-action:none}
-
-/* ===== 顶部状态栏 ===== */
-#arTopBar{position:fixed;top:0;left:0;right:0;z-index:10;
-  padding:max(14px,env(safe-area-inset-top)) 16px 14px;
-  background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);
-  display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+#arTopBar{position:fixed;top:0;left:0;right:0;z-index:10;padding:max(14px,env(safe-area-inset-top)) 16px 14px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);display:flex;align-items:center;justify-content:space-between;pointer-events:none}
 #arTopBar>*{pointer-events:auto}
-.ar-title{font-weight:700;font-size:17px;display:flex;align-items:center;gap:6px;
-  text-shadow:0 1px 4px rgba(0,0,0,.5)}
-.ar-title .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;
-  box-shadow:0 0 10px #22c55e;animation:pulse 1.5s infinite}
+.ar-title{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.ar-title .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px #22c55e;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .ar-btns{display:flex;gap:8px}
-.ar-btns button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;
-  padding:8px 14px;font-size:13px;cursor:pointer;transition:.2s}
+.ar-btns button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;padding:7px 13px;font-size:13px;transition:.2s}
 .ar-btns button:active{transform:scale(.95);background:rgba(255,255,255,.25)}
-
-/* ===== 加载/错误 ===== */
-#arLoading,#arError,#arNoCam{position:fixed;inset:0;z-index:30;
-  background:#000;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
-#arLoading .spinner{width:48px;height:48px;border:3px solid rgba(99,102,241,.2);
-  border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite}
+#arLoading,#arError,#arNoCam{position:fixed;inset:0;z-index:30;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+#arLoading .spinner{width:48px;height:48px;border:3px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #arLoading .text,#arError .text,#arNoCam .text{font-size:14px;color:#94a3b8;line-height:1.6}
-#arError .text b,#arNoCam .text b{color:#fff}
-#arError button,#arNoCam button{background:#6366f1;color:#fff;border:none;border-radius:8px;
-  padding:10px 24px;font-size:14px;cursor:pointer}
-#arError button:active,#arNoCam button:active{transform:scale(.96)}
-
-/* ===== 故事气泡 ===== */
-#arBubble{position:fixed;left:16px;right:16px;bottom:180px;z-index:10;
-  background:rgba(15,23,42,.85);backdrop-filter:blur(14px);border:1px solid rgba(99,102,241,.3);
-  border-radius:16px;padding:16px 18px;max-width:600px;margin:0 auto;
-  box-shadow:0 10px 40px rgba(99,102,241,.2);
-  opacity:0;transform:translateY(20px);transition:opacity .35s,transform .35s}
-#arBubble.visible{opacity:1;transform:translateY(0)}
+#arError button,#arNoCam button{background:#6366f1;color:#fff;border-radius:8px;padding:10px 24px;font-size:14px}
+#arBubble{position:fixed;left:16px;right:16px;bottom:20px;z-index:15;background:rgba(15,23,42,.9);backdrop-filter:blur(14px);border:1px solid rgba(99,102,241,.3);border-radius:16px;padding:16px 18px;max-width:600px;margin:0 auto;box-shadow:0 10px 40px rgba(99,102,241,.2);opacity:0;transform:translateY(20px);transition:opacity .35s,transform .35s;pointer-events:none}
+#arBubble.visible{opacity:1;transform:translateY(0);pointer-events:auto}
 #arBubble .speaker{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-#arBubble .avatar{width:32px;height:32px;border-radius:50%;
-  background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;
-  justify-content:center;font-size:16px}
+#arBubble .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:16px}
 #arBubble .name{font-weight:600;font-size:14px;color:#a5b4fc}
 #arBubble .text{font-size:15px;line-height:1.7;color:#e2e8f0}
-#arBubble .pb{margin-top:12px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
-#arBubble .pb>div{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);width:0;transition:width .1s linear}
-
-/* ===== 寻宝进度 ===== */
-#arHunt{position:fixed;left:16px;right:16px;bottom:16px;z-index:10;
-  background:rgba(15,23,42,.85);backdrop-filter:blur(14px);border:1px solid rgba(245,158,11,.3);
-  border-radius:16px;padding:14px 18px;
-  box-shadow:0 10px 40px rgba(245,158,11,.15)}
-#arHunt .title{font-weight:600;font-size:14px;color:#fbbf24;margin-bottom:10px;display:flex;justify-content:space-between}
-#arHunt .title b{color:#fff}
-#arHunt .artifacts{display:flex;gap:12px;flex-wrap:wrap}
-#arHunt .artifact{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
-  justify-content:center;font-size:20px;background:rgba(255,255,255,.08);
-  border:2px solid rgba(255,255,255,.1);transition:.3s;position:relative}
-#arHunt .artifact.found{background:linear-gradient(135deg,#f59e0b,#d97706);
-  border-color:#fbbf24;transform:scale(1.1)}
-#arHunt .artifact.found::after{content:'✓';position:absolute;bottom:-4px;right:-4px;
-  background:#22c55e;color:#fff;border-radius:50%;width:18px;height:18px;
-  font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #0f172a}
-
-/* ===== Toast ===== */
-#arToast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
-  background:rgba(15,23,42,.9);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);
-  border-radius:24px;padding:10px 20px;font-size:14px;z-index:40;
-  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+#arBubble .next-hint{margin-top:10px;font-size:12px;color:#64748b;text-align:right}
+#gamePanel{position:fixed;left:16px;right:16px;bottom:20px;z-index:20;background:rgba(15,23,42,.95);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:18px;max-width:600px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:translateY(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+#gamePanel.visible{transform:translateY(0)}
+#gamePanel .game-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+#gamePanel .game-title{font-weight:700;font-size:16px;color:#fbbf24}
+#gamePanel .game-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);color:#94a3b8;font-size:14px;display:flex;align-items:center;justify-content:center}
+#gamePanel .game-instruction{font-size:13px;color:#94a3b8;line-height:1.6;margin-bottom:14px}
+.game-progress{height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.game-progress>div{height:100%;background:linear-gradient(90deg,#f59e0b,#fbbf24);width:0;transition:width .3s}
+.sort-list{display:flex;flex-direction:column;gap:8px}
+.sort-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:12px;font-size:15px;transition:.2s;user-select:none}
+.sort-item .emoji{font-size:22px}.sort-item .name{flex:1;font-weight:600}
+.sort-item.correct{border-color:#22c55e;background:rgba(34,197,94,.15)}
+.sort-item.wrong{border-color:#ef4444;background:rgba(239,68,68,.15);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.place-grid{display:grid;gap:6px;margin-bottom:12px}
+.place-row-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.place-cell{height:44px;border:2px dashed rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;transition:.2s}
+.place-cell.filled{border-style:solid;border-color:#fbbf24;background:rgba(251,191,36,.1)}
+.place-cell.correct{border-color:#22c55e;background:rgba(34,197,94,.15)}
+.place-cell.wrong{border-color:#ef4444;background:rgba(239,68,68,.15)}
+.place-pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
+.place-piece{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:grab;transition:.2s}
+.story-scene{font-size:14px;color:#e2e8f0;line-height:1.7;margin-bottom:16px;padding:12px;background:rgba(99,102,241,.1);border-radius:10px;border-left:3px solid #6366f1}
+.story-choices{display:flex;flex-direction:column;gap:8px}
+.story-choice{padding:12px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:14px;color:#e2e8f0;text-align:left;transition:.2s;line-height:1.5}
+.story-ending{text-align:center;padding:20px 0}
+.story-ending .ending-title{font-size:18px;font-weight:700;margin-bottom:12px;background:linear-gradient(90deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.story-ending .ending-text{font-size:14px;color:#94a3b8;line-height:1.7}
+.quiz-step{text-align:center;margin-bottom:12px}
+.quiz-step .step-num{font-size:24px;font-weight:800;color:#fbbf24}
+.quiz-step .step-label{font-size:12px;color:#64748b}
+.quiz-question{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.5}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quiz-option{padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:13px;color:#e2e8f0;text-align:center;transition:.2s}
+.quiz-option.correct{background:rgba(34,197,94,.2);border-color:#22c55e}
+.quiz-option.wrong{background:rgba(239,68,68,.2);border-color:#ef4444}
+.quiz-hint{margin-top:10px;font-size:12px;color:#64748b;text-align:center}
+.match-container{display:flex;justify-content:space-between;gap:16px}
+.match-col{flex:1;display:flex;flex-direction:column;gap:10px}
+.match-item{padding:12px;text-align:center;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;font-size:20px;transition:.2s}
+.match-item.active{border-color:#fbbf24;background:rgba(251,191,36,.15)}
+.match-item.matched{border-color:#22c55e;background:rgba(34,197,94,.15);opacity:.6}
+.match-item.wrong{border-color:#ef4444;background:rgba(239,68,68,.15);animation:shake .3s}
+.rotate-wheel{width:200px;height:200px;margin:0 auto 16px;position:relative}
+.rotate-wheel .wheel-bg{width:100%;height:100%;border-radius:50%;background:conic-gradient(from 0deg,#c41e3a,#f4a460,#c41e3a,#f4a460,#c41e3a);position:absolute;transition:transform .1s}
+.rotate-wheel .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #fff;z-index:2}
+.rotate-wheel .wheel-label{position:absolute;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:18px;z-index:1}
+.rotate-hint{text-align:center;font-size:13px;color:#94a3b8;margin-bottom:14px}
+.rotate-btns{display:flex;justify-content:center;gap:12px}
+.rotate-btns button{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:24px;color:#fff}
+.game-submit{width:100%;margin-top:14px;padding:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:12px;font-size:15px;font-weight:600;transition:.2s}
+#arToast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(15,23,42,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:10px 20px;font-size:14px;z-index:40;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
 #arToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ===== 彩蛋/印记弹窗 ===== */
-.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.8);
-  display:flex;align-items:center;justify-content:center;padding:24px;
-  opacity:0;pointer-events:none;transition:.3s}
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(8px)}
 .modal-bg.visible{opacity:1;pointer-events:auto}
-.modal{background:linear-gradient(160deg,#1e1b4b,#0f172a);border:1px solid rgba(99,102,241,.4);
-  border-radius:20px;padding:28px;text-align:center;max-width:360px;width:100%;
-  box-shadow:0 30px 80px rgba(99,102,241,.3);transform:scale(.8);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.modal{background:linear-gradient(160deg,#1e1b4b,#0f172a);border:1px solid rgba(99,102,241,.4);border-radius:20px;padding:28px;text-align:center;max-width:360px;width:100%;box-shadow:0 30px 80px rgba(99,102,241,.3);transform:scale(.8);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
 .modal-bg.visible .modal{transform:scale(1)}
-.modal h2{font-size:20px;margin-bottom:8px;background:linear-gradient(90deg,#a5b4fc,#fbbf24);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.modal h2{font-size:20px;margin-bottom:8px;background:linear-gradient(90deg,#a5b4fc,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .modal p{color:#a5b4fc;font-size:14px;margin-bottom:16px;line-height:1.6}
 .modal .stamp{font-size:72px;margin:10px 0 6px;filter:drop-shadow(0 4px 20px rgba(251,191,36,.4))}
-.modal button{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;
-  border-radius:12px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer}
-.modal button:active{transform:scale(.96)}
+.modal button{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;padding:12px 32px;font-size:15px;font-weight:600}
 .modal .hint{font-size:12px;color:#64748b;margin-top:10px}
-
-/* ===== 彩蛋切换 ===== */
-#arTab{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:10;
-  background:rgba(15,23,42,.85);backdrop-filter:blur(14px);border-radius:20px;padding:4px;
-  display:flex;gap:2px;border:1px solid rgba(255,255,255,.15)}
-#arTab button{background:transparent;border:none;color:#94a3b8;padding:6px 16px;
-  font-size:12px;border-radius:16px;cursor:pointer;transition:.2s}
-#arTab button.active{background:rgba(99,102,241,.4);color:#fff}
-#arTab button.locked{opacity:.4;cursor:not-allowed}
-
-@media (min-width:768px){
-  #arBubble{max-width:500px}
-}
+#gameEntry{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:12;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:30px;padding:14px 28px;font-size:15px;font-weight:700;box-shadow:0 8px 30px rgba(245,158,11,.4);transition:.2s;display:none;align-items:center;gap:8px}
+#gameEntry.visible{display:flex;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@media (min-width:768px){#arBubble,#gamePanel{max-width:500px}}
 </style>
 </head>
 <body>
-
-<!-- 摄像头背景 -->
 <video id="arVideo" autoplay playsinline muted></video>
-
-<!-- Three.js 透明叠加 -->
 <canvas id="arCanvas"></canvas>
-
-<!-- 顶部状态栏 -->
 <div id="arTopBar">
-  <div class="ar-title"><span class="dot" id="dotCam"></span><span id="titleText">AR 空间</span></div>
+  <div class="ar-title"><span class="dot" id="dotCam"></span><span id="titleText">拾迹集册</span></div>
   <div class="ar-btns">
-    <button id="btnStory" title="重放故事">▶ 故事</button>
-    <button id="btnReset" title="重置视角">↺</button>
-    <button id="btnMic" title="语音">🔊</button>
+    <button id="btnStory">▶ 故事</button>
+    <button id="btnReset">↺</button>
+    <button id="btnMic">🔊</button>
   </div>
 </div>
-
-<!-- 彩蛋/主线 Tab -->
-<div id="arTab">
-  <button id="tabMain" class="active">📖 主线故事</button>
-  <button id="tabEgg" class="locked">🎭 隐藏彩蛋 🔒</button>
-</div>
-
-<!-- 故事气泡 -->
 <div id="arBubble">
   <div class="speaker">
     <div class="avatar" id="bAv">👤</div>
     <div class="name" id="bName">旁白</div>
   </div>
   <div class="text" id="bText">...</div>
-  <div class="pb"><div id="bPb"></div></div>
+  <div class="next-hint">点击继续 ▼</div>
 </div>
-
-<!-- 寻宝进度 -->
-<div id="arHunt">
-  <div class="title">🔍 拾迹寻宝 <span id="huntTitle"><b id="huntFound">0</b>/<b id="huntTotal">0</b></span></div>
-  <div class="artifacts" id="huntList"></div>
+<button id="gameEntry">🎮 开始挑战</button>
+<div id="gamePanel">
+  <div class="game-header">
+    <div class="game-title" id="gameTitle">游戏</div>
+    <button class="game-close" id="gameClose">✕</button>
+  </div>
+  <div class="game-instruction" id="gameInstruction"></div>
+  <div class="game-progress"><div id="gameProgressBar"></div></div>
+  <div id="gameContent"></div>
 </div>
-
-<!-- Toast -->
 <div id="arToast"></div>
-
-<!-- 加载 -->
 <div id="arLoading">
   <div class="spinner"></div>
-  <div class="text">启动 AR 空间中...<br /><span id="loadSub">请求摄像头权限</span></div>
+  <div class="text">启动拾迹空间中...<br /><span id="loadSub">请求摄像头权限</span></div>
 </div>
-
-<!-- 无摄像头降级 -->
 <div id="arNoCam" style="display:none">
   <div class="spinner" style="border-top-color:#8b5cf6"></div>
   <div class="text"><b>预览模式</b><br />当前环境无法使用摄像头<br />已自动进入 3D 模型预览</div>
   <button onclick="location.reload()">重新加载</button>
 </div>
-
-<!-- 印记弹窗 -->
 <div class="modal-bg" id="modalStamp">
   <div class="modal">
     <div class="stamp" id="stampIcon">🏛️</div>
     <h2 id="stampTitle">拾迹印记已解锁！</h2>
-    <p id="stampDesc">集齐了全部线索，获得专属印记</p>
+    <p id="stampDesc"></p>
     <button onclick="location.href='album.html'">去集册查看</button>
     <div class="hint">印记已自动存入拾迹集册</div>
   </div>
 </div>
-
-<!-- 彩蛋解锁弹窗 -->
 <div class="modal-bg" id="modalEgg">
   <div class="modal">
     <div class="stamp" style="font-size:56px">🎭</div>
     <h2>隐藏彩蛋已解锁！</h2>
     <p id="eggDesc">发现了一个隐藏的秘密...</p>
-    <button onclick="document.getElementById('modalEgg').classList.remove('visible'); document.getElementById('tabEgg').classList.remove('locked'); document.getElementById('tabEgg').textContent='🎭 隐藏彩蛋';">继续探索</button>
+    <button onclick="closeEggModal()">继续探索</button>
   </div>
 </div>
-
 <script>
 'use strict';
-
-/* ============ 配置 ============ */
 var params = new URLSearchParams(location.search);
 var POI_ID = params.get('poi') || 'gugong';
 var POI = (window.AR_POIS && window.AR_POIS.find(function(p){ return p.id === POI_ID; })) ||
           (window.AR_POIS && window.AR_POIS[0]);
-if (!POI) {
-  POI = { id: 'default', name: '3D 预览', plot: [], easterEggs: [], artifacts: [], stamp: { name: '拾迹者', icon: '✨' } };
-}
-// 统一便捷字段（兼容两种数据结构）
-POI._easterPlot = (POI.easterEggs && POI.easterEggs[0] && POI.easterEggs[0].plot) || POI._easterPlot || null;
-POI._easterIntro = (POI.easterEggs && POI.easterEggs[0] && POI.easterEggs[0].name) || POI._easterIntro || '发现了隐藏的秘密...';
-POI._stampName = (POI.stamp && POI.stamp.name) || POI._stampName || '拾迹印记';
-POI._stampIcon = (POI.stamp && POI.stamp.icon) || '🏛️';
-
-/* ============ 全局变量 ============ */
+var HuntStorage = {
+  LS_STAMPS: 'myl_hunt_stamps_v2',
+  getStamps: function() { try { return JSON.parse(localStorage.getItem(this.LS_STAMPS) || '[]'); } catch(e) { return []; } },
+  addStamp: function(stampId) { var arr = this.getStamps(); if (arr.indexOf(stampId) < 0) { arr.push(stampId); localStorage.setItem(this.LS_STAMPS, JSON.stringify(arr)); } return arr; },
+  hasStamp: function(id) { return this.getStamps().indexOf(id) >= 0; }
+};
 var scene, camera, renderer, controls;
-var poiGroup, artifacts = [];
-var storyTimer, currentTab = 'main';
-var huntState = { found: new Set(), total: 0 };
+var poiGroup;
 var voiceOn = true;
+var gameState = { active: false, completed: false, type: null };
 
-/* ============ 3D 模型生成（每种景点独特） ============ */
 function buildPOIModel(poi) {
   var g = new THREE.Group();
-  var s = 1.5;  // 基础尺寸
-
+  var s = 1.2;
   switch(poi.id) {
-    case 'bingmayong': {
-      // 兵马俑
-      var matBody = new THREE.MeshStandardMaterial({ color: 0xc8a07a, roughness: 0.9 });
-      var matHead = new THREE.MeshStandardMaterial({ color: 0xd4b48c, roughness: 0.85 });
-      for (var i = 0; i < 8; i++) {
-        var body = new THREE.Mesh(new THREE.BoxGeometry(0.55 * s, 1.6 * s, 0.35 * s), matBody);
-        body.position.set(((i % 4) - 1.5) * 0.9 * s, 0.8 * s, Math.floor(i / 4) * 1.1 * s);
-        g.add(body);
-        var head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * s, 16, 12), matHead);
-        head.position.copy(body.position).add(new THREE.Vector3(0, 1.6 * s, 0));
-        g.add(head);
+    case 'gugong': {
+      var redMat = new THREE.MeshStandardMaterial({ color: 0x9a1a1a, roughness: 0.5, metalness: 0.1 });
+      var goldMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.8, roughness: 0.25 });
+      var stoneMat = new THREE.MeshStandardMaterial({ color: 0xc9c4bb, roughness: 0.8 });
+      for (var i = 0; i < 3; i++) {
+        var base = new THREE.Mesh(new THREE.BoxGeometry((4 - i * 0.4) * s, 0.3 * s, (3 - i * 0.3) * s), stoneMat);
+        base.position.y = i * 0.35 * s + 0.15 * s;
+        g.add(base);
+      }
+      var pillarMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.35 });
+      for (var i = -2; i <= 2; i++) for (var j = -1; j <= 1; j++) {
+        var p = new THREE.Mesh(new THREE.CylinderGeometry(0.1 * s, 0.1 * s, 2 * s, 12), pillarMat);
+        p.position.set(i * 0.7 * s, 1.1 * s, j * 0.8 * s);
+        g.add(p);
+      }
+      var body = new THREE.Mesh(new THREE.BoxGeometry(3.2 * s, 1.8 * s, 2.2 * s), redMat);
+      body.position.y = 1.2 * s;
+      g.add(body);
+      var roof1 = new THREE.Mesh(new THREE.ConeGeometry(2.6 * s, 1 * s, 4), goldMat);
+      roof1.rotation.y = Math.PI / 4;
+      roof1.position.y = 2.6 * s;
+      g.add(roof1);
+      var roof2 = new THREE.Mesh(new THREE.ConeGeometry(2.2 * s, 0.8 * s, 4), goldMat);
+      roof2.rotation.y = Math.PI / 4;
+      roof2.position.y = 3.5 * s;
+      g.add(roof2);
+      for (var i = 0; i < 10; i++) {
+        var beast = new THREE.Mesh(new THREE.BoxGeometry(0.08 * s, 0.12 * s, 0.08 * s), goldMat);
+        beast.position.set(-1.2 * s + i * 0.27 * s, 3.1 * s, 0);
+        g.add(beast);
       }
       break;
     }
-    case 'gugong': {
-      // 故宫太和殿
-      var redMat = new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.5 });
-      var goldMat = new THREE.MeshStandardMaterial({ color: 0xf5d76e, metalness: 0.6, roughness: 0.3 });
-      var base = new THREE.Mesh(new THREE.BoxGeometry(4 * s, 0.5 * s, 3 * s), redMat);
-      base.position.y = 0.25 * s;
-      g.add(base);
-      var pillarMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.4 });
-      for (var i = -2; i <= 2; i++) for (var j = -1; j <= 1; j++) {
-        var p = new THREE.Mesh(new THREE.CylinderGeometry(0.12 * s, 0.12 * s, 2.5 * s, 8), pillarMat);
-        p.position.set(i * 0.9 * s, 1.5 * s, j * 1 * s);
-        g.add(p);
+    case 'bingmayong': {
+      var pitMat = new THREE.MeshStandardMaterial({ color: 0x5c4a3a, roughness: 0.95 });
+      var pit = new THREE.Mesh(new THREE.BoxGeometry(5 * s, 0.3 * s, 3 * s), pitMat);
+      pit.position.y = 0.15 * s;
+      g.add(pit);
+      var bodyMat = new THREE.MeshStandardMaterial({ color: 0xb8956e, roughness: 0.9 });
+      var headMat = new THREE.MeshStandardMaterial({ color: 0xc9a87c, roughness: 0.85 });
+      for (var row = 0; row < 3; row++) {
+        for (var col = 0; col < 6; col++) {
+          var bx = (col - 2.5) * 0.7 * s;
+          var bz = (row - 1) * 0.9 * s;
+          var body = new THREE.Mesh(new THREE.BoxGeometry(0.25 * s, 0.9 * s, 0.18 * s), bodyMat);
+          body.position.set(bx, 0.75 * s, bz);
+          g.add(body);
+          var head = new THREE.Mesh(new THREE.SphereGeometry(0.1 * s, 12, 10), headMat);
+          head.position.set(bx, 1.3 * s, bz);
+          g.add(head);
+          if (row === 0) {
+            var bow = new THREE.Mesh(new THREE.BoxGeometry(0.02 * s, 0.3 * s, 0.02 * s), new THREE.MeshStandardMaterial({ color: 0x4a3728 }));
+            bow.position.set(bx, 0.9 * s, bz - 0.15 * s);
+            g.add(bow);
+          } else if (row === 2) {
+            var chariot = new THREE.Mesh(new THREE.BoxGeometry(0.5 * s, 0.15 * s, 0.3 * s), new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.7 }));
+            chariot.position.set(bx, 0.45 * s, bz);
+            g.add(chariot);
+          }
+        }
       }
-      var roof = new THREE.Mesh(new THREE.ConeGeometry(3.2 * s, 1.5 * s, 4), goldMat);
-      roof.rotation.y = Math.PI / 4;
-      roof.position.y = 3.5 * s;
-      g.add(roof);
       break;
     }
     case 'xihu': {
-      // 西湖：湖面 + 三潭印月
-      var waterMat = new THREE.MeshStandardMaterial({ color: 0x2c5f8f, metalness: 0.3, roughness: 0.4 });
-      var water = new THREE.Mesh(new THREE.CircleGeometry(3 * s, 32), waterMat);
+      var waterMat = new THREE.MeshStandardMaterial({ color: 0x2c5f8f, metalness: 0.4, roughness: 0.3 });
+      var water = new THREE.Mesh(new THREE.CircleGeometry(4 * s, 48), waterMat);
       water.rotation.x = -Math.PI / 2;
+      water.position.y = 0;
       g.add(water);
-      var stoneMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.9 });
-      for (var i = 0; i < 3; i++) {
-        var st = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * s, 0.2 * s, 0.8 * s, 12), stoneMat);
-        var a = (i / 3) * Math.PI * 2;
-        st.position.set(Math.cos(a) * 1.2 * s, 0.4 * s, Math.sin(a) * 1.2 * s);
-        g.add(st);
+      var bridgeMat = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.85 });
+      var bridge = new THREE.Mesh(new THREE.BoxGeometry(3.5 * s, 0.15 * s, 0.5 * s), bridgeMat);
+      bridge.position.y = 0.3 * s;
+      g.add(bridge);
+      for (var i = 0; i < 2; i++) {
+        var rail = new THREE.Mesh(new THREE.BoxGeometry(3.5 * s, 0.3 * s, 0.05 * s), bridgeMat);
+        rail.position.set(0, 0.5 * s, (i === 0 ? -0.22 : 0.22) * s);
+        g.add(rail);
       }
+      var towerBody = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * s, 0.25 * s, 1 * s, 8), new THREE.MeshStandardMaterial({ color: 0xaa4444, roughness: 0.6 }));
+      towerBody.position.set(2 * s, 0.5 * s, -1.5 * s);
+      g.add(towerBody);
+      var towerTop = new THREE.Mesh(new THREE.ConeGeometry(0.12 * s, 0.3 * s, 8), new THREE.MeshStandardMaterial({ color: 0x883333 }));
+      towerTop.position.set(2 * s, 1.15 * s, -1.5 * s);
+      g.add(towerTop);
+      var umbrella = new THREE.Mesh(new THREE.ConeGeometry(0.25 * s, 0.15 * s, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, transparent: true, opacity: 0.9 }));
+      umbrella.position.set(0.5 * s, 0.8 * s, 0);
+      g.add(umbrella);
       break;
     }
     case 'zhongshan': {
-      // 中山陵：阶梯 + 牌坊
-      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.6 });
-      for (var i = 0; i < 5; i++) {
-        var step = new THREE.Mesh(new THREE.BoxGeometry(3 * s, 0.15 * s, 0.4 * s), whiteMat);
-        step.position.y = i * 0.15 * s;
-        step.position.z = -i * 0.5 * s;
+      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xe8e4de, roughness: 0.6 });
+      var arch = new THREE.Mesh(new THREE.BoxGeometry(1.5 * s, 0.15 * s, 0.1 * s), whiteMat);
+      arch.position.set(0, 1.5 * s, 1.5 * s);
+      g.add(arch);
+      var pillarL = new THREE.Mesh(new THREE.CylinderGeometry(0.06 * s, 0.06 * s, 1.5 * s, 8), whiteMat);
+      pillarL.position.set(-0.65 * s, 0.75 * s, 1.5 * s);
+      g.add(pillarL);
+      var pillarR = pillarL.clone();
+      pillarR.position.x = 0.65 * s;
+      g.add(pillarR);
+      for (var i = 0; i < 10; i++) {
+        var step = new THREE.Mesh(new THREE.BoxGeometry(2.5 * s, 0.12 * s, 0.4 * s), whiteMat);
+        step.position.y = i * 0.12 * s + 0.06 * s;
+        step.position.z = 1.0 * s - i * 0.4 * s;
         g.add(step);
       }
-      var hall = new THREE.Mesh(new THREE.BoxGeometry(2 * s, 1.2 * s, 1.5 * s), whiteMat);
-      hall.position.set(0, 1.2 * s, -2.5 * s);
+      var hall = new THREE.Mesh(new THREE.BoxGeometry(1.8 * s, 1.2 * s, 1.2 * s), whiteMat);
+      hall.position.set(0, 0.6 * s + 10 * 0.12 * s, -2.8 * s);
       g.add(hall);
-      var roof = new THREE.Mesh(new THREE.ConeGeometry(1.3 * s, 0.6 * s, 4), new THREE.MeshStandardMaterial({ color: 0x2563eb }));
-      roof.rotation.y = Math.PI / 4;
-      roof.position.copy(hall.position).add(new THREE.Vector3(0, 0.9 * s, 0));
-      g.add(roof);
+      var hallRoof = new THREE.Mesh(new THREE.ConeGeometry(1.1 * s, 0.5 * s, 4), new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.4 }));
+      hallRoof.rotation.y = Math.PI / 4;
+      hallRoof.position.copy(hall.position).add(new THREE.Vector3(0, 0.85 * s, 0));
+      g.add(hallRoof);
       break;
     }
     case 'yulong': {
-      // 玉龙雪山
-      var snowMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4, metalness: 0.1 });
-      var rockMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.9 });
-      var body = new THREE.Mesh(new THREE.ConeGeometry(2 * s, 4 * s, 6), rockMat);
-      body.position.y = 2 * s;
-      g.add(body);
-      var cap = new THREE.Mesh(new THREE.ConeGeometry(0.8 * s, 1.5 * s, 6), snowMat);
-      cap.position.y = 4 * s;
+      var rockMat = new THREE.MeshStandardMaterial({ color: 0x5a6578, roughness: 0.95 });
+      var snowMat = new THREE.MeshStandardMaterial({ color: 0xf5f8fc, roughness: 0.35, metalness: 0.05 });
+      var peak = new THREE.Mesh(new THREE.ConeGeometry(2 * s, 3.5 * s, 6), rockMat);
+      peak.position.y = 1.75 * s;
+      g.add(peak);
+      var cap = new THREE.Mesh(new THREE.ConeGeometry(0.8 * s, 1.2 * s, 6), snowMat);
+      cap.position.y = 3.2 * s;
       g.add(cap);
+      var peak2 = new THREE.Mesh(new THREE.ConeGeometry(1.2 * s, 2.2 * s, 6), rockMat);
+      peak2.position.set(1.8 * s, 1.1 * s, -0.5 * s);
+      g.add(peak2);
+      var cap2 = new THREE.Mesh(new THREE.ConeGeometry(0.5 * s, 0.7 * s, 6), snowMat);
+      cap2.position.set(1.8 * s, 2.25 * s, -0.5 * s);
+      g.add(cap2);
+      var lake = new THREE.Mesh(new THREE.CircleGeometry(1 * s, 24), new THREE.MeshStandardMaterial({ color: 0x4a9fd4, metalness: 0.5, roughness: 0.2, transparent: true, opacity: 0.8 }));
+      lake.rotation.x = -Math.PI / 2;
+      lake.position.set(-1 * s, 0.02, 1 * s);
+      g.add(lake);
+      var stele = new THREE.Mesh(new THREE.BoxGeometry(0.3 * s, 0.8 * s, 0.1 * s), new THREE.MeshStandardMaterial({ color: 0x6b5344, roughness: 0.9 }));
+      stele.position.set(-1.2 * s, 0.4 * s, 0.5 * s);
+      g.add(stele);
       break;
     }
     case 'potala': {
-      // 布达拉宫
-      var redMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.7 });
-      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.6 });
-      var white = new THREE.Mesh(new THREE.BoxGeometry(3 * s, 2 * s, 1.5 * s), whiteMat);
-      white.position.y = 1 * s;
-      g.add(white);
-      var red = new THREE.Mesh(new THREE.BoxGeometry(1.8 * s, 1.3 * s, 1.2 * s), redMat);
-      red.position.set(0, 3.65 * s, 0);
+      var hillMat = new THREE.MeshStandardMaterial({ color: 0x7a6b5d, roughness: 0.95 });
+      var hill = new THREE.Mesh(new THREE.ConeGeometry(3 * s, 1.5 * s, 8), hillMat);
+      hill.position.y = 0.75 * s;
+      g.add(hill);
+      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: 0.55 });
+      var w1 = new THREE.Mesh(new THREE.BoxGeometry(1.2 * s, 1.8 * s, 1 * s), whiteMat);
+      w1.position.set(-1 * s, 2 * s, 0);
+      g.add(w1);
+      var w2 = w1.clone();
+      w2.position.x = 1 * s;
+      g.add(w2);
+      var redMat = new THREE.MeshStandardMaterial({ color: 0x9a1a1a, roughness: 0.6 });
+      var red = new THREE.Mesh(new THREE.BoxGeometry(1.4 * s, 2.2 * s, 1.2 * s), redMat);
+      red.position.set(0, 2.3 * s, 0);
       g.add(red);
-      var roof = new THREE.Mesh(new THREE.BoxGeometry(1.9 * s, 0.1 * s, 1.3 * s), new THREE.MeshStandardMaterial({ color: 0x1e3a8a }));
-      roof.position.copy(red.position).add(new THREE.Vector3(0, 0.7 * s, 0));
-      g.add(roof);
+      var goldMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.9, roughness: 0.15, emissive: 0x332200, emissiveIntensity: 0.3 });
+      var roof1 = new THREE.Mesh(new THREE.BoxGeometry(1.5 * s, 0.15 * s, 1.3 * s), goldMat);
+      roof1.position.set(0, 3.5 * s, 0);
+      g.add(roof1);
+      var goldPositions = [[-0.5, 3.7, -0.3], [0.5, 3.7, -0.3], [-0.5, 3.7, 0.3], [0.5, 3.7, 0.3]];
+      goldPositions.forEach(function(pos) {
+        var tower = new THREE.Mesh(new THREE.ConeGeometry(0.1 * s, 0.25 * s, 6), goldMat);
+        tower.position.set(pos[0] * s, pos[1] * s, pos[2] * s);
+        g.add(tower);
+      });
       break;
     }
-    default: {
-      var geo = new THREE.DodecahedronGeometry(0.8 * s, 0);
-      var mat = new THREE.MeshStandardMaterial({ color: 0x6366f1, metalness: 0.4, roughness: 0.3 });
-      g.add(new THREE.Mesh(geo, mat));
-    }
   }
-
-  // 整体居中 + 让底在 y=0
   g.updateMatrixWorld();
   var box = new THREE.Box3().setFromObject(g);
   var cx = (box.min.x + box.max.x) / 2;
@@ -336,78 +355,379 @@ function buildPOIModel(poi) {
   g.position.x = -cx;
   g.position.z = -cz;
   g.position.y = -bottom;
-
   return g;
 }
 
-/* ============ 寻宝线索（漂浮在 3D 空间） ============ */
-function spawnArtifacts(poi) {
-  var list = (poi.artifacts || []).slice();
-  huntState.total = list.length;
-  huntState.found.clear();
-  document.getElementById('huntTotal').textContent = list.length;
-  artifacts = [];
+var storyIdx = 0, storyLines = [], storyTimer = null;
+function playStory(lines) { storyLines = lines || []; storyIdx = 0; showNextLine(); }
+function showNextLine() {
+  var bubble = document.getElementById('arBubble');
+  if (storyIdx >= storyLines.length) {
+    bubble.classList.remove('visible');
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    setTimeout(function() { if (!gameState.completed) document.getElementById('gameEntry').classList.add('visible'); }, 600);
+    return;
+  }
+  var ln = storyLines[storyIdx];
+  document.getElementById('bAv').textContent = ln.avatar || '👤';
+  document.getElementById('bName').textContent = ln.speaker || '旁白';
+  document.getElementById('bText').textContent = ln.text;
+  bubble.classList.add('visible');
+  if (voiceOn && window.speechSynthesis) {
+    try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(ln.text); u.lang = 'zh-CN'; u.rate = 0.95; window.speechSynthesis.speak(u); } catch(e) {}
+  }
+  clearTimeout(storyTimer);
+  storyTimer = setTimeout(function() { storyIdx++; showNextLine(); }, ln.duration || 3500);
+}
+document.getElementById('arBubble').addEventListener('click', function() {
+  clearTimeout(storyTimer); storyIdx++; showNextLine();
+});
 
-  // 随机在模型周围散布
-  var bounds = new THREE.Box3().setFromObject(poiGroup);
-  var cx = (bounds.min.x + bounds.max.x) / 2;
-  var cy = (bounds.min.y + bounds.max.y) / 2;
-  var cz = (bounds.min.z + bounds.max.z) / 2;
-  var rangeX = (bounds.max.x - bounds.min.x) / 2 + 0.8;
-  var rangeZ = (bounds.max.z - bounds.min.z) / 2 + 0.8;
-  var rangeY = (bounds.max.y - bounds.min.y) / 2 + 0.5;
-
-  // 准备 UI 列表
-  var huntList = document.getElementById('huntList');
-  huntList.innerHTML = '';
-
-  list.forEach(function(a, idx) {
-    // 3D 线索物体
-    var geo, color;
-    switch(a.type) {
-      case 'scroll': geo = new THREE.TorusGeometry(0.15, 0.06, 8, 24); color = 0xfbbf24; break;
-      case 'gem': geo = new THREE.OctahedronGeometry(0.18); color = 0xec4899; break;
-      case 'seal': geo = new THREE.BoxGeometry(0.22, 0.22, 0.22); color = 0xef4444; break;
-      case 'sword': geo = new THREE.ConeGeometry(0.1, 0.35, 4); color = 0x60a5fa; break;
-      default: geo = new THREE.IcosahedronGeometry(0.16); color = 0x8b5cf6;
-    }
-    var mat = new THREE.MeshStandardMaterial({
-      color: color, metalness: 0.6, roughness: 0.2,
-      emissive: color, emissiveIntensity: 0.4
-    });
-    var mesh = new THREE.Mesh(geo, mat);
-    // 随机位置
-    mesh.position.set(
-      cx + (Math.random() - 0.5) * rangeX * 2,
-      cy + (Math.random() - 0.2) * rangeY * 2,
-      cz + (Math.random() - 0.5) * rangeZ * 2
-    );
-    // 光效光晕
-    var light = new THREE.PointLight(color, 0.8, 2);
-    mesh.add(light);
-    poiGroup.add(mesh);
-
-    artifacts.push({
-      id: a.id, name: a.name, mesh: mesh,
-      baseY: mesh.position.y, phase: Math.random() * Math.PI * 2,
-      found: false, trigger: a.trigger || null
-    });
-
-    // UI 条目
-    var emojiMap = { scroll: '📜', gem: '💎', seal: '🔴', sword: '⚔️', hidden: '🎭' };
-    var div = document.createElement('div');
-    div.className = 'artifact';
-    div.title = a.name;
-    div.dataset.id = a.id;
-    div.textContent = emojiMap[a.type] || '✨';
-    huntList.appendChild(div);
-  });
+var _toastT;
+function toast(msg) {
+  var t = document.getElementById('arToast');
+  t.textContent = msg; t.classList.add('visible');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(function(){ t.classList.remove('visible'); }, 2200);
 }
 
-/* ============ 摄像头 + Three.js 初始化 ============ */
+var GameEngine = {
+  panel: null, content: null, progressBar: null, type: null, data: null, state: {},
+  init: function() {
+    this.panel = document.getElementById('gamePanel');
+    this.content = document.getElementById('gameContent');
+    this.progressBar = document.getElementById('gameProgressBar');
+    document.getElementById('gameClose').addEventListener('click', this.close.bind(this));
+    document.getElementById('gameEntry').addEventListener('click', this.open.bind(this));
+  },
+  open: function() {
+    if (!POI.game) { toast('这个景点还没有游戏'); return; }
+    this.type = POI.game.type;
+    this.data = POI.game;
+    this.state = {};
+    document.getElementById('gameTitle').textContent = '🎮 ' + this.data.title;
+    document.getElementById('gameInstruction').textContent = this.data.instruction;
+    this.panel.classList.add('visible');
+    document.getElementById('gameEntry').classList.remove('visible');
+    gameState.active = true;
+    var starters = {
+      sort_puzzle: this.startSortPuzzle,
+      placement: this.startPlacement,
+      story_choice: this.startStoryChoice,
+      quiz_climb: this.startQuizClimb,
+      symbol_match: this.startSymbolMatch,
+      rotate_align: this.startRotateAlign
+    };
+    if (starters[this.type]) starters[this.type].call(this);
+  },
+  close: function() {
+    this.panel.classList.remove('visible');
+    gameState.active = false;
+    if (!gameState.completed) document.getElementById('gameEntry').classList.add('visible');
+  },
+  setProgress: function(pct) { this.progressBar.style.width = pct + '%'; },
+  complete: function() {
+    gameState.completed = true;
+    this.panel.classList.remove('visible');
+    toast('🎉 挑战完成！');
+    if (POI.stamp) HuntStorage.addStamp(POI.stamp.id);
+    setTimeout(function() {
+      document.getElementById('stampIcon').textContent = POI.stamp.icon;
+      document.getElementById('stampTitle').textContent = POI.name + ' · 印记解锁！';
+      document.getElementById('stampDesc').textContent = POI.stamp.desc;
+      document.getElementById('modalStamp').classList.add('visible');
+    }, 800);
+    if (POI.easterEgg && POI.easterEgg.trigger === 'game_complete') {
+      setTimeout(function() {
+        document.getElementById('eggDesc').textContent = POI.easterEgg.name + ' — ' + (POI.easterEgg.reward ? POI.easterEgg.reward.desc : '');
+        document.getElementById('modalEgg').classList.add('visible');
+      }, 2500);
+    }
+  },
+  startSortPuzzle: function() {
+    var items = this.data.items.slice();
+    for (var i = items.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    this.state.order = items.map(function(i){ return i.id; });
+    var html = '<div class="sort-list">';
+    items.forEach(function(item, idx) {
+      html += '<div class="sort-item" data-id="' + item.id + '" data-idx="' + idx + '">' +
+        '<span style="color:#475569;font-size:16px">⠿</span>' +
+        '<span class="emoji">' + item.emoji + '</span>' +
+        '<span class="name">' + item.name + '</span>' +
+        '<button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',-1)">↑</button>' +
+        '<button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',1)">↓</button>' +
+      '</div>';
+    });
+    html += '</div><button class="game-submit" onclick="GameEngine.checkSort()">确认排序</button>';
+    this.content.innerHTML = html;
+    this.setProgress(0);
+  },
+  moveItem: function(idx, dir) {
+    var items = this.content.querySelectorAll('.sort-item');
+    var target = idx + dir;
+    if (target < 0 || target >= items.length) return;
+    if (dir > 0) items[idx].parentNode.insertBefore(items[idx + 1], items[idx]);
+    else items[idx].parentNode.insertBefore(items[idx], items[idx - 1]);
+    var newOrder = [];
+    this.content.querySelectorAll('.sort-item').forEach(function(el, i) {
+      el.dataset.idx = i; newOrder.push(el.dataset.id);
+    });
+    this.state.order = newOrder;
+  },
+  checkSort: function() {
+    var correct = this.data.correctOrder;
+    var correctCount = 0;
+    var items = this.content.querySelectorAll('.sort-item');
+    items.forEach(function(el, i) {
+      var id = el.dataset.id;
+      el.classList.remove('correct', 'wrong');
+      if (correct[i] === id) { el.classList.add('correct'); correctCount++; }
+      else el.classList.add('wrong');
+    });
+    this.setProgress(Math.round(correctCount / correct.length * 100));
+    if (correctCount === correct.length) {
+      var self = this;
+      setTimeout(function() { self.complete(); }, 800);
+    } else toast('排对了 ' + correctCount + '/' + correct.length + '，继续调整');
+  },
+  startPlacement: function() {
+    var grid = this.data.grid;
+    var pieces = this.data.pieces.slice();
+    this.state.placed = {};
+    var html = '<div class="place-grid">';
+    for (var r = 0; r < grid.rows; r++) {
+      html += '<div class="place-row-label">' + grid.rowLabels[r] + '</div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(' + grid.cols + ',1fr);gap:6px">';
+      for (var c = 0; c < grid.cols; c++) html += '<div class="place-cell" data-row="' + r + '" data-col="' + c + '"></div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '<div style="font-size:12px;color:#64748b;margin-bottom:6px">点击下方俑，再点击目标位置：</div>';
+    html += '<div class="place-pool">';
+    pieces.forEach(function(p) {
+      html += '<div class="place-piece" data-id="' + p.id + '" data-row="' + p.row + '" title="' + p.name + '">' + p.emoji + '</div>';
+    });
+    html += '</div>';
+    html += '<button class="game-submit" onclick="GameEngine.checkPlacement()">确认军阵</button>';
+    this.content.innerHTML = html;
+    this.setProgress(0);
+    var self = this;
+    var selectedPiece = null;
+    this.content.querySelectorAll('.place-piece').forEach(function(piece) {
+      piece.addEventListener('click', function() {
+        self.content.querySelectorAll('.place-piece').forEach(function(p){ p.style.borderColor = ''; });
+        this.style.borderColor = '#fbbf24';
+        selectedPiece = this;
+      });
+    });
+    this.content.querySelectorAll('.place-cell').forEach(function(cell) {
+      cell.addEventListener('click', function() {
+        if (!selectedPiece) { toast('先选一个俑'); return; }
+        if (this.classList.contains('filled')) { toast('这里已经有俑了'); return; }
+        this.textContent = selectedPiece.textContent;
+        this.classList.add('filled');
+        this.dataset.pieceId = selectedPiece.dataset.id;
+        this.dataset.correctRow = selectedPiece.dataset.row;
+        selectedPiece.style.display = 'none';
+        selectedPiece = null;
+        self.content.querySelectorAll('.place-piece').forEach(function(p){ p.style.borderColor = ''; });
+      });
+    });
+  },
+  checkPlacement: function() {
+    var self = this;
+    var correctCount = 0;
+    var total = this.data.pieces.length;
+    var cells = this.content.querySelectorAll('.place-cell.filled');
+    cells.forEach(function(cell) {
+      var row = parseInt(cell.dataset.row);
+      var correctRow = parseInt(cell.dataset.correctRow);
+      cell.classList.remove('correct', 'wrong');
+      if (row === correctRow) { cell.classList.add('correct'); correctCount++; }
+      else cell.classList.add('wrong');
+    });
+    this.setProgress(Math.round(correctCount / total * 100));
+    if (correctCount === total) setTimeout(function() { self.complete(); }, 800);
+    else toast('放对了 ' + correctCount + '/' + total + '，看看哪排错了');
+  },
+  startStoryChoice: function() {
+    this.state.chapterIdx = 0;
+    this.state.choices = [];
+    this.showChapter();
+  },
+  showChapter: function() {
+    var chapters = this.data.chapters;
+    var idx = this.state.chapterIdx;
+    if (idx >= chapters.length) { this.showEnding(); return; }
+    var ch = chapters[idx];
+    this.setProgress(Math.round(idx / chapters.length * 100));
+    var html = '<div class="story-scene"><b>【' + ch.scene + '】</b><br/>' + ch.text + '</div>';
+    html += '<div class="story-choices">';
+    ch.choices.forEach(function(choice, i) {
+      html += '<button class="story-choice" data-next="' + choice.next + '">' + choice.text + '</button>';
+    });
+    html += '</div>';
+    this.content.innerHTML = html;
+    var self = this;
+    this.content.querySelectorAll('.story-choice').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        self.state.choices.push(this.dataset.next);
+        self.state.chapterIdx++;
+        var next = this.dataset.next;
+        if (next.indexOf('ending') >= 0 || next.indexOf('bad') >= 0 || next.indexOf('mid') >= 0) self.showEnding(next);
+        else self.showChapter();
+      });
+    });
+  },
+  showEnding: function(endingKey) {
+    var endings = this.data.endings;
+    var ending = endings.good_ending;
+    var lastChoice = this.state.choices[this.state.choices.length - 1];
+    if (lastChoice === 'good_ending') ending = endings.good_ending;
+    else if (lastChoice === 'mid_ending') ending = endings.mid_ending;
+    else if (lastChoice === 'bad_ending') ending = endings.bad_ending;
+    else {
+      var firstChoice = this.state.choices[0];
+      if (firstChoice === 'ch2_bad') ending = endings.bad_ending;
+      else if (firstChoice === 'ch3_mid') ending = endings.mid_ending;
+    }
+    this.setProgress(100);
+    var html = '<div class="story-ending"><div class="ending-title">' + ending.title + '</div><div class="ending-text">' + ending.text + '</div></div>';
+    this.content.innerHTML = html;
+    var self = this;
+    setTimeout(function() { self.complete(); }, 2500);
+  },
+  startQuizClimb: function() {
+    this.state.currentStep = 0;
+    this.state.correct = 0;
+    this.showQuestion();
+  },
+  showQuestion: function() {
+    var questions = this.data.questions;
+    var idx = this.state.currentStep;
+    if (idx >= questions.length) { this.complete(); return; }
+    var q = questions[idx];
+    this.setProgress(Math.round(idx / questions.length * 100));
+    var html = '<div class="quiz-step"><div class="step-num">' + (idx + 1) + '</div><div class="step-label">第 ' + q.step + ' 级台阶</div></div>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    html += '<div class="quiz-options">';
+    q.options.forEach(function(opt, i) {
+      html += '<button class="quiz-option" data-answer="' + i + '">' + opt + '</button>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-hint" style="display:none">💡 ' + q.hint + '</div>';
+    this.content.innerHTML = html;
+    var self = this;
+    this.content.querySelectorAll('.quiz-option').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var chosen = parseInt(this.dataset.answer);
+        var correct = q.answer;
+        self.content.querySelectorAll('.quiz-option').forEach(function(b, i) {
+          if (i === correct) b.classList.add('correct');
+          if (i === chosen && chosen !== correct) b.classList.add('wrong');
+        });
+        self.content.querySelector('.quiz-hint').style.display = 'block';
+        if (chosen === correct) { self.state.correct++; toast('✅ 答对了，继续向上！'); }
+        else toast('❌ 答错了，看看正确答案');
+        setTimeout(function() { self.state.currentStep++; self.showQuestion(); }, 1800);
+      });
+    });
+  },
+  startSymbolMatch: function() {
+    var pairs = this.data.pairs.slice();
+    this.state.matched = 0;
+    this.state.selectedLeft = null;
+    var rightItems = pairs.slice().sort(function(){ return Math.random() - 0.5; });
+    var html = '<div class="match-container">';
+    html += '<div class="match-col">';
+    pairs.forEach(function(p) { html += '<div class="match-item" data-id="' + p.id + '" data-side="left">' + p.symbol + '</div>'; });
+    html += '</div>';
+    html += '<div class="match-col">';
+    rightItems.forEach(function(p) { html += '<div class="match-item" data-id="' + p.id + '" data-side="right">' + p.meaning + '</div>'; });
+    html += '</div>';
+    html += '</div>';
+    this.content.innerHTML = html;
+    this.setProgress(0);
+    var self = this;
+    this.content.querySelectorAll('[data-side="left"]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        self.content.querySelectorAll('[data-side="left"]').forEach(function(e){ e.classList.remove('active'); });
+        this.classList.add('active');
+        self.state.selectedLeft = this.dataset.id;
+      });
+    });
+    this.content.querySelectorAll('[data-side="right"]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        if (!self.state.selectedLeft) { toast('先选左边的象形文'); return; }
+        var rightId = this.dataset.id;
+        var leftId = self.state.selectedLeft;
+        if (leftId === rightId) {
+          this.classList.add('matched');
+          self.content.querySelector('[data-side="left"][data-id="' + leftId + '"]').classList.add('matched');
+          self.state.matched++;
+          self.setProgress(Math.round(self.state.matched / pairs.length * 100));
+          toast('✨ 匹配成功！');
+          self.state.selectedLeft = null;
+          self.content.querySelectorAll('[data-side="left"]').forEach(function(e){ e.classList.remove('active'); });
+          if (self.state.matched === pairs.length) setTimeout(function() { self.complete(); }, 800);
+        } else {
+          this.classList.add('wrong');
+          var leftEl = self.content.querySelector('[data-side="left"][data-id="' + leftId + '"]');
+          if (leftEl) leftEl.classList.add('wrong');
+          toast('❌ 不对，再想想');
+          (function(el, lEl) {
+            setTimeout(function() { el.classList.remove('wrong'); if (lEl) lEl.classList.remove('wrong'); }, 600);
+          })(this, leftEl);
+        }
+      });
+    });
+  },
+  startRotateAlign: function() {
+    this.state.rotation = 0;
+    this.state.round = 0;
+    this.newRound();
+  },
+  newRound: function() {
+    var totalRounds = this.data.totalRounds;
+    if (this.state.round >= totalRounds) { this.complete(); return; }
+    this.state.targetRotation = Math.floor(Math.random() * 4) * 90;
+    this.state.rotation = 0;
+    this.setProgress(Math.round(this.state.round / totalRounds * 100));
+    var directions = ['北', '东', '南', '西'];
+    var html = '<div class="rotate-hint">第 ' + (this.state.round + 1) + '/' + totalRounds + ' 轮<br/>目标：让指针对准 <b style="color:#fbbf24">' + directions[this.state.targetRotation / 90] + '</b> 方</div>';
+    html += '<div class="rotate-wheel"><div class="wheel-bg" id="wheelBg"></div><div class="wheel-pointer"></div>';
+    var pos = [{top:'5%',left:'50%'},{top:'50%',right:'5%'},{bottom:'5%',left:'50%'},{top:'50%',left:'5%'}];
+    var dirs = ['北','东','南','西'];
+    for (var i = 0; i < 4; i++) html += '<div class="wheel-label" style="top:' + pos[i].top + ';bottom:' + (pos[i].bottom||'') + ';left:' + pos[i].left + ';right:' + (pos[i].right||'') + '">' + dirs[i] + '</div>';
+    html += '</div>';
+    html += '<div class="rotate-btns"><button onclick="GameEngine.rotateWheel(-30)">↺</button><button onclick="GameEngine.rotateWheel(30)">↻</button></div>';
+    html += '<button class="game-submit" onclick="GameEngine.checkRotate()">对齐！</button>';
+    this.content.innerHTML = html;
+  },
+  rotateWheel: function(deg) {
+    this.state.rotation += deg;
+    var bg = document.getElementById('wheelBg');
+    if (bg) bg.style.transform = 'rotate(' + this.state.rotation + 'deg)';
+  },
+  checkRotate: function() {
+    var target = this.state.targetRotation;
+    var current = ((this.state.rotation % 360) + 360) % 360;
+    var diff = Math.abs(current - target);
+    if (diff > 180) diff = 360 - diff;
+    if (diff <= 15) {
+      toast('✨ 对齐成功！佛光降临');
+      this.state.round++;
+      var self = this;
+      setTimeout(function() { self.newRound(); }, 800);
+    } else toast('偏差 ' + Math.round(diff) + '°，再转转');
+  }
+};
+
 async function start() {
   try {
-    // 摄像头（环境摄像头）
     var video = document.getElementById('arVideo');
     try {
       video.srcObject = await navigator.mediaDevices.getUserMedia({
@@ -420,28 +740,17 @@ async function start() {
       console.warn('摄像头启动失败（降级预览模式）:', camErr.message);
       document.getElementById('arLoading').style.display = 'none';
       document.getElementById('arNoCam').style.display = 'flex';
-      // 降级：灰色背景当"3D 预览"
       document.getElementById('arVideo').style.background = 'linear-gradient(135deg,#1e293b,#334155)';
     }
-
     document.getElementById('loadSub').textContent = '初始化 3D 空间';
-
-    // Three.js
-    renderer = new THREE.WebGLRenderer({
-      canvas: document.getElementById('arCanvas'),
-      alpha: true, antialias: true
-    });
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('arCanvas'), alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0);
-
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.set(0, 1.2, 4.5);
+    camera.position.set(0, 1.5, 5);
     camera.lookAt(0, 1, 0);
-
     scene = new THREE.Scene();
-
-    // 灯光
     scene.add(new THREE.AmbientLight(0xffffff, 0.65));
     var sun = new THREE.DirectionalLight(0xffffff, 0.9);
     sun.position.set(5, 8, 5);
@@ -449,227 +758,41 @@ async function start() {
     var fill = new THREE.DirectionalLight(0xa5b4fc, 0.3);
     fill.position.set(-3, 2, -5);
     scene.add(fill);
-
-    // 景点模型
     poiGroup = buildPOIModel(POI);
     scene.add(poiGroup);
-
-    // 寻宝线索
-    spawnArtifacts(POI);
-
-    // TouchControls
     controls = new TouchControls(renderer.domElement, camera, poiGroup);
-
-    // 窗口大小
     window.addEventListener('resize', function() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-    // 标题
-    document.title = POI.name + ' · AR 空间';
-    document.getElementById('titleText').textContent = POI.name + ' · AR 空间';
-
-    // 隐藏加载
+    document.title = POI.name + ' · 拾迹';
+    document.getElementById('titleText').textContent = POI.name;
+    GameEngine.init();
     document.getElementById('arLoading').style.display = 'none';
-
-    // 开始故事
-    setTimeout(function(){ playStory(POI.plot || []); }, 1200);
-
-    // 彩蛋
-    if (POI._easterPlot) {
-      document.getElementById('tabEgg').addEventListener('click', function(){
-        if (this.classList.contains('locked')) return;
-        currentTab = 'egg';
-        document.getElementById('tabMain').classList.remove('active');
-        this.classList.add('active');
-        playStory(POI._easterPlot);
-      });
-      document.getElementById('tabMain').addEventListener('click', function(){
-        currentTab = 'main';
-        this.classList.add('active');
-        document.getElementById('tabEgg').classList.remove('active');
-        playStory(POI.plot || []);
-      });
-    } else {
-      document.getElementById('tabEgg').style.display = 'none';
-    }
-
-    // 按钮
-    document.getElementById('btnReset').addEventListener('click', function(){
-      poiGroup.position.set(0, 0, 0);
-      poiGroup.rotation.set(0, 0, 0);
-      poiGroup.scale.setScalar(1);
+    setTimeout(function(){ playStory(POI.plot || []); }, 800);
+    document.getElementById('btnReset').addEventListener('click', function() {
+      poiGroup.position.set(0, 0, 0); poiGroup.rotation.set(0, 0, 0); poiGroup.scale.setScalar(1);
     });
-    document.getElementById('btnMic').addEventListener('click', function(){
-      voiceOn = !voiceOn;
-      this.textContent = voiceOn ? '🔊' : '🔇';
+    document.getElementById('btnMic').addEventListener('click', function() {
+      voiceOn = !voiceOn; this.textContent = voiceOn ? '🔊' : '🔇';
       if (!voiceOn && window.speechSynthesis) window.speechSynthesis.cancel();
     });
-    document.getElementById('btnStory').addEventListener('click', function(){
-      playStory(currentTab === 'main' ? (POI.plot || []) : (POI._easterPlot || []));
-    });
-
-    // 动画
+    document.getElementById('btnStory').addEventListener('click', function(){ playStory(POI.plot || []); });
     animate();
-
   } catch(e) {
     console.error(e);
     document.getElementById('loadSub').textContent = '初始化失败: ' + e.message;
     document.getElementById('arLoading').querySelector('.spinner').style.borderTopColor = '#ef4444';
   }
 }
-
-/* ============ 故事播放 ============ */
-function playStory(lines) {
-  if (!lines || !lines.length) return;
-  var bubble = document.getElementById('arBubble');
-  var av = document.getElementById('bAv');
-  var name = document.getElementById('bName');
-  var text = document.getElementById('bText');
-  var pb = document.getElementById('bPb');
-
-  window.clearTimeout(storyTimer);
-  var i = 0;
-  function next() {
-    if (i >= lines.length) {
-      bubble.classList.remove('visible');
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      return;
-    }
-    var ln = lines[i];
-    av.textContent = ln.avatar || '👤';
-    name.textContent = ln.speaker || '旁白';
-    text.textContent = ln.text;
-    pb.style.width = '0';
-    bubble.classList.add('visible');
-
-    // 语音
-    if (voiceOn && window.speechSynthesis) {
-      try {
-        window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(ln.text);
-        u.lang = 'zh-CN';
-        u.rate = 0.95;
-        window.speechSynthesis.speak(u);
-      } catch(e) {}
-    }
-
-    // 彩蛋触发
-    if (ln.hint === 'egg' || ln.trigger === 'found_all') {
-      if (POI._easterPlot && !document.getElementById('tabEgg').classList.contains('locked')) {
-        // 已解锁过，不再弹窗
-      } else {
-        document.getElementById('eggDesc').textContent = POI._easterIntro || POI.name + ' 里还藏着一个秘密...';
-        document.getElementById('modalEgg').classList.add('visible');
-      }
-    }
-
-    // 动画故事进度条
-    var dur = ln.duration || 4000;
-    var t0 = Date.now();
-    (function step(){
-      var pct = Math.min(100, (Date.now() - t0) / dur * 100);
-      pb.style.width = pct + '%';
-      if (pct < 100) storyTimer = window.setTimeout(step, 50);
-    })();
-
-    storyTimer = window.setTimeout(function(){ i++; next(); }, dur);
-  }
-  next();
-}
-
-/* ============ Toast ============ */
-var _toastT;
-function toast(msg) {
-  var t = document.getElementById('arToast');
-  t.textContent = msg;
-  t.classList.add('visible');
-  window.clearTimeout(_toastT);
-  _toastT = window.setTimeout(function(){ t.classList.remove('visible'); }, 2200);
-}
-
-/* ============ 寻宝 proximity check（每帧） ============ */
-function checkProximity() {
-  artifacts.forEach(function(a) {
-    if (a.found) return;
-    var dist = camera.position.distanceTo(a.mesh.position);
-    if (dist < 1.8) {
-      a.found = true;
-      huntState.found.add(a.id);
-      // 标记到 UI
-      var el = document.querySelector('#huntList .artifact[data-id="' + a.id + '"]');
-      if (el) el.classList.add('found');
-      toast('✨ 发现线索：' + a.name);
-      // 隐藏
-      a.mesh.visible = false;
-
-      // 彩蛋触发：从 POI.easterEggs 读取 trigger
-      if (POI.easterEggs && POI.easterEggs.length && !huntState.eggUnlocked) {
-        for (var ei = 0; ei < POI.easterEggs.length; ei++) {
-          var trig = POI.easterEggs[ei].trigger || '';
-          var m = trig.match(/found_artifact_(\d+)/);
-          if (m && huntState.found.size >= parseInt(m[1])) {
-            huntState.eggUnlocked = true;
-            document.getElementById('modalEgg').classList.add('visible');
-            document.getElementById('tabEgg').classList.remove('locked');
-            document.getElementById('tabEgg').textContent = '🎭 隐藏彩蛋';
-            break;
-          }
-        }
-      }
-
-      // 全部找到
-      if (huntState.found.size === huntState.total) {
-        huntComplete();
-      }
-    }
-  });
-  document.getElementById('huntFound').textContent = huntState.found.size;
-}
-
-/* ============ 寻宝完成 ============ */
-function huntComplete() {
-  toast('🎉 全部线索找到！');
-  // 发印记
-  try {
-    if (window.HuntStorage) window.HuntStorage.addStamp(POI.id);
-    else if (window.HuntGame && window.HuntGame.storage) window.HuntGame.storage.addStamp(POI.id);
-  } catch(e) {}
-  // 弹窗
-  var stampEmoji = '🏛️';
-  if (POI.id === 'bingmayong') stampEmoji = '⚔️';
-  else if (POI.id === 'gugong') stampEmoji = '🐉';
-  else if (POI.id === 'xihu') stampEmoji = '🪷';
-  else if (POI.id === 'yulong') stampEmoji = '🏔️';
-  else if (POI.id === 'potala') stampEmoji = '🛕';
-  document.getElementById('stampIcon').textContent = stampEmoji;
-  document.getElementById('stampTitle').textContent = POI.name + ' · 拾迹印记已解锁！';
-  document.getElementById('stampDesc').textContent = '集齐了 ' + huntState.total + ' 件线索，获得「' + POI._stampName + '」印记';
-  setTimeout(function(){
-    document.getElementById('modalStamp').classList.add('visible');
-  }, 800);
-}
-
-/* ============ 动画循环 ============ */
+function closeEggModal() { document.getElementById('modalEgg').classList.remove('visible'); }
 function animate() {
   requestAnimationFrame(animate);
-
-  // 线索漂浮动画
-  artifacts.forEach(function(a) {
-    if (!a.found) {
-      a.mesh.rotation.y += 0.02;
-      a.mesh.position.y = a.baseY + Math.sin(Date.now() / 600 + a.phase) * 0.08;
-    }
-  });
-
-  controls.update();
-  checkProximity();
+  if (poiGroup && !gameState.active) poiGroup.rotation.y += 0.002;
+  if (controls) controls.update();
   renderer.render(scene, camera);
 }
-
-/* ============ 启动 ============ */
 start();
 </script>
 </body>
