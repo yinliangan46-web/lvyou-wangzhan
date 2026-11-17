@@ -2185,6 +2185,12 @@ function getTransportInfo(destName) {
     };
 }
 
-// 初始化新项目
-renderHiddenCities();
-renderRegrets();
+// 初始化新项目（等DOM加载完再执行）
+window.addEventListener('load', function() {
+    try {
+        renderHiddenCities();
+        renderRegrets();
+    } catch(e) {
+        console.log('新项目初始化失败:', e);
+    }
+});
