@@ -27,6 +27,8 @@
             line-height: 1.6;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* 导航 */
         .header {
             position: sticky; top: 0; z-index: 1000;
             background: rgba(255,255,255,.95);
@@ -57,6 +59,8 @@
             transition: transform .2s, box-shadow .2s;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,.3); }
+
+        /* Hero */
         .hero {
             background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0ea5e9 100%);
             color: #fff;
@@ -65,6 +69,8 @@
         }
         .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 16px; }
         .hero p { font-size: 1.1rem; opacity: .9; max-width: 600px; margin: 0 auto; }
+
+        /* Tabs */
         .tabs {
             display: flex; gap: 8px;
             background: #fff;
@@ -98,6 +104,9 @@
         .tab-panel { display: none; animation: fadeIn .4s; }
         .tab-panel.active { display: block; }
         @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+        /* 通用 section */
+        .section { padding: 40px 0; }
         .section-title {
             font-size: 1.8rem; font-weight: 900;
             margin-bottom: 8px; text-align: center;
@@ -106,6 +115,8 @@
             text-align: center; color: var(--text-light);
             margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;
         }
+
+        /* ===== 旅行人格测试 ===== */
         .quiz-container {
             max-width: 600px; margin: 0 auto;
             background: #fff; border-radius: var(--radius);
@@ -150,6 +161,8 @@
         }
         .quiz-dest-card h4 { font-size: 1rem; margin-bottom: 4px; }
         .quiz-dest-card p { font-size: .8rem; color: var(--text-light); }
+
+        /* ===== 必去清单地图 ===== */
         #bucketMap { height: 500px; border-radius: var(--radius); box-shadow: var(--shadow); }
         .bucket-stats {
             display: flex; gap: 20px; justify-content: center;
@@ -170,6 +183,8 @@
             display: inline-block; width: 12px; height: 12px;
             border-radius: 50%; margin-right: 6px; vertical-align: middle;
         }
+
+        /* ===== 跟着剧去旅行 ===== */
         .drama-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -198,6 +213,8 @@
             padding: 4px 10px; border-radius: 20px;
             font-size: .8rem;
         }
+
+        /* ===== Solo 旅行 ===== */
         .solo-banner {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
             border-radius: var(--radius);
@@ -227,12 +244,16 @@
             padding: 3px 10px; border-radius: 20px;
             font-size: .78rem;
         }
+
+        /* Footer */
         .footer {
             background: #1e293b; color: #94a3b8;
             padding: 40px 0; text-align: center;
             margin-top: 60px;
         }
         .footer a { color: #94a3b8; text-decoration: none; }
+
+        /* 移动端 */
         @media (max-width: 768px) {
             .nav { display: none; }
             .hero h1 { font-size: 1.8rem; }
@@ -243,6 +264,8 @@
     </style>
 </head>
 <body>
+
+<!-- 导航 -->
 <header class="header">
     <div class="container">
         <a href="index.html" class="logo">
@@ -259,12 +282,16 @@
         <a href="index.html#contact" class="btn">联系我们</a>
     </div>
 </header>
+
+<!-- Hero -->
 <section class="hero">
     <div class="container">
         <h1>发现 MYL</h1>
         <p>测试你的旅行人格 · 打卡一生必去清单 · 跟着影视剧去旅行 · 一个人也能玩</p>
     </div>
 </section>
+
+<!-- Tabs -->
 <div class="container">
     <div class="tabs">
         <button class="tab-btn active" data-tab="personality">🧭 旅行人格测试</button>
@@ -273,12 +300,15 @@
         <button class="tab-btn" data-tab="solo">👤 Solo 旅行</button>
     </div>
 </div>
+
 <div class="container">
+
+    <!-- ===== 旅行人格测试 ===== -->
     <div class="tab-panel active" id="tab-personality">
         <div class="quiz-container">
             <div id="quizStart">
-                <h2 class="section-title">3 分钟测出你的旅行人格</h2>
-                <p class="section-desc">回答 6 道题，我们告诉你最适合去哪里旅行</p>
+                <h2 class="section-title">5 分钟测出你的旅行人格</h2>
+                <p class="section-desc">回答 15 道题，我们告诉你最适合去哪里旅行</p>
                 <div style="text-align:center">
                     <button class="btn" onclick="startQuiz()">开始测试 →</button>
                 </div>
@@ -293,6 +323,8 @@
             <div id="quizResult" style="display:none"></div>
         </div>
     </div>
+
+    <!-- ===== 必去清单 ===== -->
     <div class="tab-panel" id="tab-bucket">
         <h2 class="section-title">一生必去清单 · 打卡地图</h2>
         <p class="section-desc">点击地图上的标记，打卡你去过的地方。点亮属于你的旅行足迹！</p>
@@ -317,6 +349,8 @@
             <span style="color:var(--primary);cursor:pointer" onclick="resetBucket()"><i class="fas fa-rotate-left"></i> 重置打卡</span>
         </div>
     </div>
+
+    <!-- ===== 跟着剧去旅行 ===== -->
     <div class="tab-panel" id="tab-drama">
         <h2 class="section-title">跟着影视剧去旅行</h2>
         <p class="section-desc">那些让你心动的画面，现在就去实景打卡</p>
@@ -415,16 +449,18 @@
                     <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 日本 · 东北</div>
                     <p>一年四季，稻田、木屋、手作料理。这是理想中的乡村生活。</p>
                     <div class="drama-spots">
+                        <span class="drama-spot">晴空代表录</span>
                         <span class="drama-spot">横手市</span>
-                        <span class="drama-spot">秋田县</span>
+                        <span class="drama-spot">秋身湖</span>
                         <span class="drama-spot">奥州平泉</span>
-                        <span class="drama-spot">银山温泉</span>
                     </div>
                     <a href="index.html" class="btn" style="width:100%;text-align:center">查看日本线路 →</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ===== Solo 旅行 ===== -->
     <div class="tab-panel" id="tab-solo">
         <h2 class="section-title">一个人也能玩得很爽</h2>
         <p class="section-desc">单人报名不加价 · 安全友好 · 容易认识同路人</p>
@@ -510,14 +546,19 @@
             </div>
         </div>
     </div>
+
 </div>
+
+<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <p>&copy; 2026 MYL Travel · <a href="index.html">返回首页</a></p>
     </div>
 </footer>
+
 <script src="vendor/leaflet/leaflet.js"></script>
 <script>
+// ===== Tabs =====
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -527,57 +568,205 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         if (btn.dataset.tab === 'bucket' && !bucketMapInitialized) initBucketMap();
     });
 });
+
+// ===== 旅行人格测试 =====
 const quizQuestions = [
-    { q: '早上旅行时，你通常几点醒？', options: [
-        { text: '🌅 7点前，早起看日出', score: 'A' },
-        { text: '☕ 9-10点，慢慢起床', score: 'B' },
-        { text: '😴 12点后，睡到自然醒', score: 'C' }
-    ]},
-    { q: '旅行最重要的是什么？', options: [
-        { text: '🏔️ 看到震撼的风景', score: 'A' },
-        { text: '🍜 吃到当地美食', score: 'B' },
-        { text: '📸 拍好看的照片', score: 'C' },
-        { text: '👥 认识有趣的人', score: 'D' }
-    ]},
-    { q: '你更喜欢住哪里？', options: [
-        { text: '🛏️ 青年旅舍，热闹', score: 'D' },
-        { text: '🏠 精品民宿，有特色', score: 'C' },
-        { text: '🏨 五星级酒店，舒服', score: 'B' }
-    ]},
-    { q: '你能接受的旅行节奏？', options: [
-        { text: '🏃 一天跑5个景点，特种兵', score: 'A' },
-        { text: '🚶 一天2-3个，刚刚好', score: 'C' },
-        { text: '🛋️ 一天1个，躺平', score: 'B' }
-    ]},
-    { q: '你最怕遇到什么？', options: [
-        { text: '👨‍👩‍👧‍👦 人挤人', score: 'A' },
-        { text: '🗣️ 语言不通', score: 'D' },
-        { text: '🛌 住得差', score: 'B' },
-        { text: '📵 没网', score: 'C' }
-    ]},
-    { q: '你旅行回来最想发什么朋友圈？', options: [
-        { text: '🏔️ 雪山/海滩/星空大片', score: 'A' },
-        { text: '🍱 九宫格美食图', score: 'B' },
-        { text: '🧏 文艺风景+短句', score: 'C' },
-        { text: '🥂 和旅伴的合照', score: 'D' }
-    ]}
+    {
+        q: '早上旅行时，你通常几点醒？',
+        options: [
+            { text: '🌅 7点前，早起看日出', score: 'A' },
+            { text: '☕ 9-10点，慢慢起床', score: 'B' },
+            { text: '😴 12点后，睡到自然醒', score: 'C' }
+        ]
+    },
+    {
+        q: '旅行最重要的是什么？',
+        options: [
+            { text: '🏔️ 看到震撼的风景', score: 'A' },
+            { text: '🍜 吃到当地美食', score: 'B' },
+            { text: '📸 拍好看的照片', score: 'C' },
+            { text: '👥 认识有趣的人', score: 'D' }
+        ]
+    },
+    {
+        q: '你更喜欢住哪里？',
+        options: [
+            { text: '🛏️ 青年旅舍，热闹', score: 'D' },
+            { text: '🏠 精品民宿，有特色', score: 'C' },
+            { text: '🏨 五星级酒店，舒服', score: 'B' }
+        ]
+    },
+    {
+        q: '你能接受的旅行节奏？',
+        options: [
+            { text: '🏃 一天跑5个景点，特种兵', score: 'A' },
+            { text: '🚶 一天2-3个，刚刚好', score: 'C' },
+            { text: '🛋️ 一天1个，躺平', score: 'B' }
+        ]
+    },
+    {
+        q: '你最怕遇到什么？',
+        options: [
+            { text: '👨‍👩‍👧‍👦 人挤人', score: 'A' },
+            { text: '🗣️ 语言不通', score: 'D' },
+            { text: '🛌 住得差', score: 'B' },
+            { text: '📵 没网', score: 'C' }
+        ]
+    },
+    {
+        q: '你旅行回来最想发什么朋友圈？',
+        options: [
+            { text: '🏔️ 雪山/海滩/星空大片', score: 'A' },
+            { text: '🍱 九宫格美食图', score: 'B' },
+            { text: '🧏 文艺风景+短句', score: 'C' },
+            { text: '🥂 和旅伴的合照', score: 'D' }
+        ]
+    },
+    {
+        q: '你更喜欢哪种旅行方式？',
+        options: [
+            { text: '🏕️ 自驾/徒步，深入自然', score: 'A' },
+            { text: '🚌 坐当地公交，逛菜市场', score: 'B' },
+            { text: '🏛️ 逛博物馆/老街区，慢慢走', score: 'C' },
+            { text: '👫 跟团/拼团，有人带', score: 'D' }
+        ]
+    },
+    {
+        q: '旅行预算你最愿意花在哪？',
+        options: [
+            { text: '🎫 门票/户外体验', score: 'A' },
+            { text: '🍜 吃！吃！吃！', score: 'B' },
+            { text: '🛏️ 住有设计感的酒店', score: 'C' },
+            { text: '🍹 酒吧/社交活动', score: 'D' }
+        ]
+    },
+    {
+        q: '你最喜欢的旅行天气？',
+        options: [
+            { text: '❄️ 雪天/星空，极端天气', score: 'A' },
+            { text: '☀️ 晴天，适合逛街吃小吃', score: 'B' },
+            { text: '🌧️ 阴雨天，适合拍文艺照', score: 'C' },
+            { text: '🤷 无所谓，关键是和谁', score: 'D' }
+        ]
+    },
+    {
+        q: '旅途中你最想做的事？',
+        options: [
+            { text: '🌅 看日出/日落/极光', score: 'A' },
+            { text: '🥘 找当地老字号', score: 'B' },
+            { text: '📚 逛书店/咖啡馆', score: 'C' },
+            { text: '🎉 参加当地人的聚会', score: 'D' }
+        ]
+    },
+    {
+        q: '你更喜欢哪种交通方式？',
+        options: [
+            { text: '🚗 自驾/徒步，自由掌控', score: 'A' },
+            { text: '🚇 地铁/公交，穿梭市井', score: 'B' },
+            { text: '🚞 高铁/慢车，看风景', score: 'C' },
+            { text: '🚐 拼车/搭便车，认识人', score: 'D' }
+        ]
+    },
+    {
+        q: '旅行纪念品你会买什么？',
+        options: [
+            { text: '🪨 石头/树叶/自然标本', score: 'A' },
+            { text: '🌶️ 当地调味料/零食', score: 'B' },
+            { text: '🖼️ 明信片/文创周边', score: 'C' },
+            { text: '🤝 和旅伴的合影/签名', score: 'D' }
+        ]
+    },
+    {
+        q: '你更喜欢哪种类型的目的地？',
+        options: [
+            { text: '🏞️ 国家公园/荒野/无人区', score: 'A' },
+            { text: '🍢 美食之都/夜市/小吃街', score: 'B' },
+            { text: '🏘️ 古城/文艺小镇/美术馆', score: 'C' },
+            { text: '🏄 派对城市/冲浪小镇', score: 'D' }
+        ]
+    },
+    {
+        q: '旅行中你最在意什么？',
+        options: [
+            { text: '🏔️ 看到别人没看过的风景', score: 'A' },
+            { text: '🍜 吃到别人不知道的馆子', score: 'B' },
+            { text: '📷 拍到别人拍不到的角度', score: 'C' },
+            { text: '👥 认识别人不认识的朋友', score: 'D' }
+        ]
+    },
+    {
+        q: '如果只能选一个地方待一周，你选？',
+        options: [
+            { text: '🏔️ 雪山脚下的小木屋', score: 'A' },
+            { text: '🌶️ 美食之都的市中心', score: 'B' },
+            { text: '🌊 海边的文艺小镇', score: 'C' },
+            { text: '🏝️ 有很多青旅的度假岛', score: 'D' }
+        ]
+    }
 ];
+
 const quizResults = {
-    A: { icon: '🏔️', title: '荒野探险家', desc: '你热爱自然、追求震撼的风景，不介意早起、不怕累。人少、景美、原生态是你的关键词。', destinations: [{ name: '冰岛', reason: '极光+冰川+瀑布' }, { name: '新疆', reason: '草原+沙漠+雪山' }, { name: '新西兰', reason: '魔戒取景地' }] },
-    B: { icon: '🍜', title: '美食家', desc: '你旅行就是为了吃！街头巷尾的小店、当地人才知道的馆子，才是你的宝藏。', destinations: [{ name: '成都', reason: '火锅+串串+小吃' }, { name: '曼谷', reason: '街头美食天堂' }, { name: '大阪', reason: '天下厨房' }] },
-    C: { icon: '📸', title: '文艺青年', desc: '你追求质感、喜欢拍照、在意住得有没有味道。慢节奏、有故事的地方最适合你。', destinations: [{ name: '大理', reason: '洱海+古镇+咖啡' }, { name: '京都', reason: '寺庙+樱花+茶道' }, { name: '厦门', reason: '鼓浪屿+海边' }] },
-    D: { icon: '👥', title: '社交达人', desc: '你旅行最重要的是认识新朋友！青旅、拼餐、搭子，一个人出发也能玩出一群人的热闹。', destinations: [{ name: '巴厘岛', reason: '冲浪+派对+社交' }, { name: '清迈', reason: '夜市+咖啡馆+义工' }, { name: '台北', reason: '友善+美食+便利' }] }
+    A: {
+        icon: '🏔️',
+        title: '荒野探险家',
+        desc: '你热爱自然、追求震撼的风景，不介意早起、不怕累。人少、景美、原生态是你的关键词。',
+        destinations: [
+            { name: '冰岛', reason: '极光+冰川+瀑布' },
+            { name: '新疆', reason: '草原+沙漠+雪山' },
+            { name: '新西兰', reason: '魔戒取景地' }
+        ]
+    },
+    B: {
+        icon: '🍜',
+        title: '美食家',
+        desc: '你旅行就是为了吃！街头巷尾的小店、当地人才知道的馆子，才是你的宝藏。',
+        destinations: [
+            { name: '成都', reason: '火锅+串串+小吃' },
+            { name: '曼谷', reason: '街头美食天堂' },
+            { name: '大阪', reason: '天下厨房' }
+        ]
+    },
+    C: {
+        icon: '📸',
+        title: '文艺青年',
+        desc: '你追求质感、喜欢拍照、在意住得有没有味道。慢节奏、有故事的地方最适合你。',
+        destinations: [
+            { name: '大理', reason: '洱海+古镇+咖啡' },
+            { name: '京都', reason: '寺庙+樱花+茶道' },
+            { name: '厦门', reason: '鼓浪屿+海边' }
+        ]
+    },
+    D: {
+        icon: '👥',
+        title: '社交达人',
+        desc: '你旅行最重要的是认识新朋友！青旅、拼餐、搭子，一个人出发也能玩出一群人的热闹。',
+        destinations: [
+            { name: '巴厘岛', reason: '冲浪+派对+社交' },
+            { name: '清迈', reason: '夜市+咖啡馆+义工' },
+            { name: '台北', reason: '友善+美食+便利' }
+        ]
+    }
 };
+
 let currentQ = 0;
 let answers = [];
-function startQuiz() { currentQ = 0; answers = []; document.getElementById('quizStart').style.display = 'none'; document.getElementById('quizResult').style.display = 'none'; document.getElementById('quizPlaying').style.display = 'block'; showQuestion(); }
+
+function startQuiz() {
+    currentQ = 0;
+    answers = [];
+    document.getElementById('quizStart').style.display = 'none';
+    document.getElementById('quizResult').style.display = 'none';
+    document.getElementById('quizPlaying').style.display = 'block';
+    showQuestion();
+}
+
 function showQuestion() {
     const q = quizQuestions[currentQ];
     document.getElementById('quizProgress').style.width = ((currentQ) / quizQuestions.length * 100) + '%';
     document.getElementById('quizQuestion').textContent = `Q${currentQ + 1}. ${q.q}`;
     const optsEl = document.getElementById('quizOptions');
     optsEl.innerHTML = '';
-    q.options.forEach((opt) => {
+    q.options.forEach((opt, i) => {
         const div = document.createElement('div');
         div.className = 'quiz-option';
         div.textContent = opt.text;
@@ -585,26 +774,61 @@ function showQuestion() {
         optsEl.appendChild(div);
     });
 }
+
 function selectOption(score, el) {
     document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers.push(score);
-    setTimeout(() => { currentQ++; if (currentQ < quizQuestions.length) { showQuestion(); } else { showResult(); } }, 300);
+    setTimeout(() => {
+        currentQ++;
+        if (currentQ < quizQuestions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }, 300);
 }
+
 function showResult() {
     document.getElementById('quizPlaying').style.display = 'none';
     const resultEl = document.getElementById('quizResult');
     resultEl.style.display = 'block';
+
+    // 统计最多的选项
     const counts = {};
     answers.forEach(a => counts[a] = (counts[a] || 0) + 1);
-    let maxType = 'A'; let maxCount = 0;
-    for (const [k, v] of Object.entries(counts)) { if (v > maxCount) { maxCount = v; maxType = k; } }
+    let maxType = 'A';
+    let maxCount = 0;
+    for (const [k, v] of Object.entries(counts)) {
+        if (v > maxCount) { maxCount = v; maxType = k; }
+    }
+
     const r = quizResults[maxType];
-    resultEl.innerHTML = `<div class="quiz-result"><div class="quiz-result-icon">${r.icon}</div><h2 class="quiz-result-title">${r.title}</h2><p class="quiz-result-desc">${r.desc}</p><h4 style="margin: 20px 0 12px;">为你推荐：</h4><div class="quiz-result-destinations">${r.destinations.map(d => `<div class="quiz-dest-card"><h4>${d.name}</h4><p>${d.reason}</p></div>`).join('')}</div><button class="btn" onclick="startQuiz()">重新测试</button><a href="index.html" class="btn" style="background:#64748b;margin-left:8px">看看这些地方</a></div>`;
+    resultEl.innerHTML = `
+        <div class="quiz-result">
+            <div class="quiz-result-icon">${r.icon}</div>
+            <h2 class="quiz-result-title">${r.title}</h2>
+            <p class="quiz-result-desc">${r.desc}</p>
+            <h4 style="margin: 20px 0 12px;">为你推荐：</h4>
+            <div class="quiz-result-destinations">
+                ${r.destinations.map(d => `
+                    <div class="quiz-dest-card">
+                        <h4>${d.name}</h4>
+                        <p>${d.reason}</p>
+                    </div>
+                `).join('')}
+            </div>
+            <button class="btn" onclick="startQuiz()">重新测试</button>
+            <a href="index.html" class="btn" style="background:#64748b;margin-left:8px">看看这些地方</a>
+        </div>
+    `;
 }
+
+// ===== 必去清单地图 =====
 let bucketMapInitialized = false;
 let bucketMap;
 let visitedPlaces = JSON.parse(localStorage.getItem('myBucketList') || '[]');
+
 const bucketList = [
     { name: '冰岛·极光', lat: 64.96, lng: -19.02, icon: '🌌' },
     { name: '新西兰·皇后镇', lat: -45.03, lng: 168.66, icon: '🏔️' },
@@ -637,36 +861,71 @@ const bucketList = [
     { name: '加拿大·班夫', lat: 51.18, lng: -115.57, icon: '🏔️' },
     { name: '南极', lat: -82.00, lng: 0.00, icon: '🐧' }
 ];
+
 function initBucketMap() {
     bucketMapInitialized = true;
     bucketMap = L.map('bucketMap').setView([30, 10], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(bucketMap);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(bucketMap);
     renderBucketMarkers();
     updateBucketStats();
 }
+
 function renderBucketMarkers() {
-    bucketMap.eachLayer(layer => { if (layer instanceof L.Marker) bucketMap.removeLayer(layer); });
+    // 清除旧标记
+    bucketMap.eachLayer(layer => {
+        if (layer instanceof L.Marker) bucketMap.removeLayer(layer);
+    });
     bucketList.forEach((place, idx) => {
         const visited = visitedPlaces.includes(idx);
-        const icon = L.divIcon({ html: `<div style="font-size:24px;cursor:pointer;${visited ? 'opacity:1' : 'opacity:.5'}">${place.icon}</div>`, className: 'bucket-marker', iconSize: [24, 24] });
+        const icon = L.divIcon({
+            html: `<div style="font-size:24px;cursor:pointer;${visited ? 'filter:grayscale(0);opacity:1' : 'opacity:.5'}">${place.icon}</div>`,
+            className: 'bucket-marker',
+            iconSize: [24, 24]
+        });
         const marker = L.marker([place.lat, place.lng], { icon }).addTo(bucketMap);
-        marker.bindPopup(`<div style="text-align:center;min-width:120px"><div style="font-size:28px;margin-bottom:4px">${place.icon}</div><div style="font-weight:700;margin-bottom:8px">${place.name}</div><button onclick="toggleVisit(${idx})" style="background:${visited ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;">${visited ? '✓ 已打卡 · 点击取消' : '打卡这里'}</button></div>`);
+        marker.bindPopup(`
+            <div style="text-align:center;min-width:120px">
+                <div style="font-size:28px;margin-bottom:4px">${place.icon}</div>
+                <div style="font-weight:700;margin-bottom:8px">${place.name}</div>
+                <button onclick="toggleVisit(${idx})" style="
+                    background:${visited ? '#22c55e' : '#ef4444'};
+                    color:#fff;border:none;padding:6px 16px;border-radius:20px;
+                    cursor:pointer;font-size:.85rem;">
+                    ${visited ? '✓ 已打卡 · 点击取消' : '打卡这里'}
+                </button>
+            </div>
+        `);
     });
 }
+
 function toggleVisit(idx) {
-    if (visitedPlaces.includes(idx)) { visitedPlaces = visitedPlaces.filter(i => i !== idx); } else { visitedPlaces.push(idx); }
+    if (visitedPlaces.includes(idx)) {
+        visitedPlaces = visitedPlaces.filter(i => i !== idx);
+    } else {
+        visitedPlaces.push(idx);
+    }
     localStorage.setItem('myBucketList', JSON.stringify(visitedPlaces));
     renderBucketMarkers();
     updateBucketStats();
 }
+
 function updateBucketStats() {
     document.getElementById('visitedCount').textContent = visitedPlaces.length;
     const pct = Math.round(visitedPlaces.length / bucketList.length * 100);
     document.getElementById('percentText').textContent = pct + '%';
 }
+
 function resetBucket() {
-    if (confirm('确定要清空所有打卡记录吗？')) { visitedPlaces = []; localStorage.setItem('myBucketList', '[]'); renderBucketMarkers(); updateBucketStats(); }
+    if (confirm('确定要清空所有打卡记录吗？')) {
+        visitedPlaces = [];
+        localStorage.setItem('myBucketList', '[]');
+        renderBucketMarkers();
+        updateBucketStats();
+    }
 }
 </script>
+
 </body>
 </html>
