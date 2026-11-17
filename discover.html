@@ -20,257 +20,124 @@
             --radius: 16px;
             --shadow: 0 4px 24px rgba(0,0,0,.08);
         }
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            color: var(--text);
-            background: var(--bg);
-            line-height: 1.6;
-        }
+        body { font-family: 'Noto Sans SC', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        /* 导航 */
-        .header {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(255,255,255,.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 0;
-        }
+        .header { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,.95); backdrop-filter: blur(10px); border-bottom: 1px solid #e2e8f0; padding: 16px 0; }
         .header .container { display: flex; align-items: center; justify-content: space-between; }
-        .logo {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem; font-weight: 900;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .logo { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 900; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
         .nav { display: flex; gap: 24px; }
-        .nav a {
-            text-decoration: none; color: var(--text);
-            font-weight: 500; transition: color .2s;
-        }
+        .nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: color .2s; }
         .nav a:hover, .nav a.active { color: var(--primary); }
-        .btn {
-            display: inline-block;
-            padding: 10px 24px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff; border: none; border-radius: 30px;
-            font-weight: 600; text-decoration: none; cursor: pointer;
-            transition: transform .2s, box-shadow .2s;
-        }
+        .btn { display: inline-block; padding: 10px 24px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border: none; border-radius: 30px; font-weight: 600; text-decoration: none; cursor: pointer; transition: transform .2s, box-shadow .2s; font-size: .9rem; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,.3); }
+        .btn-sm { padding: 8px 20px; font-size: .85rem; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
 
-        /* Hero */
-        .hero {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0ea5e9 100%);
-            color: #fff;
-            padding: 80px 0 60px;
-            text-align: center;
-        }
+        .hero { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0ea5e9 100%); color: #fff; padding: 70px 0 50px; text-align: center; }
         .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 16px; }
         .hero p { font-size: 1.1rem; opacity: .9; max-width: 600px; margin: 0 auto; }
 
-        /* Tabs */
-        .tabs {
-            display: flex; gap: 8px;
-            background: #fff;
-            padding: 8px;
-            border-radius: 50px;
-            box-shadow: var(--shadow);
-            max-width: 900px;
-            margin: -30px auto 40px;
-            position: relative;
-            z-index: 10;
-            overflow-x: auto;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 14px 20px;
-            border: none;
-            background: transparent;
-            border-radius: 40px;
-            font-size: .95rem;
-            font-weight: 600;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all .3s;
-            white-space: nowrap;
-        }
-        .tab-btn.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(37,99,235,.3);
-        }
+        .tabs { display: flex; gap: 8px; background: #fff; padding: 8px; border-radius: 50px; box-shadow: var(--shadow); max-width: 900px; margin: -30px auto 40px; position: relative; z-index: 10; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 14px 20px; border: none; background: transparent; border-radius: 40px; font-size: .95rem; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all .3s; white-space: nowrap; }
+        .tab-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,.3); }
         .tab-panel { display: none; animation: fadeIn .4s; }
         .tab-panel.active { display: block; }
         @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
-        /* 通用 section */
-        .section { padding: 40px 0; }
-        .section-title {
-            font-size: 1.8rem; font-weight: 900;
-            margin-bottom: 8px; text-align: center;
-        }
-        .section-desc {
-            text-align: center; color: var(--text-light);
-            margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;
-        }
+        .section { padding: 30px 0; }
+        .section-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; text-align: center; }
+        .section-desc { text-align: center; color: var(--text-light); margin-bottom: 36px; max-width: 500px; margin-left: auto; margin-right: auto; }
 
-        /* ===== 旅行人格测试 ===== */
-        .quiz-container {
-            max-width: 600px; margin: 0 auto;
-            background: #fff; border-radius: var(--radius);
-            box-shadow: var(--shadow); padding: 40px;
-        }
-        .quiz-progress {
-            height: 6px; background: #e2e8f0;
-            border-radius: 3px; margin-bottom: 30px; overflow: hidden;
-        }
-        .quiz-progress-bar {
-            height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 3px; transition: width .3s;
-        }
+        /* ===== 人格测试 ===== */
+        .quiz-container { max-width: 680px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px; }
+        .quiz-progress { height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .quiz-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 3px; transition: width .3s; }
         .quiz-question { font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; }
         .quiz-options { display: flex; flex-direction: column; gap: 12px; }
-        .quiz-option {
-            padding: 16px 20px;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all .2s;
-            font-weight: 500;
-        }
+        .quiz-option { padding: 16px 20px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all .2s; font-weight: 500; }
         .quiz-option:hover { border-color: var(--primary); background: #eff6ff; }
-        .quiz-option.selected {
-            border-color: var(--primary);
-            background: #dbeafe;
-            color: var(--primary-dark);
-        }
-        .quiz-result { text-align: center; }
-        .quiz-result-icon { font-size: 4rem; margin-bottom: 16px; }
-        .quiz-result-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 12px; color: var(--primary); }
-        .quiz-result-desc { color: var(--text-light); margin-bottom: 24px; }
-        .quiz-result-destinations {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-            margin: 24px 0;
-        }
-        .quiz-dest-card {
-            background: #f8fafc; border-radius: 12px; padding: 16px;
-            text-align: center;
-        }
-        .quiz-dest-card h4 { font-size: 1rem; margin-bottom: 4px; }
-        .quiz-dest-card p { font-size: .8rem; color: var(--text-light); }
+        .quiz-option.selected { border-color: var(--primary); background: #dbeafe; color: var(--primary-dark); }
 
-        /* ===== 必去清单地图 ===== */
+        .quiz-result { text-align: center; }
+        .quiz-result-icon { font-size: 4.5rem; margin-bottom: 12px; }
+        .quiz-result-title { font-size: 2rem; font-weight: 900; margin-bottom: 8px; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .quiz-result-badge { display: inline-block; background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; padding: 6px 18px; border-radius: 20px; font-size: .85rem; font-weight: 600; margin-bottom: 16px; }
+        .quiz-result-desc { color: var(--text-light); margin-bottom: 24px; font-size: .95rem; }
+
+        /* 人格结果里的线路卡片 */
+        .result-routes { text-align: left; margin: 24px 0; }
+        .result-routes h4 { font-size: 1.1rem; margin-bottom: 16px; text-align: center; }
+        .route-detail-card { background: #f8fafc; border-radius: 14px; padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--primary); }
+        .route-detail-card h5 { font-size: 1.1rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .route-detail-card .route-sub { color: var(--primary); font-size: .85rem; margin-bottom: 12px; }
+        .route-day { margin-bottom: 10px; padding-left: 12px; border-left: 2px solid #e2e8f0; }
+        .route-day-label { font-weight: 700; color: var(--primary-dark); font-size: .85rem; }
+        .route-day-text { font-size: .88rem; color: var(--text-light); }
+        .route-book-btn { display: inline-block; margin-top: 10px; padding: 8px 20px; background: linear-gradient(135deg, var(--accent), #ea580c); color: #fff; border-radius: 20px; font-size: .82rem; font-weight: 600; text-decoration: none; }
+
+        /* ===== 必去清单 ===== */
         #bucketMap { height: 500px; border-radius: var(--radius); box-shadow: var(--shadow); }
-        .bucket-stats {
-            display: flex; gap: 20px; justify-content: center;
-            margin-bottom: 24px; flex-wrap: wrap;
-        }
-        .bucket-stat {
-            background: #fff; padding: 16px 24px;
-            border-radius: 12px; box-shadow: var(--shadow);
-            text-align: center;
-        }
+        .bucket-stats { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+        .bucket-stat { background: #fff; padding: 16px 24px; border-radius: 12px; box-shadow: var(--shadow); text-align: center; }
         .bucket-stat-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
         .bucket-stat-label { font-size: .85rem; color: var(--text-light); }
-        .bucket-legend {
-            display: flex; gap: 20px; justify-content: center;
-            margin-top: 16px; font-size: .85rem; color: var(--text-light);
-        }
-        .legend-dot {
-            display: inline-block; width: 12px; height: 12px;
-            border-radius: 50%; margin-right: 6px; vertical-align: middle;
-        }
+        .bucket-legend { display: flex; gap: 20px; justify-content: center; margin-top: 16px; font-size: .85rem; color: var(--text-light); flex-wrap: wrap; }
+        .legend-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
 
-        /* ===== 跟着剧去旅行 ===== */
-        .drama-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-        .drama-card {
-            background: #fff; border-radius: var(--radius);
-            overflow: hidden; box-shadow: var(--shadow);
-            transition: transform .3s;
-        }
+        /* ===== 剧游 ===== */
+        .drama-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+        .drama-card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform .3s; }
         .drama-card:hover { transform: translateY(-4px); }
-        .drama-img { height: 200px; background-size: cover; background-position: center; position: relative; }
-        .drama-tag {
-            position: absolute; top: 12px; left: 12px;
-            background: rgba(0,0,0,.7); color: #fff;
-            padding: 4px 12px; border-radius: 20px;
-            font-size: .75rem;
-        }
+        .drama-img { height: 200px; background-size: cover; background-position: center; position: relative; cursor: pointer; }
+        .drama-tag { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,.7); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: .75rem; }
+        .drama-expand-hint { position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,.9); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
         .drama-body { padding: 20px; }
-        .drama-body h3 { font-size: 1.2rem; margin-bottom: 8px; }
+        .drama-body h3 { font-size: 1.2rem; margin-bottom: 8px; cursor: pointer; }
         .drama-body .drama-loc { color: var(--primary); font-size: .9rem; margin-bottom: 12px; }
         .drama-body p { color: var(--text-light); font-size: .9rem; margin-bottom: 16px; }
         .drama-spots { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-        .drama-spot {
-            background: #eff6ff; color: var(--primary-dark);
-            padding: 4px 10px; border-radius: 20px;
-            font-size: .8rem;
-        }
+        .drama-spot { background: #eff6ff; color: var(--primary-dark); padding: 4px 10px; border-radius: 20px; font-size: .8rem; }
+        .drama-route-detail { display: none; margin-top: 16px; padding-top: 16px; border-top: 2px dashed #e2e8f0; }
+        .drama-route-detail.open { display: block; }
+        .drama-route-detail h5 { font-size: 1rem; margin-bottom: 12px; color: var(--primary-dark); }
 
-        /* ===== Solo 旅行 ===== */
-        .solo-banner {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border-radius: var(--radius);
-            padding: 32px;
-            margin-bottom: 32px;
-            display: flex; align-items: center; gap: 24px;
-        }
+        /* ===== Solo ===== */
+        .solo-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: var(--radius); padding: 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 24px; }
         .solo-banner-icon { font-size: 3rem; }
-        .solo-banner h3 { font-size: 1.3rem; margin-bottom: 8px; }
+        .solo-banner h3 { font-size: 1.3rem; margin-bottom: 6px; }
         .solo-banner p { color: #92400e; font-size: .95rem; }
-        .solo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .solo-card {
-            background: #fff; border-radius: var(--radius);
-            overflow: hidden; box-shadow: var(--shadow);
-        }
-        .solo-card-img { height: 160px; background-size: cover; background-position: center; }
+        .solo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .solo-card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+        .solo-card-img { height: 160px; background-size: cover; background-position: center; cursor: pointer; }
         .solo-card-body { padding: 20px; }
-        .solo-card-body h4 { font-size: 1.1rem; margin-bottom: 8px; }
+        .solo-card-body h4 { font-size: 1.1rem; margin-bottom: 8px; cursor: pointer; }
         .solo-card-body p { color: var(--text-light); font-size: .88rem; margin-bottom: 12px; }
-        .solo-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-        .solo-tag {
-            background: #f0fdf4; color: #16a34a;
-            padding: 3px 10px; border-radius: 20px;
-            font-size: .78rem;
-        }
+        .solo-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .solo-tag { background: #f0fdf4; color: #16a34a; padding: 3px 10px; border-radius: 20px; font-size: .78rem; }
+        .solo-route-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 2px dashed #e2e8f0; }
+        .solo-route-detail.open { display: block; }
+        .solo-safety { background: #fef2f2; border-radius: 10px; padding: 12px; margin-top: 12px; font-size: .82rem; color: #991b1b; }
+        .solo-safety strong { display: block; margin-bottom: 4px; }
 
-        /* Footer */
-        .footer {
-            background: #1e293b; color: #94a3b8;
-            padding: 40px 0; text-align: center;
-            margin-top: 60px;
-        }
+        .footer { background: #1e293b; color: #94a3b8; padding: 30px 0; text-align: center; margin-top: 60px; }
         .footer a { color: #94a3b8; text-decoration: none; }
 
-        /* 移动端 */
         @media (max-width: 768px) {
             .nav { display: none; }
             .hero h1 { font-size: 1.8rem; }
             .tabs { flex-direction: column; border-radius: 20px; }
-            .quiz-result-destinations { grid-template-columns: 1fr; }
             .solo-banner { flex-direction: column; text-align: center; }
+            .quiz-container { padding: 24px; }
         }
     </style>
 </head>
 <body>
 
-<!-- 导航 -->
 <header class="header">
     <div class="container">
-        <a href="index.html" class="logo">
-            <i class="fas fa-compass"></i> MYL
-        </a>
+        <a href="index.html" class="logo"><i class="fas fa-compass"></i> MYL</a>
         <nav class="nav">
             <a href="index.html">首页</a>
             <a href="index.html#destinations">出境游</a>
@@ -279,11 +146,10 @@
             <a href="discover.html" class="active">发现 MYL</a>
             <a href="index.html#contact">联系我们</a>
         </nav>
-        <a href="index.html#contact" class="btn">联系我们</a>
+        <a href="index.html#contact" class="btn btn-sm">联系我们</a>
     </div>
 </header>
 
-<!-- Hero -->
 <section class="hero">
     <div class="container">
         <h1>发现 MYL</h1>
@@ -291,7 +157,6 @@
     </div>
 </section>
 
-<!-- Tabs -->
 <div class="container">
     <div class="tabs">
         <button class="tab-btn active" data-tab="personality">🧭 旅行人格测试</button>
@@ -308,15 +173,13 @@
         <div class="quiz-container">
             <div id="quizStart">
                 <h2 class="section-title">5 分钟测出你的旅行人格</h2>
-                <p class="section-desc">回答 15 道题，我们告诉你最适合去哪里旅行</p>
+                <p class="section-desc">回答 15 道题，解锁你的专属旅行人格 + 定制线路</p>
                 <div style="text-align:center">
                     <button class="btn" onclick="startQuiz()">开始测试 →</button>
                 </div>
             </div>
             <div id="quizPlaying" style="display:none">
-                <div class="quiz-progress">
-                    <div class="quiz-progress-bar" id="quizProgress" style="width:0%"></div>
-                </div>
+                <div class="quiz-progress"><div class="quiz-progress-bar" id="quizProgress" style="width:0%"></div></div>
                 <div class="quiz-question" id="quizQuestion"></div>
                 <div class="quiz-options" id="quizOptions"></div>
             </div>
@@ -327,20 +190,11 @@
     <!-- ===== 必去清单 ===== -->
     <div class="tab-panel" id="tab-bucket">
         <h2 class="section-title">一生必去清单 · 打卡地图</h2>
-        <p class="section-desc">点击地图上的标记，打卡你去过的地方。点亮属于你的旅行足迹！</p>
+        <p class="section-desc">点击地图上的标记，打卡你去过的地方，同时查看推荐线路！</p>
         <div class="bucket-stats">
-            <div class="bucket-stat">
-                <div class="bucket-stat-num" id="visitedCount">0</div>
-                <div class="bucket-stat-label">已打卡</div>
-            </div>
-            <div class="bucket-stat">
-                <div class="bucket-stat-num">30</div>
-                <div class="bucket-stat-label">必去地点</div>
-            </div>
-            <div class="bucket-stat">
-                <div class="bucket-stat-num" id="percentText">0%</div>
-                <div class="bucket-stat-label">完成度</div>
-            </div>
+            <div class="bucket-stat"><div class="bucket-stat-num" id="visitedCount">0</div><div class="bucket-stat-label">已打卡</div></div>
+            <div class="bucket-stat"><div class="bucket-stat-num">30</div><div class="bucket-stat-label">必去地点</div></div>
+            <div class="bucket-stat"><div class="bucket-stat-num" id="percentText">0%</div><div class="bucket-stat-label">完成度</div></div>
         </div>
         <div id="bucketMap"></div>
         <div class="bucket-legend">
@@ -353,111 +207,8 @@
     <!-- ===== 跟着剧去旅行 ===== -->
     <div class="tab-panel" id="tab-drama">
         <h2 class="section-title">跟着影视剧去旅行</h2>
-        <p class="section-desc">那些让你心动的画面，现在就去实景打卡</p>
-        <div class="drama-grid">
-            <div class="drama-card">
-                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80')">
-                    <span class="drama-tag">热播剧</span>
-                </div>
-                <div class="drama-body">
-                    <h3>《去有风的地方》</h3>
-                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 云南 · 大理</div>
-                    <p>许红豆在大理洱海边的民宿里治愈了自己。如果你也累了，去有风的地方走走吧。</p>
-                    <div class="drama-spots">
-                        <span class="drama-spot">洱海生态廊道</span>
-                        <span class="drama-spot">喜洲古镇</span>
-                        <span class="drama-spot">沙溪古镇</span>
-                        <span class="drama-spot">凤阳邑</span>
-                    </div>
-                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看大理线路 →</a>
-                </div>
-            </div>
-            <div class="drama-card">
-                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80')">
-                    <span class="drama-tag">爆款</span>
-                </div>
-                <div class="drama-body">
-                    <h3>《漫长的季节》</h3>
-                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 辽宁 · 沈阳</div>
-                    <p>"往前看，别回头。"东北老工业基地的秋天，有一种苍凉的浪漫。</p>
-                    <div class="drama-spots">
-                        <span class="drama-spot">铁西区</span>
-                        <span class="drama-spot">沈阳故宫</span>
-                        <span class="drama-spot">北陵公园</span>
-                        <span class="drama-spot">西塔街</span>
-                    </div>
-                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看沈阳线路 →</a>
-                </div>
-            </div>
-            <div class="drama-card">
-                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80')">
-                    <span class="drama-tag">年代剧</span>
-                </div>
-                <div class="drama-body">
-                    <h3>《繁花》</h3>
-                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 上海</div>
-                    <p>黄河路的烟火气，至真园的本帮菜，90年代上海的繁华一梦。</p>
-                    <div class="drama-spots">
-                        <span class="drama-spot">黄河路</span>
-                        <span class="drama-spot">外滩</span>
-                        <span class="drama-spot">和平饭店</span>
-                        <span class="drama-spot">永康路</span>
-                    </div>
-                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看上海线路 →</a>
-                </div>
-            </div>
-            <div class="drama-card">
-                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80')">
-                    <span class="drama-tag">日剧圣地</span>
-                </div>
-                <div class="drama-body">
-                    <h3>《灌篮高手》</h3>
-                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 日本 · 镰仓</div>
-                    <p>樱木花道挥手的那个路口，是多少人的青春回忆。</p>
-                    <div class="drama-spots">
-                        <span class="drama-spot">镰仓高校前站</span>
-                        <span class="drama-spot">江之岛</span>
-                        <span class="drama-spot">湘南海岸</span>
-                        <span class="drama-spot">鹤冈八幡宫</span>
-                    </div>
-                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看东京线路 →</a>
-                </div>
-            </div>
-            <div class="drama-card">
-                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80')">
-                    <span class="drama-tag">电影</span>
-                </div>
-                <div class="drama-body">
-                    <h3>《卧虎藏龙》</h3>
-                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 安徽 · 宏村</div>
-                    <p>李慕白和玉娇龙在竹海间飞来飞去，水墨丹青般的徽派古村。</p>
-                    <div class="drama-spots">
-                        <span class="drama-spot">宏村</span>
-                        <span class="drama-spot">西递</span>
-                        <span class="drama-spot">木坑竹海</span>
-                        <span class="drama-spot">塔川</span>
-                    </div>
-                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看黄山线路 →</a>
-                </div>
-            </div>
-            <div class="drama-card">
-                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80')">
-                    <span class="drama-tag">治愈系</span>
-                </div>
-                <div class="drama-body">
-                    <h3>《小森林》</h3>
-                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 日本 · 东北</div>
-                    <p>一年四季，稻田、木屋、手作料理。这是理想中的乡村生活。</p>
-                    <div class="drama-spots">
-                        <span class="drama-spot">晴空代表录</span>
-                        <span class="drama-spot">横手市</span>
-                        <span class="drama-spot">秋身湖</span>
-                        <span class="drama-spot">奥州平泉</span>
-                    </div>
-                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看日本线路 →</a>
-                </div>
-            </div>
-        </div>
+        <p class="section-desc">点击卡片，展开这部剧同款城市的完整线路行程</p>
+        <div class="drama-grid" id="dramaGrid"></div>
     </div>
 
     <!-- ===== Solo 旅行 ===== -->
@@ -468,92 +219,16 @@
             <div class="solo-banner-icon">🎒</div>
             <div>
                 <h3>Solo Traveler 专属福利</h3>
-                <p>单人报名 MYL 精选 Solo 线路，<strong>免单房差</strong>！我们会安排同性拼房，让你一个人出发也不孤单。</p>
+                <p>单人报名 MYL 精选 Solo 线路，<strong>免单房差</strong>！安排同性拼房，一个人出发也不孤单。点击下方城市卡片展开专属行程。</p>
             </div>
         </div>
-        <div class="solo-grid">
-            <div class="solo-card">
-                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1565636140897-3c7a8e0a8e0a?w=600&q=80')"></div>
-                <div class="solo-card-body">
-                    <h4>成都 · 美食 Solo 之旅</h4>
-                    <p>一个人也能吃火锅！串串、冒菜、担担面，美食之都最适合独自觅食。</p>
-                    <div class="solo-tags">
-                        <span class="solo-tag">🍜 美食友好</span>
-                        <span class="solo-tag">🚇 地铁方便</span>
-                        <span class="solo-tag">💰 消费低</span>
-                    </div>
-                </div>
-            </div>
-            <div class="solo-card">
-                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80')"></div>
-                <div class="solo-card-body">
-                    <h4>厦门 · 文艺 Solo 之旅</h4>
-                    <p>鼓浪屿的小巷、曾厝垵的咖啡馆，适合一个人散步发呆的慢生活城市。</p>
-                    <div class="solo-tags">
-                        <span class="solo-tag">☕ 咖啡馆多</span>
-                        <span class="solo-tag">🌊 海边散步</span>
-                        <span class="solo-tag">🛡️ 安全</span>
-                    </div>
-                </div>
-            </div>
-            <div class="solo-card">
-                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600&q=80')"></div>
-                <div class="solo-card-body">
-                    <h4>重庆 · 魔幻 Solo 之旅</h4>
-                    <p>8D 魔幻城市，一个人坐轻轨穿楼、过江索道，探索感拉满。</p>
-                    <div class="solo-tags">
-                        <span class="solo-tag">🌶️ 火锅之都</span>
-                        <span class="solo-tag">🎮 探索感强</span>
-                        <span class="solo-tag">💰 消费低</span>
-                    </div>
-                </div>
-            </div>
-            <div class="solo-card">
-                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80')"></div>
-                <div class="solo-card-body">
-                    <h4>大理 · 治愈 Solo 之旅</h4>
-                    <p>洱海边骑车、在人民路发呆，大理是 solo 旅行者的天堂，容易认识朋友。</p>
-                    <div class="solo-tags">
-                        <span class="solo-tag">👥 容易认识人</span>
-                        <span class="solo-tag">🚲 骑行友好</span>
-                        <span class="solo-tag">🧘 治愈</span>
-                    </div>
-                </div>
-            </div>
-            <div class="solo-card">
-                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80')"></div>
-                <div class="solo-card-body">
-                    <h4>镰仓 · 青春 Solo 之旅</h4>
-                    <p>跟着灌篮高手的脚步，在湘南海岸骑车，一个人也能很热血。</p>
-                    <div class="solo-tags">
-                        <span class="solo-tag">🚃 电车文化</span>
-                        <span class="solo-tag">🌅 看海</span>
-                        <span class="solo-tag">📸 出片</span>
-                    </div>
-                </div>
-            </div>
-            <div class="solo-card">
-                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80')"></div>
-                <div class="solo-card-body">
-                    <h4>曼谷 · 美食 Solo 之旅</h4>
-                    <p>街头美食天堂，一个人逛街边摊、逛夜市，泰国是 solo 旅行者的入门首选。</p>
-                    <div class="solo-tags">
-                        <span class="solo-tag">🍜 街头美食</span>
-                        <span class="solo-tag">💊 签证简单</span>
-                        <span class="solo-tag">💰 消费低</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="solo-grid" id="soloGrid"></div>
     </div>
 
 </div>
 
-<!-- Footer -->
 <footer class="footer">
-    <div class="container">
-        <p>&copy; 2026 MYL Travel · <a href="index.html">返回首页</a></p>
-    </div>
+    <div class="container"><p>&copy; 2026 MYL Travel · <a href="index.html">返回首页</a></p></div>
 </footer>
 
 <script src="vendor/leaflet/leaflet.js"></script>
@@ -569,181 +244,319 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-// ===== 旅行人格测试 =====
+// ============================================================
+//  人格测试 —— 8 种奇特人格 + 每种附带详细线路
+// ============================================================
 const quizQuestions = [
-    {
-        q: '早上旅行时，你通常几点醒？',
-        options: [
-            { text: '🌅 7点前，早起看日出', score: 'A' },
-            { text: '☕ 9-10点，慢慢起床', score: 'B' },
-            { text: '😴 12点后，睡到自然醒', score: 'C' }
-        ]
-    },
-    {
-        q: '旅行最重要的是什么？',
-        options: [
-            { text: '🏔️ 看到震撼的风景', score: 'A' },
-            { text: '🍜 吃到当地美食', score: 'B' },
-            { text: '📸 拍好看的照片', score: 'C' },
-            { text: '👥 认识有趣的人', score: 'D' }
-        ]
-    },
-    {
-        q: '你更喜欢住哪里？',
-        options: [
-            { text: '🛏️ 青年旅舍，热闹', score: 'D' },
-            { text: '🏠 精品民宿，有特色', score: 'C' },
-            { text: '🏨 五星级酒店，舒服', score: 'B' }
-        ]
-    },
-    {
-        q: '你能接受的旅行节奏？',
-        options: [
-            { text: '🏃 一天跑5个景点，特种兵', score: 'A' },
-            { text: '🚶 一天2-3个，刚刚好', score: 'C' },
-            { text: '🛋️ 一天1个，躺平', score: 'B' }
-        ]
-    },
-    {
-        q: '你最怕遇到什么？',
-        options: [
-            { text: '👨‍👩‍👧‍👦 人挤人', score: 'A' },
-            { text: '🗣️ 语言不通', score: 'D' },
-            { text: '🛌 住得差', score: 'B' },
-            { text: '📵 没网', score: 'C' }
-        ]
-    },
-    {
-        q: '你旅行回来最想发什么朋友圈？',
-        options: [
-            { text: '🏔️ 雪山/海滩/星空大片', score: 'A' },
-            { text: '🍱 九宫格美食图', score: 'B' },
-            { text: '🧏 文艺风景+短句', score: 'C' },
-            { text: '🥂 和旅伴的合照', score: 'D' }
-        ]
-    },
-    {
-        q: '你更喜欢哪种旅行方式？',
-        options: [
-            { text: '🏕️ 自驾/徒步，深入自然', score: 'A' },
-            { text: '🚌 坐当地公交，逛菜市场', score: 'B' },
-            { text: '🏛️ 逛博物馆/老街区，慢慢走', score: 'C' },
-            { text: '👫 跟团/拼团，有人带', score: 'D' }
-        ]
-    },
-    {
-        q: '旅行预算你最愿意花在哪？',
-        options: [
-            { text: '🎫 门票/户外体验', score: 'A' },
-            { text: '🍜 吃！吃！吃！', score: 'B' },
-            { text: '🛏️ 住有设计感的酒店', score: 'C' },
-            { text: '🍹 酒吧/社交活动', score: 'D' }
-        ]
-    },
-    {
-        q: '你最喜欢的旅行天气？',
-        options: [
-            { text: '❄️ 雪天/星空，极端天气', score: 'A' },
-            { text: '☀️ 晴天，适合逛街吃小吃', score: 'B' },
-            { text: '🌧️ 阴雨天，适合拍文艺照', score: 'C' },
-            { text: '🤷 无所谓，关键是和谁', score: 'D' }
-        ]
-    },
-    {
-        q: '旅途中你最想做的事？',
-        options: [
-            { text: '🌅 看日出/日落/极光', score: 'A' },
-            { text: '🥘 找当地老字号', score: 'B' },
-            { text: '📚 逛书店/咖啡馆', score: 'C' },
-            { text: '🎉 参加当地人的聚会', score: 'D' }
-        ]
-    },
-    {
-        q: '你更喜欢哪种交通方式？',
-        options: [
-            { text: '🚗 自驾/徒步，自由掌控', score: 'A' },
-            { text: '🚇 地铁/公交，穿梭市井', score: 'B' },
-            { text: '🚞 高铁/慢车，看风景', score: 'C' },
-            { text: '🚐 拼车/搭便车，认识人', score: 'D' }
-        ]
-    },
-    {
-        q: '旅行纪念品你会买什么？',
-        options: [
-            { text: '🪨 石头/树叶/自然标本', score: 'A' },
-            { text: '🌶️ 当地调味料/零食', score: 'B' },
-            { text: '🖼️ 明信片/文创周边', score: 'C' },
-            { text: '🤝 和旅伴的合影/签名', score: 'D' }
-        ]
-    },
-    {
-        q: '你更喜欢哪种类型的目的地？',
-        options: [
-            { text: '🏞️ 国家公园/荒野/无人区', score: 'A' },
-            { text: '🍢 美食之都/夜市/小吃街', score: 'B' },
-            { text: '🏘️ 古城/文艺小镇/美术馆', score: 'C' },
-            { text: '🏄 派对城市/冲浪小镇', score: 'D' }
-        ]
-    },
-    {
-        q: '旅行中你最在意什么？',
-        options: [
-            { text: '🏔️ 看到别人没看过的风景', score: 'A' },
-            { text: '🍜 吃到别人不知道的馆子', score: 'B' },
-            { text: '📷 拍到别人拍不到的角度', score: 'C' },
-            { text: '👥 认识别人不认识的朋友', score: 'D' }
-        ]
-    },
-    {
-        q: '如果只能选一个地方待一周，你选？',
-        options: [
-            { text: '🏔️ 雪山脚下的小木屋', score: 'A' },
-            { text: '🌶️ 美食之都的市中心', score: 'B' },
-            { text: '🌊 海边的文艺小镇', score: 'C' },
-            { text: '🏝️ 有很多青旅的度假岛', score: 'D' }
-        ]
-    }
+    { q: '早上旅行时，你通常几点醒？', options: [
+        { text: '🌅 7点前，爬起来看日出', score: 'A' },
+        { text: '☕ 9-10点，慢慢起床觅食', score: 'B' },
+        { text: '😴 12点后，睡到自然醒', score: 'C' }
+    ]},
+    { q: '旅行最重要的是什么？', options: [
+        { text: '🏔️ 看到震撼到失语的风景', score: 'A' },
+        { text: '🍜 吃到当地人排队的馆子', score: 'B' },
+        { text: '📸 拍一组能封神的照片', score: 'C' },
+        { text: '👥 认识有趣的旅伴故事', score: 'D' }
+    ]},
+    { q: '你更喜欢住哪里？', options: [
+        { text: '🛏️ 青旅多人间，热闹拼饭', score: 'D' },
+        { text: '🏠 设计感民宿，有故事', score: 'C' },
+        { text: '🏨 五星酒店，躺平舒服', score: 'B' }
+    ]},
+    { q: '你能接受的旅行节奏？', options: [
+        { text: '🏃 一天跑5个景点，特种兵', score: 'A' },
+        { text: '🚶 一天2-3个，慢慢逛', score: 'C' },
+        { text: '🛋️ 一天1个，躺平不赶路', score: 'B' }
+    ]},
+    { q: '你最怕遇到什么？', options: [
+        { text: '👨‍👩‍👧‍👦 人挤人，拍不了照', score: 'A' },
+        { text: '🗣️ 语言不通吃不到好吃的', score: 'D' },
+        { text: '🛌 住得差影响心情', score: 'B' },
+        { text: '📵 没网拍不了照发不了圈', score: 'C' }
+    ]},
+    { q: '旅行回来你最想发什么朋友圈？', options: [
+        { text: '🏔️ 雪山/极光/星空大片', score: 'A' },
+        { text: '🍱 九宫格美食图配文\'绝了\'', score: 'B' },
+        { text: '🧏 文艺风景+一句短句', score: 'C' },
+        { text: '🥂 和旅伴的合照+故事', score: 'D' }
+    ]},
+    { q: '你更喜欢哪种旅行方式？', options: [
+        { text: '🏕️ 自驾/徒步，深入荒野', score: 'A' },
+        { text: '🚌 坐公交逛菜市场吃小吃', score: 'B' },
+        { text: '🏛️ 逛博物馆/老街区慢慢走', score: 'C' },
+        { text: '👫 拼团/青旅，有人带', score: 'D' }
+    ]},
+    { q: '旅行预算你最愿意花在哪？', options: [
+        { text: '🎫 门票/户外体验/跳伞', score: 'A' },
+        { text: '🍜 吃！吃！吃！', score: 'B' },
+        { text: '🛏️ 住有设计感的酒店/民宿', score: 'C' },
+        { text: '🍹 酒吧/社交活动/拼餐', score: 'D' }
+    ]},
+    { q: '你最喜欢的旅行天气？', options: [
+        { text: '❄️ 雪天/极光/极端天气', score: 'A' },
+        { text: '☀️ 晴天，逛街吃小吃', score: 'B' },
+        { text: '🌧️ 阴雨天，拍文艺照', score: 'C' },
+        { text: '🤷 无所谓，关键是和谁', score: 'D' }
+    ]},
+    { q: '旅途中你最想做的事？', options: [
+        { text: '🌅 看日出/日落/极光', score: 'A' },
+        { text: '🥘 找当地老字号苍蝇馆', score: 'B' },
+        { text: '📚 逛独立书店/咖啡馆', score: 'C' },
+        { text: '🎉 参加当地人的聚会/夜市', score: 'D' }
+    ]},
+    { q: '你更喜欢哪种交通方式？', options: [
+        { text: '🚗 自驾/徒步，自由掌控', score: 'A' },
+        { text: '🚇 地铁/公交，穿梭市井', score: 'B' },
+        { text: '🚞 高铁/慢车，看风景', score: 'C' },
+        { text: '🚐 拼车/搭便车，认识人', score: 'D' }
+    ]},
+    { q: '旅行纪念品你会买什么？', options: [
+        { text: '🪨 石头/树叶/自然标本', score: 'A' },
+        { text: '🌶️ 当地调味料/零食伴手礼', score: 'B' },
+        { text: '🖼️ 明信片/文创周边', score: 'C' },
+        { text: '🤝 和旅伴的合影/签名', score: 'D' }
+    ]},
+    { q: '你更喜欢哪种类型的目的地？', options: [
+        { text: '🏞️ 国家公园/荒野/无人区', score: 'A' },
+        { text: '🍢 美食之都/夜市/小吃街', score: 'B' },
+        { text: '🏘️ 古城/文艺小镇/美术馆', score: 'C' },
+        { text: '🏄 派对城市/冲浪小镇', score: 'D' }
+    ]},
+    { q: '旅行中你最在意什么？', options: [
+        { text: '🏔️ 看到别人没看过的风景', score: 'A' },
+        { text: '🍜 吃到别人不知道的馆子', score: 'B' },
+        { text: '📷 拍到别人拍不到的角度', score: 'C' },
+        { text: '👥 认识别人不认识的朋友', score: 'D' }
+    ]},
+    { q: '如果只能选一个地方待一周，你选？', options: [
+        { text: '🏔️ 雪山脚下的小木屋', score: 'A' },
+        { text: '🌶️ 美食之都的市中心', score: 'B' },
+        { text: '🌊 海边的文艺小镇', score: 'C' },
+        { text: '🏝️ 有很多青旅的度假岛', score: 'D' }
+    ]}
 ];
 
-const quizResults = {
-    A: {
-        icon: '🏔️',
-        title: '荒野探险家',
-        desc: '你热爱自然、追求震撼的风景，不介意早起、不怕累。人少、景美、原生态是你的关键词。',
-        destinations: [
-            { name: '冰岛', reason: '极光+冰川+瀑布' },
-            { name: '新疆', reason: '草原+沙漠+雪山' },
-            { name: '新西兰', reason: '魔戒取景地' }
+// 8 种人格 —— 名字奇特、适合发朋友圈
+const personalityTypes = {
+    'A': {
+        icon: '🏔️', title: '极地追光者', badge: '荒野血脉 · 视觉动物',
+        desc: '你骨子里流着荒野的血。人多的地方你掉头就走，雪山脚下、极光下、无人区里才是你的主场。你旅行不是为了放松，是为了被震撼到说不出话。',
+        routes: [
+            { dest: '冰岛 · 极光环岛', days: '7天6晚',
+              itinerary: [
+                { d: 'Day1', t: '雷克雅未克落地 → 蓝湖温泉泡汤 → 市区漫步' },
+                { d: 'Day2', t: '黄金圈：辛格维利尔国家公园 → 盖歇尔间歇泉 → 黄金瀑布' },
+                { d: 'Day3', t: '南岸自驾：塞里雅兰瀑布 → 斯科加瀑布 → 黑沙滩' },
+                { d: 'Day4', t: '冰河湖 → 钻石冰沙滩 → 杰古沙龙游船' },
+                { d: 'Day5', t: '东峡湾小镇 → 都皮沃古尔（看海豹）' },
+                { d: 'Day6', t: '米湖地热区 → 黛提瀑布（欧洲最强瀑布）→ 众神瀑布' },
+                { d: 'Day7', t: '阿克雷里 → 返雷克雅未克，追极光夜' }
+              ]},
+            { dest: '新疆 · 北疆大环线', days: '8天7晚',
+              itinerary: [
+                { d: 'Day1', t: '乌鲁木齐集合 → 国际大巴扎' },
+                { d: 'Day2', t: '布尔津 → 五彩滩日落' },
+                { d: 'Day3', t: '喀纳斯湖 → 观鱼台 → 三湾徒步' },
+                { d: 'Day4', t: '禾木村 → 晨雾 → 图瓦人家访' },
+                { d: 'Day5', t: '世界魔鬼城 → 克拉玛依' },
+                { d: 'Day6', t: '赛里木湖环湖 → 果子沟大桥' },
+                { d: 'Day7', t: '那拉提草原 → 空中草原' },
+                { d: 'Day8', t: '独库公路 → 返乌鲁木齐' }
+              ]},
+            { dest: '新西兰 · 南岛自驾', days: '10天9晚',
+              itinerary: [
+                { d: 'Day1', t: '基督城落地 → 植物园 → 雅芳河撑篙' },
+                { d: 'Day2', t: '格雷茅斯 → 薄饼岩 → 千层岩日出' },
+                { d: 'Day3', t: '福克斯冰川徒步 → 马瑟森湖镜面倒影' },
+                { d: 'Day4', t: '瓦纳卡 → 孤独的树 → 迷幻世界' },
+                { d: 'Day5', t: '皇后镇 → 天空缆车 → 瓦卡蒂普湖' },
+                { d: 'Day6', t: '米尔福德峡湾游船 → 瀑布群' },
+                { d: 'Day7', t: '但尼丁 → 鲍德温街 → 拉纳克城堡' },
+                { d: 'Day8', t: '蒂卡普湖 → 好牧羊人教堂 → 夜间观星' },
+                { d: 'Day9', t: '基督城还车 → 南极中心' },
+                { d: 'Day10', t: '返程' }
+              ]}
         ]
     },
-    B: {
-        icon: '🍜',
-        title: '美食家',
-        desc: '你旅行就是为了吃！街头巷尾的小店、当地人才知道的馆子，才是你的宝藏。',
-        destinations: [
-            { name: '成都', reason: '火锅+串串+小吃' },
-            { name: '曼谷', reason: '街头美食天堂' },
-            { name: '大阪', reason: '天下厨房' }
+    'B': {
+        icon: '🍜', title: '碳水刺客', badge: '舌头侦探 · 城市猎人',
+        desc: '你旅行的KPI就是吃遍当地。大众点评不看，专钻巷子找苍蝇馆。你能为了一碗面飞一座城，朋友圈九宫格全是吃的，文案永远是"绝了"。',
+        routes: [
+            { dest: '成都 · 美食猎人之旅', days: '4天3晚',
+              itinerary: [
+                { d: 'Day1', t: '宽窄巷子 → 奎星楼街冒椒火辣 → 锦里夜市' },
+                { d: 'Day2', t: '大熊猫基地 → 建设巷小吃街 → 春熙路' },
+                { d: 'Day3', t: '人民公园鹤鸣茶社 → 玉林路小酒馆 → 地道火锅' },
+                { d: 'Day4', t: '文殊院 → 洞子口张老二凉粉 → 返程' }
+              ]},
+            { dest: '曼谷 · 街头美食巡礼', days: '5天4晚',
+              itinerary: [
+                { d: 'Day1', t: '考山路夜市 → 芒果糯米饭 → 冬阴功汤' },
+                { d: 'Day2', t: '恰图恰周末市场 → 海鲜烧烤 → 泰式奶茶' },
+                { d: 'Day3', t: '唐人街耀华力路 → 鱼翅羹 → 燕窝汤' },
+                { d: 'Day4', t: '安帕瓦水上市场 → 船面 → 萤火虫夜游' },
+                { d: 'Day5', t: 'Terminal 21 → 泰式船面 → 返程' }
+              ]},
+            { dest: '大阪 · 天下厨房', days: '4天3晚',
+              itinerary: [
+                { d: 'Day1', t: '道顿堀 → 章鱼烧 → 御好烧 → 串炸' },
+                { d: 'Day2', t: '黑门市场 → 和牛刺身 → 海胆饭' },
+                { d: 'Day3', t: '新世界 → 通天阁 → 炸串老店' },
+                { d: 'Day4', t: '梅田蓝天大厦 → 大阪烧 → 返程' }
+              ]}
         ]
     },
-    C: {
-        icon: '📸',
-        title: '文艺青年',
-        desc: '你追求质感、喜欢拍照、在意住得有没有味道。慢节奏、有故事的地方最适合你。',
-        destinations: [
-            { name: '大理', reason: '洱海+古镇+咖啡' },
-            { name: '京都', reason: '寺庙+樱花+茶道' },
-            { name: '厦门', reason: '鼓浪屿+海边' }
+    'C': {
+        icon: '📸', title: '胶片诗人', badge: '光线捕手 · 质感信徒',
+        desc: '你旅行不是赶路，是等光。你会为了一束光在同一个地方蹲两小时。你住酒店先看窗边有没有光，拍照必须胶片滤镜，文案永远是短句留白。',
+        routes: [
+            { dest: '大理 · 有风的地方', days: '5天4晚',
+              itinerary: [
+                { d: 'Day1', t: '大理古城入住 → 人民路闲逛 → 黄昏洋人街' },
+                { d: 'Day2', t: '洱海生态廊道骑行 → 喜洲稻田 → 海舌公园日落' },
+                { d: 'Day3', t: '沙溪古镇 → 寺登街 → 先锋书局 → 石宝山' },
+                { d: 'Day4', t: '凤阳邑茶马古道 → 无为寺 → 咖啡馆发呆' },
+                { d: 'Day5', t: '苍山洗马潭索道 → 寂照庵吃素斋 → 返程' }
+              ]},
+            { dest: '京都 · 侘寂巡礼', days: '5天4晚',
+              itinerary: [
+                { d: 'Day1', t: '清水寺 → 二年坂三年坂 → 祇园花见小路' },
+                { d: 'Day2', t: '金阁寺 → 龙安寺石庭 → 仁和寺' },
+                { d: 'Day3', t: '岚山竹林 → 天龙寺 → 渡月桥日落' },
+                { d: 'Day4', t: '伏见稻荷大社千本鸟居 → 宇治抹茶体验' },
+                { d: 'Day5', t: '哲学之道 → 南禅寺 → 平安神宫 → 返程' }
+              ]},
+            { dest: '厦门 · 海岛慢生活', days: '4天3晚',
+              itinerary: [
+                { d: 'Day1', t: '中山路骑楼 → 八市吃海鲜 → 沙坡尾艺术西区' },
+                { d: 'Day2', t: '鼓浪屿全天 → 菽庄花园 → 日光岩日落' },
+                { d: 'Day3', t: '曾厝垵 → 环岛路骑行 → 黄厝海滩看日出' },
+                { d: 'Day4', t: '南普陀寺 → 厦大校园 → 返程' }
+              ]}
         ]
     },
-    D: {
-        icon: '👥',
-        title: '社交达人',
-        desc: '你旅行最重要的是认识新朋友！青旅、拼餐、搭子，一个人出发也能玩出一群人的热闹。',
-        destinations: [
-            { name: '巴厘岛', reason: '冲浪+派对+社交' },
-            { name: '清迈', reason: '夜市+咖啡馆+义工' },
-            { name: '台北', reason: '友善+美食+便利' }
+    'D': {
+        icon: '🎉', title: '旅途交际花', badge: '搭子雷达 · 故事收集者',
+        desc: '你一个人出门，但永远不会一个人吃饭。青旅客厅、拼餐局、夜市搭子……你走到哪聊到哪，旅行回来微信多了50个好友，手机里全是别人的故事。',
+        routes: [
+            { dest: '巴厘岛 · 冲浪社交岛', days: '6天5晚',
+              itinerary: [
+                { d: 'Day1', t: '库塔入住青旅 → 海滩日落 → 青旅欢迎派对' },
+                { d: 'Day2', t: '冲浪课（初学者）→ 海滩酒吧 → 篝火晚会' },
+                { d: 'Day3', t: '乌布一日游 → 梯田 → 猴林 → 青旅烹饪课' },
+                { d: 'Day4', t: '蓝梦岛浮潜 → 恶魔的眼泪 → 日落巡航' },
+                { d: 'Day5', t: '水明漾逛咖啡馆 → 海滩俱乐部 → 派对夜' },
+                { d: 'Day6', t: '告别早餐 → 返程' }
+              ]},
+            { dest: '清迈 · 慢城社交', days: '6天5晚',
+              itinerary: [
+                { d: 'Day1', t: '古城入住 → 周日夜市 → 青旅拼饭' },
+                { d: 'Day2', t: '素贴山双龙寺 → 宁曼路咖啡馆 → Live House' },
+                { d: 'Day3', t: '泰菜烹饪课 → 夜市逛吃 → 酒吧街' },
+                { d: 'Day4', t: '大象自然保护营（义工）→ 和伙伴看星空' },
+                { d: 'Day5', t: '拜县一日游 → 二战桥 → 草莓园 → 日落' },
+                { d: 'Day6', t: '告别 brunch → 返程' }
+              ]},
+            { dest: '台北 · 友善之城', days: '5天4晚',
+              itinerary: [
+                { d: 'Day1', t: '西门町 → 红楼 → 宁夏夜市' },
+                { d: 'Day2', t: '台北故宫 → 士林官邸 → 士林夜市' },
+                { d: 'Day3', t: '九份一日游 → 十分放天灯 → 基隆庙口' },
+                { d: 'Day4', t: '永康街 → 师大商圈 → 临江街夜市' },
+                { d: 'Day5', t: '中正纪念堂 → 牯岭街 → 返程' }
+              ]}
+        ]
+    },
+    'AB': {
+        icon: '⛰️', title: '山野饕客', badge: '为了一口吃的翻山越岭',
+        desc: '你可以为了一碗农家土鸡翻两座山，也可以在山顶啃着干粮看日出。荒野和美食在你这里不矛盾——你要的是最原生态的那一口。',
+        routes: [
+            { dest: '成都 → 川西 · 山野美食线', days: '7天6晚',
+              itinerary: [
+                { d: 'Day1', t: '成都集合 → 宽窄巷子吃小吃' },
+                { d: 'Day2', t: '四姑娘山 → 藏家牦牛肉火锅' },
+                { d: 'Day3', t: '长坪沟徒步 → 高山露营' },
+                { d: 'Day4', t: '丹巴藏寨 → 酥油茶 + 糌粑体验' },
+                { d: 'Day5', t: '塔公草原 → 雅拉雪山 → 手抓羊肉' },
+                { d: 'Day6', t: '新都桥摄影 → 返回康定' },
+                { d: 'Day7', t: '康定 → 成都返程' }
+              ]},
+            { dest: '云南 · 菌子美食线', days: '6天5晚',
+              itinerary: [
+                { d: 'Day1', t: '昆明落地 → 过桥米线总店' },
+                { d: 'Day2', t: '大理 → 白族三道茶 → 乳扇' },
+                { d: 'Day3', t: '香格里拉 → 松茸炖鸡 → 酥油茶' },
+                { d: 'Day4', t: '普达措徒步 → 牦牛火锅' },
+                { d: 'Day5', t: '丽江 → 纳西烤肉 → 腊排骨' },
+                { d: 'Day6', t: '昆明返程' }
+              ]}
+        ]
+    },
+    'AC': {
+        icon: '🏔️', title: '荒野艺术家', badge: '在无人处找光',
+        desc: '你不满足于游客照。你要的是那种"这里竟然有这种地方"的震撼，加上"这个角度只有我拍到了"的骄傲。荒野是你的片场。',
+        routes: [
+            { dest: '青海 · 大西北环线', days: '7天6晚',
+              itinerary: [
+                { d: 'Day1', t: '西宁集合 → 塔尔寺' },
+                { d: 'Day2', t: '青海湖环湖 → 茶卡镇入住' },
+                { d: 'Day3', t: '茶卡盐湖天空之镜 → 翡翠湖' },
+                { d: 'Day4', t: 'U型公路 → 水上雅丹 → 南八仙' },
+                { d: 'Day5', t: '莫高窟 → 鸣沙山月牙泉日落' },
+                { d: 'Day6', t: '嘉峪关 → 张掖七彩丹霞' },
+                { d: 'Day7', t: '祁连大草原 → 返西宁' }
+              ]},
+            { dest: '甘肃 · 河西走廊', days: '6天5晚',
+              itinerary: [
+                { d: 'Day1', t: '兰州 → 中山桥 → 牛肉面' },
+                { d: 'Day2', t: '武威雷台汉墓 → 张掖大佛寺' },
+                { d: 'Day3', t: '张掖丹霞日出 → 嘉峪关关城' },
+                { d: 'Day4', t: '瓜州 → 榆林窟 → 敦煌' },
+                { d: 'Day5', t: '莫高窟 → 鸣沙山露营看星空' },
+                { d: 'Day6', t: '敦煌返程' }
+              ]}
+        ]
+    },
+    'BC': {
+        icon: '🍜', title: '味蕾诗人', badge: '用舌头写旅行日记',
+        desc: '你是那种会在咖啡馆写旅行手账的人。吃要吃得讲究，住要住得有味道，走要走得有节奏。你旅行不是打卡，是过日子。',
+        routes: [
+            { dest: '杭州 · 茶与食', days: '4天3晚',
+              itinerary: [
+                { d: 'Day1', t: '西湖漫步 → 楼外楼吃西湖醋鱼 → 柳浪闻莺日落' },
+                { d: 'Day2', t: '龙井村采茶 → 农家菜 → 九溪烟树徒步' },
+                { d: 'Day3', t: '灵隐寺 → 法喜寺吃素面 → 小河直街咖啡馆' },
+                { d: 'Day4', t: '西溪湿地 → 知味观 → 返程' }
+              ]},
+            { dest: '苏州 · 园林与面', days: '4天3晚',
+              itinerary: [
+                { d: 'Day1', t: '拙政园 → 苏式汤面（同得兴）→ 平江路夜游' },
+                { d: 'Day2', t: '留园 → 虎丘 → 山塘街吃小吃' },
+                { d: 'Day3', t: '网师园晨景 → 狮子林 → 金鸡湖日落' },
+                { d: 'Day4', t: '诚品书店 → 哑巴生煎 → 返程' }
+              ]}
+        ]
+    },
+    'CD': {
+        icon: '📸', title: '文艺社交家', badge: '一边拍照一边交朋友',
+        desc: '你是朋友圈里最会玩的那个人。你能在咖啡馆和老板聊一下午，也能在青旅组局去夜市。你旅行的朋友圈永远是大片+有趣的故事。',
+        routes: [
+            { dest: '长沙 · 娱乐之都', days: '4天3晚',
+              itinerary: [
+                { d: 'Day1', t: '五一广场 → 太平街 → 黄兴路步行街夜市' },
+                { d: 'Day2', t: '岳麓山 → 橘子洲头 → 文和友' },
+                { d: 'Day3', t: '谢子龙影像艺术馆 → 李自健美术馆 → 梅溪湖' },
+                { d: 'Day4', t: '冬瓜山小吃 → 返程' }
+              ]},
+            { dest: '厦门 → 泉州 · 闽南文艺线', days: '5天4晚',
+              itinerary: [
+                { d: 'Day1', t: '厦门沙坡尾 → 环岛路日落' },
+                { d: 'Day2', t: '鼓浪屿 → 老别墅咖啡馆' },
+                { d: 'Day3', t: '泉州 → 西街 → 开元寺 → 姜母鸭' },
+                { d: 'Day4', t: '蟳埔村簪花体验 → 洛阳桥 → 夜市' },
+                { d: 'Day5', t: '泉州返程' }
+              ]}
         ]
     }
 };
@@ -752,8 +565,7 @@ let currentQ = 0;
 let answers = [];
 
 function startQuiz() {
-    currentQ = 0;
-    answers = [];
+    currentQ = 0; answers = [];
     document.getElementById('quizStart').style.display = 'none';
     document.getElementById('quizResult').style.display = 'none';
     document.getElementById('quizPlaying').style.display = 'block';
@@ -762,11 +574,11 @@ function startQuiz() {
 
 function showQuestion() {
     const q = quizQuestions[currentQ];
-    document.getElementById('quizProgress').style.width = ((currentQ) / quizQuestions.length * 100) + '%';
+    document.getElementById('quizProgress').style.width = (currentQ / quizQuestions.length * 100) + '%';
     document.getElementById('quizQuestion').textContent = `Q${currentQ + 1}. ${q.q}`;
     const optsEl = document.getElementById('quizOptions');
     optsEl.innerHTML = '';
-    q.options.forEach((opt, i) => {
+    q.options.forEach(opt => {
         const div = document.createElement('div');
         div.className = 'quiz-option';
         div.textContent = opt.text;
@@ -781,12 +593,9 @@ function selectOption(score, el) {
     answers.push(score);
     setTimeout(() => {
         currentQ++;
-        if (currentQ < quizQuestions.length) {
-            showQuestion();
-        } else {
-            showResult();
-        }
-    }, 300);
+        if (currentQ < quizQuestions.length) showQuestion();
+        else showResult();
+    }, 250);
 }
 
 function showResult() {
@@ -794,101 +603,112 @@ function showResult() {
     const resultEl = document.getElementById('quizResult');
     resultEl.style.display = 'block';
 
-    // 统计最多的选项
-    const counts = {};
-    answers.forEach(a => counts[a] = (counts[a] || 0) + 1);
-    let maxType = 'A';
-    let maxCount = 0;
-    for (const [k, v] of Object.entries(counts)) {
-        if (v > maxCount) { maxCount = v; maxType = k; }
+    const counts = {A:0, B:0, C:0, D:0};
+    answers.forEach(a => counts[a]++);
+
+    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+    const main = sorted[0][0];
+    const sub = sorted[1][0];
+
+    let typeKey;
+    if (sorted[0][1] >= sorted[1][1] + 3) {
+        typeKey = main;
+    } else {
+        typeKey = main + sub;
     }
 
-    const r = quizResults[maxType];
+    const r = personalityTypes[typeKey] || personalityTypes[main];
+
     resultEl.innerHTML = `
         <div class="quiz-result">
             <div class="quiz-result-icon">${r.icon}</div>
             <h2 class="quiz-result-title">${r.title}</h2>
+            <div class="quiz-result-badge">${r.badge}</div>
             <p class="quiz-result-desc">${r.desc}</p>
-            <h4 style="margin: 20px 0 12px;">为你推荐：</h4>
-            <div class="quiz-result-destinations">
-                ${r.destinations.map(d => `
-                    <div class="quiz-dest-card">
-                        <h4>${d.name}</h4>
-                        <p>${d.reason}</p>
+            <div class="result-routes">
+                <h4>🎯 为你定制的专属线路</h4>
+                ${r.routes.map(rt => `
+                    <div class="route-detail-card">
+                        <h5>${rt.dest} <span style="font-size:.8rem;color:var(--text-light);font-weight:400">（${rt.days}）</span></h5>
+                        <div class="route-sub">MYL 专属定制线路 · 含住宿+门票+交通</div>
+                        ${rt.itinerary.map(day => `
+                            <div class="route-day">
+                                <span class="route-day-label">${day.d}</span>
+                                <span class="route-day-text">${day.t}</span>
+                            </div>
+                        `).join('')}
+                        <a href="index.html#contact" class="route-book-btn">咨询这条线路 →</a>
                     </div>
                 `).join('')}
             </div>
             <button class="btn" onclick="startQuiz()">重新测试</button>
-            <a href="index.html" class="btn" style="background:#64748b;margin-left:8px">看看这些地方</a>
+            <a href="index.html#china" class="btn btn-outline" style="margin-left:8px">看看更多目的地</a>
         </div>
     `;
 }
 
-// ===== 必去清单地图 =====
+// ============================================================
+//  必去清单地图 —— 每个地点带线路预览
+// ============================================================
 let bucketMapInitialized = false;
 let bucketMap;
 let visitedPlaces = JSON.parse(localStorage.getItem('myBucketList') || '[]');
 
 const bucketList = [
-    { name: '冰岛·极光', lat: 64.96, lng: -19.02, icon: '🌌' },
-    { name: '新西兰·皇后镇', lat: -45.03, lng: 168.66, icon: '🏔️' },
-    { name: '日本·京都', lat: 35.01, lng: 135.77, icon: '⛩️' },
-    { name: '泰国·清迈', lat: 18.79, lng: 98.98, icon: '🛕' },
-    { name: '巴厘岛·乌布', lat: -8.51, lng: 115.26, icon: '🌴' },
-    { name: '澳大利亚·大堡礁', lat: -18.29, lng: 147.70, icon: '🐠' },
-    { name: '埃及·金字塔', lat: 29.98, lng: 31.13, icon: '🔺' },
-    { name: '肯尼亚·马赛马拉', lat: -1.48, lng: 35.14, icon: '🦁' },
-    { name: '土耳其·卡帕多奇亚', lat: 38.64, lng: 34.83, icon: '🎈' },
-    { name: '法国·巴黎', lat: 48.86, lng: 2.35, icon: '🗼' },
-    { name: '意大利·威尼斯', lat: 45.44, lng: 12.33, icon: '🚤' },
-    { name: '西班牙·巴塞罗那', lat: 41.39, lng: 2.17, icon: '🏖️' },
-    { name: '美国·纽约', lat: 40.71, lng: -74.01, icon: '🗽' },
-    { name: '美国·大峡谷', lat: 36.11, lng: -112.11, icon: '🏜️' },
-    { name: '秘鲁·马丘比丘', lat: -13.16, lng: -72.55, icon: '⛰️' },
-    { name: '巴西·里约', lat: -22.91, lng: -43.17, icon: '🏖️' },
-    { name: '中国·西藏拉萨', lat: 29.65, lng: 91.14, icon: '🛕' },
-    { name: '中国·新疆喀什', lat: 39.47, lng: 75.99, icon: '🏜️' },
-    { name: '中国·云南大理', lat: 25.61, lng: 100.27, icon: '🌊' },
-    { name: '中国·四川稻城', lat: 28.44, lng: 100.33, icon: '🏔️' },
-    { name: '中国·甘肃敦煌', lat: 40.17, lng: 94.67, icon: '🏜️' },
-    { name: '中国·张家界', lat: 29.12, lng: 110.48, icon: '⛰️' },
-    { name: '中国·三亚', lat: 18.25, lng: 109.51, icon: '🏝️' },
-    { name: '中国·哈尔滨', lat: 45.80, lng: 126.53, icon: '❄️' },
-    { name: '韩国·首尔', lat: 37.57, lng: 126.98, icon: '🏯' },
-    { name: '新加坡', lat: 1.35, lng: 103.82, icon: '🏙️' },
-    { name: '瑞士·阿尔卑斯', lat: 46.52, lng: 6.57, icon: '🏔️' },
-    { name: '希腊·圣托里尼', lat: 36.39, lng: 25.46, icon: '⛪' },
-    { name: '加拿大·班夫', lat: 51.18, lng: -115.57, icon: '🏔️' },
-    { name: '南极', lat: -82.00, lng: 0.00, icon: '🐧' }
+    { name: '冰岛·极光', lat: 64.96, lng: -19.02, icon: '🌌', route: '推荐：7天环岛，雷克雅未克→黄金圈→南岸→冰河湖→米湖→追极光' },
+    { name: '新西兰·皇后镇', lat: -45.03, lng: 168.66, icon: '🏔️', route: '推荐：10天南岛自驾，基督城→福克斯冰川→瓦纳卡→皇后镇→米尔福德峡湾' },
+    { name: '日本·京都', lat: 35.01, lng: 135.77, icon: '⛩️', route: '推荐：5天深度，清水寺→金阁寺→岚山→伏见稻荷→哲学之道' },
+    { name: '泰国·清迈', lat: 18.79, lng: 98.98, icon: '🛕', route: '推荐：6天慢城，古城→素贴山→烹饪课→大象营→拜县' },
+    { name: '巴厘岛·乌布', lat: -8.51, lng: 115.26, icon: '🌴', route: '推荐：6天，库塔冲浪→乌布梯田→蓝梦岛浮潜→水明漾派对' },
+    { name: '澳大利亚·大堡礁', lat: -18.29, lng: 147.70, icon: '🐠', route: '推荐：凯恩斯3天，大堡礁游船→库兰达热带雨林→棕榈湾' },
+    { name: '埃及·金字塔', lat: 29.98, lng: 31.13, icon: '🔺', route: '推荐：8天，开罗→金字塔→狮身人面像→卢克索神庙→阿斯旺' },
+    { name: '肯尼亚·马赛马拉', lat: -1.48, lng: 35.14, icon: '🦁', route: '推荐：7天野生动物之旅，内罗毕→马赛马拉→安博塞利' },
+    { name: '土耳其·卡帕多奇亚', lat: 38.64, lng: 34.83, icon: '🎈', route: '推荐：热气球日出→地下城→格雷梅露天博物馆→日落ATV' },
+    { name: '法国·巴黎', lat: 48.86, lng: 2.35, icon: '🗼', route: '推荐：7天，埃菲尔铁塔→卢浮宫→塞纳河→凡尔赛宫→蒙马特' },
+    { name: '意大利·威尼斯', lat: 45.44, lng: 12.33, icon: '🚤', route: '推荐：3天主岛→彩色岛→玻璃岛→贡多拉夜游' },
+    { name: '西班牙·巴塞罗那', lat: 41.39, lng: 2.17, icon: '🏖️', route: '推荐：5天，圣家堂→古埃尔公园→兰布拉大道→海边' },
+    { name: '美国·纽约', lat: 40.71, lng: -74.01, icon: '🗽', route: '推荐：5天，曼哈顿→自由女神→中央公园→布鲁克林大桥' },
+    { name: '美国·大峡谷', lat: 36.11, lng: -112.11, icon: '🏜️', route: '推荐：拉斯维加斯出发3天，西峡→南峡→胡佛水坝' },
+    { name: '秘鲁·马丘比丘', lat: -13.16, lng: -72.55, icon: '⛰️', route: '推荐：7天，库斯科→神圣山谷→马丘比丘日出→的的喀喀湖' },
+    { name: '巴西·里约', lat: -22.91, lng: -43.17, icon: '🏖️', route: '推荐：5天，基督像→面包山→科帕卡巴纳海滩→塞勒隆阶梯' },
+    { name: '中国·西藏拉萨', lat: 29.65, lng: 91.14, icon: '🛕', route: '推荐：7天，布达拉宫→大昭寺→纳木错→羊卓雍措→林芝' },
+    { name: '中国·新疆喀什', lat: 39.47, lng: 75.99, icon: '🏜️', route: '推荐：8天南疆，喀什古城→帕米尔高原→塔县→盘龙古道' },
+    { name: '中国·云南大理', lat: 25.61, lng: 100.27, icon: '🌊', route: '推荐：5天，古城→洱海骑行→喜洲→沙溪→苍山' },
+    { name: '中国·四川稻城', lat: 28.44, lng: 100.33, icon: '🏔️', route: '推荐：6天，成都→新都桥→稻城亚丁→牛奶海→五色海' },
+    { name: '中国·甘肃敦煌', lat: 40.17, lng: 94.67, icon: '🏜️', route: '推荐：5天，莫高窟→鸣沙山月牙泉→玉门关→雅丹魔鬼城' },
+    { name: '中国·张家界', lat: 29.12, lng: 110.48, icon: '⛰️', route: '推荐：5天，国家森林公园→天门山→大峡谷玻璃桥→凤凰古城' },
+    { name: '中国·三亚', lat: 18.25, lng: 109.51, icon: '🏝️', route: '推荐：5天，亚龙湾→蜈支洲岛→天涯海角→南山寺→海棠湾' },
+    { name: '中国·哈尔滨', lat: 45.80, lng: 126.53, icon: '❄️', route: '推荐：5天冰雪季，中央大街→冰雪大世界→太阳岛雪博会→索菲亚教堂' },
+    { name: '韩国·首尔', lat: 37.57, lng: 126.98, icon: '🏯', route: '推荐：5天，景福宫→明洞→弘大→江南→北村韩屋村' },
+    { name: '新加坡', lat: 1.35, lng: 103.82, icon: '🏙️', route: '推荐：4天，滨海湾花园→圣淘沙→乌节路→克拉码头→Night Safari' },
+    { name: '瑞士·阿尔卑斯', lat: 46.52, lng: 6.57, icon: '🏔️', route: '推荐：8天少女峰线，日内瓦→蒙特勒→因特拉肯→少女峰→苏黎世' },
+    { name: '希腊·圣托里尼', lat: 36.39, lng: 25.46, icon: '⛪', route: '推荐：5天，伊亚日落→费拉小镇→红沙滩→火山温泉→Oia晚宴' },
+    { name: '加拿大·班夫', lat: 51.18, lng: -115.57, icon: '🏔️', route: '推荐：7天落基山，卡尔加里→班夫镇→露易丝湖→贾斯珀' },
+    { name: '南极', lat: -82.00, lng: 0.00, icon: '🐧', route: '推荐：15天邮轮，乌斯怀亚出发→德雷克海峡→南极半岛→企鹅栖息地' }
 ];
 
 function initBucketMap() {
     bucketMapInitialized = true;
     bucketMap = L.map('bucketMap').setView([30, 10], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(bucketMap);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(bucketMap);
     renderBucketMarkers();
     updateBucketStats();
 }
 
 function renderBucketMarkers() {
-    // 清除旧标记
-    bucketMap.eachLayer(layer => {
-        if (layer instanceof L.Marker) bucketMap.removeLayer(layer);
-    });
+    bucketMap.eachLayer(layer => { if (layer instanceof L.Marker) bucketMap.removeLayer(layer); });
     bucketList.forEach((place, idx) => {
         const visited = visitedPlaces.includes(idx);
         const icon = L.divIcon({
-            html: `<div style="font-size:24px;cursor:pointer;${visited ? 'filter:grayscale(0);opacity:1' : 'opacity:.5'}">${place.icon}</div>`,
-            className: 'bucket-marker',
-            iconSize: [24, 24]
+            html: `<div style="font-size:24px;cursor:pointer;${visited ? '' : 'opacity:.5'}">${place.icon}</div>`,
+            className: 'bucket-marker', iconSize: [24, 24]
         });
         const marker = L.marker([place.lat, place.lng], { icon }).addTo(bucketMap);
         marker.bindPopup(`
-            <div style="text-align:center;min-width:120px">
+            <div style="text-align:center;min-width:160px">
                 <div style="font-size:28px;margin-bottom:4px">${place.icon}</div>
-                <div style="font-weight:700;margin-bottom:8px">${place.name}</div>
+                <div style="font-weight:700;margin-bottom:6px">${place.name}</div>
+                <div style="font-size:.78rem;color:#64748b;margin-bottom:8px;text-align:left;background:#f8fafc;padding:8px;border-radius:6px">🗺️ ${place.route}</div>
                 <button onclick="toggleVisit(${idx})" style="
                     background:${visited ? '#22c55e' : '#ef4444'};
                     color:#fff;border:none;padding:6px 16px;border-radius:20px;
@@ -901,11 +721,8 @@ function renderBucketMarkers() {
 }
 
 function toggleVisit(idx) {
-    if (visitedPlaces.includes(idx)) {
-        visitedPlaces = visitedPlaces.filter(i => i !== idx);
-    } else {
-        visitedPlaces.push(idx);
-    }
+    if (visitedPlaces.includes(idx)) visitedPlaces = visitedPlaces.filter(i => i !== idx);
+    else visitedPlaces.push(idx);
     localStorage.setItem('myBucketList', JSON.stringify(visitedPlaces));
     renderBucketMarkers();
     updateBucketStats();
@@ -913,18 +730,261 @@ function toggleVisit(idx) {
 
 function updateBucketStats() {
     document.getElementById('visitedCount').textContent = visitedPlaces.length;
-    const pct = Math.round(visitedPlaces.length / bucketList.length * 100);
-    document.getElementById('percentText').textContent = pct + '%';
+    document.getElementById('percentText').textContent = Math.round(visitedPlaces.length / bucketList.length * 100) + '%';
 }
 
 function resetBucket() {
     if (confirm('确定要清空所有打卡记录吗？')) {
         visitedPlaces = [];
         localStorage.setItem('myBucketList', '[]');
-        renderBucketMarkers();
-        updateBucketStats();
+        renderBucketMarkers(); updateBucketStats();
     }
 }
+
+// ============================================================
+//  跟着剧去旅行 —— 点击展开详细线路
+// ============================================================
+const dramaData = [
+    {
+        title: '《去有风的地方》', tag: '热播剧', loc: '云南 · 大理',
+        img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80',
+        desc: '许红豆在大理洱海边的民宿里治愈了自己。如果你也累了，去有风的地方走走吧。',
+        spots: ['洱海生态廊道', '喜洲古镇', '沙溪古镇', '凤阳邑'],
+        route: {
+            name: '大理治愈 5 日线路',
+            days: [
+                { d: 'Day1', t: '大理古城入住 → 人民路闲逛 → 黄昏洋人街' },
+                { d: 'Day2', t: '洱海生态廊道骑行（才村→喜洲）→ 喜洲稻田拍照 → 海舌公园日落' },
+                { d: 'Day3', t: '沙溪古镇一日游 → 寺登街 → 先锋书局 → 石宝山' },
+                { d: 'Day4', t: '凤阳邑茶马古道（许红豆住的民宿取景地）→ 无为寺 → 咖啡馆发呆' },
+                { d: 'Day5', t: '苍山洗马潭索道 → 寂照庵吃素斋 → 返程' }
+            ]
+        }
+    },
+    {
+        title: '《漫长的季节》', tag: '爆款', loc: '辽宁 · 沈阳',
+        img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80',
+        desc: '"往前看，别回头。"东北老工业基地的秋天，有一种苍凉的浪漫。',
+        spots: ['铁西区', '沈阳故宫', '北陵公园', '西塔街'],
+        route: {
+            name: '沈阳怀旧 3 日线路',
+            days: [
+                { d: 'Day1', t: '铁西区工业博物馆（剧中钢厂原型）→ 1905文化创意园 → 西塔街吃烤肉' },
+                { d: 'Day2', t: '沈阳故宫 → 张氏帅府 → 中街老街 → 老边饺子馆' },
+                { d: 'Day3', t: '北陵公园（昭陵）→ 辽宁省博物馆 → 返程' }
+            ]
+        }
+    },
+    {
+        title: '《繁花》', tag: '年代剧', loc: '上海',
+        img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+        desc: '黄河路的烟火气，至真园的本帮菜，90年代上海的繁华一梦。',
+        spots: ['黄河路', '外滩', '和平饭店', '永康路'],
+        route: {
+            name: '上海繁花 3 日线路',
+            days: [
+                { d: 'Day1', t: '黄河路（至真园取景地）→ 国际饭店西饼屋 → 外滩夜游' },
+                { d: 'Day2', t: '和平饭店下午茶 → 永康路咖啡馆 → 武康路历史建筑群 → 思南公馆' },
+                { d: 'Day3', t: '上海博物馆 → 豫园城隍庙 → 本帮菜老字号（老正兴）→ 返程' }
+            ]
+        }
+    },
+    {
+        title: '《灌篮高手》', tag: '日剧圣地', loc: '日本 · 镰仓',
+        img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80',
+        desc: '樱木花道挥手的那个路口，是多少人的青春回忆。',
+        spots: ['镰仓高校前站', '江之岛', '湘南海岸', '鹤冈八幡宫'],
+        route: {
+            name: '镰仓青春 2 日线路',
+            days: [
+                { d: 'Day1', t: '东京出发 → 镰仓高校前站（经典路口打卡）→ 湘南海岸散步 → 江之岛日落' },
+                { d: 'Day2', t: '鹤冈八幡宫 → 小町通商店街吃小吃 → 镰仓大佛 → 返东京' }
+            ]
+        }
+    },
+    {
+        title: '《卧虎藏龙》', tag: '电影', loc: '安徽 · 宏村',
+        img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80',
+        desc: '李慕白和玉娇龙在竹海间飞来飞去，水墨丹青般的徽派古村。',
+        spots: ['宏村', '西递', '木坑竹海', '塔川'],
+        route: {
+            name: '宏村水墨 3 日线路',
+            days: [
+                { d: 'Day1', t: '宏村全天 → 南湖书院 → 月沼 → 承志堂 → 晚上住民宿看星空' },
+                { d: 'Day2', t: '木坑竹海（电影打斗取景地）→ 塔川秋色 → 西递古村' },
+                { d: 'Day3', t: '黄山一日游（迎客松→光明顶→西海大峡谷）→ 返程' }
+            ]
+        }
+    },
+    {
+        title: '《小森林》', tag: '治愈系', loc: '日本 · 秋田',
+        img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80',
+        desc: '一年四季，稻田、木屋、手作料理。这是理想中的乡村生活。',
+        spots: ['横手市', '羽後町', '奥州平泉', '秋田内陆线'],
+        route: {
+            name: '秋田治愈 4 日线路',
+            days: [
+                { d: 'Day1', t: '东京→秋田 → 横手市（主角家乡原型）→ 入住乡村民宿' },
+                { d: 'Day2', t: '羽後町稻田散步 → 手作料理体验 → 秋田内陆线小火车' },
+                { d: 'Day3', t: '奥州平泉 → 中尊寺 → 毛越寺庭园 → 白鹭温泉' },
+                { d: 'Day4', t: '乳头高原 → 乳頭温泉乡 → 返东京' }
+            ]
+        }
+    }
+];
+
+function renderDrama() {
+    const grid = document.getElementById('dramaGrid');
+    grid.innerHTML = dramaData.map((d, i) => `
+        <div class="drama-card">
+            <div class="drama-img" style="background-image:url('${d.img}')" onclick="toggleDramaRoute(${i})">
+                <span class="drama-tag">${d.tag}</span>
+                <span class="drama-expand-hint">${d.route.name} ▾</span>
+            </div>
+            <div class="drama-body">
+                <h3 onclick="toggleDramaRoute(${i})">${d.title}</h3>
+                <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> ${d.loc}</div>
+                <p>${d.desc}</p>
+                <div class="drama-spots">
+                    ${d.spots.map(s => `<span class="drama-spot">${s}</span>`).join('')}
+                </div>
+                <div class="drama-route-detail" id="dramaRoute${i}">
+                    <h5>🗺️ ${d.route.name}</h5>
+                    ${d.route.days.map(day => `
+                        <div class="route-day" style="margin-bottom:8px">
+                            <span class="route-day-label">${day.d}</span>
+                            <span class="route-day-text">${day.t}</span>
+                        </div>
+                    `).join('')}
+                    <a href="index.html#contact" class="route-book-btn" style="margin-top:12px">咨询这条线路 →</a>
+                </div>
+                <button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleDramaRoute(${i})" id="dramaBtn${i}">展开线路行程 ▾</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleDramaRoute(i) {
+    const detail = document.getElementById('dramaRoute' + i);
+    const btn = document.getElementById('dramaBtn' + i);
+    detail.classList.toggle('open');
+    btn.textContent = detail.classList.contains('open') ? '收起线路 ▴' : '展开线路行程 ▾';
+}
+
+// ============================================================
+//  Solo 旅行 —— 点击展开详细行程+安全提示
+// ============================================================
+const soloData = [
+    {
+        city: '成都 · 美食 Solo 之旅', img: 'https://images.unsplash.com/photo-1565636140897-3c7a8e0a8e0a?w=600&q=80',
+        desc: '一个人也能吃火锅！串串、冒菜、担担面，美食之都最适合独自觅食。',
+        tags: ['🍜 美食友好', '🚇 地铁方便', '💰 消费低'],
+        itinerary: [
+            { d: 'Day1', t: '宽窄巷子 → 奎星楼街冒椒火辣（一个人坐吧台吃）→ 锦里夜市' },
+            { d: 'Day2', t: '大熊猫基地（早去）→ 建设巷小吃街 → 春熙路IFS拍照' },
+            { d: 'Day3', t: '人民公园鹤鸣茶社喝茶 → 玉林路小酒馆 → 地道串串香' },
+            { d: 'Day4', t: '文殊院 → 洞子口张老二凉粉 → 返程' }
+        ],
+        safety: '成都安全指数高，夜市热闹但注意随身物品。一个人吃火锅可以选小火锅店或坐吧台。'
+    },
+    {
+        city: '厦门 · 文艺 Solo 之旅', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+        desc: '鼓浪屿的小巷、曾厝垵的咖啡馆，适合一个人散步发呆的慢生活城市。',
+        tags: ['☕ 咖啡馆多', '🌊 海边散步', '🛡️ 安全'],
+        itinerary: [
+            { d: 'Day1', t: '中山路骑楼 → 八市吃海鲜 → 沙坡尾艺术西区拍照' },
+            { d: 'Day2', t: '鼓浪屿全天 → 菽庄花园 → 日光岩看日落 → 岛上咖啡馆发呆' },
+            { d: 'Day3', t: '曾厝垵 → 环岛路骑行 → 黄厝海滩看日出' },
+            { d: 'Day4', t: '南普陀寺 → 厦大校园 → 返程' }
+        ],
+        safety: '厦门非常安全，适合女生 solo。鼓浪屿晚上人少，建议天黑前返回市区。'
+    },
+    {
+        city: '重庆 · 魔幻 Solo 之旅', img: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600&q=80',
+        desc: '8D 魔幻城市，一个人坐轻轨穿楼、过江索道，探索感拉满。',
+        tags: ['🌶️ 火锅之都', '🎮 探索感强', '💰 消费低'],
+        itinerary: [
+            { d: 'Day1', t: '解放碑 → 洪崖洞夜景 → 千厮门大桥散步' },
+            { d: 'Day2', t: '李子坝轻轨穿楼 → 鹅岭二厂文创园 → 南山一棵树看夜景' },
+            { d: 'Day3', t: '长江索道 → 磁器口古镇 → 地道老火锅' },
+            { d: 'Day4', t: '武隆天生三桥一日游 → 返程' }
+        ],
+        safety: '重庆地形复杂，导航经常"骗人"，跟着问路人更靠谱。晚上走梯坎注意脚下。'
+    },
+    {
+        city: '大理 · 治愈 Solo 之旅', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80',
+        desc: '洱海边骑车、在人民路发呆，大理是 solo 旅行者的天堂，容易认识朋友。',
+        tags: ['👥 容易认识人', '🚲 骑行友好', '🧘 治愈'],
+        itinerary: [
+            { d: 'Day1', t: '古城入住青旅 → 人民路闲逛 → 青旅拼饭' },
+            { d: 'Day2', t: '洱海生态廊道骑行 → 喜洲古镇 → 海舌公园日落' },
+            { d: 'Day3', t: '沙溪古镇一日游 → 认识旅伴 → 咖啡馆发呆' },
+            { d: 'Day4', t: '苍山徒步 → 寂照庵 → 返程' }
+        ],
+        safety: '大理 solo 氛围极好，青旅经常组局。注意防晒，紫外线很强。'
+    },
+    {
+        city: '镰仓 · 青春 Solo 之旅', img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80',
+        desc: '跟着灌篮高手的脚步，在湘南海岸骑车，一个人也能很热血。',
+        tags: ['🚃 电车文化', '🌅 看海', '📸 出片'],
+        itinerary: [
+            { d: 'Day1', t: '东京出发 → 镰仓高校前站打卡 → 湘南海岸骑行 → 江之岛日落' },
+            { d: 'Day2', t: '鹤冈八幡宫 → 小町通商店街 → 镰仓大佛 → 返东京' }
+        ],
+        safety: '日本治安极好，适合 solo。电车班次固定，提前查好末班车时间。'
+    },
+    {
+        city: '曼谷 · 美食 Solo 之旅', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80',
+        desc: '街头美食天堂，一个人逛街边摊、逛夜市，泰国是 solo 旅行者的入门首选。',
+        tags: ['🍜 街头美食', '💊 签证简单', '💰 消费低'],
+        itinerary: [
+            { d: 'Day1', t: '考山路夜市 → 芒果糯米饭 → 冬阴功汤 → 青旅认识旅伴' },
+            { d: 'Day2', t: '恰图恰周末市场 → 泰式按摩 → 唐人街耀华力路吃海鲜' },
+            { d: 'Day3', t: '大皇宫 → 卧佛寺 → 湄南河游船 → 夜市' },
+            { d: 'Day4', t: '安帕瓦水上市场 → 萤火虫夜游 → 返程' }
+        ],
+        safety: '曼谷 solo 友好，但注意防晒和补水。夜市看好手机，突突车砍价对半砍。'
+    }
+];
+
+function renderSolo() {
+    const grid = document.getElementById('soloGrid');
+    grid.innerHTML = soloData.map((s, i) => `
+        <div class="solo-card">
+            <div class="solo-card-img" style="background-image:url('${s.img}')" onclick="toggleSoloRoute(${i})"></div>
+            <div class="solo-card-body">
+                <h4 onclick="toggleSoloRoute(${i})">${s.city}</h4>
+                <p>${s.desc}</p>
+                <div class="solo-tags">${s.tags.map(t => `<span class="solo-tag">${t}</span>`).join('')}</div>
+                <div class="solo-route-detail" id="soloRoute${i}">
+                    ${s.itinerary.map(day => `
+                        <div class="route-day" style="margin-bottom:8px">
+                            <span class="route-day-label">${day.d}</span>
+                            <span class="route-day-text">${day.t}</span>
+                        </div>
+                    `).join('')}
+                    <div class="solo-safety">
+                        <strong>🛡️ Solo 安全提示</strong>
+                        ${s.safety}
+                    </div>
+                    <a href="index.html#contact" class="route-book-btn" style="margin-top:12px">咨询这条线路 →</a>
+                </div>
+                <button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleSoloRoute(${i})" id="soloBtn${i}">展开专属行程 ▾</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleSoloRoute(i) {
+    const detail = document.getElementById('soloRoute' + i);
+    const btn = document.getElementById('soloBtn' + i);
+    detail.classList.toggle('open');
+    btn.textContent = detail.classList.contains('open') ? '收起行程 ▴' : '展开专属行程 ▾';
+}
+
+// 初始化
+renderDrama();
+renderSolo();
 </script>
 
 </body>
