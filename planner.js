@@ -512,11 +512,32 @@
             picks[c] = (state.picks[c] || []).filter(function (n) {
                 return CATALOG[c].items.some(function (i) { return i.name === n; });
             });
-            if (!picks[c].length) {
-                // 只选了城市没选景点时，补两个经典景点保证能出图
-                var sorted = CATALOG[c].items.slice().sort(function (a, b) {
-                    return (prefScore(b) * 10 - b.idx) - (prefScore(a) * 10 - a.idx);
-                });
+        });
+
+        // 先算好天数分配，知道每城需要多少景点
+        var preAlloc = {};
+        cities.forEach(function (c) { preAlloc[c] = 1; });
+        var preExtra = nDays - cities.length;
+        if (preExtra > 0) {
+            cities.forEach(function (c) { preAlloc[c] += Math.floor(preExtra / cities.length); });
+            // 余数给第一个城市
+            var used = cities.reduce(function (s, c) { return s + preAlloc[c]; }, 0);
+            for (var ri = 0; ri < nDays - used; ri++) preAlloc[cities[ri % cities.length]]++;
+        }
+
+        // 每城需要 = alloc[c] × 每天景点上限，确保每天都有内容
+        cities.forEach(function (c) {
+            var need = preAlloc[c] * capPerDay();  // 每天最多 capPerDay 个
+            var sorted = CATALOG[c].items.slice().sort(function (a, b) {
+                return (prefScore(b) * 10 - b.idx) - (prefScore(a) * 10 - a.idx);
+            });
+            if (!picks[c].length) picks[c] = [];
+            sorted.forEach(function (it) {
+                if (picks[c].length >= need) return;
+                if (picks[c].indexOf(it.name) < 0) picks[c].push(it.name);
+            });
+            // 极端情况：CATALOG 本身景点不够，至少保底 2 个
+            if (picks[c].length < 2) {
                 sorted.forEach(function (it) {
                     if (picks[c].length < 2 && picks[c].indexOf(it.name) < 0) picks[c].push(it.name);
                 });
