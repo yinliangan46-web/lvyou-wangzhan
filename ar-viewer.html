@@ -1,559 +1,661 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d1117">
-<title>拾迹 AR · MYL 旅行</title>
-
-<!-- importmap: THREE.js + MindAR 从 CDN 加载 -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "ar-lib/three.min.js"
-  }
-}
-</script>
-<!-- 兜底：window.THREE 和 window.MINDAR 用本地 IIFE（ESM 无法被普通 script 加载）-->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="theme-color" content="#0a0a0a" />
+<title>AR 空间 · 拾迹</title>
 <script src="ar-lib/three.min.js"></script>
-<script src="ar-lib/mindar-image.min.js"></script>
-
+<script src="touch-controls.js"></script>
+<script src="ar-stories.js"></script>
+<script src="hunt-engine.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    width: 100%; height: 100%;
-    background: #0d1117; color: #e6edf3;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
-    overflow: hidden;
-  }
-  #ar-root { position: fixed; inset: 0; }
-  #ar-camera { position: absolute; inset: 0; width: 100%; height: 100%; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif;color:#fff}
+button{font-family:inherit}
 
-  /* ===== 顶部状态栏 ===== */
-  .ar-topbar {
-    position: absolute; top: 0; left: 0; right: 0;
-    padding: max(12px, env(safe-area-inset-top)) 16px 12px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.75), rgba(0,0,0,0));
-    display: flex; align-items: center; justify-content: space-between;
-    z-index: 20; pointer-events: none;
-  }
-  .ar-title {
-    font-size: 14px; font-weight: 600;
-    pointer-events: auto;
-  }
-  .ar-title .name { color: #ffd700; }
-  .ar-badge {
-    font-size: 11px; padding: 3px 8px; border-radius: 12px;
-    background: rgba(255,215,0,0.2); color: #ffd700;
-    backdrop-filter: blur(8px);
-  }
+/* ===== 摄像头背景 + Three.js 叠加 ===== */
+#arVideo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transform:scaleX(-1)}
+#arCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:2;touch-action:none}
 
-  /* ===== 底部：线索进度 + 提示 ===== */
-  .ar-bottom {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 16px max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom));
-    z-index: 20; pointer-events: none;
-  }
-  .ar-progress {
-    background: rgba(13,17,23,0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 12px; padding: 12px 16px;
-    pointer-events: auto;
-  }
-  .ar-progress-head {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; font-weight: 600; margin-bottom: 8px;
-  }
-  .ar-progress-bar {
-    height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;
-  }
-  .ar-progress-fill {
-    height: 100%; background: linear-gradient(90deg, #ffd700, #ff8c00);
-    width: 0%; transition: width 0.3s; border-radius: 3px;
-  }
-  .ar-hint {
-    margin-top: 10px; font-size: 12px; color: #94a3b8;
-    min-height: 16px;
-  }
+/* ===== 顶部状态栏 ===== */
+#arTopBar{position:fixed;top:0;left:0;right:0;z-index:10;
+  padding:max(14px,env(safe-area-inset-top)) 16px 14px;
+  background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);
+  display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+#arTopBar>*{pointer-events:auto}
+.ar-title{font-weight:700;font-size:17px;display:flex;align-items:center;gap:6px;
+  text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.ar-title .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;
+  box-shadow:0 0 10px #22c55e;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ar-btns{display:flex;gap:8px}
+.ar-btns button{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;
+  padding:8px 14px;font-size:13px;cursor:pointer;transition:.2s}
+.ar-btns button:active{transform:scale(.95);background:rgba(255,255,255,.25)}
 
-  /* ===== 对话气泡（原神式） ===== */
-  .hp-bubble {
-    position: absolute; left: 16px; right: 16px; top: 30%;
-    background: linear-gradient(135deg, rgba(13,17,23,0.95), rgba(30,41,59,0.95));
-    border: 1px solid rgba(255,215,0,0.4); border-radius: 16px;
-    padding: 14px 16px;
-    display: flex; gap: 12px;
-    transform: translateY(20px); opacity: 0;
-    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
-    z-index: 30;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    pointer-events: none;
-  }
-  .hp-bubble.hp-in { transform: translateY(0); opacity: 1; }
-  .hp-avatar {
-    font-size: 32px; width: 44px; height: 44px; flex-shrink: 0;
-    background: rgba(255,215,0,0.15); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .hp-content { flex: 1; min-width: 0; }
-  .hp-speaker {
-    font-size: 11px; color: #ffd700; font-weight: 600;
-    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .hp-text { font-size: 15px; line-height: 1.5; color: #f1f5f9; }
-  .hp-hint {
-    margin-top: 10px; font-size: 12px; color: #fbbf24;
-    background: rgba(251,191,36,0.1); padding: 6px 10px; border-radius: 6px;
-  }
+/* ===== 加载/错误 ===== */
+#arLoading,#arError,#arNoCam{position:fixed;inset:0;z-index:30;
+  background:#000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+#arLoading .spinner{width:48px;height:48px;border:3px solid rgba(99,102,241,.2);
+  border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#arLoading .text,#arError .text,#arNoCam .text{font-size:14px;color:#94a3b8;line-height:1.6}
+#arError .text b,#arNoCam .text b{color:#fff}
+#arError button,#arNoCam button{background:#6366f1;color:#fff;border:none;border-radius:8px;
+  padding:10px 24px;font-size:14px;cursor:pointer}
+#arError button:active,#arNoCam button:active{transform:scale(.96)}
 
-  /* ===== Toast ===== */
-  .hp-toast {
-    position: absolute; left: 50%; transform: translateX(-50%) translateY(-30px);
-    top: 20%;
-    background: rgba(0,0,0,0.9); color: #ffd700;
-    padding: 10px 20px; border-radius: 24px;
-    font-size: 14px; font-weight: 600;
-    opacity: 0; transition: all 0.3s;
-    z-index: 40; border: 1px solid rgba(255,215,0,0.5);
-    backdrop-filter: blur(8px);
-    pointer-events: none;
-  }
-  .hp-toast.hp-in { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .hp-toast.hp-success { color: #4ade80; border-color: #4ade80; }
+/* ===== 故事气泡 ===== */
+#arBubble{position:fixed;left:16px;right:16px;bottom:180px;z-index:10;
+  background:rgba(15,23,42,.85);backdrop-filter:blur(14px);border:1px solid rgba(99,102,241,.3);
+  border-radius:16px;padding:16px 18px;max-width:600px;margin:0 auto;
+  box-shadow:0 10px 40px rgba(99,102,241,.2);
+  opacity:0;transform:translateY(20px);transition:opacity .35s,transform .35s}
+#arBubble.visible{opacity:1;transform:translateY(0)}
+#arBubble .speaker{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+#arBubble .avatar{width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;
+  justify-content:center;font-size:16px}
+#arBubble .name{font-weight:600;font-size:14px;color:#a5b4fc}
+#arBubble .text{font-size:15px;line-height:1.7;color:#e2e8f0}
+#arBubble .pb{margin-top:12px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+#arBubble .pb>div{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);width:0;transition:width .1s linear}
 
-  /* ===== 印记弹窗 ===== */
-  .hp-stamp-modal {
-    position: fixed; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-    opacity: 0; transition: opacity 0.3s; z-index: 100;
-  }
-  .hp-stamp-modal.hp-in { opacity: 1; }
-  .hp-stamp-inner {
-    width: 280px; padding: 32px 24px; border-radius: 20px;
-    text-align: center; color: #fff;
-    transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  }
-  .hp-stamp-modal.hp-in .hp-stamp-inner { transform: scale(1); }
-  .hp-stamp-icon { font-size: 56px; margin-bottom: 12px; }
-  .hp-stamp-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-  .hp-stamp-desc { font-size: 13px; opacity: 0.85; margin-bottom: 20px; }
-  .hp-stamp-close {
-    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
-    color: #fff; padding: 10px 28px; border-radius: 20px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-  }
+/* ===== 寻宝进度 ===== */
+#arHunt{position:fixed;left:16px;right:16px;bottom:16px;z-index:10;
+  background:rgba(15,23,42,.85);backdrop-filter:blur(14px);border:1px solid rgba(245,158,11,.3);
+  border-radius:16px;padding:14px 18px;
+  box-shadow:0 10px 40px rgba(245,158,11,.15)}
+#arHunt .title{font-weight:600;font-size:14px;color:#fbbf24;margin-bottom:10px;display:flex;justify-content:space-between}
+#arHunt .title b{color:#fff}
+#arHunt .artifacts{display:flex;gap:12px;flex-wrap:wrap}
+#arHunt .artifact{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;background:rgba(255,255,255,.08);
+  border:2px solid rgba(255,255,255,.1);transition:.3s;position:relative}
+#arHunt .artifact.found{background:linear-gradient(135deg,#f59e0b,#d97706);
+  border-color:#fbbf24;transform:scale(1.1)}
+#arHunt .artifact.found::after{content:'✓';position:absolute;bottom:-4px;right:-4px;
+  background:#22c55e;color:#fff;border-radius:50%;width:18px;height:18px;
+  font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #0f172a}
 
-  /* ===== 加载/错误遮罩 ===== */
-  .ar-splash {
-    position: absolute; inset: 0; z-index: 30;
-    background: radial-gradient(circle at 50% 40%, #1a1a2e 0%, #0d1117 100%);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 24px; text-align: center;
-    transition: opacity 0.5s;
-  }
-  .ar-splash.hidden { opacity: 0; pointer-events: none; }
-  .ar-splash .logo { font-size: 48px; margin-bottom: 16px; }
-  .ar-splash .title { font-size: 22px; font-weight: 700; color: #ffd700; margin-bottom: 8px; }
-  .ar-splash .sub { font-size: 14px; color: #94a3b8; max-width: 320px; line-height: 1.6; }
-  .ar-splash .spinner {
-    width: 36px; height: 36px; border: 3px solid rgba(255,215,0,0.2);
-    border-top-color: #ffd700; border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 24px auto;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .ar-btn {
-    display: inline-block; margin-top: 16px;
-    background: #ffd700; color: #1a0a00; border: none; border-radius: 24px;
-    padding: 12px 28px; font-size: 15px; font-weight: 700;
-    cursor: pointer; text-decoration: none;
-  }
+/* ===== Toast ===== */
+#arToast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:rgba(15,23,42,.9);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);
+  border-radius:24px;padding:10px 20px;font-size:14px;z-index:40;
+  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+#arToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ===== AR 识别提示 ===== */
-  .ar-scan-hint {
-    position: absolute; top: 45%; left: 50%; transform: translate(-50%,-50%);
-    z-index: 10; text-align: center;
-    pointer-events: none; transition: opacity 0.4s;
-  }
-  .ar-scan-hint.hidden { opacity: 0; }
-  .ar-finder {
-    width: 200px; height: 140px; border: 2px solid rgba(255,215,0,0.4);
-    border-radius: 12px; position: relative; margin: 0 auto 12px;
-  }
-  .ar-finder::before, .ar-finder::after {
-    content: ''; position: absolute; width: 24px; height: 24px;
-    border-color: #ffd700; border-style: solid;
-  }
-  .ar-finder::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 12px 0 0 0; }
-  .ar-finder::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 12px 0; }
-  .ar-finder .crosshair {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: rgba(255,215,0,0.6);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
-  .ar-scan-text { font-size: 14px; color: #ffd700; font-weight: 600;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+/* ===== 彩蛋/印记弹窗 ===== */
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.8);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:.3s}
+.modal-bg.visible{opacity:1;pointer-events:auto}
+.modal{background:linear-gradient(160deg,#1e1b4b,#0f172a);border:1px solid rgba(99,102,241,.4);
+  border-radius:20px;padding:28px;text-align:center;max-width:360px;width:100%;
+  box-shadow:0 30px 80px rgba(99,102,241,.3);transform:scale(.8);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.modal-bg.visible .modal{transform:scale(1)}
+.modal h2{font-size:20px;margin-bottom:8px;background:linear-gradient(90deg,#a5b4fc,#fbbf24);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.modal p{color:#a5b4fc;font-size:14px;margin-bottom:16px;line-height:1.6}
+.modal .stamp{font-size:72px;margin:10px 0 6px;filter:drop-shadow(0 4px 20px rgba(251,191,36,.4))}
+.modal button{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;
+  border-radius:12px;padding:12px 32px;font-size:15px;font-weight:600;cursor:pointer}
+.modal button:active{transform:scale(.96)}
+.modal .hint{font-size:12px;color:#64748b;margin-top:10px}
 
-  /* ===== 语音开关 ===== */
-  .ar-mic-toggle {
-    position: absolute; top: max(12px, env(safe-area-inset-top)); right: 16px;
-    width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.2); color: #fff;
-    font-size: 16px; z-index: 25; cursor: pointer;
-  }
-  .ar-mic-toggle.muted { opacity: 0.5; }
+/* ===== 彩蛋切换 ===== */
+#arTab{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:10;
+  background:rgba(15,23,42,.85);backdrop-filter:blur(14px);border-radius:20px;padding:4px;
+  display:flex;gap:2px;border:1px solid rgba(255,255,255,.15)}
+#arTab button{background:transparent;border:none;color:#94a3b8;padding:6px 16px;
+  font-size:12px;border-radius:16px;cursor:pointer;transition:.2s}
+#arTab button.active{background:rgba(99,102,241,.4);color:#fff}
+#arTab button.locked{opacity:.4;cursor:not-allowed}
+
+@media (min-width:768px){
+  #arBubble{max-width:500px}
+}
 </style>
 </head>
-
 <body>
 
-<!-- MindAR 视频流容器 -->
-<div id="ar-root">
-  <video id="ar-camera" autoplay playsinline muted></video>
-</div>
+<!-- 摄像头背景 -->
+<video id="arVideo" autoplay playsinline muted></video>
+
+<!-- Three.js 透明叠加 -->
+<canvas id="arCanvas"></canvas>
 
 <!-- 顶部状态栏 -->
-<div class="ar-topbar">
-  <div class="ar-title">
-    <span class="name" id="arPoiName">加载中…</span>
-    <span class="ar-badge" id="arStampStatus"></span>
+<div id="arTopBar">
+  <div class="ar-title"><span class="dot" id="dotCam"></span><span id="titleText">AR 空间</span></div>
+  <div class="ar-btns">
+    <button id="btnStory" title="重放故事">▶ 故事</button>
+    <button id="btnReset" title="重置视角">↺</button>
+    <button id="btnMic" title="语音">🔊</button>
   </div>
 </div>
 
-<!-- 语音开关 -->
-<button class="ar-mic-toggle" id="arMicBtn" title="语音旁白">🔊</button>
-
-<!-- AR 识别提示 -->
-<div class="ar-scan-hint" id="arScanHint">
-  <div class="ar-finder"><div class="crosshair">⌖</div></div>
-  <div class="ar-scan-text">将摄像头对准景点实景识别图</div>
+<!-- 彩蛋/主线 Tab -->
+<div id="arTab">
+  <button id="tabMain" class="active">📖 主线故事</button>
+  <button id="tabEgg" class="locked">🎭 隐藏彩蛋 🔒</button>
 </div>
 
-<!-- 对话气泡容器 -->
-<div id="arPlotBox" style="pointer-events:none"></div>
+<!-- 故事气泡 -->
+<div id="arBubble">
+  <div class="speaker">
+    <div class="avatar" id="bAv">👤</div>
+    <div class="name" id="bName">旁白</div>
+  </div>
+  <div class="text" id="bText">...</div>
+  <div class="pb"><div id="bPb"></div></div>
+</div>
 
-<!-- 底部进度 + 提示 -->
-<div class="ar-bottom">
-  <div class="ar-progress">
-    <div class="ar-progress-head">
-      <span id="arProgressTitle">🗝️ 寻宝进度</span>
-      <span id="arProgressCount">0 / 0</span>
-    </div>
-    <div class="ar-progress-bar"><div class="ar-progress-fill" id="arProgressFill"></div></div>
-    <div class="ar-hint" id="arHoverHint"></div>
+<!-- 寻宝进度 -->
+<div id="arHunt">
+  <div class="title">🔍 拾迹寻宝 <span id="huntTitle"><b id="huntFound">0</b>/<b id="huntTotal">0</b></span></div>
+  <div class="artifacts" id="huntList"></div>
+</div>
+
+<!-- Toast -->
+<div id="arToast"></div>
+
+<!-- 加载 -->
+<div id="arLoading">
+  <div class="spinner"></div>
+  <div class="text">启动 AR 空间中...<br /><span id="loadSub">请求摄像头权限</span></div>
+</div>
+
+<!-- 无摄像头降级 -->
+<div id="arNoCam" style="display:none">
+  <div class="spinner" style="border-top-color:#8b5cf6"></div>
+  <div class="text"><b>预览模式</b><br />当前环境无法使用摄像头<br />已自动进入 3D 模型预览</div>
+  <button onclick="location.reload()">重新加载</button>
+</div>
+
+<!-- 印记弹窗 -->
+<div class="modal-bg" id="modalStamp">
+  <div class="modal">
+    <div class="stamp" id="stampIcon">🏛️</div>
+    <h2 id="stampTitle">拾迹印记已解锁！</h2>
+    <p id="stampDesc">集齐了全部线索，获得专属印记</p>
+    <button onclick="location.href='album.html'">去集册查看</button>
+    <div class="hint">印记已自动存入拾迹集册</div>
   </div>
 </div>
 
-<!-- 启动 / 错误遮罩 -->
-<div class="ar-splash" id="arSplash">
-  <div class="logo">🔍</div>
-  <div class="title" id="arSplashTitle">拾迹 AR · 故事导览</div>
-  <div class="spinner" id="arSpinner"></div>
-  <div class="sub" id="arSplashText">
-    正在请求摄像头权限并加载识别图<br>
-    请允许浏览器使用摄像头
+<!-- 彩蛋解锁弹窗 -->
+<div class="modal-bg" id="modalEgg">
+  <div class="modal">
+    <div class="stamp" style="font-size:56px">🎭</div>
+    <h2>隐藏彩蛋已解锁！</h2>
+    <p id="eggDesc">发现了一个隐藏的秘密...</p>
+    <button onclick="document.getElementById('modalEgg').classList.remove('visible'); document.getElementById('tabEgg').classList.remove('locked'); document.getElementById('tabEgg').textContent='🎭 隐藏彩蛋';">继续探索</button>
   </div>
-  <button class="ar-btn hidden" id="arRetryBtn" style="display:none">重试</button>
-  <a class="ar-btn hidden" id="arFallbackBtn" style="display:none" href="javascript:void(0)">查看备用版本</a>
 </div>
 
 <script>
-/* ============ 全局依赖检查 ============ */
-if (!window.THREE) {
-  // CDN 脚本标签兜底
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
-  document.head.appendChild(s);
-}
+'use strict';
 
-/* ============ URL 参数 ============ */
+/* ============ 配置 ============ */
 var params = new URLSearchParams(location.search);
-var poiId = params.get('poi') || 'gugong';
-var mode = params.get('mode') || 'auto';  // ar | fallback | auto
+var POI_ID = params.get('poi') || 'gugong';
+var POI = (window.STORIES && window.STORIES.find(function(p){ return p.id === POI_ID; })) ||
+          (window.STORIES && window.STORIES[0]);
 
-/* ============ 加载依赖脚本 ============ */
-function loadScript(url) {
-  return new Promise(function(resolve, reject) {
-    if (document.querySelector('script[src="' + url + '"]')) { resolve(); return; }
-    var s = document.createElement('script');
-    s.src = url; s.async = true;
-    s.onload = resolve; s.onerror = reject;
-    document.head.appendChild(s);
+/* ============ 全局变量 ============ */
+var scene, camera, renderer, controls;
+var poiGroup, artifacts = [];
+var storyTimer, currentTab = 'main';
+var huntState = { found: new Set(), total: 0 };
+var voiceOn = true;
+
+/* ============ 3D 模型生成（每种景点独特） ============ */
+function buildPOIModel(poi) {
+  var g = new THREE.Group();
+  var s = 1.5;  // 基础尺寸
+
+  switch(poi.id) {
+    case 'bingmayong': {
+      // 兵马俑
+      var matBody = new THREE.MeshStandardMaterial({ color: 0xc8a07a, roughness: 0.9 });
+      var matHead = new THREE.MeshStandardMaterial({ color: 0xd4b48c, roughness: 0.85 });
+      for (var i = 0; i < 8; i++) {
+        var body = new THREE.Mesh(new THREE.BoxGeometry(0.55 * s, 1.6 * s, 0.35 * s), matBody);
+        body.position.set(((i % 4) - 1.5) * 0.9 * s, 0.8 * s, Math.floor(i / 4) * 1.1 * s);
+        g.add(body);
+        var head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * s, 16, 12), matHead);
+        head.position.copy(body.position).add(new THREE.Vector3(0, 1.6 * s, 0));
+        g.add(head);
+      }
+      break;
+    }
+    case 'gugong': {
+      // 故宫太和殿
+      var redMat = new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.5 });
+      var goldMat = new THREE.MeshStandardMaterial({ color: 0xf5d76e, metalness: 0.6, roughness: 0.3 });
+      var base = new THREE.Mesh(new THREE.BoxGeometry(4 * s, 0.5 * s, 3 * s), redMat);
+      base.position.y = 0.25 * s;
+      g.add(base);
+      var pillarMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.4 });
+      for (var i = -2; i <= 2; i++) for (var j = -1; j <= 1; j++) {
+        var p = new THREE.Mesh(new THREE.CylinderGeometry(0.12 * s, 0.12 * s, 2.5 * s, 8), pillarMat);
+        p.position.set(i * 0.9 * s, 1.5 * s, j * 1 * s);
+        g.add(p);
+      }
+      var roof = new THREE.Mesh(new THREE.ConeGeometry(3.2 * s, 1.5 * s, 4), goldMat);
+      roof.rotation.y = Math.PI / 4;
+      roof.position.y = 3.5 * s;
+      g.add(roof);
+      break;
+    }
+    case 'xihu': {
+      // 西湖：湖面 + 三潭印月
+      var waterMat = new THREE.MeshStandardMaterial({ color: 0x2c5f8f, metalness: 0.3, roughness: 0.4 });
+      var water = new THREE.Mesh(new THREE.CircleGeometry(3 * s, 32), waterMat);
+      water.rotation.x = -Math.PI / 2;
+      g.add(water);
+      var stoneMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.9 });
+      for (var i = 0; i < 3; i++) {
+        var st = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * s, 0.2 * s, 0.8 * s, 12), stoneMat);
+        var a = (i / 3) * Math.PI * 2;
+        st.position.set(Math.cos(a) * 1.2 * s, 0.4 * s, Math.sin(a) * 1.2 * s);
+        g.add(st);
+      }
+      break;
+    }
+    case 'zhongshan': {
+      // 中山陵：阶梯 + 牌坊
+      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.6 });
+      for (var i = 0; i < 5; i++) {
+        var step = new THREE.Mesh(new THREE.BoxGeometry(3 * s, 0.15 * s, 0.4 * s), whiteMat);
+        step.position.y = i * 0.15 * s;
+        step.position.z = -i * 0.5 * s;
+        g.add(step);
+      }
+      var hall = new THREE.Mesh(new THREE.BoxGeometry(2 * s, 1.2 * s, 1.5 * s), whiteMat);
+      hall.position.set(0, 1.2 * s, -2.5 * s);
+      g.add(hall);
+      var roof = new THREE.Mesh(new THREE.ConeGeometry(1.3 * s, 0.6 * s, 4), new THREE.MeshStandardMaterial({ color: 0x2563eb }));
+      roof.rotation.y = Math.PI / 4;
+      roof.position.copy(hall.position).add(new THREE.Vector3(0, 0.9 * s, 0));
+      g.add(roof);
+      break;
+    }
+    case 'yulong': {
+      // 玉龙雪山
+      var snowMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4, metalness: 0.1 });
+      var rockMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.9 });
+      var body = new THREE.Mesh(new THREE.ConeGeometry(2 * s, 4 * s, 6), rockMat);
+      body.position.y = 2 * s;
+      g.add(body);
+      var cap = new THREE.Mesh(new THREE.ConeGeometry(0.8 * s, 1.5 * s, 6), snowMat);
+      cap.position.y = 4 * s;
+      g.add(cap);
+      break;
+    }
+    case 'potala': {
+      // 布达拉宫
+      var redMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.7 });
+      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.6 });
+      var white = new THREE.Mesh(new THREE.BoxGeometry(3 * s, 2 * s, 1.5 * s), whiteMat);
+      white.position.y = 1 * s;
+      g.add(white);
+      var red = new THREE.Mesh(new THREE.BoxGeometry(1.8 * s, 1.3 * s, 1.2 * s), redMat);
+      red.position.set(0, 3.65 * s, 0);
+      g.add(red);
+      var roof = new THREE.Mesh(new THREE.BoxGeometry(1.9 * s, 0.1 * s, 1.3 * s), new THREE.MeshStandardMaterial({ color: 0x1e3a8a }));
+      roof.position.copy(red.position).add(new THREE.Vector3(0, 0.7 * s, 0));
+      g.add(roof);
+      break;
+    }
+    default: {
+      var geo = new THREE.DodecahedronGeometry(0.8 * s, 0);
+      var mat = new THREE.MeshStandardMaterial({ color: 0x6366f1, metalness: 0.4, roughness: 0.3 });
+      g.add(new THREE.Mesh(geo, mat));
+    }
+  }
+
+  // 整体居中 + 让底在 y=0
+  g.updateMatrixWorld();
+  var box = new THREE.Box3().setFromObject(g);
+  var cx = (box.min.x + box.max.x) / 2;
+  var cz = (box.min.z + box.max.z) / 2;
+  var bottom = box.min.y;
+  g.position.x = -cx;
+  g.position.z = -cz;
+  g.position.y = -bottom;
+
+  return g;
+}
+
+/* ============ 寻宝线索（漂浮在 3D 空间） ============ */
+function spawnArtifacts(poi) {
+  var list = (poi.artifacts || []).slice();
+  huntState.total = list.length;
+  huntState.found.clear();
+  document.getElementById('huntTotal').textContent = list.length;
+  artifacts = [];
+
+  // 随机在模型周围散布
+  var bounds = new THREE.Box3().setFromObject(poiGroup);
+  var cx = (bounds.min.x + bounds.max.x) / 2;
+  var cy = (bounds.min.y + bounds.max.y) / 2;
+  var cz = (bounds.min.z + bounds.max.z) / 2;
+  var rangeX = (bounds.max.x - bounds.min.x) / 2 + 0.8;
+  var rangeZ = (bounds.max.z - bounds.min.z) / 2 + 0.8;
+  var rangeY = (bounds.max.y - bounds.min.y) / 2 + 0.5;
+
+  // 准备 UI 列表
+  var huntList = document.getElementById('huntList');
+  huntList.innerHTML = '';
+
+  list.forEach(function(a, idx) {
+    // 3D 线索物体
+    var geo, color;
+    switch(a.type) {
+      case 'scroll': geo = new THREE.TorusGeometry(0.15, 0.06, 8, 24); color = 0xfbbf24; break;
+      case 'gem': geo = new THREE.OctahedronGeometry(0.18); color = 0xec4899; break;
+      case 'seal': geo = new THREE.BoxGeometry(0.22, 0.22, 0.22); color = 0xef4444; break;
+      case 'sword': geo = new THREE.ConeGeometry(0.1, 0.35, 4); color = 0x60a5fa; break;
+      default: geo = new THREE.IcosahedronGeometry(0.16); color = 0x8b5cf6;
+    }
+    var mat = new THREE.MeshStandardMaterial({
+      color: color, metalness: 0.6, roughness: 0.2,
+      emissive: color, emissiveIntensity: 0.4
+    });
+    var mesh = new THREE.Mesh(geo, mat);
+    // 随机位置
+    mesh.position.set(
+      cx + (Math.random() - 0.5) * rangeX * 2,
+      cy + (Math.random() - 0.2) * rangeY * 2,
+      cz + (Math.random() - 0.5) * rangeZ * 2
+    );
+    // 光效光晕
+    var light = new THREE.PointLight(color, 0.8, 2);
+    mesh.add(light);
+    poiGroup.add(mesh);
+
+    artifacts.push({
+      id: a.id, name: a.name, mesh: mesh,
+      baseY: mesh.position.y, phase: Math.random() * Math.PI * 2,
+      found: false, trigger: a.trigger || null
+    });
+
+    // UI 条目
+    var emojiMap = { scroll: '📜', gem: '💎', seal: '🔴', sword: '⚔️', hidden: '🎭' };
+    var div = document.createElement('div');
+    div.className = 'artifact';
+    div.title = a.name;
+    div.dataset.id = a.id;
+    div.textContent = emojiMap[a.type] || '✨';
+    huntList.appendChild(div);
   });
 }
 
-function loadModule(url) {
-  return new Promise(function(resolve, reject) {
-    var s = document.createElement('script');
-    s.type = 'module'; s.src = url;
-    s.async = true;
-    s.onload = resolve; s.onerror = reject;
-    document.head.appendChild(s);
-    // module 没有明确 onload 等待，500ms 后 resolve
-    setTimeout(resolve, 800);
-  });
-}
-
-/* ============ 获取景点数据 ============ */
-var POIS = window.AR_POIS || [];
-var STORIES = POIS.find(function(p){ return p.id === poiId; }) || POIS[0];
-
-document.getElementById('arPoiName').textContent = STORIES ? STORIES.name : '未知景点';
-
-/* ============ 状态 ============ */
-var THREE = null;
-var engine = null;
-var scene, camera, renderer, markerGroup, coordGroup;
-var arController;
-var running = false;
-
-/* ============ 语音开关 ============ */
-var micBtn = document.getElementById('arMicBtn');
-if (micBtn) {
-  micBtn.onclick = function() {
-    var muted = micBtn.classList.toggle('muted');
-    if (engine && engine._plot) engine._plot.voiceEnabled = !muted;
-    micBtn.textContent = muted ? '🔇' : '🔊';
-  };
-}
-
-/* ============ 进度 UI 更新 ============ */
-function updateProgressUI() {
-  if (!engine) return;
-  var total = engine._artifacts.length;
-  var found = engine._artifacts.filter(function(e){ return e.found; }).length;
-  var fill = document.getElementById('arProgressFill');
-  var count = document.getElementById('arProgressCount');
-  var title = document.getElementById('arProgressTitle');
-  if (fill) fill.style.width = (found / Math.max(1, total) * 100) + '%';
-  if (count) count.textContent = found + ' / ' + total;
-  if (title) {
-    if (found === total) title.textContent = '🏆 寻宝完成！';
-    else if (found === 0) title.textContent = '🗝️ 开始寻宝';
-    else title.textContent = '🗝️ 已找到 ' + found;
-  }
-
-  // 印记状态
-  var stampBadge = document.getElementById('arStampStatus');
-  if (stampBadge && STORIES && window.HuntStorage) {
-    stampBadge.textContent = window.HuntStorage.hasStamp(STORIES.stamp.id) ? '✅ 已集齐' : '🎯 待收集';
-  }
-}
-
-/* ============ MindAR + Three.js AR 初始化 ============ */
-async function startAR() {
-  var splash = document.getElementById('arSplash');
-  var splashTitle = document.getElementById('arSplashTitle');
-  var splashText = document.getElementById('arSplashText');
-  var spinner = document.getElementById('arSpinner');
-  var retryBtn = document.getElementById('arRetryBtn');
-
-  splashTitle.textContent = '加载 MindAR 引擎...';
-  splashText.innerHTML = '正在初始化 WebAR 组件<br>请稍等';
-
+/* ============ 摄像头 + Three.js 初始化 ============ */
+async function start() {
   try {
-    // 1. 依赖库（本地 IIFE，不走 CDN 避免 ESM 加载失败）
-    if (!window.THREE) {
-      await loadScript('ar-lib/three.min.js');
-    }
-    THREE = window.THREE;
-    if (!window.MINDAR || !window.MINDAR.IMAGE) {
-      await loadScript('ar-lib/mindar-image.min.js');
-    }
-
-    // 2. 加载业务数据
-    if (!window.AR_POIS) await loadScript('ar-stories.js');
-    if (!window.HuntEngine) await loadScript('hunt-engine.js');
-
-    // 重新取 POI（因为可能刚加载）
-    POIS = window.AR_POIS || [];
-    STORIES = POIS.find(function(p){ return p.id === poiId; }) || POIS[0];
-
-    splashTitle.textContent = '请求摄像头权限...';
-    splashText.innerHTML = '将摄像头对准景点实景<br>首次使用需允许浏览器调用摄像头';
-
-    // 3. 检查 marker 文件是否存在（不存在则提前降级）
-    var markerUrl = STORIES.markerUrl || 'markers/' + poiId + '.mind';
-    var markerOk = true;
+    // 摄像头（环境摄像头）
+    var video = document.getElementById('arVideo');
     try {
-      var resp = await fetch(markerUrl, { method: 'HEAD' });
-      if (!resp.ok) markerOk = false;
-    } catch(e) { markerOk = false; }
-
-    if (!markerOk) {
-      // marker 文件不存在 → 降级到沉浸式故事模式（不用摄像头）
-      splashTitle.textContent = '🎭 沉浸式故事模式';
-      splashText.innerHTML = '该景点尚未上传 AR 标记图<br>已自动切换到故事漫游模式';
-      await new Promise(r => setTimeout(r, 1200));
-      startFallbackMode();
-      return;
+      video.srcObject = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false
+      });
+      await video.play();
+      document.getElementById('dotCam').style.background = '#22c55e';
+    } catch(camErr) {
+      console.warn('摄像头启动失败（降级预览模式）:', camErr.message);
+      document.getElementById('arLoading').style.display = 'none';
+      document.getElementById('arNoCam').style.display = 'flex';
+      // 降级：灰色背景当"3D 预览"
+      document.getElementById('arVideo').style.background = 'linear-gradient(135deg,#1e293b,#334155)';
     }
 
-    // 4. MindAR Image Tracking 配置（注意 API 名是 MINDAR.IMAGE 大写）
-    arController = new window.MINDAR.IMAGE.Controller({
-      container: document.getElementById('ar-root'),
-      imageTargetSrc: markerUrl,
-      uiOverlay: { display: 'none' },    // 我们自己做 UI
-      videoSettings: {
-        video: document.getElementById('ar-camera'),
-        facing: 'environment',
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    });
+    document.getElementById('loadSub').textContent = '初始化 3D 空间';
 
-    // 5. Three.js 初始化
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Three.js
+    renderer = new THREE.WebGLRenderer({
+      canvas: document.getElementById('arCanvas'),
+      alpha: true, antialias: true
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x000000, 0);  // 透明，底下显示摄像头视频
+    renderer.setClearColor(0x000000, 0);
 
-    var arRoot = document.getElementById('ar-root');
-    arRoot.appendChild(renderer.domElement);
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.inset = '0';
-    renderer.domElement.style.zIndex = '5';
+    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 100);
+    camera.position.set(0, 1.2, 4.5);
+    camera.lookAt(0, 1, 0);
 
-    // 6. 灯光（MeshStandardMaterial 需要光照才可见）
-    var ambient = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambient);
-    var dir = new THREE.DirectionalLight(0xffffff, 0.8);
-    dir.position.set(1, 2, 1);
-    scene.add(dir);
+    scene = new THREE.Scene();
 
-    // 7. 绑定 MindAR controller
-    arController.addMarkerBinder('marker', {
-      onTargetFound: function(target) {
-        console.log('[AR] 识别到标记！', target);
-        document.getElementById('arScanHint').classList.add('hidden');
+    // 灯光
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    var sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    sun.position.set(5, 8, 5);
+    scene.add(sun);
+    var fill = new THREE.DirectionalLight(0xa5b4fc, 0.3);
+    fill.position.set(-3, 2, -5);
+    scene.add(fill);
 
-        // anchor group 由 MindAR-THREE 自动创建
-        markerGroup = target.group;
+    // 景点模型
+    poiGroup = buildPOIModel(POI);
+    scene.add(poiGroup);
 
-        // 坐标系转换：MindAR 锚点 XY 平面，我们让物体竖直
-        coordGroup = new THREE.Group();
-        coordGroup.rotation.x = -Math.PI / 2;
-        coordGroup.rotation.z = Math.PI;
-        markerGroup.add(coordGroup);
+    // 寻宝线索
+    spawnArtifacts(POI);
 
-        scene.add(target.scene);
+    // TouchControls
+    controls = new TouchControls(renderer.domElement, camera, poiGroup);
 
-        // 绑定 HuntEngine
-        engine.bindScene(scene, document.getElementById('arPlotBox'), document.getElementById('arHoverHint'));
-        engine.bindMarkerGroup(coordGroup);
-        engine.start(STORIES);
-        updateProgressUI();
-      },
-      onTargetLost: function() {
-        console.log('[AR] 标记丢失');
-        document.getElementById('arScanHint').classList.remove('hidden');
-      }
-    });
-
-    arController.start();
-
-    // 隐藏启动遮罩
-    splash.classList.add('hidden');
-
-    // 8. 渲染循环
-    var clock = new THREE.Clock();
-    running = true;
-    function animate() {
-      if (!running) return;
-      requestAnimationFrame(animate);
-      var delta = clock.getDelta();
-
-      if (markerGroup && coordGroup) {
-        camera = arController.getThreeCamera();
-      }
-
-      if (engine) {
-        engine.animate(delta, camera);
-        engine.updateParticles(delta);
-        updateProgressUI();
-      }
-
-      renderer.render(scene, camera);
-    }
-    animate();
-
+    // 窗口大小
     window.addEventListener('resize', function() {
-      if (!renderer) return;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-  } catch(err) {
-    console.error('[AR] 启动失败:', err);
-    splashTitle.textContent = '⚠️ 启动失败';
-    splashText.innerHTML = err.message || String(err);
-    spinner.style.display = 'none';
-    retryBtn.style.display = 'inline-block';
-    retryBtn.onclick = function() { location.reload(); };
+    // 标题
+    document.title = POI.name + ' · AR 空间';
+    document.getElementById('titleText').textContent = POI.name + ' · AR 空间';
+
+    // 隐藏加载
+    document.getElementById('arLoading').style.display = 'none';
+
+    // 开始故事
+    setTimeout(function(){ playStory(POI.plot || []); }, 1200);
+
+    // 彩蛋
+    if (POI.easterPlot) {
+      document.getElementById('tabEgg').addEventListener('click', function(){
+        if (this.classList.contains('locked')) return;
+        currentTab = 'egg';
+        document.getElementById('tabMain').classList.remove('active');
+        this.classList.add('active');
+        playStory(POI.easterPlot);
+      });
+      document.getElementById('tabMain').addEventListener('click', function(){
+        currentTab = 'main';
+        this.classList.add('active');
+        document.getElementById('tabEgg').classList.remove('active');
+        playStory(POI.plot || []);
+      });
+    } else {
+      document.getElementById('tabEgg').style.display = 'none';
+    }
+
+    // 按钮
+    document.getElementById('btnReset').addEventListener('click', function(){
+      poiGroup.position.set(0, 0, 0);
+      poiGroup.rotation.set(0, 0, 0);
+      poiGroup.scale.setScalar(1);
+    });
+    document.getElementById('btnMic').addEventListener('click', function(){
+      voiceOn = !voiceOn;
+      this.textContent = voiceOn ? '🔊' : '🔇';
+      if (!voiceOn && window.speechSynthesis) window.speechSynthesis.cancel();
+    });
+    document.getElementById('btnStory').addEventListener('click', function(){
+      playStory(currentTab === 'main' ? (POI.plot || []) : (POI.easterPlot || []));
+    });
+
+    // 动画
+    animate();
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('loadSub').textContent = '初始化失败: ' + e.message;
+    document.getElementById('arLoading').querySelector('.spinner').style.borderTopColor = '#ef4444';
   }
 }
 
-/* ============ 启动 HuntEngine 占位 ============ */
-// 即使 AR 初始化失败，engine 也要有实例（用于 UI 渲染）
-if (!engine && window.HuntEngine) {
-  engine = new window.HuntEngine();
+/* ============ 故事播放 ============ */
+function playStory(lines) {
+  if (!lines || !lines.length) return;
+  var bubble = document.getElementById('arBubble');
+  var av = document.getElementById('bAv');
+  var name = document.getElementById('bName');
+  var text = document.getElementById('bText');
+  var pb = document.getElementById('bPb');
+
+  window.clearTimeout(storyTimer);
+  var i = 0;
+  function next() {
+    if (i >= lines.length) {
+      bubble.classList.remove('visible');
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      return;
+    }
+    var ln = lines[i];
+    av.textContent = ln.avatar || '👤';
+    name.textContent = ln.speaker || '旁白';
+    text.textContent = ln.text;
+    pb.style.width = '0';
+    bubble.classList.add('visible');
+
+    // 语音
+    if (voiceOn && window.speechSynthesis) {
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(ln.text);
+        u.lang = 'zh-CN';
+        u.rate = 0.95;
+        window.speechSynthesis.speak(u);
+      } catch(e) {}
+    }
+
+    // 彩蛋触发
+    if (ln.hint === 'egg' || ln.trigger === 'found_all') {
+      if (POI.easterPlot && !document.getElementById('tabEgg').classList.contains('locked')) {
+        // 已解锁过，不再弹窗
+      } else {
+        document.getElementById('eggDesc').textContent = POI.easterIntro || POI.name + ' 里还藏着一个秘密...';
+        document.getElementById('modalEgg').classList.add('visible');
+      }
+    }
+
+    // 动画故事进度条
+    var dur = ln.duration || 4000;
+    var t0 = Date.now();
+    (function step(){
+      var pct = Math.min(100, (Date.now() - t0) / dur * 100);
+      pb.style.width = pct + '%';
+      if (pct < 100) storyTimer = window.setTimeout(step, 50);
+    })();
+
+    storyTimer = window.setTimeout(function(){ i++; next(); }, dur);
+  }
+  next();
 }
 
-/* ============ Fallback 模式（marker 不存在时：沉浸式故事 + 寻宝）============ */
-async function startFallbackMode() {
-  var splash = document.getElementById('arSplash');
-  var arRoot = document.getElementById('ar-root');
-  var camera = document.getElementById('ar-camera');
-
-  // 隐藏 splash
-  splash.style.display = 'none';
-
-  // 不显示摄像头，改用景点背景图铺满 ar-root
-  camera.style.display = 'none';
-  arRoot.style.backgroundImage = 'url("' + (STORIES.bg || '') + '")';
-  arRoot.style.backgroundSize = 'cover';
-  arRoot.style.backgroundPosition = 'center';
-
-  // 初始化 HuntEngine（故事播放 + 寻宝）
-  if (!engine && window.HuntEngine) {
-    engine = new window.HuntEngine();
-  }
-
-  // 直接开始故事
-  if (engine && engine.playStory) {
-    engine.playStory();
-  }
+/* ============ Toast ============ */
+var _toastT;
+function toast(msg) {
+  var t = document.getElementById('arToast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  window.clearTimeout(_toastT);
+  _toastT = window.setTimeout(function(){ t.classList.remove('visible'); }, 2200);
 }
 
-/* ============ 页面加载完成 ============ */
-window.addEventListener('load', function() {
-  // 检查 HTTPS（摄像头权限要求）
-  var isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  if (!isSecure) {
-    document.getElementById('arSplashText').innerHTML =
-      '⚠️ 摄像头需要 HTTPS<br>请在 GitHub Pages 上打开，或本地用 <code>https-server</code>';
-    document.getElementById('arSpinner').style.display = 'none';
-    return;
-  }
+/* ============ 寻宝 proximity check（每帧） ============ */
+function checkProximity() {
+  artifacts.forEach(function(a) {
+    if (a.found) return;
+    var dist = camera.position.distanceTo(a.mesh.position);
+    if (dist < 1.8) {
+      a.found = true;
+      huntState.found.add(a.id);
+      // 标记到 UI
+      var el = document.querySelector('#huntList .artifact[data-id="' + a.id + '"]');
+      if (el) el.classList.add('found');
+      toast('✨ 发现线索：' + a.name);
+      // 隐藏（或缩小）
+      a.mesh.visible = false;
 
-  startAR();
-});
+      // 彩蛋触发检查
+      if (a.trigger && a.trigger.indexOf('found_artifact_') === 0) {
+        var targetN = parseInt(a.trigger.split('_').pop());
+        if (huntState.found.size >= targetN) {
+          document.getElementById('modalEgg').classList.add('visible');
+        }
+      }
 
-/* ============ 页面卸载清理 ============ */
-window.addEventListener('beforeunload', function() {
-  running = false;
-  try { if (arController) arController.stop(); } catch(e){}
-  try { window.speechSynthesis.cancel(); } catch(e){}
-  if (renderer) renderer.dispose();
-});
+      // 全部找到
+      if (huntState.found.size === huntState.total) {
+        huntComplete();
+      }
+    }
+  });
+  document.getElementById('huntFound').textContent = huntState.found.size;
+}
+
+/* ============ 寻宝完成 ============ */
+function huntComplete() {
+  toast('🎉 全部线索找到！');
+  // 发印记
+  try {
+    if (window.HuntStorage) window.HuntStorage.addStamp(POI.id);
+    else if (window.HuntGame && window.HuntGame.storage) window.HuntGame.storage.addStamp(POI.id);
+  } catch(e) {}
+  // 弹窗
+  var stampEmoji = '🏛️';
+  if (POI.id === 'bingmayong') stampEmoji = '⚔️';
+  else if (POI.id === 'gugong') stampEmoji = '🐉';
+  else if (POI.id === 'xihu') stampEmoji = '🪷';
+  else if (POI.id === 'yulong') stampEmoji = '🏔️';
+  else if (POI.id === 'potala') stampEmoji = '🛕';
+  document.getElementById('stampIcon').textContent = stampEmoji;
+  document.getElementById('stampTitle').textContent = POI.name + ' · 拾迹印记已解锁！';
+  document.getElementById('stampDesc').textContent = '集齐了 ' + huntState.total + ' 件线索，获得「' + POI.stampName + '」印记';
+  setTimeout(function(){
+    document.getElementById('modalStamp').classList.add('visible');
+  }, 800);
+}
+
+/* ============ 动画循环 ============ */
+function animate() {
+  requestAnimationFrame(animate);
+
+  // 线索漂浮动画
+  artifacts.forEach(function(a) {
+    if (!a.found) {
+      a.mesh.rotation.y += 0.02;
+      a.mesh.position.y = a.baseY + Math.sin(Date.now() / 600 + a.phase) * 0.08;
+    }
+  });
+
+  controls.update();
+  checkProximity();
+  renderer.render(scene, camera);
+}
+
+/* ============ 启动 ============ */
+start();
 </script>
 </body>
 </html>
