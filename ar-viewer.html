@@ -187,186 +187,281 @@ var visitedHotspots = new Set();
 var autoRotate = true;
 var gameState = { active: false, completed: false };
 
+function makeTex(drawFn, rx, ry) {
+  var c = document.createElement('canvas'); c.width = 256; c.height = 256;
+  var ctx = c.getContext('2d'); drawFn(ctx, 256);
+  var t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx || 2, ry || 2);
+  return t;
+}
+function brickTex(base, line) {
+  return makeTex(function(ctx, s) {
+    ctx.fillStyle = base; ctx.fillRect(0, 0, s, s);
+    ctx.strokeStyle = line || 'rgba(0,0,0,.3)'; ctx.lineWidth = 2;
+    var bh = 32, bw = 64;
+    for (var y = 0; y < s; y += bh) {
+      var off = (y / bh) % 2 === 0 ? 0 : bw / 2;
+      for (var x = -bw; x < s + bw; x += bw) ctx.strokeRect(x + off, y, bw, bh);
+    }
+    for (var i = 0; i < 150; i++) {
+      ctx.fillStyle = 'rgba(0,0,0,' + Math.random() * 0.08 + ')';
+      ctx.fillRect(Math.random() * s, Math.random() * s, 3, 3);
+    }
+  }, 3, 2);
+}
+function roofTex() {
+  return makeTex(function(ctx, s) {
+    for (var x = 0; x < s; x += 16) {
+      var grad = ctx.createLinearGradient(x, 0, x + 16, 0);
+      grad.addColorStop(0, '#a8821a'); grad.addColorStop(0.5, '#e6c24a'); grad.addColorStop(1, '#a8821a');
+      ctx.fillStyle = grad; ctx.fillRect(x, 0, 16, s);
+    }
+  }, 4, 2);
+}
+function stoneTex() {
+  return makeTex(function(ctx, s) {
+    ctx.fillStyle = '#d0ccc4'; ctx.fillRect(0, 0, s, s);
+    for (var i = 0; i < 200; i++) {
+      var v = 180 + Math.random() * 40;
+      ctx.fillStyle = 'rgba(' + v + ',' + v + ',' + v + ',.3)';
+      ctx.fillRect(Math.random() * s, Math.random() * s, 4, 4);
+    }
+    ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.lineWidth = 1;
+    for (var y = 0; y < s; y += 64) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(s, y); ctx.stroke(); }
+  }, 2, 2);
+}
+
 function buildPOIModel(poi) {
   var g = new THREE.Group();
-  var s = 1.2;
+  var s = 1.0;
+  var wallTex = brickTex('#9a1a1a', 'rgba(0,0,0,.25)');
+  var goldTex = roofTex();
+  var stnTex = stoneTex();
+
   switch(poi.id) {
     case 'gugong': {
-      var redMat = new THREE.MeshStandardMaterial({ color: 0x9a1a1a, roughness: 0.5, metalness: 0.1 });
-      var goldMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.8, roughness: 0.25 });
-      var stoneMat = new THREE.MeshStandardMaterial({ color: 0xc9c4bb, roughness: 0.8 });
+      var stoneMat = new THREE.MeshStandardMaterial({ map: stnTex, roughness: 0.8 });
       for (var i = 0; i < 3; i++) {
-        var base = new THREE.Mesh(new THREE.BoxGeometry((4 - i * 0.4) * s, 0.3 * s, (3 - i * 0.3) * s), stoneMat);
-        base.position.y = i * 0.35 * s + 0.15 * s;
+        var w = (5 - i * 0.6) * s, d = (4 - i * 0.5) * s;
+        var base = new THREE.Mesh(new THREE.BoxGeometry(w, 0.35 * s, d), stoneMat);
+        base.position.y = i * 0.38 * s + 0.17 * s;
+        base.castShadow = true; base.receiveShadow = true;
         g.add(base);
+        var railMat = new THREE.MeshStandardMaterial({ color: 0xe8e4de, roughness: 0.6 });
+        var rf = new THREE.Mesh(new THREE.BoxGeometry(w, 0.18 * s, 0.04 * s), railMat);
+        rf.position.set(0, (i * 0.38 + 0.44) * s, d/2); g.add(rf);
+        var rb = rf.clone(); rb.position.z = -d/2; g.add(rb);
+        var rl = new THREE.Mesh(new THREE.BoxGeometry(0.04 * s, 0.18 * s, d), railMat);
+        rl.position.set(-w/2, (i * 0.38 + 0.44) * s, 0); g.add(rl);
+        var rr = rl.clone(); rr.position.x = w/2; g.add(rr);
       }
-      var pillarMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.35 });
-      for (var i = -2; i <= 2; i++) for (var j = -1; j <= 1; j++) {
-        var p = new THREE.Mesh(new THREE.CylinderGeometry(0.1 * s, 0.1 * s, 2 * s, 12), pillarMat);
-        p.position.set(i * 0.7 * s, 1.1 * s, j * 0.8 * s);
-        g.add(p);
+      var stepMat = new THREE.MeshStandardMaterial({ color: 0xc0bcb4, roughness: 0.7 });
+      for (var i = 0; i < 5; i++) {
+        var step = new THREE.Mesh(new THREE.BoxGeometry(1.2 * s, 0.1 * s, 0.5 * s), stepMat);
+        step.position.set(0, i * 0.1 * s + 0.05 * s, (2 + i * 0.3) * s);
+        g.add(step);
       }
-      var body = new THREE.Mesh(new THREE.BoxGeometry(3.2 * s, 1.8 * s, 2.2 * s), redMat);
-      body.position.y = 1.2 * s;
-      g.add(body);
-      var roof1 = new THREE.Mesh(new THREE.ConeGeometry(2.6 * s, 1 * s, 4), goldMat);
+      var wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.5 });
+      var body = new THREE.Mesh(new THREE.BoxGeometry(3.5 * s, 2 * s, 2.5 * s), wallMat);
+      body.position.y = 1.15 * s + 1.14 * s;
+      body.castShadow = true; g.add(body);
+      var pillarMat = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.3, metalness: 0.1 });
+      for (var i = -2; i <= 2; i++) {
+        var p = new THREE.Mesh(new THREE.CylinderGeometry(0.08 * s, 0.08 * s, 2.2 * s, 12), pillarMat);
+        p.position.set(i * 0.65 * s, 1.15 * s + 1.14 * s, 1.3 * s);
+        p.castShadow = true; g.add(p);
+      }
+      var doorMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.6, roughness: 0.3 });
+      for (var i = -1.5; i <= 1.5; i += 1) {
+        var door = new THREE.Mesh(new THREE.BoxGeometry(0.6 * s, 1.5 * s, 0.05 * s), doorMat);
+        door.position.set(i * s, 1.15 * s + 1.14 * s, 1.26 * s);
+        g.add(door);
+      }
+      var roofMat = new THREE.MeshStandardMaterial({ map: goldTex, metalness: 0.7, roughness: 0.3 });
+      var roof1 = new THREE.Mesh(new THREE.ConeGeometry(2.8 * s, 0.9 * s, 4), roofMat);
       roof1.rotation.y = Math.PI / 4;
-      roof1.position.y = 2.6 * s;
-      g.add(roof1);
-      var roof2 = new THREE.Mesh(new THREE.ConeGeometry(2.2 * s, 0.8 * s, 4), goldMat);
+      roof1.position.y = 1.15 * s + 1.14 * s + 1.45 * s;
+      roof1.castShadow = true; g.add(roof1);
+      var roof2 = new THREE.Mesh(new THREE.ConeGeometry(2.2 * s, 0.8 * s, 4), roofMat);
       roof2.rotation.y = Math.PI / 4;
-      roof2.position.y = 3.5 * s;
-      g.add(roof2);
+      roof2.position.y = roof1.position.y + 1.3 * s;
+      roof2.castShadow = true; g.add(roof2);
+      var beastMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.8, roughness: 0.2 });
       for (var i = 0; i < 10; i++) {
-        var beast = new THREE.Mesh(new THREE.BoxGeometry(0.08 * s, 0.12 * s, 0.08 * s), goldMat);
-        beast.position.set(-1.2 * s + i * 0.27 * s, 3.1 * s, 0);
+        var beast = new THREE.Mesh(new THREE.BoxGeometry(0.06 * s, 0.1 * s, 0.06 * s), beastMat);
+        beast.position.set(-1.1 * s + i * 0.24 * s, roof2.position.y + 0.35 * s, 0);
         g.add(beast);
       }
       break;
     }
     case 'bingmayong': {
-      var pitMat = new THREE.MeshStandardMaterial({ color: 0x5c4a3a, roughness: 0.95 });
-      var pit = new THREE.Mesh(new THREE.BoxGeometry(5 * s, 0.3 * s, 3 * s), pitMat);
-      pit.position.y = 0.15 * s;
-      g.add(pit);
-      var bodyMat = new THREE.MeshStandardMaterial({ color: 0xb8956e, roughness: 0.9 });
-      var headMat = new THREE.MeshStandardMaterial({ color: 0xc9a87c, roughness: 0.85 });
-      for (var row = 0; row < 3; row++) {
-        for (var col = 0; col < 6; col++) {
-          var bx = (col - 2.5) * 0.7 * s;
-          var bz = (row - 1) * 0.9 * s;
-          var body = new THREE.Mesh(new THREE.BoxGeometry(0.25 * s, 0.9 * s, 0.18 * s), bodyMat);
-          body.position.set(bx, 0.75 * s, bz);
-          g.add(body);
-          var head = new THREE.Mesh(new THREE.SphereGeometry(0.1 * s, 12, 10), headMat);
-          head.position.set(bx, 1.3 * s, bz);
-          g.add(head);
-          if (row === 0) {
-            var bow = new THREE.Mesh(new THREE.BoxGeometry(0.02 * s, 0.3 * s, 0.02 * s), new THREE.MeshStandardMaterial({ color: 0x4a3728 }));
-            bow.position.set(bx, 0.9 * s, bz - 0.15 * s);
-            g.add(bow);
-          } else if (row === 2) {
-            var chariot = new THREE.Mesh(new THREE.BoxGeometry(0.5 * s, 0.15 * s, 0.3 * s), new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.7 }));
-            chariot.position.set(bx, 0.45 * s, bz);
-            g.add(chariot);
+      var pitMat = new THREE.MeshStandardMaterial({ color: 0x6b5344, roughness: 0.95 });
+      var pit = new THREE.Mesh(new THREE.BoxGeometry(6 * s, 0.4 * s, 4 * s), pitMat);
+      pit.position.y = 0.2 * s; pit.receiveShadow = true; g.add(pit);
+      var wallMat = new THREE.MeshStandardMaterial({ color: 0x5c4535, roughness: 0.95 });
+      for (var i = -1; i <= 1; i++) {
+        var wall = new THREE.Mesh(new THREE.BoxGeometry(6 * s, 0.5 * s, 0.15 * s), wallMat);
+        wall.position.set(0, 0.45 * s, i * 1.2 * s); g.add(wall);
+      }
+      var clayMat = new THREE.MeshStandardMaterial({ color: 0xa08060, roughness: 0.85 });
+      var clayDark = new THREE.MeshStandardMaterial({ color: 0x8a6f50, roughness: 0.9 });
+      var rows = [{ z: -1.5*s, type: 'nu', count: 8 }, { z: 0, type: 'bu', count: 8 }, { z: 1.5*s, type: 'che', count: 6 }];
+      rows.forEach(function(row) {
+        for (var i = 0; i < row.count; i++) {
+          var bx = (i - row.count/2) * 0.65 * s, bz = row.z;
+          var body = new THREE.Mesh(new THREE.CylinderGeometry(0.12*s, 0.18*s, 0.8*s, 8), clayMat);
+          body.position.set(bx, 0.8*s, bz); body.castShadow = true; g.add(body);
+          var armor = new THREE.Mesh(new THREE.CylinderGeometry(0.13*s, 0.14*s, 0.3*s, 8), clayDark);
+          armor.position.set(bx, 1.0*s, bz); g.add(armor);
+          var head = new THREE.Mesh(new THREE.SphereGeometry(0.1*s, 10, 8), clayMat);
+          head.position.set(bx, 1.3*s, bz); head.castShadow = true; g.add(head);
+          var topknot = new THREE.Mesh(new THREE.CylinderGeometry(0.03*s, 0.03*s, 0.08*s, 6), clayDark);
+          topknot.position.set(bx, 1.42*s, bz); g.add(topknot);
+          var leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.06*s, 0.4*s, 0.08*s), clayDark);
+          leg1.position.set(bx - 0.05*s, 0.5*s, bz); g.add(leg1);
+          var leg2 = leg1.clone(); leg2.position.x = bx + 0.05*s; g.add(leg2);
+          if (row.type === 'nu') {
+            var bow = new THREE.Mesh(new THREE.BoxGeometry(0.03*s, 0.4*s, 0.03*s), new THREE.MeshStandardMaterial({ color: 0x3a2a1a }));
+            bow.position.set(bx + 0.15*s, 0.9*s, bz - 0.1*s); g.add(bow);
+          } else if (row.type === 'bu') {
+            var sword = new THREE.Mesh(new THREE.BoxGeometry(0.02*s, 0.5*s, 0.02*s), new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.8, roughness: 0.2 }));
+            sword.position.set(bx + 0.15*s, 0.9*s, bz); g.add(sword);
           }
         }
-      }
+      });
+      var gBody = new THREE.Mesh(new THREE.CylinderGeometry(0.18*s, 0.25*s, 1*s, 8), clayMat);
+      gBody.position.y = 0.9*s; g.add(gBody);
+      var gHead = new THREE.Mesh(new THREE.SphereGeometry(0.13*s, 10, 8), clayMat);
+      gHead.position.y = 1.55*s; g.add(gHead);
       break;
     }
     case 'xihu': {
-      var waterMat = new THREE.MeshStandardMaterial({ color: 0x2c5f8f, metalness: 0.4, roughness: 0.3 });
-      var water = new THREE.Mesh(new THREE.CircleGeometry(4 * s, 48), waterMat);
-      water.rotation.x = -Math.PI / 2;
-      water.position.y = 0;
-      g.add(water);
-      var bridgeMat = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.85 });
-      var bridge = new THREE.Mesh(new THREE.BoxGeometry(3.5 * s, 0.15 * s, 0.5 * s), bridgeMat);
-      bridge.position.y = 0.3 * s;
-      g.add(bridge);
-      for (var i = 0; i < 2; i++) {
-        var rail = new THREE.Mesh(new THREE.BoxGeometry(3.5 * s, 0.3 * s, 0.05 * s), bridgeMat);
-        rail.position.set(0, 0.5 * s, (i === 0 ? -0.22 : 0.22) * s);
-        g.add(rail);
+      var waterMat = new THREE.MeshStandardMaterial({ color: 0x2a5f8f, metalness: 0.6, roughness: 0.2, transparent: true, opacity: 0.85 });
+      var water = new THREE.Mesh(new THREE.CircleGeometry(5*s, 64), waterMat);
+      water.rotation.x = -Math.PI/2; water.position.y = 0; g.add(water);
+      var shoreMat = new THREE.MeshStandardMaterial({ color: 0x5a7a4a, roughness: 0.9 });
+      var shore = new THREE.Mesh(new THREE.RingGeometry(5*s, 6*s, 64), shoreMat);
+      shore.rotation.x = -Math.PI/2; shore.position.y = -0.02; g.add(shore);
+      var bridgeMat = new THREE.MeshStandardMaterial({ map: stnTex, roughness: 0.85 });
+      var bridgeBody = new THREE.Mesh(new THREE.BoxGeometry(4*s, 0.2*s, 0.6*s), bridgeMat);
+      bridgeBody.position.y = 0.4*s; bridgeBody.castShadow = true; g.add(bridgeBody);
+      var railMat = new THREE.MeshStandardMaterial({ color: 0xb8b4ac, roughness: 0.7 });
+      for (var i = -2; i <= 2; i++) {
+        var p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03*s, 0.03*s, 0.4*s, 6), railMat);
+        p1.position.set(i*0.8*s, 0.7*s, 0.3*s); g.add(p1);
+        var p2 = p1.clone(); p2.position.z = -0.3*s; g.add(p2);
       }
-      var towerBody = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * s, 0.25 * s, 1 * s, 8), new THREE.MeshStandardMaterial({ color: 0xaa4444, roughness: 0.6 }));
-      towerBody.position.set(2 * s, 0.5 * s, -1.5 * s);
-      g.add(towerBody);
-      var towerTop = new THREE.Mesh(new THREE.ConeGeometry(0.12 * s, 0.3 * s, 8), new THREE.MeshStandardMaterial({ color: 0x883333 }));
-      towerTop.position.set(2 * s, 1.15 * s, -1.5 * s);
-      g.add(towerTop);
-      var umbrella = new THREE.Mesh(new THREE.ConeGeometry(0.25 * s, 0.15 * s, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, transparent: true, opacity: 0.9 }));
-      umbrella.position.set(0.5 * s, 0.8 * s, 0);
-      g.add(umbrella);
+      var hr1 = new THREE.Mesh(new THREE.BoxGeometry(4*s, 0.05*s, 0.05*s), railMat);
+      hr1.position.set(0, 0.9*s, 0.3*s); g.add(hr1);
+      var hr2 = hr1.clone(); hr2.position.z = -0.3*s; g.add(hr2);
+      var towerGroup = new THREE.Group();
+      var tRed = new THREE.MeshStandardMaterial({ color: 0xaa3333, roughness: 0.6 });
+      var tRoof = new THREE.MeshStandardMaterial({ color: 0x882222, roughness: 0.5 });
+      for (var i = 0; i < 5; i++) {
+        var w = (0.8 - i*0.12)*s;
+        var tier = new THREE.Mesh(new THREE.BoxGeometry(w, 0.3*s, w), tRed);
+        tier.position.y = i*0.4*s + 0.15*s; towerGroup.add(tier);
+        var roof = new THREE.Mesh(new THREE.ConeGeometry(w*0.8, 0.2*s, 4), tRoof);
+        roof.rotation.y = Math.PI/4; roof.position.y = i*0.4*s + 0.35*s; towerGroup.add(roof);
+      }
+      var spire = new THREE.Mesh(new THREE.ConeGeometry(0.05*s, 0.4*s, 6), new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.8 }));
+      spire.position.y = 2.2*s; towerGroup.add(spire);
+      towerGroup.position.set(2.5*s, 0, -2*s); g.add(towerGroup);
+      var trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06*s, 0.08*s, 0.8*s, 8), new THREE.MeshStandardMaterial({ color: 0x6b4423 }));
+      trunk.position.set(-2*s, 0.4*s, 1*s); g.add(trunk);
+      var crown = new THREE.Mesh(new THREE.SphereGeometry(0.4*s, 12, 8), new THREE.MeshStandardMaterial({ color: 0x4a7a3a }));
+      crown.position.set(-2*s, 1*s, 1*s); crown.scale.y = 1.3; g.add(crown);
+      var umbrella = new THREE.Mesh(new THREE.ConeGeometry(0.3*s, 0.2*s, 16), new THREE.MeshStandardMaterial({ color: 0xf5f0e0, transparent: true, opacity: 0.9 }));
+      umbrella.position.set(0.5*s, 1*s, 0); g.add(umbrella);
       break;
     }
     case 'zhongshan': {
-      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xe8e4de, roughness: 0.6 });
-      var arch = new THREE.Mesh(new THREE.BoxGeometry(1.5 * s, 0.15 * s, 0.1 * s), whiteMat);
-      arch.position.set(0, 1.5 * s, 1.8 * s);
-      g.add(arch);
-      var pillarL = new THREE.Mesh(new THREE.CylinderGeometry(0.06 * s, 0.06 * s, 1.5 * s, 8), whiteMat);
-      pillarL.position.set(-0.65 * s, 0.75 * s, 1.8 * s);
-      g.add(pillarL);
-      var pillarR = pillarL.clone();
-      pillarR.position.x = 0.65 * s;
-      g.add(pillarR);
-      for (var i = 0; i < 10; i++) {
-        var step = new THREE.Mesh(new THREE.BoxGeometry(2.5 * s, 0.12 * s, 0.4 * s), whiteMat);
-        step.position.y = i * 0.12 * s + 0.06 * s;
-        step.position.z = 1.3 * s - i * 0.4 * s;
-        g.add(step);
+      var whiteMat = new THREE.MeshStandardMaterial({ map: stnTex, roughness: 0.6 });
+      var blueMat = new THREE.MeshStandardMaterial({ color: 0x1e4a7a, roughness: 0.4 });
+      var pillar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08*s, 0.08*s, 1.8*s, 8), whiteMat);
+      pillar1.position.set(-0.8*s, 0.9*s, 2.5*s); pillar1.castShadow = true; g.add(pillar1);
+      var pillar2 = pillar1.clone(); pillar2.position.x = 0.8*s; g.add(pillar2);
+      var beam = new THREE.Mesh(new THREE.BoxGeometry(2*s, 0.2*s, 0.15*s), whiteMat);
+      beam.position.set(0, 1.7*s, 2.5*s); g.add(beam);
+      var archRoof = new THREE.Mesh(new THREE.ConeGeometry(1.2*s, 0.4*s, 4), blueMat);
+      archRoof.rotation.y = Math.PI/4; archRoof.position.set(0, 2*s, 2.5*s); g.add(archRoof);
+      var stepMat = new THREE.MeshStandardMaterial({ color: 0xd0ccc4, roughness: 0.75 });
+      for (var i = 0; i < 20; i++) {
+        var step = new THREE.Mesh(new THREE.BoxGeometry(3*s, 0.08*s, 0.35*s), stepMat);
+        step.position.y = i*0.08*s + 0.04*s;
+        step.position.z = 2.2*s - i*0.32*s;
+        step.receiveShadow = true; g.add(step);
       }
-      var hall = new THREE.Mesh(new THREE.BoxGeometry(1.8 * s, 1.2 * s, 1.2 * s), whiteMat);
-      hall.position.set(0, 0.6 * s + 10 * 0.12 * s, -2.8 * s);
-      g.add(hall);
-      var hallRoof = new THREE.Mesh(new THREE.ConeGeometry(1.1 * s, 0.5 * s, 4), new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.4 }));
-      hallRoof.rotation.y = Math.PI / 4;
-      hallRoof.position.copy(hall.position).add(new THREE.Vector3(0, 0.85 * s, 0));
-      g.add(hallRoof);
+      var hall = new THREE.Mesh(new THREE.BoxGeometry(2.5*s, 1.5*s, 1.8*s), whiteMat);
+      hall.position.set(0, 0.8*s + 19*0.08*s, -3.5*s); hall.castShadow = true; g.add(hall);
+      var hallRoof = new THREE.Mesh(new THREE.ConeGeometry(1.6*s, 0.8*s, 4), blueMat);
+      hallRoof.rotation.y = Math.PI/4;
+      hallRoof.position.set(0, 0.8*s + 19*0.08*s + 1.15*s, -3.5*s);
+      hallRoof.castShadow = true; g.add(hallRoof);
       break;
     }
     case 'yulong': {
       var rockMat = new THREE.MeshStandardMaterial({ color: 0x5a6578, roughness: 0.95 });
-      var snowMat = new THREE.MeshStandardMaterial({ color: 0xf5f8fc, roughness: 0.35, metalness: 0.05 });
-      var peak = new THREE.Mesh(new THREE.ConeGeometry(2 * s, 3.5 * s, 6), rockMat);
-      peak.position.y = 1.75 * s;
-      g.add(peak);
-      var cap = new THREE.Mesh(new THREE.ConeGeometry(0.8 * s, 1.2 * s, 6), snowMat);
-      cap.position.y = 3.2 * s;
-      g.add(cap);
-      var peak2 = new THREE.Mesh(new THREE.ConeGeometry(1.2 * s, 2.2 * s, 6), rockMat);
-      peak2.position.set(1.8 * s, 1.1 * s, -0.5 * s);
-      g.add(peak2);
-      var cap2 = new THREE.Mesh(new THREE.ConeGeometry(0.5 * s, 0.7 * s, 6), snowMat);
-      cap2.position.set(1.8 * s, 2.25 * s, -0.5 * s);
-      g.add(cap2);
-      var lake = new THREE.Mesh(new THREE.CircleGeometry(1 * s, 24), new THREE.MeshStandardMaterial({ color: 0x4a9fd4, metalness: 0.5, roughness: 0.2, transparent: true, opacity: 0.8 }));
-      lake.rotation.x = -Math.PI / 2;
-      lake.position.set(-1 * s, 0.02, 1 * s);
-      g.add(lake);
-      var stele = new THREE.Mesh(new THREE.BoxGeometry(0.3 * s, 0.8 * s, 0.1 * s), new THREE.MeshStandardMaterial({ color: 0x6b5344, roughness: 0.9 }));
-      stele.position.set(-1.2 * s, 0.4 * s, 0.5 * s);
-      g.add(stele);
+      var snowMat = new THREE.MeshStandardMaterial({ color: 0xf5f8fc, roughness: 0.35 });
+      var peak = new THREE.Mesh(new THREE.ConeGeometry(2.5*s, 5*s, 8), rockMat);
+      peak.position.y = 2.5*s; peak.castShadow = true; g.add(peak);
+      var snowCap = new THREE.Mesh(new THREE.ConeGeometry(1*s, 2*s, 8), snowMat);
+      snowCap.position.y = 4*s; g.add(snowCap);
+      var peak2 = new THREE.Mesh(new THREE.ConeGeometry(1.5*s, 3*s, 8), rockMat);
+      peak2.position.set(2*s, 1.5*s, -0.5*s); peak2.castShadow = true; g.add(peak2);
+      var snowCap2 = new THREE.Mesh(new THREE.ConeGeometry(0.6*s, 1.2*s, 8), snowMat);
+      snowCap2.position.set(2*s, 2.4*s, -0.5*s); g.add(snowCap2);
+      var lake = new THREE.Mesh(new THREE.CircleGeometry(1.5*s, 32), new THREE.MeshStandardMaterial({ color: 0x4ab0d4, metalness: 0.5, roughness: 0.15, transparent: true, opacity: 0.8 }));
+      lake.rotation.x = -Math.PI/2; lake.position.set(-1.5*s, 0.02, 1.5*s); g.add(lake);
+      var stele = new THREE.Mesh(new THREE.BoxGeometry(0.4*s, 1*s, 0.15*s), new THREE.MeshStandardMaterial({ color: 0x5a4a3a }));
+      stele.position.set(-1.8*s, 0.5*s, 0.8*s); stele.castShadow = true; g.add(stele);
       break;
     }
     case 'potala': {
-      var hillMat = new THREE.MeshStandardMaterial({ color: 0x7a6b5d, roughness: 0.95 });
-      var hill = new THREE.Mesh(new THREE.ConeGeometry(3 * s, 1.5 * s, 8), hillMat);
-      hill.position.y = 0.75 * s;
-      g.add(hill);
-      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: 0.55 });
-      var w1 = new THREE.Mesh(new THREE.BoxGeometry(1.2 * s, 1.8 * s, 1 * s), whiteMat);
-      w1.position.set(-1 * s, 2 * s, 0);
-      g.add(w1);
-      var w2 = w1.clone();
-      w2.position.x = 1 * s;
-      g.add(w2);
-      var redMat = new THREE.MeshStandardMaterial({ color: 0x9a1a1a, roughness: 0.6 });
-      var red = new THREE.Mesh(new THREE.BoxGeometry(1.4 * s, 2.2 * s, 1.2 * s), redMat);
-      red.position.set(0, 2.3 * s, 0);
-      g.add(red);
+      var hillMat = new THREE.MeshStandardMaterial({ color: 0x7a5a4a, roughness: 0.95 });
+      var hill = new THREE.Mesh(new THREE.ConeGeometry(4*s, 2*s, 8), hillMat);
+      hill.position.y = 1*s; hill.receiveShadow = true; g.add(hill);
+      var whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0e6d2, roughness: 0.5 });
+      var w1 = new THREE.Group();
+      for (var i = 0; i < 4; i++) {
+        var ww = (1.5 - i*0.15)*s;
+        var tier = new THREE.Mesh(new THREE.BoxGeometry(ww, 0.5*s, 1.2*s), whiteMat);
+        tier.position.y = i*0.5*s + 0.25*s; tier.castShadow = true; w1.add(tier);
+        for (var j = -1; j <= 1; j++) {
+          var win = new THREE.Mesh(new THREE.BoxGeometry(0.15*s, 0.2*s, 0.02*s), new THREE.MeshStandardMaterial({ color: 0x2a2a2a }));
+          win.position.set(j*0.3*s, i*0.5*s + 0.25*s, 0.61*s); w1.add(win);
+        }
+      }
+      w1.position.set(-1.5*s, 2*s, 0); g.add(w1);
+      var w2 = w1.clone(); w2.position.x = 1.5*s; g.add(w2);
+      var redMat = new THREE.MeshStandardMaterial({ color: 0x8a1a1a, roughness: 0.55 });
+      var redGroup = new THREE.Group();
+      for (var i = 0; i < 6; i++) {
+        var rw = (1.8 - i*0.1)*s;
+        var tier = new THREE.Mesh(new THREE.BoxGeometry(rw, 0.5*s, 1.5*s), redMat);
+        tier.position.y = i*0.5*s + 0.25*s; tier.castShadow = true; redGroup.add(tier);
+        for (var j = -1.5; j <= 1.5; j += 0.5) {
+          var win = new THREE.Mesh(new THREE.BoxGeometry(0.12*s, 0.18*s, 0.02*s), new THREE.MeshStandardMaterial({ color: 0x1a1a1a }));
+          win.position.set(j*0.3*s, i*0.5*s + 0.25*s, 0.76*s); redGroup.add(win);
+        }
+      }
+      redGroup.position.set(0, 2.5*s, 0); g.add(redGroup);
       var goldMat = new THREE.MeshStandardMaterial({ color: 0xd4a843, metalness: 0.9, roughness: 0.15, emissive: 0x332200, emissiveIntensity: 0.3 });
-      var roof1 = new THREE.Mesh(new THREE.BoxGeometry(1.5 * s, 0.15 * s, 1.3 * s), goldMat);
-      roof1.position.set(0, 3.5 * s, 0);
-      g.add(roof1);
-      var goldPositions = [[-0.5, 3.7, -0.3], [0.5, 3.7, -0.3], [-0.5, 3.7, 0.3], [0.5, 3.7, 0.3]];
-      goldPositions.forEach(function(pos) {
-        var tower = new THREE.Mesh(new THREE.ConeGeometry(0.1 * s, 0.25 * s, 6), goldMat);
-        tower.position.set(pos[0] * s, pos[1] * s, pos[2] * s);
-        g.add(tower);
+      var goldRoof = new THREE.Mesh(new THREE.BoxGeometry(2*s, 0.15*s, 1.6*s), goldMat);
+      goldRoof.position.set(0, 2.5*s + 3*s + 0.1*s, 0); g.add(goldRoof);
+      var gpos = [[-0.6,0],[0.6,0],[-0.6,0.6],[0.6,0.6]];
+      gpos.forEach(function(pos) {
+        var tower = new THREE.Mesh(new THREE.ConeGeometry(0.12*s, 0.35*s, 6), goldMat);
+        tower.position.set(pos[0]*s, 2.5*s + 3*s + 0.3*s, pos[1]*s - 0.3*s); g.add(tower);
       });
       break;
     }
   }
   g.updateMatrixWorld();
   var box = new THREE.Box3().setFromObject(g);
-  var cx = (box.min.x + box.max.x) / 2;
-  var cz = (box.min.z + box.max.z) / 2;
-  var bottom = box.min.y;
-  g.position.x = -cx;
-  g.position.z = -cz;
-  g.position.y = -bottom;
+  g.position.x = -(box.min.x + box.max.x) / 2;
+  g.position.z = -(box.min.z + box.max.z) / 2;
+  g.position.y = -box.min.y;
   return g;
 }
 
@@ -387,7 +482,6 @@ function createHotspots(poi) {
     hotspotObjects.push({ anchor: anchor, tag: tag, data: hs });
   });
 }
-
 function updateHotspotPositions() {
   var w = window.innerWidth, h = window.innerHeight;
   hotspotObjects.forEach(function(hs) {
@@ -404,7 +498,6 @@ function updateHotspotPositions() {
     }
   });
 }
-
 function showInfoCard(hs) {
   visitedHotspots.add(hs.id);
   document.getElementById('hsSeen').textContent = visitedHotspots.size;
@@ -415,7 +508,6 @@ function showInfoCard(hs) {
   document.getElementById('infoCard').classList.add('visible');
   document.getElementById('gameEntry').style.display = 'none';
 }
-
 function closeInfoCard() {
   document.getElementById('infoCard').classList.remove('visible');
   if (!gameState.completed) document.getElementById('gameEntry').style.display = 'flex';
@@ -506,16 +598,9 @@ var GameEngine = {
       var j = Math.floor(Math.random() * (i + 1));
       [items[i], items[j]] = [items[j], items[i]];
     }
-    this.state.order = items.map(function(i){ return i.id; });
     var html = '<div class="sort-list">';
     items.forEach(function(item, idx) {
-      html += '<div class="sort-item" data-id="' + item.id + '" data-idx="' + idx + '">' +
-        '<span style="color:#475569">⠿</span>' +
-        '<span class="emoji">' + item.emoji + '</span>' +
-        '<span class="name">' + item.name + '</span>' +
-        '<button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',-1)">↑</button>' +
-        '<button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',1)">↓</button>' +
-      '</div>';
+      html += '<div class="sort-item" data-id="' + item.id + '"><span style="color:#475569">⠿</span><span class="emoji">' + item.emoji + '</span><span class="name">' + item.name + '</span><button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',-1)">↑</button><button style="background:rgba(255,255,255,.1);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px" onclick="GameEngine.moveItem(' + idx + ',1)">↓</button></div>';
     });
     html += '</div><button class="game-submit" onclick="GameEngine.checkSort()">确认排序</button>';
     this.content.innerHTML = html;
@@ -531,7 +616,6 @@ var GameEngine = {
     this.content.querySelectorAll('.sort-item').forEach(function(el, i) {
       el.dataset.idx = i; newOrder.push(el.dataset.id);
     });
-    this.state.order = newOrder;
   },
   checkSort: function() {
     var correct = this.data.correctOrder;
@@ -550,8 +634,7 @@ var GameEngine = {
     var grid = this.data.grid, pieces = this.data.pieces.slice();
     var html = '<div class="place-grid">';
     for (var r = 0; r < grid.rows; r++) {
-      html += '<div class="place-row-label">' + grid.rowLabels[r] + '</div>';
-      html += '<div style="display:grid;grid-template-columns:repeat(' + grid.cols + ',1fr);gap:6px">';
+      html += '<div class="place-row-label">' + grid.rowLabels[r] + '</div><div style="display:grid;grid-template-columns:repeat(' + grid.cols + ',1fr);gap:6px">';
       for (var c = 0; c < grid.cols; c++) html += '<div class="place-cell" data-row="' + r + '" data-col="' + c + '"></div>';
       html += '</div>';
     }
@@ -592,18 +675,14 @@ var GameEngine = {
     if (correctCount === total) setTimeout(function() { self.complete(); }, 800);
     else toast('放对了 ' + correctCount + '/' + total + '，看看哪排错了');
   },
-  startStoryChoice: function() {
-    this.state.chapterIdx = 0; this.state.choices = []; this.showChapter();
-  },
+  startStoryChoice: function() { this.state.chapterIdx = 0; this.state.choices = []; this.showChapter(); },
   showChapter: function() {
     var chapters = this.data.chapters, idx = this.state.chapterIdx;
     if (idx >= chapters.length) { this.showEnding(); return; }
     var ch = chapters[idx];
     this.setProgress(Math.round(idx / chapters.length * 100));
     var html = '<div class="story-scene"><b>【' + ch.scene + '】</b><br/>' + ch.text + '</div><div class="story-choices">';
-    ch.choices.forEach(function(choice) {
-      html += '<button class="story-choice" data-next="' + choice.next + '">' + choice.text + '</button>';
-    });
+    ch.choices.forEach(function(choice) { html += '<button class="story-choice" data-next="' + choice.next + '">' + choice.text + '</button>'; });
     html += '</div>';
     this.content.innerHTML = html;
     var self = this;
@@ -629,9 +708,7 @@ var GameEngine = {
     var self = this;
     setTimeout(function() { self.complete(); }, 2500);
   },
-  startQuizClimb: function() {
-    this.state.currentStep = 0; this.state.correct = 0; this.showQuestion();
-  },
+  startQuizClimb: function() { this.state.currentStep = 0; this.state.correct = 0; this.showQuestion(); },
   showQuestion: function() {
     var questions = this.data.questions, idx = this.state.currentStep;
     if (idx >= questions.length) { this.complete(); return; }
@@ -699,9 +776,7 @@ var GameEngine = {
       });
     });
   },
-  startRotateAlign: function() {
-    this.state.rotation = 0; this.state.round = 0; this.newRound();
-  },
+  startRotateAlign: function() { this.state.rotation = 0; this.state.round = 0; this.newRound(); },
   newRound: function() {
     var totalRounds = this.data.totalRounds;
     if (this.state.round >= totalRounds) { this.complete(); return; }
@@ -745,6 +820,8 @@ function init() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x0a0a0a, 1);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
   var camPos = (POI.scene && POI.scene.cameraPos) || [0, 2.5, 6];
   var lookAt = (POI.scene && POI.scene.cameraLookAt) || [0, 1.5, 0];
@@ -752,15 +829,33 @@ function init() {
   camera.lookAt(lookAt[0], lookAt[1], lookAt[2]);
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0a0a0a, 8, 20);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-  var sun = new THREE.DirectionalLight(0xffffff, 1.0);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  var sun = new THREE.DirectionalLight(0xffffff, 1.2);
   sun.position.set(5, 8, 5);
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 1024;
+  sun.shadow.mapSize.height = 1024;
+  sun.shadow.camera.near = 0.5;
+  sun.shadow.camera.far = 30;
+  sun.shadow.camera.left = -8;
+  sun.shadow.camera.right = 8;
+  sun.shadow.camera.top = 8;
+  sun.shadow.camera.bottom = -8;
   scene.add(sun);
-  var fill = new THREE.DirectionalLight(0xa5b4fc, 0.4);
+  var fill = new THREE.DirectionalLight(0xa5b4fc, 0.3);
   fill.position.set(-3, 3, -5);
   scene.add(fill);
+  var rim = new THREE.DirectionalLight(0xffd700, 0.2);
+  rim.position.set(0, 5, -8);
+  scene.add(rim);
   poiGroup = buildPOIModel(POI);
   scene.add(poiGroup);
+  var groundMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.9, metalness: 0 });
+  var ground = new THREE.Mesh(new THREE.CircleGeometry(10, 64), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = 0;
+  ground.receiveShadow = true;
+  scene.add(ground);
   createHotspots(POI);
   controls = new TouchControls(renderer.domElement, camera, poiGroup);
   window.addEventListener('resize', function() {
@@ -781,9 +876,7 @@ function init() {
 
 function animate() {
   requestAnimationFrame(animate);
-  if (poiGroup && autoRotate && !gameState.active) {
-    poiGroup.rotation.y += 0.003;
-  }
+  if (poiGroup && autoRotate && !gameState.active) poiGroup.rotation.y += 0.003;
   if (controls) controls.update();
   updateHotspotPositions();
   renderer.render(scene, camera);
