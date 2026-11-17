@@ -281,6 +281,7 @@
             CITY_EXTRA_POIS[city].forEach(function (n) { if (arr.indexOf(n) < 0) arr.push(n); });
         });
         var R = window.REAL_POI_COORDS || {};
+        var S = window.CITY_SPOT_COORDS || {};   // city-spot-coords.js（自动生成的高精度坐标）
         var centers = window.ALL_CITY_COORDS || {};
         var out = {};
         Object.keys(known).forEach(function (city) {
@@ -290,14 +291,23 @@
             (known[city] || []).forEach(function (name, idx) {
                 if (!name || seen[name]) return;
                 var extra = CITY_EXTRA_COORDS[city + '·' + name];
-                var c = R[city + '·' + name] || R[name] || extra;
+                // 坐标查找优先级（层层严格，避免串城）：
+                // 1. CITY_SPOT_COORDS[city·name] — 自动生成，最准
+                // 2. REAL_POI_COORDS[city·name] — 带城市前缀的精确条目
+                // 3. CITY_EXTRA_COORDS[city·name] — map-coords.js 手工补
+                // 4. REAL_POI_COORDS[name]  — 不带前缀，但必须距市中心 < 200km 才信
+                // 5. approxCoord — 兜底
+                var ck = city + '·' + name;
+                var c = S[ck] || R[ck] || extra;
+                var fromRealByName = false;
+                if (!c && R[name] && distKm(R[name], center) < 200) { c = R[name]; fromRealByName = true; }
                 if (c && (!isFinite(c[0]) || !isFinite(c[1]))) c = null;
                 if (c && distKm(c, center) > 400) c = null;
-                if (!c) c = approxCoord(name, center, idx);   // 没有精确坐标：按城市范围近似，保证可搜索可排线
+                if (!c) c = approxCoord(name, center, idx);
                 seen[name] = 1;
                 items.push({
                     name: name, city: city, lng: +c[0], lat: +c[1], idx: idx,
-                    cat: classify(name), approx: !(R[city + '·' + name] || R[name] || extra)
+                    cat: classify(name), approx: !(S[ck] || R[ck] || extra || fromRealByName)
                 });
             });
             if (items.length >= 1) out[city] = { name: city, center: center, items: items };
