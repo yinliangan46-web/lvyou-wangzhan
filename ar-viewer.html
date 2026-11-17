@@ -10,14 +10,13 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-    "mindar": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+    "three": "ar-lib/three.min.js"
   }
 }
 </script>
-<!-- 兜底：window.THREE 如果 importmap 失败 -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<!-- 兜底：window.THREE 和 window.MINDAR 用本地 IIFE（ESM 无法被普通 script 加载）-->
+<script src="ar-lib/three.min.js"></script>
+<script src="ar-lib/mindar-image.min.js"></script>
 
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -358,18 +357,16 @@ async function startAR() {
   splashText.innerHTML = '正在初始化 WebAR 组件<br>请稍等';
 
   try {
-    // 1. 加载 Three.js
+    // 1. 依赖库（本地 IIFE，不走 CDN 避免 ESM 加载失败）
     if (!window.THREE) {
-      await loadScript('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js');
+      await loadScript('ar-lib/three.min.js');
     }
     THREE = window.THREE;
+    if (!window.MINDAR || !window.MINDAR.IMAGE) {
+      await loadScript('ar-lib/mindar-image.min.js');
+    }
 
-    // 2. 加载 MindAR
-    splashTitle.textContent = '加载 MindAR 识别...';
-    await loadScript('https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js');
-    await loadScript('https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js');
-
-    // 3. 加载数据和引擎
+    // 2. 加载业务数据
     if (!window.AR_POIS) await loadScript('ar-stories.js');
     if (!window.HuntEngine) await loadScript('hunt-engine.js');
 
@@ -380,10 +377,25 @@ async function startAR() {
     splashTitle.textContent = '请求摄像头权限...';
     splashText.innerHTML = '将摄像头对准景点实景<br>首次使用需允许浏览器调用摄像头';
 
-    // 4. MindAR Image Tracking 配置
+    // 3. 检查 marker 文件是否存在（不存在则提前降级）
     var markerUrl = STORIES.markerUrl || 'markers/' + poiId + '.mind';
+    var markerOk = true;
+    try {
+      var resp = await fetch(markerUrl, { method: 'HEAD' });
+      if (!resp.ok) markerOk = false;
+    } catch(e) { markerOk = false; }
 
-    arController = new window.MINDAR.Image.Controller({
+    if (!markerOk) {
+      // marker 文件不存在 → 降级到沉浸式故事模式（不用摄像头）
+      splashTitle.textContent = '🎭 沉浸式故事模式';
+      splashText.innerHTML = '该景点尚未上传 AR 标记图<br>已自动切换到故事漫游模式';
+      await new Promise(r => setTimeout(r, 1200));
+      startFallbackMode();
+      return;
+    }
+
+    // 4. MindAR Image Tracking 配置（注意 API 名是 MINDAR.IMAGE 大写）
+    arController = new window.MINDAR.IMAGE.Controller({
       container: document.getElementById('ar-root'),
       imageTargetSrc: markerUrl,
       uiOverlay: { display: 'none' },    // 我们自己做 UI
@@ -493,6 +505,32 @@ async function startAR() {
 // 即使 AR 初始化失败，engine 也要有实例（用于 UI 渲染）
 if (!engine && window.HuntEngine) {
   engine = new window.HuntEngine();
+}
+
+/* ============ Fallback 模式（marker 不存在时：沉浸式故事 + 寻宝）============ */
+async function startFallbackMode() {
+  var splash = document.getElementById('arSplash');
+  var arRoot = document.getElementById('ar-root');
+  var camera = document.getElementById('ar-camera');
+
+  // 隐藏 splash
+  splash.style.display = 'none';
+
+  // 不显示摄像头，改用景点背景图铺满 ar-root
+  camera.style.display = 'none';
+  arRoot.style.backgroundImage = 'url("' + (STORIES.bg || '') + '")';
+  arRoot.style.backgroundSize = 'cover';
+  arRoot.style.backgroundPosition = 'center';
+
+  // 初始化 HuntEngine（故事播放 + 寻宝）
+  if (!engine && window.HuntEngine) {
+    engine = new window.HuntEngine();
+  }
+
+  // 直接开始故事
+  if (engine && engine.playStory) {
+    engine.playStory();
+  }
 }
 
 /* ============ 页面加载完成 ============ */
