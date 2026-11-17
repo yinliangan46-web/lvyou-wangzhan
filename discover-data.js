@@ -544,7 +544,30 @@ const dramaData = [
           { d: 'Day4', t: '凤阳邑茶马古道 → 无为寺 → 咖啡馆发呆' },
           { d: 'Day5', t: '苍山洗马潭索道 → 寂照庵吃素斋 → 返程' }
       ]},
-      ai: { budget: '¥2,500-4,000/人（5天含住）', transport: '大理站/机场打车，环洱海租电动车', hotel: '古城内/才村洱海边民宿', bestTime: '3-5月或9-11月', tips: '洱海骑行选海西生态廊道；紫外线极强；节假日环海路堵车建议早出发。' }
+      ai: { budget: '¥2,500-4,000/人（5天含住）', transport: '大理站/机场打车，环洱海租电动车', hotel: '古城内/才村洱海边民宿', bestTime: '3-5月或9-11月',
+        timeline: [
+          { d: 'Day1 下午', t: '大理古城入住 → 人民路闲逛 → 黄昏洋人街看夕阳' },
+          { d: 'Day2 全天', t: '洱海生态廊道骑行 → 喜洲稻田 → 海舌公园日落' },
+          { d: 'Day3 全天', t: '沙溪古镇 → 寺登街 → 先锋书局 → 石宝山' },
+          { d: 'Day4 全天', t: '凤阳邑茶马古道 → 无为寺 → 咖啡馆发呆' },
+          { d: 'Day5 上午', t: '苍山洗马潭索道 → 寂照庵吃素斋 → 返程' }
+        ],
+        attractions: [
+          { name: '洱海生态廊道', desc: '骑行/散步都美，剧中许红豆常去', price: '免费', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80' },
+          { name: '喜洲古镇', desc: '稻田+白族民居，剧中有风小院取景地', price: '免费', img: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/dali45/5288.html' },
+          { name: '沙溪古镇', desc: '茶马古道上唯一幸存的古集市', price: '免费', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=80' },
+          { name: '苍山洗马潭', desc: '索道上山看洱海全景', price: '¥282（索道）', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/dali45/5290.html' }
+        ],
+        foods: [
+          { name: '喜洲粑粑', desc: '甜咸都好吃，现烤最香', price: '¥10/个', img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80' },
+          { name: '白族石板烧', desc: '大理特色，自己烤着吃', price: '¥60/人', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' },
+          { name: '乳扇沙琪玛', desc: '白族特色奶制品，当零食吃', price: '¥20/盒', img: 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&q=80' }
+        ],
+        hotels: [
+          { name: '才村洱海边民宿', desc: '推开窗就是洱海，看日出绝佳', price: '¥400', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/dali45.html' },
+          { name: '古城内青旅', desc: '人民路附近，方便认识旅伴', price: '¥80/床位', img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/dali45.html' }
+        ],
+        tips: '洱海骑行选海西生态廊道（免费）；紫外线极强，防晒必备；节假日环海路堵车建议早出发；喜洲稻田最佳季节是9-10月。' }
     },
     { title: '《漫长的季节》', tag: '爆款', loc: '辽宁 · 沈阳',
       img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80',
@@ -633,7 +656,28 @@ const soloData = [
           { d: 'Day4', t: '文殊院 → 洞子口张老二凉粉 → 返程' }
       ],
       safety: '成都安全指数高，夜市热闹但注意随身物品。一个人吃火锅可以选小火锅店或坐吧台。',
-      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: '地铁+打车，无需租车', hotel: '春熙路/太古里附近', bestTime: '3-6月或9-11月', tips: '火锅提前大众点评取号；兔头谨慎尝试；熊猫基地7点前到。' }
+      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: '地铁+打车，无需租车', hotel: '春熙路/太古里附近', bestTime: '3-6月或9-11月',
+        timeline: [
+          { d: 'Day1 下午', t: '宽窄巷子逛老成都 → 奎星楼街吃冒椒火辣（坐吧台）→ 锦里夜景+小吃' },
+          { d: 'Day2 全天', t: '7:30到熊猫基地看熊猫吃早餐 → 建设巷小吃街 → 春熙路IFS爬墙熊猫' },
+          { d: 'Day3 上午-晚上', t: '人民公园鹤鸣茶社喝盖碗茶 → 玉林路小酒馆 → 地道串串香' },
+          { d: 'Day4 上午', t: '文殊院拜佛 → 洞子口张老二凉粉 → 返程' }
+        ],
+        attractions: [
+          { name: '大熊猫繁育基地', desc: '一定要早去！熊猫早上最活跃', price: '¥55', img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/chengdu104/1354.html' },
+          { name: '宽窄巷子', desc: '老成都名片，宽巷子逛+窄巷子吃', price: '免费', img: 'https://images.unsplash.com/photo-1565992441121-4367c29671e2?w=400&q=80' },
+          { name: '锦里古街', desc: '晚上灯笼亮起最美，小吃多但偏贵', price: '免费', img: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400&q=80' }
+        ],
+        foods: [
+          { name: '冒椒火辣', desc: '奎星楼街网红串串，坐吧台一个人友好', price: '¥60/人', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' },
+          { name: '张老二凉粉', desc: '文殊院旁老字号，甜水面必点', price: '¥15/人', img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80' },
+          { name: '鹤鸣茶社', desc: '人民公园内百年老茶馆，盖碗茶15元', price: '¥15/位', img: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80' }
+        ],
+        hotels: [
+          { name: '春熙路智选假日', desc: '地铁口，逛街吃饭方便', price: '¥350', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/chengdu104.html' },
+          { name: '太古里博舍', desc: '设计感顶级，网红打卡', price: '¥1800', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/chengdu104.html' }
+        ],
+        tips: '火锅提前大众点评取号；兔头/折耳根谨慎尝试；熊猫基地7点前到；一个人吃火锅选小火锅店或坐吧台。' }
     },
     { city: '厦门 · 文艺 Solo 之旅', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
       desc: '鼓浪屿的小巷、曾厝垵的咖啡馆，适合一个人散步发呆的慢生活城市。',
@@ -645,7 +689,28 @@ const soloData = [
           { d: 'Day4', t: '南普陀寺 → 厦大校园 → 返程' }
       ],
       safety: '厦门非常安全，适合女生 solo。鼓浪屿晚上人少，建议天黑前返回市区。',
-      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: 'BRT+打车+鼓浪屿轮渡', hotel: '思明区/沙坡尾设计民宿', bestTime: '10月-4月', tips: '鼓浪屿船票提前公众号买；厦大需预约；八市海鲜找加工店注意称重。' }
+      ai: { budget: '¥2,000-3,500/人（4天含住）', transport: 'BRT+打车+鼓浪屿轮渡', hotel: '思明区/沙坡尾设计民宿', bestTime: '10月-4月',
+        timeline: [
+          { d: 'Day1 下午', t: '中山路骑楼逛吃 → 八市吃海鲜 → 沙坡尾艺术西区拍照' },
+          { d: 'Day2 全天', t: '鼓浪屿全天：菽庄花园 → 日光岩日落 → 小巷咖啡馆发呆' },
+          { d: 'Day3 全天', t: '曾厝垵 → 环岛路骑行 → 黄厝海滩看日出' },
+          { d: 'Day4 上午', t: '南普陀寺 → 厦大校园 → 返程' }
+        ],
+        attractions: [
+          { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
+          { name: '日光岩', desc: '鼓浪屿最高点，看日落绝美', price: '¥50', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4725.html' },
+          { name: '南普陀寺', desc: '闽南佛教圣地，素饼必买', price: '免费（需预约）', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', wechatUrl: 'https://mp.weixin.qq.com/s/nanputuo' }
+        ],
+        foods: [
+          { name: '八市海鲜', desc: '厦门最接地气的海鲜市场，找加工店', price: '¥80/人', img: 'https://images.unsplash.com/photo-1559742811-822873691df8?w=400&q=80' },
+          { name: '沙茶面', desc: '厦门灵魂早餐，乌糖/月华都正宗', price: '¥25/碗', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' },
+          { name: '海蛎煎', desc: '闽南特色，配甜辣酱绝了', price: '¥20/份', img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80' }
+        ],
+        hotels: [
+          { name: '沙坡尾设计民宿', desc: '艺术西区旁，拍照出片', price: '¥300', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/xiamen23.html' },
+          { name: '鼓浪屿磐诺假日', desc: '岛上住一晚，清晨没人时最美', price: '¥500', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/xiamen23.html' }
+        ],
+        tips: '鼓浪屿船票提前在"厦门轮渡"公众号买；厦大需要提前预约；八市海鲜找加工店注意称重；晚上鼓浪屿人少建议天黑前返回市区。' }
     },
     { city: '重庆 · 魔幻 Solo 之旅', img: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600&q=80',
       desc: '8D 魔幻城市，一个人坐轻轨穿楼、过江索道，探索感拉满。',
@@ -1007,7 +1072,51 @@ function calcBudget() {
     document.getElementById('budgetResult').classList.add('open');
 }
 
+// ============================================================
+//  旅行穿搭指南 —— 按目的地类型推荐穿搭，拍照出片
+// ============================================================
+const outfitData = [
+    { type: '🏔️ 雪山/高原', img: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=400&q=80',
+      tips: ['冲锋衣+抓绒内胆（防风防水）', '登山鞋（防滑）', '墨镜+防晒霜（紫外线极强）', '红色/白色围巾拍照出片', '帽子+手套（高海拔很冷）'],
+      colors: ['🧥 红色/白色', '👖 卡其/黑色', '👟 棕色登山鞋'] },
+    { type: '🌊 海边/海岛', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80',
+      tips: ['白色/米色连衣裙（沙滩出片）', '草帽+墨镜（防晒+拍照）', '平底凉鞋（沙滩走路）', '防晒衣（海边紫外线强）', '泳衣+外搭罩衫'],
+      colors: ['👗 白色/米色/碎花', '👒 草编帽', '👡 棕色凉鞋'] },
+    { type: '🏯 古城/古镇', img: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400&q=80',
+      tips: ['棉麻质地（透气+拍照有质感）', '新中式/汉服元素', '布鞋/马丁靴（走路舒适）', '帆布包/编织包', '素色为主，避免大logo'],
+      colors: ['👘 麻色/藏蓝/墨绿', '👢 棕色马丁靴', '👜 帆布包'] },
+    { type: '🌆 城市/都市', img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80',
+      tips: ['简约基础款（黑白灰）', '一双好走的鞋（城市走很多路）', '斜挎包（解放双手）', '薄外套（商场/地铁空调冷）', '精致配饰提升质感'],
+      colors: ['🧥 黑/白/灰', '👟 小白鞋', '👜 小黑包'] },
+    { type: '🍂 秋天/红叶', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80',
+      tips: ['焦糖色/大地色系（和红叶呼应）', '针织毛衣+风衣', '短靴（秋天穿刚好）', '贝雷帽/围巾（氛围感）', '胶片感滤镜'],
+      colors: ['🧥 焦糖/驼色/燕麦色', '👢 棕色短靴', '🧣 格纹围巾'] },
+    { type: '🌧️ 江南/雨天', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
+      tips: ['素色棉麻（雨天拍照有氛围感）', '透明伞（拍照不挡脸）', '防水鞋/雨靴', '暖色调内搭（阴天地暖）', '咖啡馆拍室内照'],
+      colors: ['🧥 米白/浅灰', '☂️ 透明伞', '👢 黑色雨靴'] }
+];
+
+function renderOutfit() {
+    let html = '';
+    outfitData.forEach((o, i) => {
+        html += `<div class="outfit-card">
+            <div class="outfit-img" style="background-image:url('${o.img}')">
+                <span class="outfit-type">${o.type}</span>
+            </div>
+            <div class="outfit-body">
+                <div class="outfit-tips">${o.tips.map(t => `<div style="font-size:.82rem;margin-bottom:4px">✓ ${t}</div>`).join('')}</div>
+                <div class="outfit-colors" style="margin-top:10px;padding-top:10px;border-top:1px dashed #e2e8f0">
+                    <div style="font-size:.75rem;font-weight:700;color:var(--purple-dark);margin-bottom:6px">🎨 推荐配色</div>
+                    <div style="font-size:.8rem">${o.colors.join(' · ')}</div>
+                </div>
+            </div>
+        </div>`;
+    });
+    document.getElementById('outfitGrid').innerHTML = html;
+}
+
 // 初始化
 renderDrama();
 renderSolo();
 renderSeason();
+renderOutfit();
