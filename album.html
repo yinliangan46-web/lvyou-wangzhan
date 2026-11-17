@@ -135,9 +135,24 @@ button{font-family:inherit}
     'use strict';
 
     var $ = function (id) { return document.getElementById(id); };
-    var stamps = window.MYLHunt.Storage.getStamps();
+    // 兼容新接口：HuntStorage 返回数组
+    var stampsArr = (window.HuntStorage && window.HuntStorage.getStamps()) || [];
+    var stamps = {};
+    stampsArr.forEach(function(id){ stamps[id] = { id: id, earnedAt: Date.now() }; });
+
     var allPois = window.AR_POIS || [];
-    var posters = window.MYLHunt.checkPosters();
+    var posterGroups = window.POSTER_GROUPS || [];
+    var allStampIds = (window.HuntStorage && window.HuntStorage.getStamps()) || [];
+    var posters = posterGroups.map(function(g) {
+        var got = g.required.filter(function(r){ return allStampIds.indexOf(r) >= 0; }).length;
+        return {
+            id: g.id, name: g.name, title: g.title, subtitle: g.desc,
+            bg: g.bg, total: g.required.length, got: got,
+            unlocked: got >= g.required.length
+        };
+    });
+    // 已解锁排前面
+    posters.sort(function(a,b){ return (b.unlocked?1:0)-(a.unlocked?1:0) || b.got-a.got; });
 
     var got = Object.keys(stamps).length;
     var total = allPois.length;
@@ -152,12 +167,12 @@ button{font-family:inherit}
         wall.innerHTML = '<div class="empty"><div class="empty-icon">🗺️</div><h3>暂无印记</h3><p>去景点详情页开启「拾迹寻宝」吧</p><a href="index.html">返回首页</a></div>';
     } else {
         wall.innerHTML = allPois.map(function (poi) {
-            var earned = !!stamps[poi.id];
+            var earned = !!stamps[poi.stamp.id];
             var s = poi.stamp || {};
             return '<div class="stamp-card ' + (earned ? 'earned' : 'locked') + '" data-poi="' + poi.id + '" data-earned="' + earned + '">' +
-                '<div class="emoji">' + (earned ? (s.emoji || '🏅') : '🔒') + '</div>' +
+                '<div class="emoji">' + (earned ? (s.icon || '🏅') : '🔒') + '</div>' +
                 '<div class="name">' + escapeHtml(s.name || poi.name) + '</div>' +
-                '<div class="city">' + escapeHtml(poi.city) + '</div>' +
+                '<div class="city">' + escapeHtml(poi.name) + '</div>' +
                 (earned ? '<div class="earned-badge">✓</div>' : '') +
                 '</div>';
         }).join('');
@@ -174,8 +189,7 @@ button{font-family:inherit}
                 location.href = 'ar-viewer.html?poi=' + poi.id;
             }
         } else {
-            // 已收集：弹窗展示 + 支持分享
-            alert('「' + poi.stamp.name + '」印记 · 来自「' + poi.city + ' ' + poi.name + '」\n已收集于 ' + new Date(stamps[poiId].earnedAt).toLocaleDateString());
+            alert('「' + poi.stamp.name + '」印记\n来自「' + poi.name + '」\n已收集 ✓');
         }
     });
 

@@ -1,368 +1,433 @@
-/* ============================================================
-   拾迹引擎 — 印记存储 / 故事播放 / 寻宝游戏 / AR 调度
-   单文件，无外部依赖（AR 模式需 MindAR 从 CDN 加载）
-   ============================================================ */
+/* =========================================================
+   MYL · 拾迹寻宝 引擎层（真实 WebAR 寻宝）
+   
+   核心职责：
+   1. Storage : 印记 / 收集进度 / 解锁状态 → localStorage
+   2. PlotPlayer : 剧情播放器（对话气泡 + 语音合成）
+   3. HuntEngine : 寻宝引擎（与 Three.js 场景交互）
+   
+   与 ar-viewer.html 的交互：
+   - huntEngine.bind(arScene)   绑定 Three.js 场景
+   - huntEngine.start(poiStory)  开始游戏（渲染 3D 线索物体 + 播放剧情）
+   - huntEngine.animate(delta)   每帧调，检测线索 proximity + 触发彩蛋
+   
+   ========================================================= */
 
-(function () {
-    'use strict';
+/* ============ 印记存储 ============ */
+window.HuntStorage = {
+  LS_STAMPS: 'myl_hunt_stamps',
+  LS_PROGRESS: 'myl_hunt_progress',
 
-    var LS_STAMPS = 'myl_hunt_stamps_v1';
-    var LS_PROGRESS = 'myl_hunt_progress_v1';
+  getStamps() {
+    try { return JSON.parse(localStorage.getItem(this.LS_STAMPS) || '[]'); }
+    catch(e) { return []; }
+  },
+  addStamp(stamp) {
+    var arr = this.getStamps();
+    if (arr.indexOf(stamp.id) < 0) arr.push(stamp.id);
+    localStorage.setItem(this.LS_STAMPS, JSON.stringify(arr));
+    return arr;
+  },
+  hasStamp(id) { return this.getStamps().indexOf(id) >= 0; },
+  getProgress(poiId) {
+    try { return JSON.parse(localStorage.getItem(this.LS_PROGRESS + '_' + poiId) || 'null'); }
+    catch(e) { return null; }
+  },
+  setProgress(poiId, data) {
+    localStorage.setItem(this.LS_PROGRESS + '_' + poiId, JSON.stringify(data));
+  },
+  isPostersUnlocked() {
+    var stamps = this.getStamps();
+    var groups = window.POSTER_GROUPS || [];
+    return groups.filter(function(g) {
+      return g.required.every(function(r) { return stamps.indexOf(r) >= 0; });
+    });
+  }
+};
 
-    /* ---------- 印记存储 ---------- */
-    var Storage = {
-        getStamps: function () {
-            try { return JSON.parse(localStorage.getItem(LS_STAMPS) || '{}'); }
-            catch (e) { return {}; }
-        },
-        hasStamp: function (poiId) {
-            return !!this.getStamps()[poiId];
-        },
-        addStamp: function (poi) {
-            var stamps = this.getStamps();
-            stamps[poi.id] = {
-                id: poi.id,
-                name: poi.name,
-                city: poi.city,
-                stamp: poi.stamp,
-                posterUrl: poi.posterUrl,
-                earnedAt: Date.now()
-            };
-            localStorage.setItem(LS_STAMPS, JSON.stringify(stamps));
-            return stamps;
-        },
-        getProgress: function () {
-            try { return JSON.parse(localStorage.getItem(LS_PROGRESS) || '{}'); }
-            catch (e) { return {}; }
-        },
-        setProgress: function (poiId, data) {
-            var p = this.getProgress();
-            p[poiId] = data;
-            localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
-        },
-        reset: function (poiId) {
-            var p = this.getProgress();
-            delete p[poiId];
-            localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
-        },
-        totalCount: function () { return Object.keys(this.getStamps()).length; }
-    };
+/* ============ 剧情播放器（原神式对话气泡） ============ */
+window.PlotPlayer = function(container) {
+  this.container = container;
+  this.queue = [];
+  this.playing = false;
+  this.currentSpeaker = null;
+  this.currentAvatar = null;
+  this.onEnd = null;
+  this.voiceEnabled = true;
+};
 
-    /* ---------- 海报解锁 ---------- */
-    function checkPosters() {
-        var stamps = Storage.getStamps();
-        var posters = [];
-        (window.AR_POSTERS || []).forEach(function (poster) {
-            var got = (poster.required || []).filter(function (id) { return stamps[id]; });
-            posters.push({
-                id: poster.id,
-                title: poster.title,
-                subtitle: poster.subtitle,
-                bg: poster.bg,
-                caption: poster.caption,
-                total: (poster.required || []).length,
-                got: got.length,
-                unlocked: got.length >= (poster.required || []).length,
-                required: poster.required
-            });
-        });
-        return posters;
+window.PlotPlayer.prototype = {
+  /* 播放一组剧情 */
+  play(plotArr, opts) {
+    var self = this;
+    opts = opts || {};
+    this.onEnd = opts.onEnd || null;
+    this.queue = (plotArr || []).slice().sort(function(a,b){ return (a.delay||0) - (b.delay||0); });
+    this.playing = true;
+    this._tick();
+  },
+
+  _tick() {
+    var self = this;
+    if (!this.playing) return;
+    if (!this.queue.length) { this.playing = false; if (this.onEnd) this.onEnd(); return; }
+    var next = this.queue.shift();
+    if (next.delay) {
+      setTimeout(function(){ self._showBubble(next, function(){ self._tick(); }); }, next.delay);
+    } else {
+      self._showBubble(next, function(){ self._tick(); });
+    }
+  },
+
+  _showBubble(node, done) {
+    if (!this.container) { done && done(); return; }
+    var el = document.createElement('div');
+    el.className = 'hp-bubble';
+    el.innerHTML =
+      '<div class="hp-avatar">' + (node.avatar || '📜') + '</div>' +
+      '<div class="hp-content">' +
+        '<div class="hp-speaker">' + (node.speaker || '旁白') + '</div>' +
+        '<div class="hp-text">' + (node.text || '') + '</div>' +
+      '</div>' +
+      (node.hint ? '<div class="hp-hint">💡 ' + node.hint + '</div>' : '');
+    this.container.innerHTML = '';
+    this.container.appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('hp-in'); });
+
+    // 语音合成
+    if (this.voiceEnabled && window.speechSynthesis) {
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(node.text);
+        u.lang = 'zh-CN'; u.rate = 0.9; u.pitch = 1.0;
+        window.speechSynthesis.speak(u);
+      } catch(e){}
     }
 
-    /* ---------- 故事播放器 ---------- */
-    function StoryPlayer(container, poi, mode) {
-        this.el = container;
-        this.poi = poi;
-        this.mode = mode || 'main'; // 'main' | 'egg'
-        this.segments = poi.storyMain;
-        if (this.mode === 'egg') this.segments = poi.storyEgg;
-        this.cur = -1;
-        this.timer = null;
-        this._onFinish = null;
-        this._onChange = null;
-    }
-    StoryPlayer.prototype.play = function () {
-        var self = this;
-        this.stop();
-        this.cur = -1;
-        this._render();
-        this._next();
-    };
-    StoryPlayer.prototype.stop = function () {
-        if (this.timer) clearTimeout(this.timer);
-        this.timer = null;
-    };
-    StoryPlayer.prototype._next = function () {
-        this.cur++;
-        if (this.cur >= this.segments.length) {
-            this._render();
-            if (this._onFinish) this._onFinish(this.mode);
-            return;
-        }
-        this._render();
-        var seg = this.segments[this.cur];
-        var dur = seg.duration || 3000;
-        this.timer = setTimeout(this._next.bind(this), dur);
-        // 同时播放语音（如果浏览器支持）
-        this._speak(seg.text);
-        if (this._onChange) this._onChange(this.cur, seg);
-    };
-    StoryPlayer.prototype._render = function () {
-        if (!this.el) return;
-        var html = '<div class="ar-story-player">';
-        html += '<div class="ar-story-title">' + esc(this.poi.name) + ' · ' + (this.mode === 'egg' ? '隐藏彩蛋' : '主线故事') + '</div>';
-        html += '<div class="ar-story-list">';
-        this.segments.forEach(function (s, i) {
-            var cls = i < this.cur ? 'ar-story-done' : (i === this.cur ? 'ar-story-active' : 'ar-story-pending');
-            html += '<div class="' + cls + '" data-idx="' + i + '"><span class="ar-dot"></span>' + esc(s.text) + '</div>';
-        }.bind(this));
-        html += '</div></div>';
-        this.el.innerHTML = html;
-    };
-    StoryPlayer.prototype._speak = function (text) {
-        if (!('speechSynthesis' in window)) return;
-        try {
-            window.speechSynthesis.cancel();
-            var u = new SpeechSynthesisUtterance(text);
-            u.lang = 'zh-CN'; u.rate = 0.9; u.pitch = 1;
-            window.speechSynthesis.speak(u);
-        } catch (e) { /* 忽略语音失败 */ }
-    };
+    var dur = Math.max(2500, (node.text || '').length * 150 + (node.delay || 0));
+    if (node.hint) dur += 500;
+    setTimeout(done, Math.min(dur, 15000));
+  },
 
-    /* ---------- 寻宝游戏 ---------- */
-    function HuntGame(poi, opts) {
-        this.poi = poi;
-        this.opts = opts || {};
-        this.onComplete = opts.onComplete || function () {};
-        this.onStamp = opts.onStamp || function () {};
-        this.el = null;
-        this.state = Storage.getProgress()[poi.id] || {
-            foundMarkers: [],      // 已找到的标记 id
-            quizAnswers: [],        // 答题情况
-            completed: false
-        };
+  stop() {
+    this.playing = false;
+    this.queue = [];
+    try { window.speechSynthesis.cancel(); } catch(e){}
+    if (this.container) this.container.innerHTML = '';
+  }
+};
+
+/* ============ 寻宝引擎（与 Three.js 场景交互） ============ */
+window.HuntEngine = function() {
+  this.poi = null;            // 当前 POI_STORY 对象
+  this.scene = null;          // Three.js scene 引用
+  this._markerGroup = null;   // MindAR anchor 挂的 group
+  this._artifacts = [];       // [{mesh, artifact, found, floatPhase}]
+  this._particles = [];       // 发现时的粒子特效
+  this._plot = null;          // PlotPlayer 实例
+  this._hoverInfo = null;     // 左下角提示框
+  this._progress = null;      // 当前景点进度缓存
+  this._unlockedEggs = [];    // 已解锁彩蛋列表
+  this._stampAwarded = false;
+  this._listener = null;      // 自定义事件派发
+};
+
+window.HuntEngine.prototype = {
+  /* 绑定 Three.js scene */
+  bindScene(threeScene, plotContainer, hoverInfoEl) {
+    this.scene = threeScene;
+    this._plot = new PlotPlayer(plotContainer);
+    this._hoverInfo = hoverInfoEl;
+  },
+
+  /* 绑定 MindAR anchor group（识别图出现时调用） */
+  bindMarkerGroup(group) {
+    this._markerGroup = group;
+    // 给 marker 加坐标系转换（编辑器地面XY → MindAR平面）
+    // group.rotation.x = -Math.PI / 2;
+    // group.rotation.z = Math.PI;
+  },
+
+  /* 开始寻宝 */
+  start(poiStory) {
+    var self = this;
+    this.poi = poiStory;
+    this._artifacts = [];
+    this._particles = [];
+    this._unlockedEggs = [];
+    this._stampAwarded = false;
+
+    // 加载已有进度
+    var saved = window.HuntStorage.getProgress(poiStory.id);
+    if (saved && saved.found) {
+      this._artifacts = (poiStory.artifacts || []).map(function(a) {
+        return { artifact: a, found: saved.found.indexOf(a.id) >= 0 };
+      });
+    } else {
+      this._artifacts = (poiStory.artifacts || []).map(function(a) {
+        return { artifact: a, found: false };
+      });
     }
 
-    HuntGame.prototype.render = function (container) {
-        this.el = container;
-        var h = this.poi.hunt;
-        var markers = h.markers || [];
-        var quizzes = h.quizzes || [];
+    // 渲染 3D 线索物体挂到 marker group 上
+    this._renderArtifacts();
 
-        var html = '<div class="ar-hunt">';
-        html += '<div class="ar-hunt-header"><b>🔍 拾迹寻宝</b> <small>集齐全部线索，解锁「' + esc(this.poi.stamp.name) + '」印记</small></div>';
-
-        // 标记线索区
-        html += '<div class="ar-markers">';
-        html += '<div class="ar-section-title">① 找到这些线索</div>';
-        html += '<div class="ar-marker-list">';
-        markers.forEach(function (m, i) {
-            var found = this.state.foundMarkers.indexOf(m.id) >= 0;
-            html += '<div class="ar-marker' + (found ? ' found' : '') + '" data-mid="' + m.id + '">';
-            html += '<div class="ar-marker-icon">' + (found ? '✅' : '📍') + '</div>';
-            html += '<div class="ar-marker-body">';
-            html += '<div class="ar-marker-name">线索 ' + (i + 1) + '</div>';
-            html += '<div class="ar-marker-hint">' + esc(m.hint) + '</div>';
-            if (!found) {
-                html += '<button class="ar-find-btn" data-mid="' + m.id + '">我找到了！</button>';
-            } else {
-                html += '<div class="ar-found-ans">答案：<b>' + esc(m.answer) + '</b></div>';
-            }
-            html += '</div></div>';
-        }.bind(this));
-        html += '</div></div>';
-
-        // 答题区
-        if (markers.length === 0 || this.state.foundMarkers.length >= markers.length) {
-            html += '<div class="ar-quiz">';
-            html += '<div class="ar-section-title">② 趣味考题</div>';
-            quizzes.forEach(function (q, qi) {
-                var ans = this.state.quizAnswers[qi];
-                var locked = ans === undefined;
-                var correct = ans !== undefined && ans.correct;
-                html += '<div class="ar-quiz-item' + (correct ? ' correct' : (ans !== undefined ? ' wrong' : '')) + '">';
-                html += '<div class="ar-q-num">Q' + (qi + 1) + '</div>';
-                html += '<div class="ar-q-text">' + esc(q.q) + '</div>';
-                if (ans !== undefined) {
-                    html += '<div class="ar-q-result">' + (correct ? '✅ 答对了' : '❌ 答错了（可以再试）') + '</div>';
-                }
-                if (ans === undefined) {
-                    html += '<div class="ar-q-opts">';
-                    q.options.forEach(function (opt, oi) {
-                        html += '<button class="ar-q-opt" data-qi="' + qi + '" data-oi="' + oi + '">' + esc(opt) + '</button>';
-                    });
-                    html += '</div>';
-                } else {
-                    html += '<div class="ar-q-retry"><button class="ar-retry-btn" data-qi="' + qi + '">重新作答</button></div>';
-                }
-                html += '</div>';
-            }.bind(this));
-            html += '</div>';
-        } else {
-            html += '<div class="ar-hint">先去找到全部 ' + markers.length + ' 个线索标记，考题才会解锁 →</div>';
-        }
-
-        // 印记发放区
-        if (this._allMarkersFound() && this._allQuizzesCorrect()) {
-            var already = Storage.hasStamp(this.poi.id);
-            if (!already) {
-                html += '<div class="ar-stamp-award">';
-                html += '<div class="ar-stamp-big">' + this.poi.stamp.emoji + '</div>';
-                html += '<div class="ar-stamp-name">「' + esc(this.poi.stamp.name) + '」已发放</div>';
-                html += '<div class="ar-stamp-sub">恭喜！你解锁了这个景点的专属印记</div>';
-                html += '<button class="ar-open-album">去拾迹集册看看 →</button>';
-                html += '</div>';
-            } else {
-                html += '<div class="ar-stamp-already">🏆 你已经拿到「' + esc(this.poi.stamp.name) + '」了！</div>';
-            }
-            this.state.completed = true;
-        }
-
-        html += '</div>';
-        this.el.innerHTML = html;
-        this._bind();
-    };
-
-    HuntGame.prototype._bind = function () {
-        var self = this;
-        this.el.querySelectorAll('.ar-find-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var mid = btn.getAttribute('data-mid');
-                self._markFound(mid);
-            });
-        });
-        this.el.querySelectorAll('.ar-q-opt').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var qi = parseInt(btn.getAttribute('data-qi'), 10);
-                var oi = parseInt(btn.getAttribute('data-oi'), 10);
-                self._answer(qi, oi);
-            });
-        });
-        this.el.querySelectorAll('.ar-retry-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var qi = parseInt(btn.getAttribute('data-qi'), 10);
-                self._retry(qi);
-            });
-        });
-        var albumBtn = this.el.querySelector('.ar-open-album');
-        if (albumBtn) {
-            albumBtn.addEventListener('click', function () {
-                window.open('album.html', '_blank');
-            });
-        }
-    };
-
-    HuntGame.prototype._markFound = function (mid) {
-        if (this.state.foundMarkers.indexOf(mid) >= 0) return;
-        this.state.foundMarkers.push(mid);
-        Storage.setProgress(this.poi.id, this.state);
-        this.render(this.el);
-        this._checkAndAward();
-    };
-
-    HuntGame.prototype._answer = function (qi, oi) {
-        var correct = oi === this.poi.hunt.quizzes[qi].answer;
-        this.state.quizAnswers[qi] = { chosen: oi, correct: correct };
-        Storage.setProgress(this.poi.id, this.state);
-        this.render(this.el);
-        this._checkAndAward();
-    };
-
-    HuntGame.prototype._retry = function (qi) {
-        delete this.state.quizAnswers[qi];
-        Storage.setProgress(this.poi.id, this.state);
-        this.render(this.el);
-    };
-
-    HuntGame.prototype._allMarkersFound = function () {
-        var ms = this.poi.hunt.markers || [];
-        if (ms.length === 0) return true;
-        return ms.every(function (m) { return this.state.foundMarkers.indexOf(m.id) >= 0; }.bind(this));
-    };
-
-    HuntGame.prototype._allQuizzesCorrect = function () {
-        var qs = this.poi.hunt.quizzes || [];
-        if (qs.length === 0) return true;
-        return qs.every(function (_, i) {
-            var a = this.state.quizAnswers[i];
-            return a && a.correct;
-        }.bind(this));
-    };
-
-    HuntGame.prototype._checkAndAward = function () {
-        if (this._allMarkersFound() && this._allQuizzesCorrect() && !Storage.hasStamp(this.poi.id)) {
-            Storage.addStamp(this.poi);
-            this.onStamp(this.poi);
-            this.render(this.el);
-        }
-    };
-
-    /* ---------- AR 调度器 ---------- */
-    var AR = {
-        isSupported: function () {
-            if (!navigator.mediaDevices) return false;
-            return true; // 支持 getUserMedia 就行，MindAR 加载失败会优雅降级
-        },
-        launchMode: function (poi, el) {
-            /* 返回 'ar' / 'interactive' / 'story' 三种模式
-               - ar: 有 markerUrl + 支持摄像头 → MindAR 增强现实
-               - interactive: 无 markerUrl 或摄像头不可用 → 页面交互式故事 + 寻宝
-               - story: 纯故事模式 */
-            if (poi.markerUrl && this.isSupported()) return 'ar';
-            return 'interactive';
-        }
-    };
-
-    /* ---------- 录屏 ---------- */
-    function startScreenCapture(videoEl, onStop) {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-            alert('当前浏览器不支持屏幕录制，建议用 Chrome / Edge 电脑端体验。');
-            return null;
-        }
-        navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
-            .then(function (stream) {
-                // 把摄像头画面 + 屏幕画面混流可录制
-                // 简单方案：直接录屏幕
-                var recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-                var chunks = [];
-                recorder.ondataavailable = function (e) { if (e.data.size > 0) chunks.push(e.data); };
-                recorder.onstop = function () {
-                    var blob = new Blob(chunks, { type: 'video/webm' });
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'myl-ar-' + Date.now() + '.webm';
-                    document.body.appendChild(a);
-                    a.click(); a.remove();
-                    if (onStop) onStop();
-                };
-                recorder.start();
-                // 用户停止共享 → 自动停录
-                stream.getVideoTracks()[0].addEventListener('ended', function () {
-                    if (recorder.state !== 'inactive') recorder.stop();
-                });
-                return recorder;
-            })
-            .catch(function (e) { alert('录屏取消或失败：' + e.message); });
-        return null;
+    // 播放主线剧情
+    if (poiStory.plot && poiStory.plot.length) {
+      this._plot.play(poiStory.plot, {
+        onEnd: function() { self._showHint('剧情结束，开始寻宝！在实景里找漂浮的发光物体'); }
+      });
     }
 
-    /* ---------- 工具 ---------- */
-    function esc(s) {
-        return String(s).replace(/[&<>"']/g, function (c) {
-            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
-        });
+    this._showHint('🎯 ' + poiStory.name + ' 寻宝开始！共 ' + this._artifacts.length + ' 件线索');
+  },
+
+  /* 渲染所有线索物体 */
+  _renderArtifacts() {
+    var self = this;
+    if (!this.scene || !this._markerGroup || !window.THREE) return;
+
+    var MODELS = window.ARTIFACT_MODELS || {};
+
+    this._artifacts.forEach(function(entry) {
+      if (entry.found) return;
+      var a = entry.artifact;
+
+      var mesh;
+      var modelKey = a.model;
+      var modelFn = MODELS[modelKey];
+
+      if (typeof modelFn === 'function') {
+        var pair = modelFn(window.THREE);
+        mesh = new window.THREE.Mesh(pair[0], pair[1]);
+      } else if (typeof modelFn === 'object' && modelFn.url) {
+        // GLB 模型（异步加载）
+        mesh = new window.THREE.Mesh(
+          new window.THREE.BoxGeometry(0.1, 0.1, 0.1),
+          new window.THREE.MeshStandardMaterial({ color: 0xffd700 })
+        );
+        console.warn('GLB 模型未实现，用占位符：' + modelKey);
+      } else {
+        mesh = new window.THREE.Mesh(
+          new window.THREE.SphereGeometry(0.04, 16, 12),
+          new window.THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffaa00, emissiveIntensity: 0.6 })
+        );
+      }
+
+      mesh.position.set(a.position[0], a.position[1], a.position[2]);
+      mesh.userData = { artifactId: a.id, type: 'artifact', entry: entry };
+
+      // 发光光环
+      var ringGeo = new window.THREE.RingGeometry(0.045, 0.055, 24);
+      var ringMat = new window.THREE.MeshBasicMaterial({ color: 0xffff00, side: window.THREE.DoubleSide, transparent: true, opacity: 0.7 });
+      var ring = new window.THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = -Math.PI / 2;
+      mesh.add(ring);
+
+      // 漂浮光柱（点光源）
+      var light = new window.THREE.PointLight(0xffaa00, 0.8, 1.5);
+      light.position.set(0, 0.15, 0);
+      mesh.add(light);
+
+      self._markerGroup.add(mesh);
+      entry.mesh = mesh;
+      entry.ring = ring;
+      entry.light = light;
+      entry.floatPhase = Math.random() * Math.PI * 2;
+    });
+  },
+
+  /* 每帧动画 + proximity 检测（找到全部线索才算通关） */
+  animate(delta, camera) {
+    var self = this;
+    if (!this._markerGroup) return;
+
+    var THREE = window.THREE;
+    var allFound = this._artifacts.every(function(e){ return e.found; });
+    var foundCount = this._artifacts.filter(function(e){ return e.found; }).length;
+
+    this._artifacts.forEach(function(entry, i) {
+      if (!entry.mesh) return;
+
+      if (entry.found) {
+        // 已找到：缩小淡出
+        entry.mesh.scale.setScalar(Math.max(0.001, (entry.mesh.scale.x || 1) - delta * 1.5));
+        return;
+      }
+
+      // 漂浮动画
+      entry.floatPhase += delta * 3;
+      entry.mesh.position.y = entry.artifact.position[1] + Math.sin(entry.floatPhase) * 0.03;
+      entry.mesh.rotation.y += delta * 1.5;
+      if (entry.ring) entry.ring.rotation.z += delta * 2;
+
+      // proximity 检测：玩家相机距离 < 0.3m 就算找到
+      if (camera) {
+        var worldPos = new THREE.Vector3();
+        entry.mesh.getWorldPosition(worldPos);
+        var camPos = camera.position;
+        var dx = worldPos.x - camPos.x, dy = worldPos.y - camPos.y, dz = worldPos.z - camPos.z;
+        var dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+        if (dist < 0.3) {
+          self._foundArtifact(entry);
+        }
+      }
+    });
+
+    // 全部找到 → 发印记
+    if (!allFound && foundCount === this._artifacts.length && !this._stampAwarded) {
+      this._awardStamp();
+    }
+  },
+
+  /* 发现一件线索 */
+  _foundArtifact(entry) {
+    var self = this;
+    var THREE = window.THREE;
+    entry.found = true;
+
+    // 粒子特效（从中心飞散的小金色方块）
+    var geo = new THREE.BoxGeometry(0.01, 0.01, 0.01);
+    var mat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xff5500, emissiveIntensity: 1 });
+    for (var i = 0; i < 12; i++) {
+      var p = new THREE.Mesh(geo, mat);
+      entry.mesh.getWorldPosition(p.position);
+      var vel = new THREE.Vector3(
+        (Math.random()-0.5) * 0.3,
+        Math.random() * 0.3,
+        (Math.random()-0.5) * 0.3
+      );
+      self._particles.push({ mesh: p, vel: vel, life: 1.0 });
+      self.scene.add(p);
     }
 
-    /* ---------- 导出 ---------- */
-    window.MYLHunt = {
-        Storage: Storage,
-        checkPosters: checkPosters,
-        StoryPlayer: StoryPlayer,
-        HuntGame: HuntGame,
-        AR: AR,
-        startScreenCapture: startScreenCapture,
-        esc: esc
-    };
+    // 提示
+    this._showToast('✨ 发现线索：' + entry.artifact.name);
+    this._saveProgress();
 
-})();
+    // 检查彩蛋
+    var total = this._artifacts.length;
+    var foundCount = this._artifacts.filter(function(e){ return e.found; }).length;
+    if (this.poi.easterEggs) {
+      this.poi.easterEggs.forEach(function(egg) {
+        if (self._unlockedEggs.indexOf(egg.id) >= 0) return;
+        var triggerFound = false;
+        if (egg.trigger === 'found_artifact_' + foundCount) triggerFound = true;
+        if (egg.trigger === 'found_all' && foundCount === total) triggerFound = true;
+        if (triggerFound) {
+          self._unlockedEggs.push(egg.id);
+          self._showToast('🎁 彩蛋解锁：' + egg.name, 4000);
+          // 彩蛋剧情
+          if (egg.plot && self._plot) {
+            setTimeout(function(){ self._plot.play(egg.plot); }, 800);
+          }
+        }
+      });
+    }
+  },
+
+  /* 粒子更新 */
+  updateParticles(delta) {
+    var THREE = window.THREE;
+    for (var i = this._particles.length - 1; i >= 0; i--) {
+      var p = this._particles[i];
+      p.life -= delta;
+      if (p.life <= 0) {
+        this.scene.remove(p.mesh);
+        p.mesh.geometry.dispose();
+        p.mesh.material.dispose();
+        this._particles.splice(i, 1);
+      } else {
+        p.mesh.position.addScaledVector(p.vel, delta);
+        p.vel.y -= delta * 0.5;
+        p.mesh.scale.setScalar(p.life);
+      }
+    }
+  },
+
+  /* 全部找到 → 发放印记 + 通关动画 */
+  _awardStamp() {
+    this._stampAwarded = true;
+    var self = this;
+
+    var stamp = this.poi.stamp;
+    window.HuntStorage.addStamp(stamp);
+
+    // 通关动画
+    this._showToast('🏆 ' + this.poi.name + ' 寻宝完成！', 5000, 'success');
+
+    setTimeout(function() {
+      self._showStampModal(stamp);
+      self._saveProgress();
+    }, 600);
+  },
+
+  /* 打印记弹窗 */
+  _showStampModal(stamp) {
+    var el = document.createElement('div');
+    el.className = 'hp-stamp-modal';
+    el.innerHTML =
+      '<div class="hp-stamp-inner" style="background:' + (stamp.bg || '#333') + '">' +
+        '<div class="hp-stamp-icon">' + stamp.icon + '</div>' +
+        '<div class="hp-stamp-title">' + stamp.name + '</div>' +
+        '<div class="hp-stamp-desc">' + stamp.desc + '</div>' +
+        '<button class="hp-stamp-close">收下</button>' +
+      '</div>';
+    document.body.appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('hp-in'); });
+    el.querySelector('.hp-stamp-close').onclick = function() {
+      el.classList.remove('hp-in');
+      setTimeout(function(){ el.remove(); }, 300);
+    };
+  },
+
+  _saveProgress() {
+    if (!this.poi) return;
+    var found = this._artifacts.filter(function(e){ return e.found; }).map(function(e){ return e.artifact.id; });
+    window.HuntStorage.setProgress(this.poi.id, {
+      found: found,
+      stamps: window.HuntStorage.getStamps()
+    });
+  },
+
+  _showToast(text, duration, kind) {
+    var self = this;
+    var el = document.createElement('div');
+    el.className = 'hp-toast' + (kind === 'success' ? ' hp-success' : '');
+    el.textContent = text;
+    document.body.appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('hp-in'); });
+    setTimeout(function(){
+      el.classList.remove('hp-in');
+      setTimeout(function(){ el.remove(); }, 300);
+    }, duration || 2000);
+  },
+
+  _showHint(text) {
+    if (this._hoverInfo) this._hoverInfo.innerHTML = text;
+  },
+
+  reset() {
+    this._artifacts.forEach(function(e) {
+      if (e.mesh && this._markerGroup) this._markerGroup.remove(e.mesh);
+    });
+    this._artifacts = [];
+    this.poi = null;
+    if (this._plot) this._plot.stop();
+  }
+};
+
+/* ============ 兼容旧接口（保留 HuntGame 名字，内部调 HuntEngine） ============ */
+window.HuntGame = {
+  init: function(opts) {
+    return new window.HuntEngine();
+  }
+};
+
+/* ============ 兼容旧接口 HuntEngine / huntEngine 名字 ============ */
+/* window.HuntEngine 已在上方定义 */
+
+/* ============ 兼容旧接口 addStamp / getStamps ============ */
+window.addStamp = function(stamp) { return window.HuntStorage.addStamp(stamp); };
+window.getStamps = function() { return window.HuntStorage.getStamps(); };

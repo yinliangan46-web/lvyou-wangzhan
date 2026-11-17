@@ -1,307 +1,357 @@
-/* ============================================================
-   AR 故事导览 + 拾迹寻宝 — 统一数据配置
-   ============================================================
-   新增景点只需在 AR_POIS 里加一条，格式见下方注释。
-   markerUrl 指向 MindAR .mind 标记文件（可用 MindAR 官方生成器从图片生成），
-   没有 .mind 文件时会自动降级为"无 AR 模式"（纯故事 + 寻宝）。
-   ============================================================ */
-
+/* =========================================================
+   MYL · 拾迹寻宝 故事情节数据
+   格式：每个景点一个 POI_STORY，含：
+     - markerUrl   : MindAR .mind 识别图（去 https://hiukim.github.io/mind-ar-js-doc/tools/compile/ 上传景点照编译）
+     - center       : 景点坐标 [lng, lat]（备用）
+     - plot         : 主线故事（对话气泡，多段）
+     - easterEggs   : 隐藏彩蛋（解锁条件 + 彩蛋剧情）
+     - artifacts    : 寻宝线索（3D物体，需在AR里找到全部才算通关）
+     - stamp        : 通关后获得的印记
+     - posters      : 集齐一组后解锁的纪念海报组
+   
+   开发者替换素材：
+   1. markerUrl: 编译 .mind 文件放 /markers/ 目录
+   2. modelUrl : .glb 模型放 /models/ 目录
+   3. bgm / sfx : 放 /audio/ 目录
+   ========================================================= */
 window.AR_POIS = [
-    /* ---------- 故宫（北京）---------- */
-    {
-        id: 'gugong',
-        city: '北京',
-        name: '故宫博物院',
-        nameEn: 'Forbidden City',
-        markerUrl: '', /* ← 替换位：MindAR 图片识别 .mind 文件，留空则走无AR */
-        posterUrl: 'https://images.unsplash.com/photo-1584646098378-0874589d76b1?w=1200&q=80',
-        lat: 39.9163, lng: 116.3972,
-        stamp: { name: '龙纹玉章', emoji: '🏯', color: '#c0392b' },
-        poster: {
-            id: 'beijing_palace',
-            title: '王者之门',
-            subtitle: '集齐北京三大皇家印记解锁',
-            cities: ['北京'],
-            requiredStamps: ['gugong', 'tiananmen', 'yishanyuan'],
-            bg: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?w=1600&q=80',
-            caption: '天子脚下，六百年帝王气象。'
-        },
-        storyMain: [
-            { time: '00:03', text: '紫禁城的黄昏，是六百年帝王最后的背影。', duration: 4000 },
-            { time: '00:08', text: '这里曾住过二十四位皇帝，每一块金砖都浸透了权谋与荣耀。', duration: 5000 },
-            { time: '00:15', text: '你现在站的地方，太和殿前的白玉台基，', duration: 3500 },
-            { time: '00:19', text: '是当年百官跪拜、山呼万岁的位置。', duration: 4000 },
-            { time: '00:25', text: '低头看看地砖，缝隙里嵌着当年工匠的名字。', duration: 4500 },
-            { time: '00:31', text: '他们或许不会想到，自己的名字会被未来的旅人轻声念起。', duration: 5000 }
-        ],
-        storyEgg: [
-            { time: '00:02', text: '【彩蛋】你知道吗？', duration: 2000 },
-            { time: '00:05', text: '故宫至今有一半以上的区域，从 1925 年开放以来，从未对公众开放过。', duration: 5000 },
-            { time: '00:12', text: '那些被木板封住的宫门后面，藏着什么？', duration: 4500 },
-            { time: '00:17', text: '也许只有风知道答案。', duration: 3500 }
-        ],
-        hunt: {
-            markerDesc: '在太和殿前找到一枚发光的「琉璃瓦」标记',
-            markers: [
-                { id: 'g1', hint: '红色宫墙的倒影里', answer: '琉璃瓦' },
-                { id: 'g2', hint: '太和殿的台阶正中央', answer: '龙纹' }
-            ],
-            quizzes: [
-                { q: '故宫里「皇帝」每天是怎么被叫醒的？', options: ['打更人敲梆子', '太监在窗外喊「万岁爷，起驾了」', '自鸣钟响', '御膳房烧炭升温'], answer: 1 },
-                { q: '故宫共有多少间房？（含廊）', options: ['9999 间半', '10000 间', '8888 间', '6666 间'], answer: 0 },
-                { q: '传说中故宫的屋顶上住着几排「仙人走兽」，走兽数量最多的大殿是？', options: ['乾清宫', '太和殿', '保和殿', '午门'], answer: 1 }
-            ]
-        }
-    },
+{
+  id: 'gugong',
+  name: '故宫·太和殿',
+  markerUrl: 'markers/gugong.mind',
+  center: [116.3975, 39.915],
+  modelUrl: null,   // 先用程序生成，换真实 GLB 填 URL
+  modelScale: 0.08,
+  modelHint: '太和殿脊兽群像',
 
-    /* ---------- 西湖（杭州）---------- */
-    {
-        id: 'xihu',
-        city: '杭州',
-        name: '西湖',
-        nameEn: 'West Lake',
-        markerUrl: '',
-        posterUrl: 'https://images.unsplash.com/photo-1599708103759-5c14db858cd5?w=1200&q=80',
-        lat: 30.2416, lng: 120.2413,
-        stamp: { name: '苏堤春晓', emoji: '🌿', color: '#16a085' },
-        poster: null,
-        storyMain: [
-            { time: '00:03', text: '烟雨朦胧的西湖，苏东坡曾在这里写道——', duration: 3000 },
-            { time: '00:07', text: '「欲把西湖比西子，淡妆浓抹总相宜。」', duration: 4500 },
-            { time: '00:13', text: '站在断桥之上，你脚下的这块石板，', duration: 3000 },
-            { time: '00:17', text: '据传是白蛇与许仙相遇之处。', duration: 4000 },
-            { time: '00:22', text: '而那一株株垂柳，', duration: 2500 },
-            { time: '00:25', text: '是白居易在任时亲手栽种的。', duration: 3500 }
-        ],
-        storyEgg: [
-            { time: '00:02', text: '【彩蛋】西湖为什么是「西」湖？', duration: 3000 },
-            { time: '00:06', text: '因为在杭州城的西边。就这么简单。', duration: 3500 },
-            { time: '00:11', text: '但一千多年来，', duration: 2000 },
-            { time: '00:14', text: '这个简单的名字承载了太多不简单的故事。', duration: 4500 }
-        ],
-        hunt: {
-            markerDesc: '在苏堤上找到「桃枝」与「柳枝」两枚标记',
-            markers: [
-                { id: 'x1', hint: '苏堤第二桥的栏杆上', answer: '桃枝' },
-                { id: 'x2', hint: '白堤东段的柳荫里', answer: '柳枝' }
-            ],
-            quizzes: [
-                { q: '「断桥残雪」是西湖十景之一，「断桥」其实指的是？', options: ['桥断了', '冬天雪融化后像断了', '桥名就叫断桥', '残桥的意思'], answer: 1 },
-                { q: '西湖最著名的特产——龙井茶，主要产自哪座山？', options: ['凤凰山', '灵隐山', '狮峰山', '宝石山'], answer: 2 },
-                { q: '苏东坡修的那条长堤现在叫什么？', options: ['白堤', '苏堤', '杨公堤', '金沙堤'], answer: 1 }
-            ]
-        }
-    },
+  /* ============ 主线故事（原神式对话气泡） ============ */
+  plot: [
+    { id:'p01', speaker:'宫女', avatar:'👧', text:'大人，您看这屋脊上蹲的那些小兽，每一只都有讲究。', delay: 0 },
+    { id:'p02', speaker:'导游', avatar:'🧑‍🏫', text:'太和殿脊兽一共有十个：龙、凤、狮子、天马、海马、狻猊、狎鱼、獬豸、斗牛、行什。', delay: 2500 },
+    { id:'p03', speaker:'宫女', avatar:'👧', text:'行什排最后，长得像猴子带翅膀，据说雷雨天气会爬去避雷。', delay: 6000 },
+    { id:'p04', speaker:'旁白', avatar:'📜', text:'【剧情提示】沿着故宫中轴线往南，穿过午门，就能看到真正的"龙"的入口。', delay: 9500, hint:'south_gate' }
+  ],
 
-    /* ---------- 兵马俑（西安）---------- */
-    {
-        id: 'bingmayong',
-        city: '西安',
-        name: '秦始皇兵马俑',
-        nameEn: 'Terracotta Warriors',
-        markerUrl: '',
-        posterUrl: 'https://images.unsplash.com/photo-1552960562-daf630e9278b?w=1200&q=80',
-        lat: 34.3843, lng: 109.2785,
-        stamp: { name: '秦俑武士', emoji: '🛡️', color: '#8e6e3a' },
-        poster: {
-            id: 'xian_terracotta',
-            title: '地下军团',
-            subtitle: '集齐西安历史印记解锁',
-            cities: ['西安'],
-            requiredStamps: ['bingmayong', 'xian_anmen', 'huashan'],
-            bg: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=1600&q=80',
-            caption: '两千年前的沉默军团，静静守望着他们的帝王。'
-        },
-        storyMain: [
-            { time: '00:03', text: '你看到的每一张脸，', duration: 2500 },
-            { time: '00:06', text: '都属于一个真实存在过的秦人。', duration: 3500 },
-            { time: '00:11', text: '他们可能是关中平原上某个村庄里的青年，', duration: 3500 },
-            { time: '00:16', text: '被征召入伍，', duration: 2000 },
-            { time: '00:19', text: '烧制成陶，', duration: 2000 },
-            { time: '00:22', text: '埋入地下，', duration: 2000 },
-            { time: '00:25', text: '等待两千年后与你相遇。', duration: 4500 }
-        ],
-        storyEgg: [
-            { time: '00:02', text: '【彩蛋】', duration: 1500 },
-            { time: '00:04', text: '兵马俑刚出土时，身上其实有鲜艳的彩色！', duration: 4000 },
-            { time: '00:10', text: '但一接触空气，颜色在几分钟内就氧化消失了。', duration: 4500 },
-            { time: '00:16', text: '所以现在你看到的，是他们真实颜色褪掉后的样子。', duration: 4500 }
-        ],
-        hunt: {
-            markerDesc: '在一号坑找到「将军俑」和「弩机」标记',
-            markers: [
-                { id: 'b1', hint: '一号坑最前排的高个子士兵', answer: '将军俑' },
-                { id: 'b2', hint: '出土时完整的青铜兵器旁', answer: '弩机' }
-            ],
-            quizzes: [
-                { q: '兵马俑的「俑」字是什么意思？', options: ['陶俑', '人偶陪葬品', '士兵', '皇帝的替身'], answer: 1 },
-                { q: '目前兵马俑已发掘的三个坑，哪个规模最大？', options: ['一号坑', '二号坑', '三号坑', '一样大'], answer: 0 },
-                { q: '为什兵马俑的身高普遍比现代人高？', options: ['古时候人更高', '陶俑夸张艺术', '士兵是从高个子里选的', '测量误差'], answer: 2 }
-            ]
-        }
-    },
-
-    /* ---------- 中山陵（南京）---------- */
-    {
-        id: 'zhongshanling',
-        city: '南京',
-        name: '中山陵',
-        nameEn: 'Sun Yat-sen Mausoleum',
-        markerUrl: '',
-        posterUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1200&q=80',
-        lat: 32.0589, lng: 118.8795,
-        stamp: { name: '博爱之印', emoji: '🌲', color: '#27ae60' },
-        poster: null,
-        storyMain: [
-            { time: '00:03', text: '三百九十二级台阶，', duration: 2500 },
-            { time: '00:06', text: '是从博爱坊到祭堂的全部距离。', duration: 3500 },
-            { time: '00:11', text: '走得越慢，听得越清。', duration: 3000 },
-            { time: '00:15', text: '先生说：「博爱。」', duration: 2500 },
-            { time: '00:19', text: '这两个字，刻在每一块青石板上。', duration: 4000 }
-        ],
-        storyEgg: [
-            { time: '00:02', text: '【彩蛋】中山陵的台阶有一个秘密：', duration: 3500 },
-            { time: '00:07', text: '从下往上看，全是台阶，看不到平台。', duration: 4000 },
-            { time: '00:13', text: '从上往下看，全是平台，看不到台阶。', duration: 4000 }
-        ],
-        hunt: {
-            markerDesc: '在祭堂和博爱坊各找一枚标记',
-            markers: [
-                { id: 'z1', hint: '祭堂门上的大字', answer: '博爱' },
-                { id: 'z2', hint: '音乐台的白鸽群中', answer: '和平' }
-            ],
-            quizzes: [
-                { q: '中山陵的设计者是著名建筑师？', options: ['吕彦直', '贝聿铭', '梁思成', '杨廷宝'], answer: 0 },
-                { q: '中山陵共有多少级台阶？', options: ['392 级', '360 级', '284 级', '400 级'], answer: 0 },
-                { q: '「三民主义」是指？', options: ['民族、民权、民生', '民主、自由、平等', '独立、富强、文明', '爱国、敬业、诚信'], answer: 0 }
-            ]
-        }
-    },
-
-    /* ---------- 布达拉宫（拉萨）---------- */
-    {
-        id: 'budala',
-        city: '拉萨',
-        name: '布达拉宫',
-        nameEn: 'Potala Palace',
-        markerUrl: '',
-        posterUrl: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=1200&q=80',
-        lat: 29.6554, lng: 91.1173,
-        stamp: { name: '雪域圣宫', emoji: '⛰️', color: '#9b59b6' },
-        poster: null,
-        storyMain: [
-            { time: '00:03', text: '红山之巅的这座宫殿，', duration: 2500 },
-            { time: '00:06', text: '已经在这里守望了一千三百多年。', duration: 4000 },
-            { time: '00:11', text: '松赞干布为迎娶文成公主，', duration: 3000 },
-            { time: '00:15', text: '在此修建了最初的宫殿。', duration: 3000 },
-            { time: '00:20', text: '现在你看到的红宫白宫，', duration: 3000 },
-            { time: '00:24', text: '是历代达赖喇嘛的灵塔殿。', duration: 4500 }
-        ],
-        storyEgg: [
-            { time: '00:02', text: '【彩蛋】布达拉宫的墙体有多厚？', duration: 3500 },
-            { time: '00:07', text: '最厚的地方有 5 米！', duration: 3000 },
-            { time: '00:11', text: '而且墙体每年还会用牛奶和白糖重新刷一遍。', duration: 4500 }
-        ],
-        hunt: {
-            markerDesc: '在白宫广场和红宫金顶各找一枚标记',
-            markers: [
-                { id: 'bd1', hint: '白宫广场的经轮旁', answer: '经轮' },
-                { id: 'bd2', hint: '红宫屋顶的金顶下', answer: '金顶' }
-            ],
-            quizzes: [
-                { q: '布达拉宫始建于公元哪一年？', options: ['公元 7 世纪', '公元 10 世纪', '公元 15 世纪', '公元 17 世纪'], answer: 0 },
-                { q: '布达拉宫分为哪两大部分？', options: ['红宫和白宫', '东宫和西宫', '上宫和下宫', '金宫和银宫'], answer: 0 },
-                { q: '去布达拉宫参观需要提前多久预约？', options: ['当天即可', '提前 1 天', '提前 7 天', '提前 30 天'], answer: 2 }
-            ]
-        }
-    },
-
-    /* ---------- 玉龙雪山（丽江）---------- */
-    {
-        id: 'yulong',
-        city: '丽江',
-        name: '玉龙雪山',
-        nameEn: 'Jade Dragon Snow Mountain',
-        markerUrl: '',
-        posterUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
-        lat: 27.1047, lng: 100.2077,
-        stamp: { name: '雪龙之魄', emoji: '🏔️', color: '#2980b9' },
-        poster: {
-            id: 'lijiang_snow',
-            title: '雪龙跃金',
-            subtitle: '集齐丽江雪山印记解锁',
-            cities: ['丽江', '大理'],
-            requiredStamps: ['yulong', 'lijiang_old', 'dali_erhai'],
-            bg: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80',
-            caption: '纳西族的神山，守护滇西千年。'
-        },
-        storyMain: [
-            { time: '00:03', text: '纳西族人称它为「欧鲁」，', duration: 2500 },
-            { time: '00:06', text: '意为「银色的山岩」。', duration: 3000 },
-            { time: '00:10', text: '十三座雪峰连绵起伏，', duration: 3000 },
-            { time: '00:14', text: '像一条银色巨龙横卧云端。', duration: 3500 },
-            { time: '00:19', text: '传说中，这里是纳西族保护神「三朵」的化身。', duration: 5000 }
-        ],
-        storyEgg: [
-            { time: '00:02', text: '【彩蛋】玉龙雪山最高峰海拔多少？', duration: 3000 },
-            { time: '00:06', text: '5596 米！', duration: 2500 },
-            { time: '00:10', text: '但至今还没有人成功登顶过。', duration: 3500 },
-            { time: '00:15', text: '纳西族人说：神山不让凡人惊扰。', duration: 4000 }
-        ],
-        hunt: {
-            markerDesc: '在蓝月谷和冰川公园各找一枚标记',
-            markers: [
-                { id: 'y1', hint: '蓝月谷的水潭中央', answer: '蓝宝石' },
-                { id: 'y2', hint: '冰川公园观景台旁', answer: '雪龙' }
-            ],
-            quizzes: [
-                { q: '玉龙雪山主峰的名字是？', options: ['扇子陡', '金字塔峰', '银龙峰', '三朵峰'], answer: 0 },
-                { q: '蓝月谷的水为什么是蓝色的？', options: ['湖水含矿物', '倒映天空', '藻类物质', '人工染色'], answer: 0 },
-                { q: '纳西族每年什么时候会祭祀玉龙雪山？', options: ['农历二月初八', '农历五月初五', '农历八月十五', '元旦'], answer: 0 }
-            ]
-        }
+  /* ============ 隐藏彩蛋 ============ */
+  easterEggs: [
+    { id:'e1', trigger:'found_artifact_3', name:'六百年前的工匠日记',
+      plot: [
+        { id:'e1a', speaker:'工匠', avatar:'🔨', text:'万历三十七年……我在这里刻了一行字，只有抬头看那只狮子的底座才能找到。', delay: 0 },
+        { id:'e1b', speaker:'旁白', avatar:'📜', text:'【彩蛋解锁！】原来太和殿的狮子底座里藏着六百年前工匠的签名："张二、李三、陈六"。', delay: 3500 }
+      ],
+      reward: { name:'工匠秘记', icon:'📖', desc:'解锁彩蛋后才能查看' }
     }
+  ],
+
+  /* ============ 寻宝线索（AR里的3D漂浮物体） ============
+     position: 相对于识别图锚点的 3D 坐标 [x, y, z]
+     （MindAR 锚点 XY 是识别图平面，Z 是深度，单位米） */
+  artifacts: [
+    { id:'a1', name:'脊兽·龙',  position: [0.0, 0.35, 0.0],  model:'dragon',   hint:'抬头，屋脊第一只' },
+    { id:'a2', name:'脊兽·行什', position: [0.6, 0.35, 0.0],  model:'monkey',   hint:'屋脊最末端那只像猴子的' },
+    { id:'a3', name:'底座·签名', position: [0.3, -0.05, 0.1], model:'seal',     hint:'低头看太和殿基座' },
+    { id:'a4', name:'午门·石狮', position: [-0.5, 0.0, -0.8], model:'lion',     hint:'午门方向的远处' }
+  ],
+
+  /* ============ 通关印记 ============ */
+  stamp: { id:'stamp_gugong', name:'紫禁龙纹章', icon:'🏯',
+    desc:'集齐太和殿全部线索，解锁故宫第一枚印记',
+    color:'#c41e3a', bg:'linear-gradient(135deg,#c41e3a,#8b0000)' }
+},
+
+{
+  id: 'bingmayong',
+  name: '兵马俑·一号坑',
+  markerUrl: 'markers/bingmayong.mind',
+  center: [109.2785, 34.3848],
+  modelUrl: null,
+  modelScale: 0.1,
+
+  plot: [
+    { id:'p01', speaker:'考古学家', avatar:'🧑‍🔬', text:'这些俑每个都不一样，脸、发式、铠甲，连鞋都不一样。', delay: 0 },
+    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】秦始皇花了 38 年、72 万工匠，修了自己的"地下军阵"。', delay: 2500 },
+    { id:'p03', speaker:'考古学家', avatar:'🧑‍🔬', text:'二号坑出土的那个绿脸俑至今还是个谜，全世界独一份。', delay: 6500 }
+  ],
+
+  easterEggs: [
+    { id:'e1', trigger:'found_artifact_2', name:'绿脸俑的秘密',
+      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】绿脸俑可能是工匠做的试验品，烧制时窑里氧气不足，铜绿没烧红。', delay: 0 }],
+      reward: { name:'考古笔记', icon:'📔' } }
+  ],
+
+  artifacts: [
+    { id:'a1', name:'将军俑',  position: [0.0, 0.5, 0.0],   model:'general',   hint:'坑中央那个最高的' },
+    { id:'a2', name:'绿脸俑',  position: [0.5, 0.4, 0.1],   model:'greenface', hint:'脸色发青的那个' },
+    { id:'a3', name:'跪射俑',  position: [-0.3, 0.1, 0.0], model:'kneeling',  hint:'蹲着的那个' }
+  ],
+
+  stamp: { id:'stamp_bingmayong', name:'秦俑青铜印', icon:'🗡️',
+    desc:'集齐兵马俑一号坑全部线索', color:'#8B7355', bg:'linear-gradient(135deg,#8B7355,#3d2914)' }
+},
+
+{
+  id: 'xihu',
+  name: '西湖·断桥',
+  markerUrl: 'markers/xihu.mind',
+  center: [120.1485, 30.2408],
+  modelUrl: null,
+  modelScale: 0.08,
+
+  plot: [
+    { id:'p01', speaker:'许仙', avatar:'👨', text:'娘子，这雨越下越大了……', delay: 0 },
+    { id:'p02', speaker:'白娘子', avatar:'👩', text:'官人不必慌张，我有伞。', delay: 2000 },
+    { id:'p03', speaker:'旁白', avatar:'📜', text:'【剧情】白蛇传的相遇，就在这座断桥上。桥断了，人没断。', delay: 4500 }
+  ],
+
+  easterEggs: [
+    { id:'e1', trigger:'found_artifact_2', name:'小青的剑',
+      plot: [{ id:'e1a', speaker:'小青', avatar:'🐍', text:'【彩蛋】姐姐救了我一命，这把剑跟着我几百年了。', delay: 0 }],
+      reward: { name:'青蛇信笺', icon:'🐍' } }
+  ],
+
+  artifacts: [
+    { id:'a1', name:'白蛇伞', position: [0.0, 0.4, 0.0],  model:'umbrella', hint:'许仙手里那把伞' },
+    { id:'a2', name:'青蛇剑', position: [0.5, 0.2, 0.1],  model:'sword',    hint:'桥东边' },
+    { id:'a3', name:'雷峰塔', position: [-0.8, 0.5, -0.3], model:'tower',    hint:'远处山顶' }
+  ],
+
+  stamp: { id:'stamp_xihu', name:'西湖月章', icon:'🌙',
+    desc:'集齐西湖断桥全部线索', color:'#3b7dd8', bg:'linear-gradient(135deg,#3b7dd8,#1e3a5f)' }
+},
+
+{
+  id: 'zhongshan',
+  name: '中山陵',
+  markerUrl: 'markers/zhongshan.mind',
+  center: [118.8315, 32.0587],
+  modelUrl: null,
+  modelScale: 0.08,
+
+  plot: [
+    { id:'p01', speaker:'孙中山', avatar:'🎩', text:'革命尚未成功，同志仍需努力。', delay: 0 },
+    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】392 级台阶象征当时的 3.92 亿同胞。', delay: 2500 }
+  ],
+
+  easterEggs: [
+    { id:'e1', trigger:'found_artifact_2', name:'天下为公匾额',
+      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】"天下为公"四个字，是孙先生的手迹。', delay: 0 }],
+      reward: { name:'为公印', icon:'🏛️' } }
+  ],
+
+  artifacts: [
+    { id:'a1', name:'博爱牌坊', position: [0.0, 0.5, 0.0],  model:'archway', hint:'入口那座牌坊' },
+    { id:'a2', name:'天下为公', position: [0.5, 0.4, 0.1],  model:'tablet',  hint:'陵门上' },
+    { id:'a3', name:'孙中山坐像', position: [0.0, 0.3, -0.8], model:'statue', hint:'最里面' }
+  ],
+
+  stamp: { id:'stamp_zhongshan', name:'紫金博爱印', icon:'🎖️',
+    desc:'集齐中山陵全部线索', color:'#c41e3a', bg:'linear-gradient(135deg,#c41e3a,#2d0a0a)' }
+},
+
+{
+  id: 'yulong',
+  name: '玉龙雪山',
+  markerUrl: 'markers/yulong.mind',
+  center: [100.185, 27.1089],
+  modelUrl: null,
+  modelScale: 0.12,
+
+  plot: [
+    { id:'p01', speaker:'纳西族老人', avatar:'👴', text:'这山上住着三兄弟："丁巴什罗"。', delay: 0 },
+    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】玉龙雪山是纳西族的神山，海拔 5596 米，没人登顶。', delay: 3000 }
+  ],
+
+  easterEggs: [
+    { id:'e1', trigger:'found_artifact_3', name:'纳西象形文密码',
+      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】纳西象形文是至今还在使用的最古老文字之一。', delay: 0 }],
+      reward: { name:'东巴经卷', icon:'📗' } }
+  ],
+
+  artifacts: [
+    { id:'a1', name:'冰川遗迹', position: [0.0, 0.5, 0.0],   model:'glacier',   hint:'冰川公园' },
+    { id:'a2', name:'蓝月谷',  position: [0.6, 0.3, 0.1],   model:'lake',      hint:'山脚蓝色湖泊' },
+    { id:'a3', name:'印象丽江', position: [-0.5, 0.0, -0.8], model:'stage',     hint:'山脚下的表演台' }
+  ],
+
+  stamp: { id:'stamp_yulong', name:'玉龙圣雪印', icon:'🏔️',
+    desc:'集齐玉龙雪山全部线索', color:'#87ceeb', bg:'linear-gradient(135deg,#87ceeb,#1e4a6e)' }
+},
+
+{
+  id: 'potala',
+  name: '布达拉宫',
+  markerUrl: 'markers/potala.mind',
+  center: [91.1173, 29.6542],
+  modelUrl: null,
+  modelScale: 0.08,
+
+  plot: [
+    { id:'p01', speaker:'喇嘛', avatar:'🙏', text:'嗡嘛呢叭咪吽——', delay: 0 },
+    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】布达拉宫建在红山上，13 层楼高 117 米，是世界屋脊上的宫殿。', delay: 2500 },
+    { id:'p03', speaker:'喇嘛', avatar:'🙏', text:'里面有 8 座灵塔，每一座都裹着真正的金箔。', delay: 6000 }
+  ],
+
+  easterEggs: [
+    { id:'e1', trigger:'found_artifact_2', name:'五世达赖的梦',
+      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】红山上曾是松赞干布的行宫，后来才改建成宫殿。', delay: 0 }],
+      reward: { name:'金箔', icon:'✨' } }
+  ],
+
+  artifacts: [
+    { id:'a1', name:'红宫', position: [0.0, 0.5, 0.0],   model:'palace',   hint:'中央那栋红墙' },
+    { id:'a2', name:'白宫', position: [0.5, 0.3, 0.1],   model:'whitehouse', hint:'旁边白墙' },
+    { id:'a3', name:'金顶', position: [-0.3, 0.8, 0.0], model:'goldroof', hint:'最上面金顶' }
+  ],
+
+  stamp: { id:'stamp_potala', name:'雪域佛光印', icon:'☀️',
+    desc:'集齐布达拉宫全部线索', color:'#f4a460', bg:'linear-gradient(135deg,#f4a460,#8b4513)' }
+}
 ];
 
-/* ============ 海报合集（集齐一组印记解锁） ============ */
-window.AR_POSTERS = [
-    {
-        id: 'beijing_palace',
-        title: '王者之门',
-        subtitle: '集齐北京皇家三印',
-        required: ['gugong', 'tiananmen', 'yishanyuan'],
-        bg: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?w=1600&q=80',
-        caption: '天子脚下，六百年帝王气象。'
-    },
-    {
-        id: 'xian_terracotta',
-        title: '地下军团',
-        subtitle: '集齐西安历史印记',
-        required: ['bingmayong', 'xian_anmen', 'huashan'],
-        bg: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=1600&q=80',
-        caption: '两千年前的沉默军团，静静守望着他们的帝王。'
-    },
-    {
-        id: 'lijiang_snow',
-        title: '雪龙跃金',
-        subtitle: '集齐滇西雪山印记',
-        required: ['yulong', 'lijiang_old', 'dali_erhai'],
-        bg: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80',
-        caption: '纳西族的神山，守护滇西千年。'
-    }
+/* ============ 纪念海报解锁组 ============ */
+// 集齐一组里的所有 stamp.id → 自动解锁海报
+window.POSTER_GROUPS = [
+  {
+    id: 'beijing', name: '王者之门',
+    title: '北京·千年帝都',
+    required: ['stamp_gugong'],
+    bg: 'linear-gradient(135deg,#c41e3a 0%,#8b0000 50%,#1a0000 100%)',
+    desc: '集齐故宫印记，解锁帝王之门海报'
+  },
+  {
+    id: 'china-golden', name: '华夏文明',
+    title: '华夏文明之光',
+    required: ['stamp_bingmayong','stamp_gugong'],
+    bg: 'linear-gradient(135deg,#daa520 0%,#8b4513 100%)',
+    desc: '集齐秦俑+故宫，解锁华夏文明海报'
+  },
+  {
+    id: 'south-yangtze', name: '江南烟雨',
+    title: '江南烟雨图',
+    required: ['stamp_xihu','stamp_zhongshan'],
+    bg: 'linear-gradient(135deg,#3b7dd8 0%,#228b22 100%)',
+    desc: '集齐西湖+中山陵，解锁江南海报'
+  },
+  {
+    id: 'plateau', name: '雪域高原',
+    title: '雪域·圣光',
+    required: ['stamp_potala','stamp_yulong'],
+    bg: 'linear-gradient(135deg,#87ceeb 0%,#e0e0e0 50%,#f4a460 100%)',
+    desc: '集齐布达拉宫+玉龙雪山，解锁高原海报'
+  },
+  {
+    id: 'myl-complete', name: '拾迹满册',
+    title: 'MYL·拾迹满册',
+    required: ['stamp_gugong','stamp_bingmayong','stamp_xihu','stamp_zhongshan','stamp_potala','stamp_yulong'],
+    bg: 'radial-gradient(circle at 50% 50%,#ffd700 0%,#c41e3a 50%,#1a0033 100%)',
+    desc: '集齐全部 6 枚印记，解锁终极海报'
+  }
 ];
 
-/* ============ 素材替换说明（开发者用） ============
- * markerUrl 字段：填入 MindAR 生成的 .mind 文件 URL
- *   - 去 https://hiukim.github.io/mind-ar-js-doc/tools/compile/ 上传一张景点正面照
- *   - 下载生成的 .mind 文件，放到 /workspace/markers/ 目录
- *   - 填入 markerUrl: 'markers/gugong.mind'
- * posterUrl / bg / 图片 URL：建议下载后放到 /workspace/assets/ 目录
- *   - GitHub Pages 从根目录直接引用
- *   - 在线图片可用 Unsplash 格式
- * storyMain / storyEgg：每段一个 {time, text, duration(ms)} 自动分段播放
- * hunt.markers：AR 模式下的虚拟标记提示，非 AR 模式下转化为线索文字
- * hunt.quizzes：答题，答对一个解锁一个拼图块，全部答对发印记
- * stamp：每个景点的电子印记 {name, emoji, color}
- * poster：一组景点集齐后解锁的纪念海报
- */
+/* ============ 3D 模型程序生成器（Three.js Mesh 数组） ============
+   每个 model key 返回 [geometry, material]，ar-viewer 会 new Mesh 挂上去
+   真实 GLB 模型替换：把 key 改成 { url: '/models/xxx.glb' } 即可 */
+window.ARTIFACT_MODELS = {
+  // 故宫
+  dragon: function(THREE) {
+    // 简化龙：金色立方体 + 尖刺
+    const geo = new THREE.BoxGeometry(0.15, 0.06, 0.15);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3, emissive: 0x443300 });
+    return [geo, mat];
+  },
+  monkey: function(THREE) {
+    const geo = new THREE.SphereGeometry(0.06, 16, 12);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x8b6914, roughness: 0.6 });
+    return [geo, mat];
+  },
+  seal: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.05, 0.02, 0.05);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xc41e3a, metalness: 0.5, roughness: 0.3 });
+    return [geo, mat];
+  },
+  lion: function(THREE) {
+    const geo = new THREE.ConeGeometry(0.04, 0.12, 8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.5 });
+    return [geo, mat];
+  },
+  // 兵马俑
+  general: function(THREE) {
+    const geo = new THREE.CylinderGeometry(0.03, 0.04, 0.25, 8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.8 });
+    return [geo, mat];
+  },
+  greenface: function(THREE) {
+    const geo = new THREE.SphereGeometry(0.035, 16, 12);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x4a7c4f, roughness: 0.6, emissive: 0x1a331a, emissiveIntensity: 0.3 });
+    return [geo, mat];
+  },
+  kneeling: function(THREE) {
+    const geo = new THREE.CylinderGeometry(0.025, 0.03, 0.15, 8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x6b5344, roughness: 0.8 });
+    return [geo, mat];
+  },
+  // 西湖
+  umbrella: function(THREE) {
+    const geo = new THREE.ConeGeometry(0.08, 0.06, 16);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+    return [geo, mat];
+  },
+  sword: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.005, 0.2, 0.005);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x8888ff, metalness: 0.9, roughness: 0.1 });
+    return [geo, mat];
+  },
+  tower: function(THREE) {
+    const geo = new THREE.CylinderGeometry(0.03, 0.04, 0.2, 8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xaa4444, roughness: 0.5 });
+    return [geo, mat];
+  },
+  // 中山陵
+  archway: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.15, 0.08, 0.04);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.6 });
+    return [geo, mat];
+  },
+  tablet: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.06, 0.04, 0.01);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0xffd700, emissiveIntensity: 0.2 });
+    return [geo, mat];
+  },
+  statue: function(THREE) {
+    const geo = new THREE.CylinderGeometry(0.025, 0.035, 0.2, 8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xfff8dc, roughness: 0.3 });
+    return [geo, mat];
+  },
+  // 玉龙雪山
+  glacier: function(THREE) {
+    const geo = new THREE.ConeGeometry(0.12, 0.3, 5);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xeeeeff, roughness: 0.1 });
+    return [geo, mat];
+  },
+  lake: function(THREE) {
+    const geo = new THREE.CircleGeometry(0.1, 16);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x4488cc, metalness: 0.6, roughness: 0.2 });
+    return [geo, mat];
+  },
+  stage: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.15, 0.02, 0.1);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xdd8866, roughness: 0.5 });
+    return [geo, mat];
+  },
+  // 布达拉宫
+  palace: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.12, 0.18, 0.08);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xc41e3a, roughness: 0.6 });
+    return [geo, mat];
+  },
+  whitehouse: function(THREE) {
+    const geo = new THREE.BoxGeometry(0.08, 0.12, 0.06);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.4 });
+    return [geo, mat];
+  },
+  goldroof: function(THREE) {
+    const geo = new THREE.ConeGeometry(0.04, 0.06, 8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.95, roughness: 0.05, emissive: 0x665500, emissiveIntensity: 0.4 });
+    return [geo, mat];
+  }
+};
