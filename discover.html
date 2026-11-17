@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>发现 MYL - 旅行人格测试 · 必去清单 · 剧游 · Solo 旅行</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Poppins:wght@700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #f97316;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --white: #fff;
+            --radius: 16px;
+            --shadow: 0 4px 24px rgba(0,0,0,.08);
+        }
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .header {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 0;
+        }
+        .header .container { display: flex; align-items: center; justify-content: space-between; }
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem; font-weight: 900;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav { display: flex; gap: 24px; }
+        .nav a {
+            text-decoration: none; color: var(--text);
+            font-weight: 500; transition: color .2s;
+        }
+        .nav a:hover, .nav a.active { color: var(--primary); }
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff; border: none; border-radius: 30px;
+            font-weight: 600; text-decoration: none; cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,.3); }
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0ea5e9 100%);
+            color: #fff;
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 16px; }
+        .hero p { font-size: 1.1rem; opacity: .9; max-width: 600px; margin: 0 auto; }
+        .tabs {
+            display: flex; gap: 8px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            max-width: 900px;
+            margin: -30px auto 40px;
+            position: relative;
+            z-index: 10;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 40px;
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all .3s;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37,99,235,.3);
+        }
+        .tab-panel { display: none; animation: fadeIn .4s; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .section-title {
+            font-size: 1.8rem; font-weight: 900;
+            margin-bottom: 8px; text-align: center;
+        }
+        .section-desc {
+            text-align: center; color: var(--text-light);
+            margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        .quiz-container {
+            max-width: 600px; margin: 0 auto;
+            background: #fff; border-radius: var(--radius);
+            box-shadow: var(--shadow); padding: 40px;
+        }
+        .quiz-progress {
+            height: 6px; background: #e2e8f0;
+            border-radius: 3px; margin-bottom: 30px; overflow: hidden;
+        }
+        .quiz-progress-bar {
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 3px; transition: width .3s;
+        }
+        .quiz-question { font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+        .quiz-option {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .2s;
+            font-weight: 500;
+        }
+        .quiz-option:hover { border-color: var(--primary); background: #eff6ff; }
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background: #dbeafe;
+            color: var(--primary-dark);
+        }
+        .quiz-result { text-align: center; }
+        .quiz-result-icon { font-size: 4rem; margin-bottom: 16px; }
+        .quiz-result-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 12px; color: var(--primary); }
+        .quiz-result-desc { color: var(--text-light); margin-bottom: 24px; }
+        .quiz-result-destinations {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin: 24px 0;
+        }
+        .quiz-dest-card {
+            background: #f8fafc; border-radius: 12px; padding: 16px;
+            text-align: center;
+        }
+        .quiz-dest-card h4 { font-size: 1rem; margin-bottom: 4px; }
+        .quiz-dest-card p { font-size: .8rem; color: var(--text-light); }
+        #bucketMap { height: 500px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .bucket-stats {
+            display: flex; gap: 20px; justify-content: center;
+            margin-bottom: 24px; flex-wrap: wrap;
+        }
+        .bucket-stat {
+            background: #fff; padding: 16px 24px;
+            border-radius: 12px; box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .bucket-stat-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+        .bucket-stat-label { font-size: .85rem; color: var(--text-light); }
+        .bucket-legend {
+            display: flex; gap: 20px; justify-content: center;
+            margin-top: 16px; font-size: .85rem; color: var(--text-light);
+        }
+        .legend-dot {
+            display: inline-block; width: 12px; height: 12px;
+            border-radius: 50%; margin-right: 6px; vertical-align: middle;
+        }
+        .drama-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .drama-card {
+            background: #fff; border-radius: var(--radius);
+            overflow: hidden; box-shadow: var(--shadow);
+            transition: transform .3s;
+        }
+        .drama-card:hover { transform: translateY(-4px); }
+        .drama-img { height: 200px; background-size: cover; background-position: center; position: relative; }
+        .drama-tag {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(0,0,0,.7); color: #fff;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: .75rem;
+        }
+        .drama-body { padding: 20px; }
+        .drama-body h3 { font-size: 1.2rem; margin-bottom: 8px; }
+        .drama-body .drama-loc { color: var(--primary); font-size: .9rem; margin-bottom: 12px; }
+        .drama-body p { color: var(--text-light); font-size: .9rem; margin-bottom: 16px; }
+        .drama-spots { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .drama-spot {
+            background: #eff6ff; color: var(--primary-dark);
+            padding: 4px 10px; border-radius: 20px;
+            font-size: .8rem;
+        }
+        .solo-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 32px;
+            display: flex; align-items: center; gap: 24px;
+        }
+        .solo-banner-icon { font-size: 3rem; }
+        .solo-banner h3 { font-size: 1.3rem; margin-bottom: 8px; }
+        .solo-banner p { color: #92400e; font-size: .95rem; }
+        .solo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .solo-card {
+            background: #fff; border-radius: var(--radius);
+            overflow: hidden; box-shadow: var(--shadow);
+        }
+        .solo-card-img { height: 160px; background-size: cover; background-position: center; }
+        .solo-card-body { padding: 20px; }
+        .solo-card-body h4 { font-size: 1.1rem; margin-bottom: 8px; }
+        .solo-card-body p { color: var(--text-light); font-size: .88rem; margin-bottom: 12px; }
+        .solo-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .solo-tag {
+            background: #f0fdf4; color: #16a34a;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: .78rem;
+        }
+        .footer {
+            background: #1e293b; color: #94a3b8;
+            padding: 40px 0; text-align: center;
+            margin-top: 60px;
+        }
+        .footer a { color: #94a3b8; text-decoration: none; }
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .hero h1 { font-size: 1.8rem; }
+            .tabs { flex-direction: column; border-radius: 20px; }
+            .quiz-result-destinations { grid-template-columns: 1fr; }
+            .solo-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-compass"></i> MYL
+        </a>
+        <nav class="nav">
+            <a href="index.html">首页</a>
+            <a href="index.html#destinations">出境游</a>
+            <a href="index.html#china">国内游</a>
+            <a href="index.html#planner">AI 定制</a>
+            <a href="discover.html" class="active">发现 MYL</a>
+            <a href="index.html#contact">联系我们</a>
+        </nav>
+        <a href="index.html#contact" class="btn">联系我们</a>
+    </div>
+</header>
+<section class="hero">
+    <div class="container">
+        <h1>发现 MYL</h1>
+        <p>测试你的旅行人格 · 打卡一生必去清单 · 跟着影视剧去旅行 · 一个人也能玩</p>
+    </div>
+</section>
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="personality">🧭 旅行人格测试</button>
+        <button class="tab-btn" data-tab="bucket">📍 必去清单打卡</button>
+        <button class="tab-btn" data-tab="drama">🎬 跟着剧去旅行</button>
+        <button class="tab-btn" data-tab="solo">👤 Solo 旅行</button>
+    </div>
+</div>
+<div class="container">
+    <div class="tab-panel active" id="tab-personality">
+        <div class="quiz-container">
+            <div id="quizStart">
+                <h2 class="section-title">3 分钟测出你的旅行人格</h2>
+                <p class="section-desc">回答 6 道题，我们告诉你最适合去哪里旅行</p>
+                <div style="text-align:center">
+                    <button class="btn" onclick="startQuiz()">开始测试 →</button>
+                </div>
+            </div>
+            <div id="quizPlaying" style="display:none">
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="quizProgress" style="width:0%"></div>
+                </div>
+                <div class="quiz-question" id="quizQuestion"></div>
+                <div class="quiz-options" id="quizOptions"></div>
+            </div>
+            <div id="quizResult" style="display:none"></div>
+        </div>
+    </div>
+    <div class="tab-panel" id="tab-bucket">
+        <h2 class="section-title">一生必去清单 · 打卡地图</h2>
+        <p class="section-desc">点击地图上的标记，打卡你去过的地方。点亮属于你的旅行足迹！</p>
+        <div class="bucket-stats">
+            <div class="bucket-stat">
+                <div class="bucket-stat-num" id="visitedCount">0</div>
+                <div class="bucket-stat-label">已打卡</div>
+            </div>
+            <div class="bucket-stat">
+                <div class="bucket-stat-num">30</div>
+                <div class="bucket-stat-label">必去地点</div>
+            </div>
+            <div class="bucket-stat">
+                <div class="bucket-stat-num" id="percentText">0%</div>
+                <div class="bucket-stat-label">完成度</div>
+            </div>
+        </div>
+        <div id="bucketMap"></div>
+        <div class="bucket-legend">
+            <span><span class="legend-dot" style="background:#ef4444"></span>未打卡</span>
+            <span><span class="legend-dot" style="background:#22c55e"></span>已打卡</span>
+            <span style="color:var(--primary);cursor:pointer" onclick="resetBucket()"><i class="fas fa-rotate-left"></i> 重置打卡</span>
+        </div>
+    </div>
+    <div class="tab-panel" id="tab-drama">
+        <h2 class="section-title">跟着影视剧去旅行</h2>
+        <p class="section-desc">那些让你心动的画面，现在就去实景打卡</p>
+        <div class="drama-grid">
+            <div class="drama-card">
+                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80')">
+                    <span class="drama-tag">热播剧</span>
+                </div>
+                <div class="drama-body">
+                    <h3>《去有风的地方》</h3>
+                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 云南 · 大理</div>
+                    <p>许红豆在大理洱海边的民宿里治愈了自己。如果你也累了，去有风的地方走走吧。</p>
+                    <div class="drama-spots">
+                        <span class="drama-spot">洱海生态廊道</span>
+                        <span class="drama-spot">喜洲古镇</span>
+                        <span class="drama-spot">沙溪古镇</span>
+                        <span class="drama-spot">凤阳邑</span>
+                    </div>
+                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看大理线路 →</a>
+                </div>
+            </div>
+            <div class="drama-card">
+                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80')">
+                    <span class="drama-tag">爆款</span>
+                </div>
+                <div class="drama-body">
+                    <h3>《漫长的季节》</h3>
+                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 辽宁 · 沈阳</div>
+                    <p>"往前看，别回头。"东北老工业基地的秋天，有一种苍凉的浪漫。</p>
+                    <div class="drama-spots">
+                        <span class="drama-spot">铁西区</span>
+                        <span class="drama-spot">沈阳故宫</span>
+                        <span class="drama-spot">北陵公园</span>
+                        <span class="drama-spot">西塔街</span>
+                    </div>
+                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看沈阳线路 →</a>
+                </div>
+            </div>
+            <div class="drama-card">
+                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80')">
+                    <span class="drama-tag">年代剧</span>
+                </div>
+                <div class="drama-body">
+                    <h3>《繁花》</h3>
+                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 上海</div>
+                    <p>黄河路的烟火气，至真园的本帮菜，90年代上海的繁华一梦。</p>
+                    <div class="drama-spots">
+                        <span class="drama-spot">黄河路</span>
+                        <span class="drama-spot">外滩</span>
+                        <span class="drama-spot">和平饭店</span>
+                        <span class="drama-spot">永康路</span>
+                    </div>
+                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看上海线路 →</a>
+                </div>
+            </div>
+            <div class="drama-card">
+                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80')">
+                    <span class="drama-tag">日剧圣地</span>
+                </div>
+                <div class="drama-body">
+                    <h3>《灌篮高手》</h3>
+                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 日本 · 镰仓</div>
+                    <p>樱木花道挥手的那个路口，是多少人的青春回忆。</p>
+                    <div class="drama-spots">
+                        <span class="drama-spot">镰仓高校前站</span>
+                        <span class="drama-spot">江之岛</span>
+                        <span class="drama-spot">湘南海岸</span>
+                        <span class="drama-spot">鹤冈八幡宫</span>
+                    </div>
+                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看东京线路 →</a>
+                </div>
+            </div>
+            <div class="drama-card">
+                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80')">
+                    <span class="drama-tag">电影</span>
+                </div>
+                <div class="drama-body">
+                    <h3>《卧虎藏龙》</h3>
+                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 安徽 · 宏村</div>
+                    <p>李慕白和玉娇龙在竹海间飞来飞去，水墨丹青般的徽派古村。</p>
+                    <div class="drama-spots">
+                        <span class="drama-spot">宏村</span>
+                        <span class="drama-spot">西递</span>
+                        <span class="drama-spot">木坑竹海</span>
+                        <span class="drama-spot">塔川</span>
+                    </div>
+                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看黄山线路 →</a>
+                </div>
+            </div>
+            <div class="drama-card">
+                <div class="drama-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80')">
+                    <span class="drama-tag">治愈系</span>
+                </div>
+                <div class="drama-body">
+                    <h3>《小森林》</h3>
+                    <div class="drama-loc"><i class="fas fa-map-marker-alt"></i> 日本 · 东北</div>
+                    <p>一年四季，稻田、木屋、手作料理。这是理想中的乡村生活。</p>
+                    <div class="drama-spots">
+                        <span class="drama-spot">横手市</span>
+                        <span class="drama-spot">秋田县</span>
+                        <span class="drama-spot">奥州平泉</span>
+                        <span class="drama-spot">银山温泉</span>
+                    </div>
+                    <a href="index.html" class="btn" style="width:100%;text-align:center">查看日本线路 →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-panel" id="tab-solo">
+        <h2 class="section-title">一个人也能玩得很爽</h2>
+        <p class="section-desc">单人报名不加价 · 安全友好 · 容易认识同路人</p>
+        <div class="solo-banner">
+            <div class="solo-banner-icon">🎒</div>
+            <div>
+                <h3>Solo Traveler 专属福利</h3>
+                <p>单人报名 MYL 精选 Solo 线路，<strong>免单房差</strong>！我们会安排同性拼房，让你一个人出发也不孤单。</p>
+            </div>
+        </div>
+        <div class="solo-grid">
+            <div class="solo-card">
+                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1565636140897-3c7a8e0a8e0a?w=600&q=80')"></div>
+                <div class="solo-card-body">
+                    <h4>成都 · 美食 Solo 之旅</h4>
+                    <p>一个人也能吃火锅！串串、冒菜、担担面，美食之都最适合独自觅食。</p>
+                    <div class="solo-tags">
+                        <span class="solo-tag">🍜 美食友好</span>
+                        <span class="solo-tag">🚇 地铁方便</span>
+                        <span class="solo-tag">💰 消费低</span>
+                    </div>
+                </div>
+            </div>
+            <div class="solo-card">
+                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80')"></div>
+                <div class="solo-card-body">
+                    <h4>厦门 · 文艺 Solo 之旅</h4>
+                    <p>鼓浪屿的小巷、曾厝垵的咖啡馆，适合一个人散步发呆的慢生活城市。</p>
+                    <div class="solo-tags">
+                        <span class="solo-tag">☕ 咖啡馆多</span>
+                        <span class="solo-tag">🌊 海边散步</span>
+                        <span class="solo-tag">🛡️ 安全</span>
+                    </div>
+                </div>
+            </div>
+            <div class="solo-card">
+                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600&q=80')"></div>
+                <div class="solo-card-body">
+                    <h4>重庆 · 魔幻 Solo 之旅</h4>
+                    <p>8D 魔幻城市，一个人坐轻轨穿楼、过江索道，探索感拉满。</p>
+                    <div class="solo-tags">
+                        <span class="solo-tag">🌶️ 火锅之都</span>
+                        <span class="solo-tag">🎮 探索感强</span>
+                        <span class="solo-tag">💰 消费低</span>
+                    </div>
+                </div>
+            </div>
+            <div class="solo-card">
+                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80')"></div>
+                <div class="solo-card-body">
+                    <h4>大理 · 治愈 Solo 之旅</h4>
+                    <p>洱海边骑车、在人民路发呆，大理是 solo 旅行者的天堂，容易认识朋友。</p>
+                    <div class="solo-tags">
+                        <span class="solo-tag">👥 容易认识人</span>
+                        <span class="solo-tag">🚲 骑行友好</span>
+                        <span class="solo-tag">🧘 治愈</span>
+                    </div>
+                </div>
+            </div>
+            <div class="solo-card">
+                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80')"></div>
+                <div class="solo-card-body">
+                    <h4>镰仓 · 青春 Solo 之旅</h4>
+                    <p>跟着灌篮高手的脚步，在湘南海岸骑车，一个人也能很热血。</p>
+                    <div class="solo-tags">
+                        <span class="solo-tag">🚃 电车文化</span>
+                        <span class="solo-tag">🌅 看海</span>
+                        <span class="solo-tag">📸 出片</span>
+                    </div>
+                </div>
+            </div>
+            <div class="solo-card">
+                <div class="solo-card-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80')"></div>
+                <div class="solo-card-body">
+                    <h4>曼谷 · 美食 Solo 之旅</h4>
+                    <p>街头美食天堂，一个人逛街边摊、逛夜市，泰国是 solo 旅行者的入门首选。</p>
+                    <div class="solo-tags">
+                        <span class="solo-tag">🍜 街头美食</span>
+                        <span class="solo-tag">💊 签证简单</span>
+                        <span class="solo-tag">💰 消费低</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2026 MYL Travel · <a href="index.html">返回首页</a></p>
+    </div>
+</footer>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'bucket' && !bucketMapInitialized) initBucketMap();
+    });
+});
+const quizQuestions = [
+    { q: '早上旅行时，你通常几点醒？', options: [
+        { text: '🌅 7点前，早起看日出', score: 'A' },
+        { text: '☕ 9-10点，慢慢起床', score: 'B' },
+        { text: '😴 12点后，睡到自然醒', score: 'C' }
+    ]},
+    { q: '旅行最重要的是什么？', options: [
+        { text: '🏔️ 看到震撼的风景', score: 'A' },
+        { text: '🍜 吃到当地美食', score: 'B' },
+        { text: '📸 拍好看的照片', score: 'C' },
+        { text: '👥 认识有趣的人', score: 'D' }
+    ]},
+    { q: '你更喜欢住哪里？', options: [
+        { text: '🛏️ 青年旅舍，热闹', score: 'D' },
+        { text: '🏠 精品民宿，有特色', score: 'C' },
+        { text: '🏨 五星级酒店，舒服', score: 'B' }
+    ]},
+    { q: '你能接受的旅行节奏？', options: [
+        { text: '🏃 一天跑5个景点，特种兵', score: 'A' },
+        { text: '🚶 一天2-3个，刚刚好', score: 'C' },
+        { text: '🛋️ 一天1个，躺平', score: 'B' }
+    ]},
+    { q: '你最怕遇到什么？', options: [
+        { text: '👨‍👩‍👧‍👦 人挤人', score: 'A' },
+        { text: '🗣️ 语言不通', score: 'D' },
+        { text: '🛌 住得差', score: 'B' },
+        { text: '📵 没网', score: 'C' }
+    ]},
+    { q: '你旅行回来最想发什么朋友圈？', options: [
+        { text: '🏔️ 雪山/海滩/星空大片', score: 'A' },
+        { text: '🍱 九宫格美食图', score: 'B' },
+        { text: '🧏 文艺风景+短句', score: 'C' },
+        { text: '🥂 和旅伴的合照', score: 'D' }
+    ]}
+];
+const quizResults = {
+    A: { icon: '🏔️', title: '荒野探险家', desc: '你热爱自然、追求震撼的风景，不介意早起、不怕累。人少、景美、原生态是你的关键词。', destinations: [{ name: '冰岛', reason: '极光+冰川+瀑布' }, { name: '新疆', reason: '草原+沙漠+雪山' }, { name: '新西兰', reason: '魔戒取景地' }] },
+    B: { icon: '🍜', title: '美食家', desc: '你旅行就是为了吃！街头巷尾的小店、当地人才知道的馆子，才是你的宝藏。', destinations: [{ name: '成都', reason: '火锅+串串+小吃' }, { name: '曼谷', reason: '街头美食天堂' }, { name: '大阪', reason: '天下厨房' }] },
+    C: { icon: '📸', title: '文艺青年', desc: '你追求质感、喜欢拍照、在意住得有没有味道。慢节奏、有故事的地方最适合你。', destinations: [{ name: '大理', reason: '洱海+古镇+咖啡' }, { name: '京都', reason: '寺庙+樱花+茶道' }, { name: '厦门', reason: '鼓浪屿+海边' }] },
+    D: { icon: '👥', title: '社交达人', desc: '你旅行最重要的是认识新朋友！青旅、拼餐、搭子，一个人出发也能玩出一群人的热闹。', destinations: [{ name: '巴厘岛', reason: '冲浪+派对+社交' }, { name: '清迈', reason: '夜市+咖啡馆+义工' }, { name: '台北', reason: '友善+美食+便利' }] }
+};
+let currentQ = 0;
+let answers = [];
+function startQuiz() { currentQ = 0; answers = []; document.getElementById('quizStart').style.display = 'none'; document.getElementById('quizResult').style.display = 'none'; document.getElementById('quizPlaying').style.display = 'block'; showQuestion(); }
+function showQuestion() {
+    const q = quizQuestions[currentQ];
+    document.getElementById('quizProgress').style.width = ((currentQ) / quizQuestions.length * 100) + '%';
+    document.getElementById('quizQuestion').textContent = `Q${currentQ + 1}. ${q.q}`;
+    const optsEl = document.getElementById('quizOptions');
+    optsEl.innerHTML = '';
+    q.options.forEach((opt) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.textContent = opt.text;
+        div.onclick = () => selectOption(opt.score, div);
+        optsEl.appendChild(div);
+    });
+}
+function selectOption(score, el) {
+    document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers.push(score);
+    setTimeout(() => { currentQ++; if (currentQ < quizQuestions.length) { showQuestion(); } else { showResult(); } }, 300);
+}
+function showResult() {
+    document.getElementById('quizPlaying').style.display = 'none';
+    const resultEl = document.getElementById('quizResult');
+    resultEl.style.display = 'block';
+    const counts = {};
+    answers.forEach(a => counts[a] = (counts[a] || 0) + 1);
+    let maxType = 'A'; let maxCount = 0;
+    for (const [k, v] of Object.entries(counts)) { if (v > maxCount) { maxCount = v; maxType = k; } }
+    const r = quizResults[maxType];
+    resultEl.innerHTML = `<div class="quiz-result"><div class="quiz-result-icon">${r.icon}</div><h2 class="quiz-result-title">${r.title}</h2><p class="quiz-result-desc">${r.desc}</p><h4 style="margin: 20px 0 12px;">为你推荐：</h4><div class="quiz-result-destinations">${r.destinations.map(d => `<div class="quiz-dest-card"><h4>${d.name}</h4><p>${d.reason}</p></div>`).join('')}</div><button class="btn" onclick="startQuiz()">重新测试</button><a href="index.html" class="btn" style="background:#64748b;margin-left:8px">看看这些地方</a></div>`;
+}
+let bucketMapInitialized = false;
+let bucketMap;
+let visitedPlaces = JSON.parse(localStorage.getItem('myBucketList') || '[]');
+const bucketList = [
+    { name: '冰岛·极光', lat: 64.96, lng: -19.02, icon: '🌌' },
+    { name: '新西兰·皇后镇', lat: -45.03, lng: 168.66, icon: '🏔️' },
+    { name: '日本·京都', lat: 35.01, lng: 135.77, icon: '⛩️' },
+    { name: '泰国·清迈', lat: 18.79, lng: 98.98, icon: '🛕' },
+    { name: '巴厘岛·乌布', lat: -8.51, lng: 115.26, icon: '🌴' },
+    { name: '澳大利亚·大堡礁', lat: -18.29, lng: 147.70, icon: '🐠' },
+    { name: '埃及·金字塔', lat: 29.98, lng: 31.13, icon: '🔺' },
+    { name: '肯尼亚·马赛马拉', lat: -1.48, lng: 35.14, icon: '🦁' },
+    { name: '土耳其·卡帕多奇亚', lat: 38.64, lng: 34.83, icon: '🎈' },
+    { name: '法国·巴黎', lat: 48.86, lng: 2.35, icon: '🗼' },
+    { name: '意大利·威尼斯', lat: 45.44, lng: 12.33, icon: '🚤' },
+    { name: '西班牙·巴塞罗那', lat: 41.39, lng: 2.17, icon: '🏖️' },
+    { name: '美国·纽约', lat: 40.71, lng: -74.01, icon: '🗽' },
+    { name: '美国·大峡谷', lat: 36.11, lng: -112.11, icon: '🏜️' },
+    { name: '秘鲁·马丘比丘', lat: -13.16, lng: -72.55, icon: '⛰️' },
+    { name: '巴西·里约', lat: -22.91, lng: -43.17, icon: '🏖️' },
+    { name: '中国·西藏拉萨', lat: 29.65, lng: 91.14, icon: '🛕' },
+    { name: '中国·新疆喀什', lat: 39.47, lng: 75.99, icon: '🏜️' },
+    { name: '中国·云南大理', lat: 25.61, lng: 100.27, icon: '🌊' },
+    { name: '中国·四川稻城', lat: 28.44, lng: 100.33, icon: '🏔️' },
+    { name: '中国·甘肃敦煌', lat: 40.17, lng: 94.67, icon: '🏜️' },
+    { name: '中国·张家界', lat: 29.12, lng: 110.48, icon: '⛰️' },
+    { name: '中国·三亚', lat: 18.25, lng: 109.51, icon: '🏝️' },
+    { name: '中国·哈尔滨', lat: 45.80, lng: 126.53, icon: '❄️' },
+    { name: '韩国·首尔', lat: 37.57, lng: 126.98, icon: '🏯' },
+    { name: '新加坡', lat: 1.35, lng: 103.82, icon: '🏙️' },
+    { name: '瑞士·阿尔卑斯', lat: 46.52, lng: 6.57, icon: '🏔️' },
+    { name: '希腊·圣托里尼', lat: 36.39, lng: 25.46, icon: '⛪' },
+    { name: '加拿大·班夫', lat: 51.18, lng: -115.57, icon: '🏔️' },
+    { name: '南极', lat: -82.00, lng: 0.00, icon: '🐧' }
+];
+function initBucketMap() {
+    bucketMapInitialized = true;
+    bucketMap = L.map('bucketMap').setView([30, 10], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(bucketMap);
+    renderBucketMarkers();
+    updateBucketStats();
+}
+function renderBucketMarkers() {
+    bucketMap.eachLayer(layer => { if (layer instanceof L.Marker) bucketMap.removeLayer(layer); });
+    bucketList.forEach((place, idx) => {
+        const visited = visitedPlaces.includes(idx);
+        const icon = L.divIcon({ html: `<div style="font-size:24px;cursor:pointer;${visited ? 'opacity:1' : 'opacity:.5'}">${place.icon}</div>`, className: 'bucket-marker', iconSize: [24, 24] });
+        const marker = L.marker([place.lat, place.lng], { icon }).addTo(bucketMap);
+        marker.bindPopup(`<div style="text-align:center;min-width:120px"><div style="font-size:28px;margin-bottom:4px">${place.icon}</div><div style="font-weight:700;margin-bottom:8px">${place.name}</div><button onclick="toggleVisit(${idx})" style="background:${visited ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;">${visited ? '✓ 已打卡 · 点击取消' : '打卡这里'}</button></div>`);
+    });
+}
+function toggleVisit(idx) {
+    if (visitedPlaces.includes(idx)) { visitedPlaces = visitedPlaces.filter(i => i !== idx); } else { visitedPlaces.push(idx); }
+    localStorage.setItem('myBucketList', JSON.stringify(visitedPlaces));
+    renderBucketMarkers();
+    updateBucketStats();
+}
+function updateBucketStats() {
+    document.getElementById('visitedCount').textContent = visitedPlaces.length;
+    const pct = Math.round(visitedPlaces.length / bucketList.length * 100);
+    document.getElementById('percentText').textContent = pct + '%';
+}
+function resetBucket() {
+    if (confirm('确定要清空所有打卡记录吗？')) { visitedPlaces = []; localStorage.setItem('myBucketList', '[]'); renderBucketMarkers(); updateBucketStats(); }
+}
+</script>
+</body>
+</html>
