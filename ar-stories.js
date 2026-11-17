@@ -1,215 +1,320 @@
 /* =========================================================
-   MYL · 拾迹寻宝 故事情节数据
-   格式：每个景点一个 POI_STORY，含：
-     - markerUrl   : MindAR .mind 识别图（去 https://hiukim.github.io/mind-ar-js-doc/tools/compile/ 上传景点照编译）
-     - center       : 景点坐标 [lng, lat]（备用）
-     - plot         : 主线故事（对话气泡，多段）
-     - easterEggs   : 隐藏彩蛋（解锁条件 + 彩蛋剧情）
-     - artifacts    : 寻宝线索（3D物体，需在AR里找到全部才算通关）
-     - stamp        : 通关后获得的印记
-     - posters      : 集齐一组后解锁的纪念海报组
-   
-   开发者替换素材：
-   1. markerUrl: 编译 .mind 文件放 /markers/ 目录
-   2. modelUrl : .glb 模型放 /models/ 目录
-   3. bgm / sfx : 放 /audio/ 目录
+   MYL · 拾迹集册 v2 · 景点故事 + 专属游戏数据
+   每个景点一个独立玩法，不再是统一的"走近捡东西"
    ========================================================= */
+
 window.AR_POIS = [
+
+/* ========== 1. 故宫·太和殿 → 脊兽品级排序 ========== */
 {
   id: 'gugong',
   name: '故宫·太和殿',
-  markerUrl: 'markers/gugong.mind',
+  subtitle: '紫禁之巅·脊兽之谜',
   center: [116.3975, 39.915],
-  modelUrl: null,   // 先用程序生成，换真实 GLB 填 URL
-  modelScale: 0.08,
-  modelHint: '太和殿脊兽群像',
+  theme: 'imperial',
+  accent: '#c41e3a',
 
-  /* ============ 主线故事（原神式对话气泡） ============ */
   plot: [
-    { id:'p01', speaker:'宫女', avatar:'👧', text:'大人，您看这屋脊上蹲的那些小兽，每一只都有讲究。', delay: 0 },
-    { id:'p02', speaker:'导游', avatar:'🧑‍🏫', text:'太和殿脊兽一共有十个：龙、凤、狮子、天马、海马、狻猊、狎鱼、獬豸、斗牛、行什。', delay: 2500 },
-    { id:'p03', speaker:'宫女', avatar:'👧', text:'行什排最后，长得像猴子带翅膀，据说雷雨天气会爬去避雷。', delay: 6000 },
-    { id:'p04', speaker:'旁白', avatar:'📜', text:'【剧情提示】沿着故宫中轴线往南，穿过午门，就能看到真正的"龙"的入口。', delay: 9500, hint:'south_gate' }
+    { speaker: '老匠人', avatar: '👴', text: '年轻人，你抬头看这屋脊——上面蹲的小兽，可是有严格品级的。', duration: 4000 },
+    { speaker: '老匠人', avatar: '👴', text: '太和殿是紫禁城里唯一能放十只脊兽的地方，连皇帝自己都不能随便加。', duration: 4500 },
+    { speaker: '旁白', avatar: '📜', text: '【任务】把十只脊兽按品级从高到低重新排列，排对了，才能解锁太和殿的秘密。', duration: 4000 }
   ],
 
-  /* ============ 隐藏彩蛋 ============ */
-  easterEggs: [
-    { id:'e1', trigger:'found_artifact_3', name:'六百年前的工匠日记',
-      plot: [
-        { id:'e1a', speaker:'工匠', avatar:'🔨', text:'万历三十七年……我在这里刻了一行字，只有抬头看那只狮子的底座才能找到。', delay: 0 },
-        { id:'e1b', speaker:'旁白', avatar:'📜', text:'【彩蛋解锁！】原来太和殿的狮子底座里藏着六百年前工匠的签名："张二、李三、陈六"。', delay: 3500 }
-      ],
-      reward: { name:'工匠秘记', icon:'📖', desc:'解锁彩蛋后才能查看' }
-    }
-  ],
+  easterEgg: {
+    name: '六百年前的签名',
+    trigger: 'game_complete',
+    plot: [
+      { speaker: '旁白', avatar: '📜', text: '【彩蛋】你排对了脊兽，脚下传来一声轻响——基座石板下藏着一块刻字砖。', duration: 3500 },
+      { speaker: '旁白', avatar: '📜', text: '上面刻着："万历三十七年，张二、李三、陈六造"——这是六百年前工匠的签名。', duration: 4000 }
+    ],
+    reward: { name: '工匠秘记', icon: '📖', desc: '太和殿基座下的工匠签名' }
+  },
 
-  /* ============ 寻宝线索（AR里的3D漂浮物体） ============
-     position: 相对于识别图锚点的 3D 坐标 [x, y, z]
-     （MindAR 锚点 XY 是识别图平面，Z 是深度，单位米） */
-  artifacts: [
-    { id:'a1', name:'脊兽·龙',  position: [0.0, 0.35, 0.0],  model:'dragon',   hint:'抬头，屋脊第一只' },
-    { id:'a2', name:'脊兽·行什', position: [0.6, 0.35, 0.0],  model:'monkey',   hint:'屋脊最末端那只像猴子的' },
-    { id:'a3', name:'底座·签名', position: [0.3, -0.05, 0.1], model:'seal',     hint:'低头看太和殿基座' },
-    { id:'a4', name:'午门·石狮', position: [-0.5, 0.0, -0.8], model:'lion',     hint:'午门方向的远处' }
-  ],
+  game: {
+    type: 'sort_puzzle',
+    title: '脊兽品级排序',
+    instruction: '把十只脊兽按品级从高到低排列（左边最大，右边最小）',
+    items: [
+      { id: 'long',    name: '龙',   emoji: '🐉', hint: '皇权象征，最高品级' },
+      { id: 'feng',    name: '凤',   emoji: '🦅', hint: '百鸟之王，祥瑞之兆' },
+      { id: 'shizi',   name: '狮子', emoji: '🦁', hint: '百兽之王，镇宅辟邪' },
+      { id: 'tianma',  name: '天马', emoji: '🐎', hint: '日行千里，神通万里' },
+      { id: 'haima',   name: '海马', emoji: '🐴', hint: '入海入渊，逢凶化吉' },
+      { id: 'suanni',  name: '狻猊', emoji: '🐯', hint: '形似狮子，喜烟好坐' },
+      { id: 'xiayu',   name: '狎鱼', emoji: '🐟', hint: '海中异兽，兴云作雨' },
+      { id: 'xiezhi',  name: '獬豸', emoji: '🦄', hint: '能辨曲直，公正无私' },
+      { id: 'douniu',  name: '斗牛', emoji: '🐂', hint: '虬龙属，镇火避灾' },
+      { id: 'hingshi', name: '行什', emoji: '🐒', hint: '雷公化身，防雷避雷' }
+    ],
+    correctOrder: ['long','feng','shizi','tianma','haima','suanni','xiayu','xiezhi','douniu','hingshi'],
+    reward: { name: '紫禁龙纹章', icon: '🏯', desc: '排列太和殿全部脊兽，解锁紫禁第一枚印记' }
+  },
 
-  /* ============ 通关印记 ============ */
-  stamp: { id:'stamp_gugong', name:'紫禁龙纹章', icon:'🏯',
-    desc:'集齐太和殿全部线索，解锁故宫第一枚印记',
-    color:'#c41e3a', bg:'linear-gradient(135deg,#c41e3a,#8b0000)' }
+  stamp: { id: 'stamp_gugong', name: '紫禁龙纹章', icon: '🏯',
+    desc: '排列太和殿全部十只脊兽，解锁帝王之巅印记',
+    color: '#c41e3a', bg: 'linear-gradient(135deg,#c41e3a,#8b0000)' }
 },
 
+/* ========== 2. 兵马俑·一号坑 → 军阵对位复原 ========== */
 {
   id: 'bingmayong',
   name: '兵马俑·一号坑',
-  markerUrl: 'markers/bingmayong.mind',
+  subtitle: '地下军阵·复原之战',
   center: [109.2785, 34.3848],
-  modelUrl: null,
-  modelScale: 0.1,
+  theme: 'ancient',
+  accent: '#8B7355',
 
   plot: [
-    { id:'p01', speaker:'考古学家', avatar:'🧑‍🔬', text:'这些俑每个都不一样，脸、发式、铠甲，连鞋都不一样。', delay: 0 },
-    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】秦始皇花了 38 年、72 万工匠，修了自己的"地下军阵"。', delay: 2500 },
-    { id:'p03', speaker:'考古学家', avatar:'🧑‍🔬', text:'二号坑出土的那个绿脸俑至今还是个谜，全世界独一份。', delay: 6500 }
+    { speaker: '考古队长', avatar: '🧑‍🔬', text: '这就是秦始皇的地下军团——6000多个俑，排成前锋、主体、侧翼三军。', duration: 4500 },
+    { speaker: '考古队长', avatar: '🧑‍🔬', text: '可惜经过两千多年的坍塌，很多俑都碎了、错位了。', duration: 3500 },
+    { speaker: '旁白', avatar: '📜', text: '【任务】把散落的俑放回正确的军阵位置：前排是前锋弩兵，中间是主战步兵，两侧是护卫。', duration: 4500 }
   ],
 
-  easterEggs: [
-    { id:'e1', trigger:'found_artifact_2', name:'绿脸俑的秘密',
-      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】绿脸俑可能是工匠做的试验品，烧制时窑里氧气不足，铜绿没烧红。', delay: 0 }],
-      reward: { name:'考古笔记', icon:'📔' } }
-  ],
+  easterEgg: {
+    name: '绿脸俑之谜',
+    trigger: 'game_complete',
+    plot: [
+      { speaker: '旁白', avatar: '📜', text: '【彩蛋】你刚复原好军阵，角落里那个脸色发青的俑突然亮了起来——', duration: 3500 },
+      { speaker: '旁白', avatar: '📜', text: '这就是传说中的"绿脸俑"，全世界仅此一件，至今没人知道为什么是绿的。', duration: 4000 }
+    ],
+    reward: { name: '绿脸俑拓片', icon: '📔', desc: '全世界独一份的绿脸俑' }
+  },
 
-  artifacts: [
-    { id:'a1', name:'将军俑',  position: [0.0, 0.5, 0.0],   model:'general',   hint:'坑中央那个最高的' },
-    { id:'a2', name:'绿脸俑',  position: [0.5, 0.4, 0.1],   model:'greenface', hint:'脸色发青的那个' },
-    { id:'a3', name:'跪射俑',  position: [-0.3, 0.1, 0.0], model:'kneeling',  hint:'蹲着的那个' }
-  ],
+  game: {
+    type: 'placement',
+    title: '军阵复原',
+    instruction: '把散落的兵马俑拖到正确的军阵位置（前排=弩兵前锋，中排=步兵主体，后排=战车护卫）',
+    grid: {
+      rows: 3,
+      cols: 4,
+      rowLabels: ['前锋（弩兵）', '主体（步兵）', '后卫（战车）']
+    },
+    pieces: [
+      { id: 'nu1',  name: '弩兵俑', emoji: '🏹', row: 0, hint: '前排射手' },
+      { id: 'nu2',  name: '弩兵俑', emoji: '🏹', row: 0, hint: '前排射手' },
+      { id: 'bu1',  name: '步兵俑', emoji: '🗡️', row: 1, hint: '主战步兵' },
+      { id: 'bu2',  name: '步兵俑', emoji: '🗡️', row: 1, hint: '主战步兵' },
+      { id: 'bu3',  name: '步兵俑', emoji: '🗡️', row: 1, hint: '主战步兵' },
+      { id: 'che1', name: '战车俑', emoji: '🏇', row: 2, hint: '战车护卫' },
+      { id: 'che2', name: '战车俑', emoji: '🏇', row: 2, hint: '战车护卫' },
+      { id: 'jiang', name: '将军俑', emoji: '🤺', row: 1, hint: '军阵中央' }
+    ],
+    reward: { name: '秦俑青铜印', icon: '🗡️', desc: '复原秦俑军阵，解锁地下军团印记' }
+  },
 
-  stamp: { id:'stamp_bingmayong', name:'秦俑青铜印', icon:'🗡️',
-    desc:'集齐兵马俑一号坑全部线索', color:'#8B7355', bg:'linear-gradient(135deg,#8B7355,#3d2914)' }
+  stamp: { id: 'stamp_bingmayong', name: '秦俑青铜印', icon: '🗡️',
+    desc: '复原兵马俑一号坑军阵，解锁地下军团印记',
+    color: '#8B7355', bg: 'linear-gradient(135deg,#8B7355,#3d2914)' }
 },
 
+/* ========== 3. 西湖·断桥 → 伞下情缘·剧情选择 ========== */
 {
   id: 'xihu',
   name: '西湖·断桥',
-  markerUrl: 'markers/xihu.mind',
+  subtitle: '烟雨江南·伞下情缘',
   center: [120.1485, 30.2408],
-  modelUrl: null,
-  modelScale: 0.08,
+  theme: 'romantic',
+  accent: '#3b7dd8',
 
   plot: [
-    { id:'p01', speaker:'许仙', avatar:'👨', text:'娘子，这雨越下越大了……', delay: 0 },
-    { id:'p02', speaker:'白娘子', avatar:'👩', text:'官人不必慌张，我有伞。', delay: 2000 },
-    { id:'p03', speaker:'旁白', avatar:'📜', text:'【剧情】白蛇传的相遇，就在这座断桥上。桥断了，人没断。', delay: 4500 }
+    { speaker: '旁白', avatar: '📜', text: '暮春三月，西湖烟雨。一座断桥，两个人，一把伞。', duration: 4000 },
+    { speaker: '许仙', avatar: '👨', text: '这位姑娘，雨这么大，不如共撑一伞？', duration: 3500 },
+    { speaker: '旁白', avatar: '📜', text: '【任务】你将扮演许仙，在三个关键时刻做出选择——你的选择，决定这段情缘的结局。', duration: 4500 }
   ],
 
-  easterEggs: [
-    { id:'e1', trigger:'found_artifact_2', name:'小青的剑',
-      plot: [{ id:'e1a', speaker:'小青', avatar:'🐍', text:'【彩蛋】姐姐救了我一命，这把剑跟着我几百年了。', delay: 0 }],
-      reward: { name:'青蛇信笺', icon:'🐍' } }
-  ],
+  easterEgg: {
+    name: '小青的剑',
+    trigger: 'game_complete',
+    plot: [
+      { speaker: '小青', avatar: '🐍', text: '姐姐救过我一命，这把剑跟了我五百年。', duration: 3000 },
+      { speaker: '小青', avatar: '🐍', text: '你若真心待姐姐，这把剑，便是见证。', duration: 3500 }
+    ],
+    reward: { name: '青蛇信笺', icon: '🐍', desc: '小青赠你的见证之剑' }
+  },
 
-  artifacts: [
-    { id:'a1', name:'白蛇伞', position: [0.0, 0.4, 0.0],  model:'umbrella', hint:'许仙手里那把伞' },
-    { id:'a2', name:'青蛇剑', position: [0.5, 0.2, 0.1],  model:'sword',    hint:'桥东边' },
-    { id:'a3', name:'雷峰塔', position: [-0.8, 0.5, -0.3], model:'tower',    hint:'远处山顶' }
-  ],
+  game: {
+    type: 'story_choice',
+    title: '伞下情缘',
+    instruction: '在关键节点做出你的选择，不同选择会导向不同结局',
+    chapters: [
+      {
+        id: 'ch1',
+        scene: '断桥初遇',
+        text: '雨越下越大，白娘子站在桥头，没有伞。你口袋里只有一把伞。你会——',
+        choices: [
+          { id: 'a', text: '主动走上前去："姑娘，共撑一伞如何？"', next: 'ch2' },
+          { id: 'b', text: '远远看着，等雨停再说', next: 'ch2_bad' },
+          { id: 'c', text: '把伞放下，自己冒雨跑走', next: 'ch2_bad' }
+        ]
+      },
+      {
+        id: 'ch2',
+        scene: '船中借伞',
+        text: '你们同船渡湖，白娘子说："雨中借伞，是缘。"你回答——',
+        choices: [
+          { id: 'a', text: '"伞是小事，能遇见姑娘，才是大缘。"', next: 'ch3' },
+          { id: 'b', text: '"一把伞而已，不必挂怀。"', next: 'ch3_mid' },
+          { id: 'c', text: '默默不语，只是笑', next: 'ch3_mid' }
+        ]
+      },
+      {
+        id: 'ch3',
+        scene: '雷峰塔下',
+        text: '法海和尚拦住去路："她是蛇妖，你还执迷不悟？"你——',
+        choices: [
+          { id: 'a', text: '"她是好人，我信她。"挡在白娘子身前', next: 'good_ending' },
+          { id: 'b', text: '犹豫后退，不知如何是好', next: 'mid_ending' },
+          { id: 'c', text: '听法海的话，转身就走', next: 'bad_ending' }
+        ]
+      }
+    ],
+    endings: {
+      good_ending: { title: '【圆满结局】断桥不断', text: '你选择了相信。千年修得同船渡，百年修得共枕眠。这段情缘，成了西湖千年的传说。' },
+      mid_ending: { title: '【遗憾结局】擦肩而过', text: '你犹豫了。缘分就像这西湖的雨，说来就来，说走就走。' },
+      bad_ending: { title: '【错过结局】烟雨断桥', text: '你转身走了。后来有人说，每年暮春，断桥上总有一个撑伞的白影，在等一个不会来的人。' }
+    },
+    reward: { name: '西湖月章', icon: '🌙', desc: '走完断桥情缘，解锁西湖印记' }
+  },
 
-  stamp: { id:'stamp_xihu', name:'西湖月章', icon:'🌙',
-    desc:'集齐西湖断桥全部线索', color:'#3b7dd8', bg:'linear-gradient(135deg,#3b7dd8,#1e3a5f)' }
+  stamp: { id: 'stamp_xihu', name: '西湖月章', icon: '🌙',
+    desc: '走完断桥情缘全剧情，解锁烟雨江南印记',
+    color: '#3b7dd8', bg: 'linear-gradient(135deg,#3b7dd8,#1e3a5f)' }
 },
 
+/* ========== 4. 中山陵 → 392级台阶·历史问答 ========== */
 {
   id: 'zhongshan',
   name: '中山陵',
-  markerUrl: 'markers/zhongshan.mind',
+  subtitle: '392级台阶·攀登之问',
   center: [118.8315, 32.0587],
-  modelUrl: null,
-  modelScale: 0.08,
+  theme: 'revolution',
+  accent: '#c41e3a',
 
   plot: [
-    { id:'p01', speaker:'孙中山', avatar:'🎩', text:'革命尚未成功，同志仍需努力。', delay: 0 },
-    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】392 级台阶象征当时的 3.92 亿同胞。', delay: 2500 }
+    { speaker: '旁白', avatar: '📜', text: '从牌坊到祭堂，共392级台阶——象征当时全国3.92亿同胞。', duration: 4000 },
+    { speaker: '旁白', avatar: '📜', text: '孙中山先生说："革命尚未成功，同志仍需努力。"', duration: 3500 },
+    { speaker: '旁白', avatar: '📜', text: '【任务】每攀登一级，回答一道民国历史题。答对了，才能继续向上。', duration: 4000 }
   ],
 
-  easterEggs: [
-    { id:'e1', trigger:'found_artifact_2', name:'天下为公匾额',
-      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】"天下为公"四个字，是孙先生的手迹。', delay: 0 }],
-      reward: { name:'为公印', icon:'🏛️' } }
-  ],
+  easterEgg: {
+    name: '天下为公匾额',
+    trigger: 'game_complete',
+    plot: [
+      { speaker: '旁白', avatar: '📜', text: '【彩蛋】你登到最高处，抬头看见那块"天下为公"匾额——', duration: 3000 },
+      { speaker: '旁白', avatar: '📜', text: '这四个字，是孙中山先生亲手写的。也是他一生的理想。', duration: 3500 }
+    ],
+    reward: { name: '为公印', icon: '🏛️', desc: '孙中山手书"天下为公"' }
+  },
 
-  artifacts: [
-    { id:'a1', name:'博爱牌坊', position: [0.0, 0.5, 0.0],  model:'archway', hint:'入口那座牌坊' },
-    { id:'a2', name:'天下为公', position: [0.5, 0.4, 0.1],  model:'tablet',  hint:'陵门上' },
-    { id:'a3', name:'孙中山坐像', position: [0.0, 0.3, -0.8], model:'statue', hint:'最里面' }
-  ],
+  game: {
+    type: 'quiz_climb',
+    title: '392级台阶',
+    instruction: '答对问题才能向上攀登，登顶即通关',
+    totalSteps: 10,
+    questions: [
+      { step: 1, q: '孙中山先生创立的政党是？', options: ['华兴会', '同盟会', '兴中会', '光复会'], answer: 1, hint: '1905年成立于东京' },
+      { step: 2, q: '辛亥革命爆发于哪一年？', options: ['1898年', '1911年', '1919年', '1921年'], answer: 1, hint: '武昌起义' },
+      { step: 3, q: '"三民主义"不包括以下哪项？', options: ['民族', '民权', '民生', '民主'], answer: 3, hint: '三民主义是：民族、民权、民生' },
+      { step: 4, q: '中山陵的设计者是？', options: ['梁思成', '吕彦直', '林徽因', '詹天佑'], answer: 1, hint: '年轻的中国建筑师' },
+      { step: 5, q: '中山陵牌坊上刻的两个字是？', options: ['博爱', '共和', '革命', '大同'], answer: 0, hint: '"天下为公"的前两个字' },
+      { step: 6, q: '孙中山先生的著作是？', options: ['《革命军》', '《建国方略》', '《猛回头》', '《警世钟》'], answer: 1, hint: '包含实业计划' },
+      { step: 7, q: '中山陵祭堂里供奉的是？', options: ['孙中山坐像', '蒋介石像', '廖仲恺像', '未知'], answer: 0, hint: '白色大理石雕' },
+      { step: 8, q: '"革命尚未成功"的下一句是？', options: ['同志仍需努力', '吾辈仍当自强', '前途是光明的', '道路是曲折的'], answer: 0, hint: '先生遗言' },
+      { step: 9, q: '中山陵位于哪座山？', options: ['紫金山', '栖霞山', '钟山', '幕府山'], answer: 2, hint: '又名紫金山' },
+      { step: 10, q: '392级台阶象征什么？', options: ['392位烈士', '当时3.92亿同胞', '392个县市', '392天工期'], answer: 1, hint: '全国人民' }
+    ],
+    reward: { name: '紫金博爱印', icon: '🎖️', desc: '登上中山陵392级台阶，解锁博爱印记' }
+  },
 
-  stamp: { id:'stamp_zhongshan', name:'紫金博爱印', icon:'🎖️',
-    desc:'集齐中山陵全部线索', color:'#c41e3a', bg:'linear-gradient(135deg,#c41e3a,#2d0a0a)' }
+  stamp: { id: 'stamp_zhongshan', name: '紫金博爱印', icon: '🎖️',
+    desc: '答对全部历史题，登中山陵之巅',
+    color: '#c41e3a', bg: 'linear-gradient(135deg,#c41e3a,#2d0a0a)' }
 },
 
+/* ========== 5. 玉龙雪山 → 东巴象形文破译 ========== */
 {
   id: 'yulong',
   name: '玉龙雪山',
-  markerUrl: 'markers/yulong.mind',
+  subtitle: '神山密码·东巴文破译',
   center: [100.185, 27.1089],
-  modelUrl: null,
-  modelScale: 0.12,
+  theme: 'mystic',
+  accent: '#87ceeb',
 
   plot: [
-    { id:'p01', speaker:'纳西族老人', avatar:'👴', text:'这山上住着三兄弟："丁巴什罗"。', delay: 0 },
-    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】玉龙雪山是纳西族的神山，海拔 5596 米，没人登顶。', delay: 3000 }
+    { speaker: '纳西老人', avatar: '👴', text: '这座雪山，是我们纳西族的神山。山上住着三朵神。', duration: 4000 },
+    { speaker: '纳西老人', avatar: '👴', text: '我们的文字——东巴文，是世界上唯一还在使用的象形文字。', duration: 4000 },
+    { speaker: '旁白', avatar: '📜', text: '【任务】石碑上刻着五组东巴象形文，把它们和对应的汉字配对，破译神山的封印。', duration: 4500 }
   ],
 
-  easterEggs: [
-    { id:'e1', trigger:'found_artifact_3', name:'纳西象形文密码',
-      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】纳西象形文是至今还在使用的最古老文字之一。', delay: 0 }],
-      reward: { name:'东巴经卷', icon:'📗' } }
-  ],
+  easterEgg: {
+    name: '东巴经卷',
+    trigger: 'game_complete',
+    plot: [
+      { speaker: '旁白', avatar: '📜', text: '【彩蛋】你破译了全部象形文，石碑缓缓移开，露出一卷古老的东巴经。', duration: 3500 },
+      { speaker: '旁白', avatar: '📜', text: '上面画着雪山、湖泊、和一个骑马的人——那是纳西族迁徙的故事。', duration: 4000 }
+    ],
+    reward: { name: '东巴经卷', icon: '📗', desc: '纳西族千年迁徙图' }
+  },
 
-  artifacts: [
-    { id:'a1', name:'冰川遗迹', position: [0.0, 0.5, 0.0],   model:'glacier',   hint:'冰川公园' },
-    { id:'a2', name:'蓝月谷',  position: [0.6, 0.3, 0.1],   model:'lake',      hint:'山脚蓝色湖泊' },
-    { id:'a3', name:'印象丽江', position: [-0.5, 0.0, -0.8], model:'stage',     hint:'山脚下的表演台' }
-  ],
+  game: {
+    type: 'symbol_match',
+    title: '东巴文破译',
+    instruction: '把左边的东巴象形文和右边对应的汉字连起来',
+    pairs: [
+      { id: 'm1', symbol: '🐉', meaning: '龙', emoji: '🐉' },
+      { id: 'm2', symbol: '🏔️', meaning: '雪山', emoji: '🏔️' },
+      { id: 'm3', symbol: '💧', meaning: '水', emoji: '💧' },
+      { id: 'm4', symbol: '🌳', meaning: '树', emoji: '🌳' },
+      { id: 'm5', symbol: '☀️', meaning: '太阳', emoji: '☀️' }
+    ],
+    reward: { name: '玉龙圣雪印', icon: '🏔️', desc: '破译东巴象形文，解锁神山印记' }
+  },
 
-  stamp: { id:'stamp_yulong', name:'玉龙圣雪印', icon:'🏔️',
-    desc:'集齐玉龙雪山全部线索', color:'#87ceeb', bg:'linear-gradient(135deg,#87ceeb,#1e4a6e)' }
+  stamp: { id: 'stamp_yulong', name: '玉龙圣雪印', icon: '🏔️',
+    desc: '破译全部东巴象形文，解锁神山封印',
+    color: '#87ceeb', bg: 'linear-gradient(135deg,#87ceeb,#1e4a6e)' }
 },
 
+/* ========== 6. 布达拉宫 → 金顶转经·方位对齐 ========== */
 {
   id: 'potala',
   name: '布达拉宫',
-  markerUrl: 'markers/potala.mind',
+  subtitle: '雪域佛光·金顶转经',
   center: [91.1173, 29.6542],
-  modelUrl: null,
-  modelScale: 0.08,
+  theme: 'spiritual',
+  accent: '#f4a460',
 
   plot: [
-    { id:'p01', speaker:'喇嘛', avatar:'🙏', text:'嗡嘛呢叭咪吽——', delay: 0 },
-    { id:'p02', speaker:'旁白', avatar:'📜', text:'【剧情】布达拉宫建在红山上，13 层楼高 117 米，是世界屋脊上的宫殿。', delay: 2500 },
-    { id:'p03', speaker:'喇嘛', avatar:'🙏', text:'里面有 8 座灵塔，每一座都裹着真正的金箔。', delay: 6000 }
+    { speaker: '喇嘛', avatar: '🙏', text: '嗡嘛呢叭咪吽——', duration: 3000 },
+    { speaker: '喇嘛', avatar: '🙏', text: '布达拉宫建在红山上，13层，高117米。是世界屋脊上的宫殿。', duration: 4500 },
+    { speaker: '旁白', avatar: '📜', text: '【任务】转动转经筒，让四个金顶分别对准东南西北四个方位。对齐了，佛光就会降临。', duration: 4500 }
   ],
 
-  easterEggs: [
-    { id:'e1', trigger:'found_artifact_2', name:'五世达赖的梦',
-      plot: [{ id:'e1a', speaker:'旁白', avatar:'📜', text:'【彩蛋】红山上曾是松赞干布的行宫，后来才改建成宫殿。', delay: 0 }],
-      reward: { name:'金箔', icon:'✨' } }
-  ],
+  easterEgg: {
+    name: '五世达赖的梦',
+    trigger: 'game_complete',
+    plot: [
+      { speaker: '旁白', avatar: '📜', text: '【彩蛋】你对齐了金顶，一道金光从山顶洒下——', duration: 3000 },
+      { speaker: '旁白', avatar: '📜', text: '传说五世达赖喇嘛梦见观音菩萨，才决定在红山上建这座宫殿。', duration: 4000 }
+    ],
+    reward: { name: '金箔', icon: '✨', desc: '布达拉宫金顶上的一片金箔' }
+  },
 
-  artifacts: [
-    { id:'a1', name:'红宫', position: [0.0, 0.5, 0.0],   model:'palace',   hint:'中央那栋红墙' },
-    { id:'a2', name:'白宫', position: [0.5, 0.3, 0.1],   model:'whitehouse', hint:'旁边白墙' },
-    { id:'a3', name:'金顶', position: [-0.3, 0.8, 0.0], model:'goldroof', hint:'最上面金顶' }
-  ],
+  game: {
+    type: 'rotate_align',
+    title: '金顶转经',
+    instruction: '旋转转经筒，让四个金顶分别对准东南西北',
+    totalRounds: 3,
+    reward: { name: '雪域佛光印', icon: '☀️', desc: '对齐金顶方位，解锁雪域佛光印记' }
+  },
 
-  stamp: { id:'stamp_potala', name:'雪域佛光印', icon:'☀️',
-    desc:'集齐布达拉宫全部线索', color:'#f4a460', bg:'linear-gradient(135deg,#f4a460,#8b4513)' }
+  stamp: { id: 'stamp_potala', name: '雪域佛光印', icon: '☀️',
+    desc: '对齐布达拉宫金顶方位，解锁雪域之光',
+    color: '#f4a460', bg: 'linear-gradient(135deg,#f4a460,#8b4513)' }
 }
 ];
 
 /* ============ 纪念海报解锁组 ============ */
-// 集齐一组里的所有 stamp.id → 自动解锁海报
 window.POSTER_GROUPS = [
   {
     id: 'beijing', name: '王者之门',
@@ -247,111 +352,3 @@ window.POSTER_GROUPS = [
     desc: '集齐全部 6 枚印记，解锁终极海报'
   }
 ];
-
-/* ============ 3D 模型程序生成器（Three.js Mesh 数组） ============
-   每个 model key 返回 [geometry, material]，ar-viewer 会 new Mesh 挂上去
-   真实 GLB 模型替换：把 key 改成 { url: '/models/xxx.glb' } 即可 */
-window.ARTIFACT_MODELS = {
-  // 故宫
-  dragon: function(THREE) {
-    // 简化龙：金色立方体 + 尖刺
-    const geo = new THREE.BoxGeometry(0.15, 0.06, 0.15);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3, emissive: 0x443300 });
-    return [geo, mat];
-  },
-  monkey: function(THREE) {
-    const geo = new THREE.SphereGeometry(0.06, 16, 12);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x8b6914, roughness: 0.6 });
-    return [geo, mat];
-  },
-  seal: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.05, 0.02, 0.05);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xc41e3a, metalness: 0.5, roughness: 0.3 });
-    return [geo, mat];
-  },
-  lion: function(THREE) {
-    const geo = new THREE.ConeGeometry(0.04, 0.12, 8);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.5 });
-    return [geo, mat];
-  },
-  // 兵马俑
-  general: function(THREE) {
-    const geo = new THREE.CylinderGeometry(0.03, 0.04, 0.25, 8);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.8 });
-    return [geo, mat];
-  },
-  greenface: function(THREE) {
-    const geo = new THREE.SphereGeometry(0.035, 16, 12);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x4a7c4f, roughness: 0.6, emissive: 0x1a331a, emissiveIntensity: 0.3 });
-    return [geo, mat];
-  },
-  kneeling: function(THREE) {
-    const geo = new THREE.CylinderGeometry(0.025, 0.03, 0.15, 8);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x6b5344, roughness: 0.8 });
-    return [geo, mat];
-  },
-  // 西湖
-  umbrella: function(THREE) {
-    const geo = new THREE.ConeGeometry(0.08, 0.06, 16);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
-    return [geo, mat];
-  },
-  sword: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.005, 0.2, 0.005);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x8888ff, metalness: 0.9, roughness: 0.1 });
-    return [geo, mat];
-  },
-  tower: function(THREE) {
-    const geo = new THREE.CylinderGeometry(0.03, 0.04, 0.2, 8);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xaa4444, roughness: 0.5 });
-    return [geo, mat];
-  },
-  // 中山陵
-  archway: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.15, 0.08, 0.04);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.6 });
-    return [geo, mat];
-  },
-  tablet: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.06, 0.04, 0.01);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0xffd700, emissiveIntensity: 0.2 });
-    return [geo, mat];
-  },
-  statue: function(THREE) {
-    const geo = new THREE.CylinderGeometry(0.025, 0.035, 0.2, 8);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xfff8dc, roughness: 0.3 });
-    return [geo, mat];
-  },
-  // 玉龙雪山
-  glacier: function(THREE) {
-    const geo = new THREE.ConeGeometry(0.12, 0.3, 5);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xeeeeff, roughness: 0.1 });
-    return [geo, mat];
-  },
-  lake: function(THREE) {
-    const geo = new THREE.CircleGeometry(0.1, 16);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x4488cc, metalness: 0.6, roughness: 0.2 });
-    return [geo, mat];
-  },
-  stage: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.15, 0.02, 0.1);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xdd8866, roughness: 0.5 });
-    return [geo, mat];
-  },
-  // 布达拉宫
-  palace: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.12, 0.18, 0.08);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xc41e3a, roughness: 0.6 });
-    return [geo, mat];
-  },
-  whitehouse: function(THREE) {
-    const geo = new THREE.BoxGeometry(0.08, 0.12, 0.06);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.4 });
-    return [geo, mat];
-  },
-  goldroof: function(THREE) {
-    const geo = new THREE.ConeGeometry(0.04, 0.06, 8);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.95, roughness: 0.05, emissive: 0x665500, emissiveIntensity: 0.4 });
-    return [geo, mat];
-  }
-};
