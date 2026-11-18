@@ -789,7 +789,7 @@
     }
     function ecoBlock() {
         var e = ECO[cat] || ECO.landmark;
-        return '<div class="sd-eco"><div class="sd-eco-head"><b>可持续游览</b><span>MYL 生态旅行准则</span></div>' +
+        return '<div class="sd-eco"><div class="sd-eco-head"><b>可持续游览</b><span>MYL 可持续旅行准则</span></div>' +
             '<div class="sd-eco-grid">' +
             '<div><em>环境敏感点</em><p>' + esc(e.sensitive) + '</p></div>' +
             '<div><em>低干扰行为</em><ul>' + e.low.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>' +
@@ -1198,7 +1198,7 @@
             cat === 'nature' ? 'Landform' : 'History',
             accList(deepRows()) + (info.desc ? p(info.desc) : ''));
 
-        html += S('eco', '生态旅游解说', 'Eco Travel', ecoBlock());
+        html += S('eco', '可持续游览', 'Sustainable Travel', ecoBlock());
         html += S('scene', '真实体验场景', 'Scenes', sceneBlock());
 
         var relList = relSpots.slice(0, 3).map(function (n) { return relCard(n, 'spot'); })
