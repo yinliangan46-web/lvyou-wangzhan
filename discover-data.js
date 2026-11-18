@@ -2576,7 +2576,7 @@ function renderPack(city, opts) {
         if (paid) links += `<a class="gl gl-douyin" href="https://www.douyin.com/search/${encodeURIComponent(a.name)}?type=general" target="_blank" rel="noopener">🎵 抖音</a>`;
         if (needReserve) links += `<a class="gl gl-wechat" href="https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(a.name + ' 预约')}" target="_blank" rel="noopener">💬 微信预约</a>`;
         return `<div class="pack-place">
-            <img src="${a.img || mylImgUrl(a.name, 'sight')}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <img src="${mylImgUrl(a.name, 'sight')}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="pp-body">
                 <div class="pp-name">${a.name}</div>
                 <div class="pp-desc">${a.desc || ''}</div>
@@ -2587,7 +2587,7 @@ function renderPack(city, opts) {
     }).join('');
 
     const foodCards = p.foods.map(f => `<div class="pack-food">
-            <img src="${f.img || mylImgUrl(f.name, 'food')}" alt="${f.name}" loading="lazy" onerror="this.onerror=null;this.src='images/food-fallback.jpg'" />
+            <img src="${mylImgUrl(f.name, 'food')}" alt="${f.name}" loading="lazy" onerror="this.onerror=null;this.src='images/food-fallback.jpg'" />
             <div class="pf-body"><div class="pf-name">${f.name}</div><div class="pf-desc">${f.desc || ''}</div><div class="pf-price">${f.price || ''}</div></div>
         </div>`).join('');
 

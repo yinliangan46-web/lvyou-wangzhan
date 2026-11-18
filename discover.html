@@ -621,14 +621,11 @@ function mylHash(s) {
 }
 function mylImgUrl(name, kind) {
     name = String(name || '旅行');
-    if (kind !== 'food') {
-        var hit = name.match(/(成都|西安|杭州|厦门|青岛|长沙|桂林|哈尔滨|喀什)/);
-        if (hit && MYL_CITY_IMG[hit[1]]) return MYL_CITY_IMG[hit[1]];
-        var pool = MYL_SIGHT_POOL;
-        return 'https://images.unsplash.com/' + pool[mylHash(name) % pool.length] + '?w=600&q=80';
+    if (typeof mylPOIImg === 'function') {
+        if (kind !== 'food' && /城市风景|都市|城市$/.test(name)) return mylPOIImg('城市街景', 'sight');
+        return mylPOIImg(name, kind);
     }
-    var fpool = MYL_FOOD_POOL;
-    return 'https://images.unsplash.com/' + fpool[mylHash(name) % fpool.length] + '?w=400&q=80';
+    return kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
 }
 function mylPic(src, name, kind) {
     var url = src || mylImgUrl(name, kind);
@@ -783,7 +780,7 @@ function renderGuide(item) {
             var links = '<a class="gl gl-ctrip" href="' + mylEsc(ctripSightUrl(name, a.ctripUrl)) + '" target="_blank" rel="noopener">🎫 携程' + (paid ? '门票' : '详情') + '</a>';
             if (paid) links += '<a class="gl gl-douyin" href="' + douyinUrl(name) + '" target="_blank" rel="noopener">🎵 抖音看票</a>';
             if (reserve) links += '<a class="gl gl-wechat" href="' + mylEsc(a.wechatUrl || wechatUrl(name)) + '" target="_blank" rel="noopener">💬 微信预约</a>';
-            html += '<div class="guide-card">' + mylPic(a.img, name, 'sight')
+            html += '<div class="guide-card">' + mylPic(mylImgUrl(name, 'sight'), name, 'sight')
                 + '<div class="guide-card-body"><div class="guide-card-top"><b>' + mylEsc(name) + '</b>'
                 + (a.price ? '<span class="guide-price' + (paid ? ' paid' : '') + '">' + mylEsc(a.price) + '</span>' : '') + '</div>'
                 + (a.desc ? '<p>' + mylEsc(a.desc) + '</p>' : '')
@@ -796,7 +793,7 @@ function renderGuide(item) {
     if (foods.length) {
         html += '<h4 class="guide-h">🍜 必吃美食</h4><div class="guide-grid">';
         foods.forEach(function (f) {
-            html += '<div class="guide-card food">' + mylPic(f.img, f.name, 'food')
+            html += '<div class="guide-card food">' + mylPic(mylImgUrl(f.name, 'food'), f.name, 'food')
                 + '<div class="guide-card-body"><div class="guide-card-top"><b>' + mylEsc(f.name) + '</b>'
                 + (f.price ? '<span class="guide-price">' + mylEsc(f.price) + '</span>' : '') + '</div>'
                 + (f.desc ? '<p>' + mylEsc(f.desc) + '</p>' : '') + '</div></div>';
@@ -873,7 +870,8 @@ function toggleAIGuide(btn, panelId, idx) {
     });
 })();
 </script>
-<script src="discover-data.js?v=20261118d"></script>
+<script src="poi-img.js?v=3"></script>
+<script src="discover-data.js?v=20261118e"></script>
 <script>
 /* =====================================================================
    初始化（在 discover-data.js 之后执行，确保函数与数据都已就绪）
