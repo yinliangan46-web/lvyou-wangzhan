@@ -218,7 +218,7 @@ const personalityTypes = {
         icon: '🍜', title: '碳水刺客', badge: '舌头侦探 · 城市猎人',
         desc: '你旅行的KPI就是吃遍当地。大众点评不看，专钻巷子找苍蝇馆。你能为了一碗面飞一座城，朋友圈九宫格全是吃的。',
         routes: [
-            { dest: '成都 · 美食猎人之旅', days: '4天3晚', img: 'https://images.unsplash.com/photo-1565992441121-4367c29671e2?w=600&q=80',
+            { dest: '成都 · 美食猎人之旅', days: '4天3晚', img: 'images/cities/chengdu.jpg',
               itinerary: [
                 { d: 'Day1', t: '宽窄巷子 → 奎星楼街冒椒火辣 → 锦里夜市' },
                 { d: 'Day2', t: '大熊猫基地 → 建设巷小吃街 → 春熙路' },
@@ -234,7 +234,7 @@ const personalityTypes = {
                 ],
                 attractions: [
                   { name: '大熊猫繁育基地', desc: '一定要早去！熊猫早上最活跃（9点后就睡觉了）', price: '¥55', img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/chengdu104/1354.html' },
-                  { name: '宽窄巷子', desc: '老成都名片，宽巷子逛+窄巷子吃', price: '免费', img: 'https://images.unsplash.com/photo-1565992441121-4367c29671e2?w=400&q=80' },
+                  { name: '宽窄巷子', desc: '老成都名片，宽巷子逛+窄巷子吃', price: '免费', img: 'images/cities/chengdu.jpg' },
                   { name: '锦里古街', desc: '晚上灯笼亮起最美，小吃多但偏贵', price: '免费', img: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400&q=80' }
                 ],
                 foods: [
@@ -340,7 +340,7 @@ const personalityTypes = {
                 foods: [
                   { name: '喜洲粑粑', desc: '甜/咸两种，现烤外酥里软', price: '¥10/个', img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80' },
                   { name: '白族石板烧', desc: '大理特色，自己烤着吃', price: '¥60/人', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' },
-                  { name: '乳扇沙琪玛', desc: '白族特色奶制品，当零食吃', price: '¥20/盒', img: 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&q=80' }
+                  { name: '乳扇沙琪玛', desc: '白族特色奶制品，当零食吃', price: '¥20/盒', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' }
                 ],
                 hotels: [
                   { name: '才村洱海边民宿', desc: '推开窗就是洱海，看日出绝佳', price: '¥400', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/dali45.html' },
@@ -380,7 +380,7 @@ const personalityTypes = {
                 ],
                 tips: '伏见稻荷早上6点去没人（旅行团9点到）；巴士一日券500日元划算；町屋住宿提前3个月订；樱花季/红叶季住宿翻倍。' }
             },
-            { dest: '厦门 · 海岛慢生活', days: '4天3晚', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+            { dest: '厦门 · 海岛慢生活', days: '4天3晚', img: 'images/cities/xiamen.jpg',
               itinerary: [
                 { d: 'Day1', t: '中山路骑楼 → 八市吃海鲜 → 沙坡尾艺术西区' },
                 { d: 'Day2', t: '鼓浪屿全天 → 菽庄花园 → 日光岩日落' },
@@ -395,7 +395,7 @@ const personalityTypes = {
                   { d: 'Day4 上午', t: '南普陀寺 → 厦大校园 → 返程' }
                 ],
                 attractions: [
-                  { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
+                  { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'images/cities/xiamen.jpg', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
                   { name: '日光岩', desc: '鼓浪屿最高点，看日落绝美', price: '¥50', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4725.html' },
                   { name: '南普陀寺', desc: '闽南佛教圣地，素饼必买', price: '免费（需预约）', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', wechatUrl: 'https://mp.weixin.qq.com/s/nanputuo' }
                 ],
@@ -621,7 +621,7 @@ const personalityTypes = {
                 attractions: [
                   { name: '茶卡盐湖', desc: '天空之镜！晴天上午去（无风如镜）', price: '¥60', img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&q=80', ctripUrl: 'https://you.ctrip.com/surface/chaka112/5800.html', wechatUrl: 'https://mp.weixin.qq.com/s/chaka-booking' },
                   { name: '莫高窟', desc: '世界文化遗产！壁画+雕塑，提前1个月抢票', price: '¥238（正常票）', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/dunhuang113/5801.html', wechatUrl: 'https://mp.weixin.qq.com/s/mogaozu' },
-                  { name: '张掖七彩丹霞', desc: '上帝打翻的调色盘！日落最美', price: '¥74', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/zhangye114/5802.html' }
+                  { name: '张掖七彩丹霞', desc: '上帝打翻的调色盘！日落最美', price: '¥74', img: 'images/cities/zhangye.jpg', ctripUrl: 'https://you.ctrip.com/sight/zhangye114/5802.html' }
                 ],
                 foods: [
                   { name: '手抓羊肉', desc: '青海特色，羊肉不膻，蘸蒜酱吃', price: '¥80/斤', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80' },
@@ -654,7 +654,7 @@ const personalityTypes = {
                 ],
                 attractions: [
                   { name: '莫高窟', desc: '世界文化遗产！壁画+雕塑，提前1个月抢票', price: '¥238（正常票）', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/dunhuang113/5801.html', wechatUrl: 'https://mp.weixin.qq.com/s/mogaozu' },
-                  { name: '鸣沙山月牙泉', desc: '沙漠中的绿洲！骑骆驼+滑沙+看星空', price: '¥110', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/dunhuang113/5900.html' },
+                  { name: '鸣沙山月牙泉', desc: '沙漠中的绿洲！骑骆驼+滑沙+看星空', price: '¥110', img: 'images/cities/zhangye.jpg', ctripUrl: 'https://you.ctrip.com/sight/dunhuang113/5900.html' },
                   { name: '榆林窟', desc: '莫高窟姊妹窟！人少壁画更原始', price: '¥55', img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/guazhou115/5901.html' }
                 ],
                 foods: [
@@ -674,7 +674,7 @@ const personalityTypes = {
         icon: '🍜', title: '味蕾诗人', badge: '用舌头写旅行日记',
         desc: '你是那种会在咖啡馆写旅行手账的人。吃要吃得讲究，住要住得有味道，走要走得有节奏。你旅行不是打卡，是过日子。',
         routes: [
-            { dest: '杭州 · 茶与食', days: '4天3晚', img: 'https://images.unsplash.com/photo-1599571234909-29ed2a27ba5b?w=600&q=80',
+            { dest: '杭州 · 茶与食', days: '4天3晚', img: 'images/cities/hangzhou.jpg',
               itinerary: [
                 { d: 'Day1', t: '西湖漫步 → 楼外楼西湖醋鱼 → 柳浪闻莺日落' },
                 { d: 'Day2', t: '龙井村采茶 → 农家菜 → 九溪烟树徒步' },
@@ -689,7 +689,7 @@ const personalityTypes = {
                   { d: 'Day4 上午', t: '西溪湿地 → 知味观小吃 → 返程' }
                 ],
                 attractions: [
-                  { name: '西湖', desc: '世界文化遗产！免费，游船另付', price: '免费（游船¥55）', img: 'https://images.unsplash.com/photo-1599571234909-29ed2a27ba5b?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/hangzhou14/5010.html' },
+                  { name: '西湖', desc: '世界文化遗产！免费，游船另付', price: '免费（游船¥55）', img: 'images/cities/hangzhou.jpg', ctripUrl: 'https://you.ctrip.com/sight/hangzhou14/5010.html' },
                   { name: '灵隐寺', desc: '千年古刹！飞来峰+灵隐寺', price: '¥75（含飞来峰）', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/hangzhou14/5011.html', wechatUrl: 'https://mp.weixin.qq.com/s/lingyin' },
                   { name: '龙井村', desc: '西湖龙井产地！采茶体验+喝茶', price: '采茶体验¥100/人', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/hangzhou14/5012.html' }
                 ],
@@ -787,7 +787,7 @@ const personalityTypes = {
                   { d: 'Day5 上午', t: '泉州返程' }
                 ],
                 attractions: [
-                  { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
+                  { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'images/cities/xiamen.jpg', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
                   { name: '泉州开元寺', desc: '福建最大佛教建筑东西塔！免费', price: '免费', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80' },
                   { name: '蟳埔村', desc: '簪花体验！40元含衣服+拍照，出片绝美', price: '簪花¥40', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/quanzhou116/6000.html' }
                 ],
@@ -855,7 +855,7 @@ function showResult() {
     r.routes.forEach((rt, i) => {
         const aiIdx = aiGuideStore.length;
         aiGuideStore.push({ dest: rt.dest, ai: rt.ai });
-        html += `<div class="route-detail-card"><div class="route-card-img" style="background-image:url('${rt.img}')"><span class="days-badge">${rt.days}</span></div><div class="route-card-body"><h5>${rt.dest}</h5><div class="route-sub">MYL 专属定制线路 · 含住宿+门票+交通</div>${rt.itinerary.map(day => `<div class="route-day"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'pGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="pGuide${aiIdx}"></div></div></div>`;
+        html += `<div class="route-detail-card"><div class="route-card-img" style="background-image:url('${rt.img || mylImgUrl(rt.dest,'sight')}')"><span class="days-badge">${rt.days}</span></div><div class="route-card-body"><h5>${rt.dest}</h5><div class="route-sub">MYL 专属定制线路 · 含住宿+门票+交通</div>${rt.itinerary.map(day => `<div class="route-day"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'pGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="pGuide${aiIdx}"></div></div></div>`;
     });
     html += `</div><button class="btn" onclick="startQuiz()">重新测试</button><a href="index.html#china" class="btn btn-outline" style="margin-left:8px">看看更多目的地</a></div>`;
     resultEl.innerHTML = html;
@@ -1020,7 +1020,7 @@ const dramaData = [
         foods: [
           { name: '喜洲粑粑', desc: '甜咸都好吃，现烤最香', price: '¥10/个', img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80' },
           { name: '白族石板烧', desc: '大理特色，自己烤着吃', price: '¥60/人', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' },
-          { name: '乳扇沙琪玛', desc: '白族特色奶制品，当零食吃', price: '¥20/盒', img: 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&q=80' }
+          { name: '乳扇沙琪玛', desc: '白族特色奶制品，当零食吃', price: '¥20/盒', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' }
         ],
         hotels: [
           { name: '才村洱海边民宿', desc: '推开窗就是洱海，看日出绝佳', price: '¥400', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/dali45.html' },
@@ -1046,7 +1046,7 @@ const dramaData = [
         attractions: [
           { name: '沈阳故宫', desc: '清朝入关前的皇宫，比北京故宫小但精致', price: '¥50', img: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/shenyang155/4740.html' },
           { name: '张氏帅府', desc: '张作霖张学良父子的官邸，民国建筑风', price: '¥48', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/shenyang155/4741.html' },
-          { name: '北陵公园（昭陵）', desc: '皇太极陵墓，沈阳最大公园，秋天银杏绝美', price: '¥50', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/shenyang155/4742.html' }
+          { name: '北陵公园（昭陵）', desc: '皇太极陵墓，沈阳最大公园，秋天银杏绝美', price: '¥50', img: 'images/cities/shenyang.jpg', ctripUrl: 'https://you.ctrip.com/sight/shenyang155/4742.html' }
         ],
         foods: [
           { name: '西塔街烤肉', desc: '朝鲜族聚居区，烤肉正宗又便宜', price: '¥80/人', img: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&q=80' },
@@ -1060,7 +1060,7 @@ const dramaData = [
         tips: '西塔街朝鲜族烤肉正宗；东北菜分量大两人点三个菜够；冬天零下20度注意保暖；9-10月秋景最美，故宫红墙配银杏。' }
     },
     { title: '《繁花》', tag: '年代剧', loc: '上海',
-      img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+      img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&q=80',
       desc: '黄河路的烟火气，至真园的本帮菜，90年代上海的繁华一梦。',
       spots: ['黄河路','外滩','和平饭店','永康路'],
       route: { name: '上海繁花 3 日线路', days: [
@@ -1075,7 +1075,7 @@ const dramaData = [
           { d: 'Day3 上午', t: '上海博物馆 → 豫园城隍庙 → 老正兴本帮菜午餐 → 返程' }
         ],
         attractions: [
-          { name: '外滩', desc: '万国建筑博览群，夜景绝美', price: '免费', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=400&q=80' },
+          { name: '外滩', desc: '万国建筑博览群，夜景绝美', price: '免费', img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80' },
           { name: '和平饭店', desc: '费尔蒙旗下，90年代上海的象征', price: '下午茶¥298/人', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80', ctripUrl: 'https://hotels.ctrip.com/hotels/shanghai2.html' },
           { name: '武康路', desc: '武康大楼打卡，网红咖啡馆一条街', price: '免费', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80' }
         ],
@@ -1091,7 +1091,7 @@ const dramaData = [
         tips: '和平饭店下午茶提前预约；本帮菜偏甜；武康路大楼拍照人多排队；豫园老街比城隍庙便宜；蝴蝶酥下午3点后可能卖完。' }
     },
     { title: '《灌篮高手》', tag: '日剧圣地', loc: '日本 · 镰仓',
-      img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80',
+      img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80',
       desc: '樱木花道挥手的那个路口，是多少人的青春回忆。',
       spots: ['镰仓高校前站','江之岛','湘南海岸','鹤冈八幡宫'],
       route: { name: '镰仓青春 2 日线路', days: [
@@ -1104,7 +1104,7 @@ const dramaData = [
           { d: 'Day2 全天', t: '鹤冈八幡宫 → 小町通商店街吃小吃 → 镰仓大佛 → 返东京' }
         ],
         attractions: [
-          { name: '镰仓高校前站', desc: '灌篮高手片头那个路口！', price: '免费', img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=400&q=80' },
+          { name: '镰仓高校前站', desc: '灌篮高手片头那个路口！', price: '免费', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=80' },
           { name: '江之岛', desc: '海边小岛，日落绝美', price: '免费', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/kamakura436/12568.html' },
           { name: '镰仓大佛', desc: '高德院镰仓大佛，日本国宝', price: '¥300', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/kamakura436/12569.html' }
         ],
@@ -1137,7 +1137,7 @@ const dramaData = [
         attractions: [
           { name: '宏村', desc: '中国画里的乡村，月沼倒影必拍', price: '¥104', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/yixian845/4920.html' },
           { name: '木坑竹海', desc: '卧虎藏龙竹林打斗取景地', price: '¥40', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/yixian845/4921.html' },
-          { name: '塔川', desc: '秋天红叶+白墙黑瓦，中国四大秋色之一', price: '¥55', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/yixian845/4922.html' }
+          { name: '塔川', desc: '秋天红叶+白墙黑瓦，中国四大秋色之一', price: '¥55', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/yixian845/4922.html' }
         ],
         foods: [
           { name: '臭鳜鱼', desc: '徽州招牌，闻着臭吃着香', price: '¥68/份', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80' },
@@ -1170,7 +1170,7 @@ const dramaData = [
         attractions: [
           { name: '羽後町稻田', desc: '小森林取景地，秋天金黄绝美', price: '免费', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80' },
           { name: '中尊寺', desc: '平泉世界遗产，金色堂金碧辉煌', price: '¥1000', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/hiraizumi1254/12570.html' },
-          { name: '乳头温泉乡', desc: '7个秘境温泉，深山里的治愈', price: '¥800/次', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/akita437/12571.html' }
+          { name: '乳头温泉乡', desc: '7个秘境温泉，深山里的治愈', price: '¥800/次', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/akita437/12571.html' }
         ],
         foods: [
           { name: '秋田手作料理', desc: '民宿老板娘做的，用当地食材', price: '含在民宿费里', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80' },
@@ -1190,7 +1190,7 @@ function renderDrama() {
     dramaData.forEach((d, i) => {
         const aiIdx = aiGuideStore.length;
         aiGuideStore.push({ dest: d.title, city: String(d.loc || '').split('·').pop().trim(), ai: d.ai });
-        html += `<div class="drama-card"><div class="drama-img" style="background-image:url('${d.img}')" onclick="toggleDramaRoute(${i})"><span class="drama-tag">${d.tag}</span><span class="drama-expand-hint">${d.route.name} ▾</span></div><div class="drama-body"><h3 onclick="toggleDramaRoute(${i})">${d.title}</h3><div class="drama-loc"><i class="fas fa-map-marker-alt"></i> ${d.loc}</div><p>${d.desc}</p><div class="drama-spots">${d.spots.map(s => `<span class="drama-spot">${s}</span>`).join('')}</div><div class="drama-route-detail" id="dramaRoute${i}"><h5>🗺️ ${d.route.name}</h5>${d.route.days.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'dramaGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="dramaGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleDramaRoute(${i})" id="dramaToggle${i}">展开线路行程 ▾</button></div></div>`;
+        html += `<div class="drama-card"><div class="drama-img" style="background-image:url('${d.img || mylImgUrl(d.title,'sight')}')" onclick="toggleDramaRoute(${i})"><span class="drama-tag">${d.tag}</span><span class="drama-expand-hint">${d.route.name} ▾</span></div><div class="drama-body"><h3 onclick="toggleDramaRoute(${i})">${d.title}</h3><div class="drama-loc"><i class="fas fa-map-marker-alt"></i> ${d.loc}</div><p>${d.desc}</p><div class="drama-spots">${d.spots.map(s => `<span class="drama-spot">${s}</span>`).join('')}</div><div class="drama-route-detail" id="dramaRoute${i}"><h5>🗺️ ${d.route.name}</h5>${d.route.days.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'dramaGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="dramaGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleDramaRoute(${i})" id="dramaToggle${i}">展开线路行程 ▾</button></div></div>`;
     });
     document.getElementById('dramaGrid').innerHTML = html;
 }
@@ -1205,7 +1205,7 @@ function toggleDramaRoute(i) {
 //  Solo —— 展开行程 + AI路书（全部补图）
 // ============================================================
 const soloData = [
-    { city: '成都 · 美食 Solo 之旅', img: 'https://images.unsplash.com/photo-1565992441121-4367c29671e2?w=600&q=80',
+    { city: '成都 · 美食 Solo 之旅', img: 'images/cities/chengdu.jpg',
       desc: '一个人也能吃火锅！串串、冒菜、担担面，美食之都最适合独自觅食。',
       tags: ['🍜 美食友好','🚇 地铁方便','💰 消费低'],
       itinerary: [
@@ -1224,7 +1224,7 @@ const soloData = [
         ],
         attractions: [
           { name: '大熊猫繁育基地', desc: '一定要早去！熊猫早上最活跃', price: '¥55', img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/chengdu104/1354.html' },
-          { name: '宽窄巷子', desc: '老成都名片，宽巷子逛+窄巷子吃', price: '免费', img: 'https://images.unsplash.com/photo-1565992441121-4367c29671e2?w=400&q=80' },
+          { name: '宽窄巷子', desc: '老成都名片，宽巷子逛+窄巷子吃', price: '免费', img: 'images/cities/chengdu.jpg' },
           { name: '锦里古街', desc: '晚上灯笼亮起最美，小吃多但偏贵', price: '免费', img: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400&q=80' }
         ],
         foods: [
@@ -1238,7 +1238,7 @@ const soloData = [
         ],
         tips: '火锅提前大众点评取号；兔头/折耳根谨慎尝试；熊猫基地7点前到；一个人吃火锅选小火锅店或坐吧台。' }
     },
-    { city: '厦门 · 文艺 Solo 之旅', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80',
+    { city: '厦门 · 文艺 Solo 之旅', img: 'images/cities/xiamen.jpg',
       desc: '鼓浪屿的小巷、曾厝垵的咖啡馆，适合一个人散步发呆的慢生活城市。',
       tags: ['☕ 咖啡馆多','🌊 海边散步','🛡️ 安全'],
       itinerary: [
@@ -1256,7 +1256,7 @@ const soloData = [
           { d: 'Day4 上午', t: '南普陀寺 → 厦大校园 → 返程' }
         ],
         attractions: [
-          { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
+          { name: '鼓浪屿', desc: '万国建筑博物馆，小巷迷路是乐趣', price: '船票¥35', img: 'images/cities/xiamen.jpg', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4723.html', wechatUrl: 'https://mp.weixin.qq.com/s/xiamen-ferry' },
           { name: '日光岩', desc: '鼓浪屿最高点，看日落绝美', price: '¥50', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/xiamen23/4725.html' },
           { name: '南普陀寺', desc: '闽南佛教圣地，素饼必买', price: '免费（需预约）', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', wechatUrl: 'https://mp.weixin.qq.com/s/nanputuo' }
         ],
@@ -1337,7 +1337,7 @@ const soloData = [
         ],
         tips: '青旅多人间床位50-80/晚，拼饭在人民路找搭子；环洱海电动车满电约80km，骑一半就够；紫外线极强，防晒必备；沙溪古镇比大理古城更安静治愈。' }
     },
-    { city: '镰仓 · 青春 Solo 之旅', img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=600&q=80',
+    { city: '镰仓 · 青春 Solo 之旅', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80',
       desc: '跟着灌篮高手的脚步，在湘南海岸骑车，一个人也能很热血。',
       tags: ['🚃 电车文化','🌅 看海','📸 出片'],
       itinerary: [
@@ -1351,7 +1351,7 @@ const soloData = [
           { d: 'Day2 全天', t: '鹤冈八幡宫 → 小町通商店街吃小吃 → 镰仓大佛 → 返东京' }
         ],
         attractions: [
-          { name: '镰仓高校前站', desc: '灌篮高手片头路口！青春回忆杀', price: '免费', img: 'https://images.unsplash.com/photo-1503899036708-1e4489d22767?w=400&q=80' },
+          { name: '镰仓高校前站', desc: '灌篮高手片头路口！青春回忆杀', price: '免费', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=80' },
           { name: '江之岛', desc: '海边小岛，日落绝美，海鲜丼必吃', price: '免费', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/kamakura436/12568.html' },
           { name: '镰仓大佛', desc: '高德院大佛，日本国宝', price: '¥300', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', ctripUrl: 'https://you.ctrip.com/sight/kamakura436/12569.html' }
         ],
@@ -1406,7 +1406,7 @@ function renderSolo() {
     soloData.forEach((s, i) => {
         const aiIdx = aiGuideStore.length;
         aiGuideStore.push({ dest: s.city, ai: s.ai });
-        html += `<div class="solo-card"><div class="solo-card-img" style="background-image:url('${s.img}')" onclick="toggleSoloRoute(${i})"></div><div class="solo-card-body"><h4 onclick="toggleSoloRoute(${i})">${s.city}</h4><p>${s.desc}</p><div class="solo-tags">${s.tags.map(t => `<span class="solo-tag">${t}</span>`).join('')}</div><div class="solo-route-detail" id="soloRoute${i}">${s.itinerary.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<div class="solo-safety"><strong>🛡️ Solo 安全提示</strong>${s.safety}</div><button class="ai-guide-btn" onclick="toggleAIGuide(this,'soloGuide${aiIdx}',${aiIdx})" style="margin-top:12px">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="soloGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleSoloRoute(${i})" id="soloToggle${i}">展开专属行程 ▾</button></div></div>`;
+        html += `<div class="solo-card"><div class="solo-card-img" style="background-image:url('${s.img || mylImgUrl(s.city,'sight')}')" onclick="toggleSoloRoute(${i})"></div><div class="solo-card-body"><h4 onclick="toggleSoloRoute(${i})">${s.city}</h4><p>${s.desc}</p><div class="solo-tags">${s.tags.map(t => `<span class="solo-tag">${t}</span>`).join('')}</div><div class="solo-route-detail" id="soloRoute${i}">${s.itinerary.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<div class="solo-safety"><strong>🛡️ Solo 安全提示</strong>${s.safety}</div><button class="ai-guide-btn" onclick="toggleAIGuide(this,'soloGuide${aiIdx}',${aiIdx})" style="margin-top:12px">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="soloGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleSoloRoute(${i})" id="soloToggle${i}">展开专属行程 ▾</button></div></div>`;
     });
     document.getElementById('soloGrid').innerHTML = html;
 }
@@ -1488,7 +1488,7 @@ const seasonData = [
           spots: ['吐尔根杏花沟','那拉提','赛里木湖'],
           transport: '伊宁包车SUV，全程约800km',
           budget: '¥4,000-6,000/人（5天含住）' },
-        { emoji: '🍃', name: '江南采茶', img: 'https://images.unsplash.com/photo-1563822249436-93403d3b8d1f?w=600&q=80', reason: '杭州龙井/苏州碧螺春开采季',
+        { emoji: '🍃', name: '江南采茶', img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&q=80', reason: '杭州龙井/苏州碧螺春开采季',
           itinerary: ['Day1: 杭州龙井村采茶体验 → 西湖漫步','Day2: 九溪烟树徒步 → 梅家坞喝茶','Day3: 苏州东山碧螺春村 → 返程'],
           food: ['西湖醋鱼','龙井虾仁','碧螺春茶','松鼠桂鱼'],
           spots: ['龙井村','九溪烟树','东山碧螺春村'],
@@ -1502,7 +1502,7 @@ const seasonData = [
           budget: '¥2,000-3,500/人（4天含住）' }
     ]},
     { month: '5月', color: 'linear-gradient(135deg,#f59e0b,#fbbf24)', icon: '☀️', dests: [
-        { emoji: '🏞️', name: '稻城亚丁', img: 'https://images.unsplash.com/photo-1464822759844-d130286e3990?w=600&q=80', reason: '积雪初融，牛奶海开始化冰',
+        { emoji: '🏞️', name: '稻城亚丁', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80', reason: '积雪初融，牛奶海开始化冰',
           itinerary: ['Day1: 成都 → 新都桥 → 雅江','Day2: 香格里拉镇 → 亚丁景区 → 冲古寺','Day3: 牛奶海 → 五色海 → 洛绒牛场','Day4: 稻城 → 理塘 → 成都返程'],
           food: ['酥油茶','糌粑','牦牛肉火锅','青稞饼'],
           spots: ['牛奶海','五色海','洛绒牛场','新都桥'],
@@ -1514,7 +1514,7 @@ const seasonData = [
           spots: ['四姑娘山','塔公草原','新都桥','亚丁'],
           transport: '成都包车SUV，5天约2000km',
           budget: '¥4,500-6,500/人（6天含住）' },
-        { emoji: '🏖️', name: '厦门海边', img: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab1ed?w=600&q=80', reason: '避开暑期人潮，水温刚好',
+        { emoji: '🏖️', name: '厦门海边', img: 'images/cities/xiamen.jpg', reason: '避开暑期人潮，水温刚好',
           itinerary: ['Day1: 中山路 → 八市 → 沙坡尾','Day2: 鼓浪屿全天 → 日光岩日落','Day3: 曾厝垵 → 环岛路骑行 → 黄厝日出','Day4: 南普陀 → 厦大 → 返程'],
           food: ['沙茶面','海蛎煎','土笋冻','花生汤'],
           spots: ['鼓浪屿','环岛路','沙坡尾','南普陀'],
@@ -1568,7 +1568,7 @@ const seasonData = [
           spots: ['库塔海滩','乌布梯田','蓝梦岛','水明漾'],
           transport: '机场接机+Grab打车',
           budget: '¥4,500-7,000/人（含机票）' },
-        { emoji: '🏔️', name: '西藏', img: 'https://images.unsplash.com/photo-1464822759844-d130286e3990?w=600&q=80', reason: '含氧量最高的季节，适合第一次去',
+        { emoji: '🏔️', name: '西藏', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80', reason: '含氧量最高的季节，适合第一次去',
           itinerary: ['Day1: 拉萨落地 → 布达拉宫广场','Day2: 布达拉宫 → 大昭寺 → 八廓街','Day3: 羊卓雍措 → 卡若拉冰川 → 江孜','Day4: 纳木错 → 返程'],
           food: ['藏面','酥油茶','甜茶','牦牛肉火锅'],
           spots: ['布达拉宫','大昭寺','羊卓雍措','纳木错'],
@@ -1594,7 +1594,7 @@ const seasonData = [
           spots: ['葡萄沟','火焰山','交河故城','库木塔格'],
           transport: '乌鲁木齐动车到吐鲁番（1小时）',
           budget: '¥1,500-2,500/人（3天含住）' },
-        { emoji: '🏔️', name: '牛背山/四姑娘山', img: 'https://images.unsplash.com/photo-1464822759844-d130286e3990?w=600&q=80', reason: '雨季结束，看到云海概率最高',
+        { emoji: '🏔️', name: '牛背山/四姑娘山', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80', reason: '雨季结束，看到云海概率最高',
           itinerary: ['Day1: 成都 → 雅安 → 牛背山星云帐篷','Day2: 牛背山日出云海 → 下山','Day3: 四姑娘山双桥沟 → 返程'],
           food: ['雅安雅鱼','藏式火锅','牦牛肉串','酥油茶'],
           spots: ['牛背山','四姑娘山双桥沟'],
@@ -1608,13 +1608,13 @@ const seasonData = [
           spots: ['九寨沟','黄龙','树正群海','五花海'],
           transport: '成都飞九寨（1小时）或大巴（8小时）',
           budget: '¥3,500-5,500/人（5天含住）' },
-        { emoji: '🏯', name: '额济纳胡杨林', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=600&q=80', reason: '一年只黄20天，10月初最佳',
+        { emoji: '🏯', name: '额济纳胡杨林', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=80', reason: '一年只黄20天，10月初最佳',
           itinerary: ['Day1: 银川 → 额济纳旗','Day2: 胡杨林一道桥→八道桥全天','Day3: 黑城遗址 → 怪树林日落','Day4: 居延海日出 → 返程'],
           food: ['手抓羊肉','居廷蜜瓜','骆驼肉','奶酪'],
           spots: ['胡杨林','黑城','怪树林','居延海'],
           transport: '银川包车SUV，4天约1500km',
           budget: '¥4,000-6,000/人（5天含住）' },
-        { emoji: '🌾', name: '皖南秋色', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=600&q=80', reason: '塔川/宏村/篁岭晒秋',
+        { emoji: '🌾', name: '皖南秋色', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=80', reason: '塔川/宏村/篁岭晒秋',
           itinerary: ['Day1: 黄山北站 → 宏村','Day2: 塔川秋色 → 木坑竹海 → 西递','Day3: 篁岭晒秋 → 返程'],
           food: ['臭鳜鱼','毛豆腐','黄山烧饼','石耳炖鸡'],
           spots: ['宏村','塔川','篁岭','西递'],
@@ -1682,7 +1682,7 @@ function renderSeason() {
                 foods: d.food.map(n => ({ name: n, desc: '当地人气美食，就近选本地人常去的小店', price: '' })),
                 tips: d.reason + '。门票、开放时间与预约要求以景区当日公告为准。'
             } });
-            html += `<div class="season-dest" id="seasonDest-${mi}-${di}" onclick="toggleSeasonDest(${mi},${di})"><div class="season-dest-header"><div class="season-dest-img" style="background-image:url('${d.img}')">${d.emoji}</div><div class="season-dest-info"><h5>${d.name}</h5><p>${d.reason}</p></div><i class="fas fa-chevron-down season-dest-arrow"></i></div><div class="season-dest-detail"><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-map"></i> 详细线路</div>${d.itinerary.map(day => `<div class="season-detail-text" style="margin-bottom:6px">📅 ${day}</div>`).join('')}</div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-utensils"></i> 必吃美食</div><div class="season-detail-food">${d.food.map(f => `<span class="food-tag">${f}</span>`).join('')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-camera"></i> 主要景点</div><div class="season-detail-text">${d.spots.join(' · ')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-car"></i> 交通建议</div><div class="season-detail-text">${d.transport}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-yen-sign"></i> 预估预算</div><div class="season-detail-text" style="font-weight:700;color:var(--primary)">${d.budget}</div></div><button class="ai-guide-btn" onclick="event.stopPropagation();toggleAIGuide(this,'seasonGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="seasonGuide${aiIdx}" onclick="event.stopPropagation()"></div></div></div>`;
+            html += `<div class="season-dest" id="seasonDest-${mi}-${di}" onclick="toggleSeasonDest(${mi},${di})"><div class="season-dest-header"><div class="season-dest-img" style="background-image:url('${d.img || mylImgUrl(d.name,'sight')}')"></div><div class="season-dest-info"><h5>${d.name}</h5><p>${d.reason}</p></div><i class="fas fa-chevron-down season-dest-arrow"></i></div><div class="season-dest-detail"><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-map"></i> 详细线路</div>${d.itinerary.map(day => `<div class="season-detail-text" style="margin-bottom:6px">📅 ${day}</div>`).join('')}</div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-utensils"></i> 必吃美食</div><div class="season-detail-food">${d.food.map(f => `<span class="food-tag">${f}</span>`).join('')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-camera"></i> 主要景点</div><div class="season-detail-text">${d.spots.join(' · ')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-car"></i> 交通建议</div><div class="season-detail-text">${d.transport}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-yen-sign"></i> 预估预算</div><div class="season-detail-text" style="font-weight:700;color:var(--primary)">${d.budget}</div></div><button class="ai-guide-btn" onclick="event.stopPropagation();toggleAIGuide(this,'seasonGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="seasonGuide${aiIdx}" onclick="event.stopPropagation()"></div></div></div>`;
         });
         html += `</div></div>`;
     });
@@ -1743,7 +1743,7 @@ const outfitData = [
     { type: '🌆 城市/都市', img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80',
       tips: ['简约基础款（黑白灰）', '一双好走的鞋（城市走很多路）', '斜挎包（解放双手）', '薄外套（商场/地铁空调冷）', '精致配饰提升质感'],
       colors: ['🧥 黑/白/灰', '👟 小白鞋', '👜 小黑包'] },
-    { type: '🍂 秋天/红叶', img: 'https://images.unsplash.com/photo-1507371341162-763b5e4d7524?w=400&q=80',
+    { type: '🍂 秋天/红叶', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&q=80',
       tips: ['焦糖色/大地色系（和红叶呼应）', '针织毛衣+风衣', '短靴（秋天穿刚好）', '贝雷帽/围巾（氛围感）', '胶片感滤镜'],
       colors: ['🧥 焦糖/驼色/燕麦色', '👢 棕色短靴', '🧣 格纹围巾'] },
     { type: '🌧️ 江南/雨天', img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
@@ -1755,7 +1755,7 @@ function renderOutfit() {
     let html = '';
     outfitData.forEach((o, i) => {
         html += `<div class="outfit-card">
-            <div class="outfit-img" style="background-image:url('${o.img}')">
+            <div class="outfit-img" style="background-image:url('${o.img || mylImgUrl(o.type,'sight')}')">
                 <span class="outfit-type">${o.type}</span>
             </div>
             <div class="outfit-body">
@@ -2576,7 +2576,7 @@ function renderPack(city, opts) {
         if (paid) links += `<a class="gl gl-douyin" href="https://www.douyin.com/search/${encodeURIComponent(a.name)}?type=general" target="_blank" rel="noopener">🎵 抖音</a>`;
         if (needReserve) links += `<a class="gl gl-wechat" href="https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(a.name + ' 预约')}" target="_blank" rel="noopener">💬 微信预约</a>`;
         return `<div class="pack-place">
-            <img src="${mylImgUrl(a.name, 'sight')}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <img src="${a.img || mylImgUrl(a.name, 'sight')}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="pp-body">
                 <div class="pp-name">${a.name}</div>
                 <div class="pp-desc">${a.desc || ''}</div>
@@ -2587,7 +2587,7 @@ function renderPack(city, opts) {
     }).join('');
 
     const foodCards = p.foods.map(f => `<div class="pack-food">
-            <img src="${mylImgUrl(f.name, 'food')}" alt="${f.name}" loading="lazy" onerror="this.onerror=null;this.src='images/food-fallback.jpg'" />
+            <img src="${f.img || mylImgUrl(f.name, 'food')}" alt="${f.name}" loading="lazy" onerror="this.onerror=null;this.src='images/food-fallback.jpg'" />
             <div class="pf-body"><div class="pf-name">${f.name}</div><div class="pf-desc">${f.desc || ''}</div><div class="pf-price">${f.price || ''}</div></div>
         </div>`).join('');
 

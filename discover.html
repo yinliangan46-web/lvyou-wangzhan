@@ -595,14 +595,40 @@ function mylEsc(s) {
     });
 }
 
-/* ---------- 图片：无图时用生图接口，失败回落本地图 ---------- */
+/* ---------- 图片：优先本地城市图，其次按名称稳定取一张可用风景图 ---------- */
+var MYL_CITY_IMG = {
+    '成都': 'images/cities/chengdu.jpg', '西安': 'images/cities/xian.jpg',
+    '杭州': 'images/cities/hangzhou.jpg', '厦门': 'images/cities/xiamen.jpg',
+    '青岛': 'images/cities/qingdao.jpg', '长沙': 'images/cities/changsha.jpg',
+    '桂林': 'images/cities/guilin.jpg', '哈尔滨': 'images/cities/haerbin.jpg',
+    '喀什': 'images/cities/kashi.jpg'
+};
+/* 已验证可访问的风景 / 美食图池（避免全站同一张兜底图） */
+var MYL_SIGHT_POOL = [
+    'photo-1506905925346-21bda4d32df4', 'photo-1470071459604-3b5ec3a7fe05',
+    'photo-1469474968028-56623f02e42e', 'photo-1507525428034-b723cf961d3e',
+    'photo-1449824913935-59a10b8d2000', 'photo-1469854523086-cc02fe5d8800',
+    'photo-1470004914212-05527e49370b', 'photo-1528181304800-259b08848526'
+];
+var MYL_FOOD_POOL = [
+    'photo-1552611052-33e04de081de', 'photo-1553621042-f6e147245754',
+    'photo-1585032226651-759b368d7246', 'photo-1563245372-f21724e3856d'
+];
+function mylHash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
+    return h;
+}
 function mylImgUrl(name, kind) {
-    var prompt = name + '，' + (kind === 'food'
-        ? '当地特色美食实拍，热气腾腾，高清美食摄影'
-        : '真实旅游风景实景照片，自然光，高清旅行摄影');
-    return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt='
-        + encodeURIComponent(prompt)
-        + '&image_size=' + (kind === 'food' ? 'square' : 'landscape_4_3');
+    name = String(name || '旅行');
+    if (kind !== 'food') {
+        var hit = name.match(/(成都|西安|杭州|厦门|青岛|长沙|桂林|哈尔滨|喀什)/);
+        if (hit && MYL_CITY_IMG[hit[1]]) return MYL_CITY_IMG[hit[1]];
+        var pool = MYL_SIGHT_POOL;
+        return 'https://images.unsplash.com/' + pool[mylHash(name) % pool.length] + '?w=600&q=80';
+    }
+    var fpool = MYL_FOOD_POOL;
+    return 'https://images.unsplash.com/' + fpool[mylHash(name) % fpool.length] + '?w=400&q=80';
 }
 function mylPic(src, name, kind) {
     var url = src || mylImgUrl(name, kind);
@@ -847,7 +873,7 @@ function toggleAIGuide(btn, panelId, idx) {
     });
 })();
 </script>
-<script src="discover-data.js?v=20261118c"></script>
+<script src="discover-data.js?v=20261118d"></script>
 <script>
 /* =====================================================================
    初始化（在 discover-data.js 之后执行，确保函数与数据都已就绪）
