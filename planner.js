@@ -280,6 +280,34 @@
             var arr = known[city] || (known[city] = []);
             CITY_EXTRA_POIS[city].forEach(function (n) { if (arr.indexOf(n) < 0) arr.push(n); });
         });
+        /* 合并全国景点库（city-poi-bank.js），让主要城市的博物馆、书店、街区也能搜到 */
+        var BANK = window.CITY_POI_BANK || {};
+        var BANK_ALIAS = {
+            '香格里拉': '迪庆', '厦门鼓浪屿': '厦门', '阳朔': '桂林', '峨眉山': '乐山',
+            '都江堰': '成都', '稻城亚丁': '甘孜藏族自治州', '康定': '甘孜藏族自治州',
+            '西昌': '凉山彝族自治州', '恩施': '恩施土家族苗族自治州', '湘西': '湘西土家族苗族自治州',
+            '甘孜': '甘孜藏族自治州', '凉山': '凉山彝族自治州', '阿坝': '阿坝藏族羌族自治州',
+            '台湾': '台北', '青岛西海岸': '青岛'
+        };
+        /* 站点基础坐标里缺失的城市，补中心点，保证景点库能进入目录 */
+        var BANK_COORD_PATCH = {
+            '天津': [117.2009, 39.0842],
+            '武夷山': [118.0353, 27.7565],
+            '神农架': [110.6758, 31.7445],
+            '稻城亚丁': [100.3290, 28.4360]
+        };
+        window.ALL_CITY_COORDS = window.ALL_CITY_COORDS || {};
+        Object.keys(BANK_COORD_PATCH).forEach(function (city) {
+            if (!window.ALL_CITY_COORDS[city]) window.ALL_CITY_COORDS[city] = BANK_COORD_PATCH[city];
+        });
+        Object.keys(BANK).forEach(function (city) {
+            var arr = known[city] || (known[city] = []);
+            (BANK[city] || []).forEach(function (n) { if (arr.indexOf(n) < 0) arr.push(n); });
+            var near = BANK_ALIAS[city];
+            if (!window.ALL_CITY_COORDS[city] && near && window.ALL_CITY_COORDS[near]) {
+                window.ALL_CITY_COORDS[city] = window.ALL_CITY_COORDS[near];
+            }
+        });
         var R = window.REAL_POI_COORDS || {};
         var S = window.CITY_SPOT_COORDS || {};   // city-spot-coords.js（自动生成的高精度坐标）
         var centers = window.ALL_CITY_COORDS || {};
@@ -507,6 +535,32 @@
         return 'https://you.ctrip.com/searchsite/food/?query=' + encodeURIComponent(q);
     }
 
+    /* ---------- 图片 / 详情页 ---------- */
+    function poiImgUrl(name, kind, city) {
+        if (typeof window.mylPOIImg === 'function') return window.mylPOIImg(name, kind, city);
+        return kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
+    }
+    function detailUrl(name, city, kind) {
+        return 'spot-detail.html?type=' + (kind === 'food' ? 'food' : 'spot') +
+            '&name=' + encodeURIComponent(name) +
+            (city ? '&city=' + encodeURIComponent(city) : '') +
+            '&back=' + encodeURIComponent('index.html#planner');
+    }
+    function foodOf(city, i) {
+        /* 优先用城市百科里的本地菜，比目录里的“美食街”更适合做午/晚餐 */
+        var cityFoods = (window.CITY_FOODS || {})[city] || [];
+        if (cityFoods.length) return cityFoods[(i || 0) % cityFoods.length];
+        var cat = CATALOG[city];
+        var foods = cat ? cat.items.filter(function (item) {
+            return (item.cat || []).indexOf('food') >= 0 && !/街|巷|夜市|市场|古镇|古城|广场|一带/.test(item.name);
+        }) : [];
+        if (!foods.length && cat) {
+            foods = cat.items.filter(function (item) { return (item.cat || []).indexOf('food') >= 0; });
+        }
+        if (!foods.length) return city + '特色小吃';
+        return foods[(i || 0) % foods.length].name;
+    }
+
     function buildPlan() {
         if (state.loop) {
             var lp = (window.LOOP_ROUTES || []).filter(function (x) { return x.id === state.loop.id; })[0];
@@ -614,9 +668,15 @@
                         desc: poiDesc(city, p),
                         poi: p
                     });
-                    if (i === 0) blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city) });
+                    if (i === 0) blocks.push({
+                        time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(city),
+                        food: foodOf(city, 0), city: city
+                    });
                 });
-                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city) });
+                blocks.push({
+                    time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city),
+                    food: foodOf(city, 1), city: city
+                });
                 var lastPoi = poiArr[poiArr.length - 1];
                 blocks.push({
                     time: '21:00', type: 'hotel',
@@ -631,7 +691,7 @@
                             time: '10:00', type: 'free', title: city + '深度漫游 · 自由活动',
                             desc: '睡到自然醒，逛老城 / 咖啡馆 / 补拍照片' + (spare ? '；如果还想玩，可以去「' + spare.name + '」' : '')
                         },
-                        { time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city) },
+                        { time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city), food: foodOf(city, 1), city: city },
                         { time: '21:00', type: 'hotel', title: '入住 · ' + city + '市中心', hotelCity: city }
                     ];
                 }
@@ -753,7 +813,9 @@
                 if (t.tip) desc.push('提示 ' + t.tip);
                 return {
                     time: t.time || '', type: type, title: act, desc: desc.join(' · '),
-                    hotelCity: type === 'hotel' ? city : null
+                    hotelCity: type === 'hotel' ? city : null,
+                    food: type === 'meal' ? foodOf(city, /晚餐/.test(act) ? 1 : 0) : '',
+                    city: type === 'meal' ? city : ''
                 };
             });
             if (!blocks.length) {
@@ -840,14 +902,10 @@
     }
 
     function lunchName(city) {
-        var cat = CATALOG[city];
-        var food = cat ? cat.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; })[0] : null;
-        return (food ? food.name + '一带' : city + '老城区') + ' · 人均 ¥45-70';
+        return foodOf(city, 0) + '一带 · 人均 ¥45-70';
     }
     function dinnerName(city) {
-        var cat = CATALOG[city];
-        var food = cat ? cat.items.filter(function (i) { return (i.cat || []).indexOf('food') >= 0; })[0] : null;
-        return (food ? food.name : city + '特色小吃街') + ' · 人均 ¥60-100';
+        return foodOf(city, 1) + ' · 人均 ¥60-100';
     }
 
     /* ==================== 推荐/自动挑选 ==================== */
@@ -971,6 +1029,7 @@
             '</div>' +
             '<div class="pl-map-wrap"><div id="plMap" class="pl-map"></div><div class="pl-map-legend" id="plMapLegend"></div></div>' +
             '<div class="pl-days" id="plDaysList">' + plan.daysList.map(renderDay).join('') + '</div>' +
+            servicesHtml() +
             '<div class="pl-cost">' +
             '<div class="pl-cost-title"><i class="fas fa-receipt" style="color:#2563eb;margin-right:6px"></i>费用估算（' + plan.people + ' 人 / 全程）</div>' +
             '<div class="pl-cost-grid">' +
@@ -998,15 +1057,82 @@
         return '<div class="pl-cost-cell">' + esc(label) + '<b>¥' + num(v) + '</b></div>';
     }
 
+    function servicesHtml() {
+        var items = [
+            { i: 'fa-user-tie', t: '当地私导', d: '中文深度讲解 · 免排队动线' },
+            { i: 'fa-car-side', t: '包车接送', d: '机场/高铁站接送 · 每日专车' },
+            { i: 'fa-camera-retro', t: '旅拍跟拍', d: '半天跟拍 · 精修出片' },
+            { i: 'fa-utensils', t: '餐厅预订', d: '本地口碑馆子提前订位' },
+            { i: 'fa-ticket', t: '门票代订', d: '付费景点/演出统一代订' },
+            { i: 'fa-headset', t: '1v1 行程管家', d: '出行中随时改行程' }
+        ];
+        return '<div class="pl-services">' +
+            '<div class="pl-services-title"><i class="fas fa-concierge-bell"></i> 个性化服务 · 可随行程一起定制</div>' +
+            '<div class="pl-services-grid">' + items.map(function (s) {
+                return '<a class="pl-service" href="#contact"><i class="fas ' + s.i + '"></i>' +
+                    '<b>' + esc(s.t) + '</b><span>' + esc(s.d) + '</span></a>';
+            }).join('') + '</div>' +
+            '<div class="pl-services-note">把交通、门票、餐厅和当地服务一起交给 MYL，出票前统一确认，行程中随时可调。</div>' +
+            '</div>';
+    }
+
     function renderDay(d) {
         var color = DAY_COLORS[(d.dayNo - 1) % DAY_COLORS.length];
+        /* 取节点对应的真实景点/美食名（环线行程的节点没有 poi 对象，靠标题反查） */
+        function blockName(b) {
+            if (b.type === 'poi') {
+                if (b.poi && b.poi.name) return b.poi.name;
+                for (var i = 0; i < d.pois.length; i++) {
+                    if (b.title.indexOf(d.pois[i].name) >= 0) return d.pois[i].name;
+                }
+                return '';
+            }
+            if (b.type === 'meal') return b.food || '';
+            return '';
+        }
+        function mediaHtml(name, kind) {
+            if (!name) return '';
+            var src = poiImgUrl(name, kind, d.city);
+            var fb = kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
+            return '<a class="pl-tl-media' + (kind === 'food' ? ' is-food' : '') + '" href="' +
+                detailUrl(name, d.city, kind) + '" target="_blank" rel="noopener" title="查看' + esc(name) + '详情">' +
+                '<img src="' + esc(src) + '" alt="' + esc(name) + '" loading="lazy" decoding="async"' +
+                ' onerror="this.onerror=null;this.src=\'' + fb + '\'"></a>';
+        }
+        function chipsHtml(b, name) {
+            if (!name) return '';
+            var kind = b.type === 'meal' ? 'food' : 'spot';
+            var out = '<a class="pl-chip pl-chip-detail" href="' + detailUrl(name, d.city, kind) +
+                '" target="_blank" rel="noopener">' + (kind === 'food' ? '美食详情' : '景点详情') + '</a>';
+            if (kind === 'food') {
+                out += '<a class="pl-chip pl-chip-ctrip" href="' + ctripFood(name) +
+                    '" target="_blank" rel="noopener">携程找店</a>';
+            } else {
+                var wx = window._wechatReserveBtn ? window._wechatReserveBtn(name) : '';
+                if (wx) {
+                    /* 需实名预约的景点：只给微信小程序入口 */
+                    out += wx;
+                } else if (ticketOf(name) > 0) {
+                    var kw = encodeURIComponent(name);
+                    out += '<a class="pl-chip pl-chip-ctrip" href="https://you.ctrip.com/searchsite/scenic/?query=' + kw +
+                        '" target="_blank" rel="noopener">携程购票</a>' +
+                        '<a class="pl-chip pl-chip-douyin" href="https://www.douyin.com/search/' + kw + encodeURIComponent(' 门票') +
+                        '" target="_blank" rel="noopener">抖音看票</a>';
+                }
+            }
+            return '<div class="pl-tl-links">' + out + '</div>';
+        }
+
         var blocks = d.blocks.map(function (b) {
             var ico = b.type === 'meal' ? 'fa-utensils' : (b.type === 'hotel' ? 'fa-hotel' : (b.type === 'free' ? 'fa-mug-hot' : 'fa-location-dot'));
             var cls = b.type === 'meal' ? ' is-meal' : (b.type === 'hotel' ? ' is-hotel' : '');
+            var name = blockName(b);
             var link = b.hotelCity ? ' <a href="https://hotels.ctrip.com/hotels/list?keyword=' + encodeURIComponent(b.hotelCity) + '" target="_blank" rel="noopener" style="color:#2563eb;font-size:.76rem;text-decoration:none">携程查房价 →</a>' : '';
             return '<div class="pl-tl-item' + cls + '"><div class="pl-tl-time">' + esc(b.time) + '</div>' +
+                mediaHtml(name, b.type === 'meal' ? 'food' : 'sight') +
                 '<div class="pl-tl-body"><div class="pl-tl-title"><i class="fas ' + ico + ' pl-tl-ico"></i>' + esc(b.title) + link + '</div>' +
-                (b.desc ? '<div class="pl-tl-desc">' + esc(b.desc) + '</div>' : '') + '</div></div>';
+                (b.desc ? '<div class="pl-tl-desc">' + esc(b.desc) + '</div>' : '') +
+                chipsHtml(b, name) + '</div></div>';
         }).join('');
 
         var legHtml = '';
@@ -1017,7 +1143,9 @@
                 : 'https://trains.ctrip.com/TrainBooking/SearchTrain.aspx?from=' + encodeURIComponent(c.from) + '&to=' + encodeURIComponent(c.to);
             legHtml = '<div class="pl-transport"><i class="fas ' + (c.mode === '飞机' ? 'fa-plane' : 'fa-train') + '"></i>' +
                 esc(c.from) + ' → ' + esc(c.to) + ' · ' + esc(c.mode) + ' 约 ' + c.hours.toFixed(1) + ' 小时 · ' + num(c.km) + ' km · 参考 ¥' + num(c.cost) +
-                '<a href="' + url + '" target="_blank" rel="noopener">携程订票 →</a></div>';
+                '<a href="' + url + '" target="_blank" rel="noopener">携程订票 →</a>' +
+                (c.mode === '飞机' ? '' : '<a href="https://www.12306.cn/index/" target="_blank" rel="noopener">12306 抢票 →</a>') +
+                '</div>';
         }
 
         return '<div class="pl-day">' +

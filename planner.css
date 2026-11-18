@@ -357,7 +357,9 @@
     flex-wrap: wrap;
 }
 .pl-transport i { color: #f59e0b; }
-.pl-transport a { margin-left: auto; color: #b45309; font-size: .78rem; text-decoration: none; border-bottom: 1px dashed #f3c98b; }
+.pl-transport a { margin-left: 0; color: #b45309; font-size: .78rem; text-decoration: none; border-bottom: 1px dashed #f3c98b; }
+.pl-transport a:first-of-type { margin-left: auto; }
+.pl-transport a + a { margin-left: 10px; }
 .pl-extra {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -433,12 +435,81 @@
     font-weight: 700;
     padding-top: 2px;
 }
-.pl-tl-body { min-width: 0; }
+.pl-tl-media {
+    flex: 0 0 84px;
+    width: 84px;
+    height: 58px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #eef3fc;
+    display: block;
+}
+.pl-tl-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s ease;
+}
+.pl-tl-media:hover img { transform: scale(1.06); }
+.pl-tl-media.is-food { flex-basis: 72px; width: 72px; height: 54px; }
+.pl-tl-body { flex: 1; min-width: 0; }
 .pl-tl-title { font-size: .9rem; color: #1e293b; font-weight: 600; }
 .pl-tl-desc { font-size: .78rem; color: #8494ab; margin-top: 3px; line-height: 1.55; }
 .pl-tl-ico { color: #93c5fd; margin-right: 6px; }
 .pl-tl-item.is-meal .pl-tl-ico { color: #fbbf24; }
 .pl-tl-item.is-hotel .pl-tl-ico { color: #a78bfa; }
+.pl-tl-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+.pl-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .74rem;
+    line-height: 1;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 4px 10px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    transition: background .2s ease, color .2s ease;
+}
+.pl-chip:hover { background: #eef2f7; }
+.pl-chip-detail { border-color: #dbe6fb; background: #f2f7ff; color: #2563eb; }
+.pl-chip-ctrip { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+.pl-chip-douyin { border-color: #fbcfe8; background: #fdf2f8; color: #be185d; }
+
+/* 个性化服务 */
+.pl-services {
+    margin-top: 18px;
+    border: 1px dashed #dbe6fb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #fbfdff;
+}
+.pl-services-title { font-size: .86rem; font-weight: 700; color: #334155; margin-bottom: 10px; }
+.pl-services-title i { color: #2563eb; margin-right: 6px; }
+.pl-services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.pl-service {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #e8eefc;
+    text-decoration: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.pl-service:hover { border-color: #bfd3f8; box-shadow: 0 4px 14px rgba(37, 99, 235, .08); }
+.pl-service i { color: #2563eb; font-size: .9rem; }
+.pl-service b { font-size: .82rem; color: #1e293b; }
+.pl-service span { font-size: .72rem; color: #8494ab; line-height: 1.45; }
+.pl-services-note { font-size: .74rem; color: #9aa8bd; margin-top: 10px; line-height: 1.6; }
+@media (max-width: 720px) {
+    .pl-tl-media { flex-basis: 68px; width: 68px; height: 50px; }
+    .pl-tl-media.is-food { flex-basis: 60px; width: 60px; height: 46px; }
+}
 
 /* 费用/提示 */
 .pl-cost {

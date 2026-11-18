@@ -1754,6 +1754,52 @@ body.modal-open {
     }
 }
 
+/* 平板：顶部导览收紧字号与间距，保证一行放得下不拥挤 */
+@media (min-width: 769px) and (max-width: 1180px) {
+    .header {
+        padding: 12px 0;
+    }
+
+    .header .container {
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 1.25rem;
+        gap: 6px;
+    }
+
+    .logo i {
+        font-size: 1.4rem;
+    }
+
+    .nav {
+        gap: 14px;
+    }
+
+    .nav a {
+        font-size: 0.82rem;
+    }
+
+    .header-actions {
+        gap: 8px;
+    }
+
+    .header-actions .btn {
+        display: none;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 920px) {
+    .nav {
+        gap: 10px;
+    }
+
+    .nav a {
+        font-size: 0.78rem;
+    }
+}
+
 @media (max-width: 768px) {
     .section {
         padding: 60px 0;
