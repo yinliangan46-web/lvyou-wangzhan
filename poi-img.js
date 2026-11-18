@@ -44,7 +44,14 @@
         tea: 'photo-1576092768241-dec231879fc3',          /* 茶杯 */
         hotelRoom: 'photo-1582719478250-c89cae4dc85b',    /* 酒店房间 */
         noodles: 'photo-1585032226651-759b368d7246',      /* 面条 */
-        tokyoStreet: 'photo-1590559899731-a382839e5549'   /* 日本街头招牌夜景 */
+        tokyoStreet: 'photo-1590559899731-a382839e5549',  /* 日本街头招牌夜景 */
+        sweetSour: 'photo-1525755662778-989d0524087e',    /* 糖醋鸡块配米饭 */
+        fishDish: 'photo-1476224203421-9ac39bcb3327',     /* 铁板鱼/酱汁热菜 */
+        friedRice: 'photo-1626804475297-41608ea09aeb',    /* 炒饭 */
+        ricePan: 'photo-1512058564366-18510be2db19',      /* 铁锅炒饭 */
+        noodleSoup: 'photo-1555126634-323283e090fa',      /* 汤面 */
+        noodleDark: 'photo-1526318896980-cf78c088247c',   /* 深色汤面 */
+        ramenShrimp: 'photo-1569718212165-3a8278d5f624'   /* 鲜虾拉面 */
     };
 
     var POOLS = {
@@ -59,6 +66,9 @@
         nature: [P.meadow, P.rapeseed, P.sakura, P.hillGreen],
         food: [P.noodles, P.dumplings, P.shrimpPlate, P.ramen, P.sushi],
         cnFood: [P.noodles, P.dumplings, P.shrimpPlate],
+        meatDish: [P.sweetSour, P.fishDish],
+        riceDish: [P.friedRice, P.ricePan],
+        noodleDish: [P.noodles, P.noodleSoup, P.noodleDark, P.ramenShrimp],
         jpFood: [P.ramen, P.sushi],
         drink: [P.tea],
         hotel: [P.hotelRoom, P.poolHotel, P.hostel],
@@ -173,7 +183,18 @@
         var isJP = /日本|东京|京都|大阪|镰仓|秋田|北海道|奈良/.test(String(name) + String(city || ''));
         var pool = POOLS[cat] || POOLS.nature;
         if (cat === 'street') pool = isJP ? [P.tokyoStreet, P.japanLantern] : [P.nightMarket];
-        if (cat === 'food') pool = isJP ? POOLS.jpFood : POOLS.cnFood;
+        if (cat === 'food') {
+            if (isJP) pool = POOLS.jpFood;
+            else {
+                var nm = String(name);
+                if (/面|粉|米线|乌冬|拉面/.test(nm)) pool = POOLS.noodleDish;
+                else if (/炒饭|盖饭|拌饭|抓饭|米饭|饭$/.test(nm)) pool = POOLS.riceDish;
+                else if (/虾|蟹|蛤|海鲜|贝/.test(nm)) pool = [P.shrimpPlate, P.ramenShrimp];
+                else if (/茶|咖啡|酸奶|啤酒|奶茶|冰棍|汁|酒/.test(nm)) pool = [P.tea];
+                else if (/火锅|炖|焖|烤|肉|鸡|鱼|肠|排|血旺|芋|豆|串/.test(nm)) pool = POOLS.meatDish;
+                else pool = [P.dumplings, P.noodles];
+            }
+        }
         var id = pool[hash(String(name) + cat) % pool.length];
         return url(id, kind);
     }
