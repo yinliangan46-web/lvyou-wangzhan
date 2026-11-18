@@ -806,9 +806,9 @@ const personalityTypes = {
     }
 };
 
-let currentQ = 0, answers = [];
+let currentQ = 0, answers = [], quizLocked = false;
 function startQuiz() {
-    currentQ = 0; answers = [];
+    currentQ = 0; answers = []; quizLocked = false;
     document.getElementById('quizStart').style.display = 'none';
     document.getElementById('quizResult').style.display = 'none';
     document.getElementById('quizPlaying').style.display = 'block';
@@ -829,10 +829,16 @@ function showQuestion() {
     });
 }
 function selectOption(score, el) {
+    if (quizLocked) return;
+    quizLocked = true;
     document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
-    answers.push(score);
-    setTimeout(() => { currentQ++; if (currentQ < quizQuestions.length) showQuestion(); else showResult(); }, 250);
+    answers[currentQ] = score;
+    setTimeout(() => {
+        currentQ++;
+        quizLocked = false;
+        if (currentQ < quizQuestions.length) showQuestion(); else showResult();
+    }, 250);
 }
 function showResult() {
     document.getElementById('quizPlaying').style.display = 'none';
@@ -1839,7 +1845,7 @@ function showAftermathQuestion(idx) {
     document.getElementById('aftermathOptions').innerHTML = optsHtml;
 }
 function answerAftermath(idx, score) {
-    aftermathAnswers.push(score);
+    aftermathAnswers[idx] = score;
     if (idx < aftermathQuestions.length - 1) {
         showAftermathQuestion(idx + 1);
     } else {
@@ -1849,9 +1855,9 @@ function answerAftermath(idx, score) {
 function showAftermathResult() {
     document.getElementById('aftermathPlaying').style.display = 'none';
     document.getElementById('aftermathResult').style.display = 'block';
-    const total = aftermathAnswers.reduce((a, b) => a + b, 0);
-    const maxScore = aftermathQuestions.length * 3;
-    const percent = Math.round(total / maxScore * 100);
+    const total = aftermathAnswers.reduce((a, b) => a + (b || 0), 0);
+    const maxScore = aftermathQuestions.reduce((s, q) => s + Math.max(...q.options.map(o => o.score)), 0);
+    const percent = Math.min(100, Math.round(total / maxScore * 100));
     let emoji, title, desc, reco;
     if (percent >= 70) {
         emoji = '🦋'; title = '重度旅行后遗症';
@@ -2136,7 +2142,7 @@ function showMatchQuestion(idx) {
     document.getElementById('matchOptions').innerHTML = optsHtml;
 }
 function answerMatch(idx, score) {
-    matchAnswers.push(score);
+    matchAnswers[idx] = score;
     if (idx < matchQuestions.length - 1) {
         showMatchQuestion(idx + 1);
     } else {
