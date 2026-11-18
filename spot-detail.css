@@ -228,6 +228,15 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .sd-acc details[open] { border-left: 2px solid var(--sd-accent); }
 .sd-acc p { margin-top: 9px; font-size: 13px; line-height: 1.9; color: var(--sd-ink2); }
 
+/* ---------- 城市时间线 ---------- */
+.sd-cityhist { margin-top: 16px; padding: 16px 18px; border: 1px solid var(--sd-line); background: rgba(20, 32, 48, .025); }
+.sd-cityhist > b { display: block; font-family: var(--sd-serif); font-size: 14px; color: var(--sd-ink); }
+.sd-cityhist > p { margin-top: 7px; font-size: 13px; line-height: 1.85; color: var(--sd-ink2); }
+.sd-cityhist ul { list-style: none; margin-top: 12px; display: grid; gap: 8px; }
+.sd-cityhist li { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px; padding-top: 8px; border-top: 1px dashed var(--sd-line); }
+.sd-cityhist li b { font-size: 11.5px; font-weight: 500; color: var(--sd-accent); }
+.sd-cityhist li span { font-size: 12.5px; line-height: 1.75; color: var(--sd-ink2); }
+
 /* ---------- 点单话术 ---------- */
 .sd-phrases { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .sd-phrases span { padding: 6px 12px; border: 1px dashed rgba(164, 90, 30, .4); border-radius: 999px; background: rgba(244, 231, 215, .4); color: var(--sd-accent); font-size: 12px; }
