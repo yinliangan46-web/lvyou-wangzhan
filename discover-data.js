@@ -2025,7 +2025,7 @@ function generateHidden(city, el) {
     let html = `<div class="hidden-result-card">
         <h4>🎲 ${city} · 本地人才知道的隐藏玩法</h4>`;
     randomSpots.forEach(s => {
-        const img = typeof mylImgUrl === 'function' ? mylImgUrl(s.name, 'sight') : 'images/city-fallback.jpg';
+        const img = typeof mylImgUrl === 'function' ? mylImgUrl(s.name, 'sight', city) : 'images/city-fallback.jpg';
         html += `<div class="hidden-spot">
             <img class="hidden-spot-img" src="${img}" alt="${s.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="hidden-spot-body">
@@ -2576,7 +2576,7 @@ function renderPack(city, opts) {
         if (paid) links += `<a class="gl gl-douyin" href="https://www.douyin.com/search/${encodeURIComponent(a.name)}?type=general" target="_blank" rel="noopener">🎵 抖音</a>`;
         if (needReserve) links += `<a class="gl gl-wechat" href="https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(a.name + ' 预约')}" target="_blank" rel="noopener">💬 微信预约</a>`;
         return `<div class="pack-place">
-            <img src="${mylImgUrl(a.name, 'sight')}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <img src="${mylImgUrl(a.name, 'sight', city)}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="pp-body">
                 <div class="pp-name">${a.name}</div>
                 <div class="pp-desc">${a.desc || ''}</div>
@@ -2594,7 +2594,7 @@ function renderPack(city, opts) {
     const stopCount = p.attrs.length;
     return `<div class="pack-card" id="pack_${seq}">
         <div class="pack-head" onclick="togglePack(${seq})">
-            <img class="pack-cover" src="${mylImgUrl(city + ' 城市风景', 'sight')}" alt="${city}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <img class="pack-cover" src="${mylImgUrl(city + ' 城市风景', 'sight', city)}" alt="${city}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="pack-head-info">
                 <div class="pack-city">${opts.label || city}</div>
                 <div class="pack-theme">${p.theme}</div>

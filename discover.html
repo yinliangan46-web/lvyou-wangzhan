@@ -595,36 +595,10 @@ function mylEsc(s) {
     });
 }
 
-/* ---------- 图片：优先本地城市图，其次按名称稳定取一张可用风景图 ---------- */
-var MYL_CITY_IMG = {
-    '成都': 'images/cities/chengdu.jpg', '西安': 'images/cities/xian.jpg',
-    '杭州': 'images/cities/hangzhou.jpg', '厦门': 'images/cities/xiamen.jpg',
-    '青岛': 'images/cities/qingdao.jpg', '长沙': 'images/cities/changsha.jpg',
-    '桂林': 'images/cities/guilin.jpg', '哈尔滨': 'images/cities/haerbin.jpg',
-    '喀什': 'images/cities/kashi.jpg'
-};
-/* 已验证可访问的风景 / 美食图池（避免全站同一张兜底图） */
-var MYL_SIGHT_POOL = [
-    'photo-1506905925346-21bda4d32df4', 'photo-1470071459604-3b5ec3a7fe05',
-    'photo-1469474968028-56623f02e42e', 'photo-1507525428034-b723cf961d3e',
-    'photo-1449824913935-59a10b8d2000', 'photo-1469854523086-cc02fe5d8800',
-    'photo-1470004914212-05527e49370b', 'photo-1528181304800-259b08848526'
-];
-var MYL_FOOD_POOL = [
-    'photo-1552611052-33e04de081de', 'photo-1553621042-f6e147245754',
-    'photo-1585032226651-759b368d7246', 'photo-1563245372-f21724e3856d'
-];
-function mylHash(s) {
-    var h = 0;
-    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
-    return h;
-}
-function mylImgUrl(name, kind) {
+/* ---------- 图片：poi-img.js 按「景点/美食 + 所属城市」解析真实照片 ---------- */
+function mylImgUrl(name, kind, city) {
     name = String(name || '旅行');
-    if (typeof mylPOIImg === 'function') {
-        if (kind !== 'food' && /城市风景|都市|城市$/.test(name)) return mylPOIImg('城市街景', 'sight');
-        return mylPOIImg(name, kind);
-    }
+    if (typeof mylPOIImg === 'function') return mylPOIImg(name, kind, city);
     return kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
 }
 function mylPic(src, name, kind) {
@@ -780,7 +754,7 @@ function renderGuide(item) {
             var links = '<a class="gl gl-ctrip" href="' + mylEsc(ctripSightUrl(name, a.ctripUrl)) + '" target="_blank" rel="noopener">🎫 携程' + (paid ? '门票' : '详情') + '</a>';
             if (paid) links += '<a class="gl gl-douyin" href="' + douyinUrl(name) + '" target="_blank" rel="noopener">🎵 抖音看票</a>';
             if (reserve) links += '<a class="gl gl-wechat" href="' + mylEsc(a.wechatUrl || wechatUrl(name)) + '" target="_blank" rel="noopener">💬 微信预约</a>';
-            html += '<div class="guide-card">' + mylPic(mylImgUrl(name, 'sight'), name, 'sight')
+            html += '<div class="guide-card">' + mylPic(mylImgUrl(name, 'sight', city), name, 'sight')
                 + '<div class="guide-card-body"><div class="guide-card-top"><b>' + mylEsc(name) + '</b>'
                 + (a.price ? '<span class="guide-price' + (paid ? ' paid' : '') + '">' + mylEsc(a.price) + '</span>' : '') + '</div>'
                 + (a.desc ? '<p>' + mylEsc(a.desc) + '</p>' : '')
@@ -870,7 +844,7 @@ function toggleAIGuide(btn, panelId, idx) {
     });
 })();
 </script>
-<script src="poi-img.js?v=5"></script>
+<script src="poi-img.js?v=6"></script>
 <script src="discover-data.js?v=20261118e"></script>
 <script>
 /* =====================================================================
