@@ -51,7 +51,13 @@
         ricePan: 'photo-1512058564366-18510be2db19',      /* 铁锅炒饭 */
         noodleSoup: 'photo-1555126634-323283e090fa',      /* 汤面 */
         noodleDark: 'photo-1526318896980-cf78c088247c',   /* 深色汤面 */
-        ramenShrimp: 'photo-1569718212165-3a8278d5f624'   /* 鲜虾拉面 */
+        ramenShrimp: 'photo-1569718212165-3a8278d5f624',  /* 鲜虾拉面 */
+        winterTree: 'photo-1483664852095-d6cc6870702d',   /* 雪原落日 */
+        ribPlatter: 'photo-1555939594-58d7cb561ad1',      /* 烤肉拼盘 */
+        roastRibs: 'photo-1544025162-d76694265947',       /* 烤肋排 */
+        riceShrimp: 'photo-1559847844-5315695dadae',      /* 海鲜盖饭 */
+        dimsum: 'photo-1534422298391-e4f8c172dddb',       /* 点心拼盘 */
+        restaurant: 'photo-1552566626-52f8b828add9'       /* 餐厅内景 */
     };
 
     var POOLS = {
@@ -72,7 +78,12 @@
         jpFood: [P.ramen, P.sushi],
         drink: [P.tea],
         hotel: [P.hotelRoom, P.poolHotel, P.hostel],
+        restaurant: [P.restaurant, P.poolHotel],
         snow: [P.snowMountain, P.starrySnow, P.ski],
+        winter: [P.winterTree, P.ski, P.starrySnow, P.snowMountain],
+        bbq: [P.ribPlatter, P.roastRibs, P.sweetSour],
+        riceBowl: [P.riceShrimp, P.friedRice, P.ricePan],
+        dimsum: [P.dimsum, P.dumplings],
         wildlife: [P.panda, P.toucan],
         japan: [P.japanLantern, P.kyotoPagoda, P.tokyoStreet],
         thai: [P.thaiTemple],
@@ -100,7 +111,7 @@
         '茶卡盐湖': 'lake', '白沙湖': 'lake', '赛里木湖': 'lake', '喀纳斯湖': 'lake',
         '莫高窟': 'desert', '鸣沙山月牙泉': 'desert', '雅丹魔鬼城': 'desert',
         '玉门关': 'desert', '张掖七彩丹霞': 'desert',
-        '冰雪大世界': 'snow', '太阳岛': 'snow', '雪山': 'snow',
+        '冰雪大世界': 'winter', '太阳岛': 'winter', '冰雪世界': 'winter', '雪山': 'snow',
         '华山': 'mountain', '崂山': 'mountain', '苍山': 'mountain',
         '岳麓山': 'mountain', '橘子洲': 'mountain', '龙脊梯田': 'nature',
         '西溪湿地': 'nature', '龙井村': 'nature',
@@ -115,7 +126,11 @@
         '土笋冻': 'food', '花生汤': 'food', '袋装原浆': 'drink',
         '超级文和友': 'street', '颐和园': 'lake', '卤煮火烧': 'food',
         '香妃园': 'nature', '大雁塔': 'temple', '栈桥': 'sea',
-        '八达岭长城': 'mountain', '桂林米粉': 'food', '都江堰': 'lake'
+        '八达岭长城': 'mountain', '桂林米粉': 'food', '都江堰': 'lake',
+        '锅包肉': 'meatDish', '锅巴土豆': 'meatDish', '冷锅串串': 'meatDish',
+        '老火锅': 'meatDish', '铁锅炖': 'meatDish', '烤羊排': 'bbq',
+        '手抓饭': 'riceBowl', '红肠': 'bbq', '甜水面': 'noodleDish',
+        '马迭尔冰棍': 'drink'
     };
 
     /* 城市 → 图片气质（决定取哪个池） */
@@ -188,7 +203,9 @@
             else {
                 var nm = String(name);
                 if (/面|粉|米线|乌冬|拉面/.test(nm)) pool = POOLS.noodleDish;
-                else if (/炒饭|盖饭|拌饭|抓饭|米饭|饭$/.test(nm)) pool = POOLS.riceDish;
+                else if (/炒饭|盖饭|拌饭|抓饭|米饭|饭$/.test(nm)) pool = POOLS.riceBowl;
+                else if (/肠|烤|腊|排骨|羊排|牛排|肉串|肉$/.test(nm)) pool = POOLS.bbq;
+                else if (/饺|馍|饼|粑|烧卖|小笼|馄饨|团|糕|点心/.test(nm)) pool = POOLS.dimsum;
                 else if (/虾|蟹|蛤|海鲜|贝/.test(nm)) pool = [P.shrimpPlate, P.ramenShrimp];
                 else if (/茶|咖啡|酸奶|啤酒|奶茶|冰棍|汁|酒/.test(nm)) pool = [P.tea];
                 else if (/火锅|炖|焖|烤|肉|鸡|鱼|肠|排|血旺|芋|豆|串/.test(nm)) pool = POOLS.meatDish;
