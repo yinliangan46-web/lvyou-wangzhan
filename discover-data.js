@@ -1856,7 +1856,7 @@ function showAftermathResult() {
     if (percent >= 70) {
         emoji = '🦋'; title = '重度旅行后遗症';
         desc = '你的身体已经回到了日常，但你的灵魂还在远方。你走在路上会突然恍惚，看到机票就想买，朋友聊天三句不离旅行。这不是病，这是旅行上瘾的表现。';
-        reco = { place: '冰岛', reason: '你需要一次真正的"荒野治愈"，在极光下把灵魂找回来' };
+        reco = { place: '敦煌', reason: '你需要一次真正的"荒野治愈"，在戈壁与石窟前把灵魂找回来' };
     } else if (percent >= 40) {
         emoji = '🐌'; title = '中度旅行后遗症';
         desc = '你已经开始恢复日常了，但旅行的余韵还在。你会偶尔刷到那个地方的视频就停下来，会和朋友翻出上次的照片看半天。这是正常的，慢慢就好了。';
@@ -1868,7 +1868,7 @@ function showAftermathResult() {
     } else {
         emoji = '🤖'; title = '无旅行后遗症';
         desc = '你是一个非常理性的人，旅行对你来说就是换个地方睡觉吃饭。回来就回来，不会有任何情绪波动。你可能需要一次真正打动你的旅行。';
-        reco = { place: '新疆', reason: '你需要一次震撼到失语的旅行，重新唤醒对世界的好奇' };
+        reco = { place: '西安', reason: '你需要一次震撼到失语的旅行，重新唤醒对世界的好奇' };
     }
     document.getElementById('aftermathResult').innerHTML = `
         <div class="aftermath-result">
@@ -1882,11 +1882,13 @@ function showAftermathResult() {
                 <div style="font-size:.95rem"><strong>${reco.place}</strong> — ${reco.reason}</div>
                 <div style="margin-top:12px"><a href="index.html#planner" class="btn btn-sm">让 MYL 帮你规划 →</a></div>
             </div>
+            <div id="aftermathRoutes"></div>
             <div style="margin-top:20px">
                 <button class="btn btn-outline btn-sm" onclick="startAftermath()">重新测试</button>
             </div>
         </div>
     `;
+    try { renderPersonaRoutes('aftermath', title, 'aftermathRoutes'); } catch (e) { console.error(e); }
 }
 
 // ============================================================
@@ -1943,16 +1945,77 @@ const hiddenCities = {
     ]
 };
 
+// 扩展更多著名城市（隐藏玩法）
+Object.assign(hiddenCities, {
+    '西安': [
+        { name: '大皮院的小巷', desc: '不是回民街主街，是大皮院，本地人吃泡馍的地方。', tip: '晚上7点去，人少' },
+        { name: '湘子庙街的咖啡馆', desc: '城墙根下的老街，有独立咖啡馆和旧书店。', tip: '下午去，光线好' },
+        { name: '书院门的旧书摊', desc: '碑林旁边的老街，有旧书、毛笔和拓片。', tip: '周末摊子最多' },
+        { name: '半坡国际艺术区', desc: '旧纺织厂改造，有展览和小剧场。', tip: '周六下午有市集' },
+        { name: '骡马市夜市', desc: '本地年轻人吃的夜市，不是游客街。', tip: '晚上9点后最热闹' },
+        { name: '兴庆宫公园的清晨', desc: '本地人打太极、唱秦腔的公园，免费。', tip: '早上6点半去' }
+    ],
+    '杭州': [
+        { name: '馒头山社区', desc: '老杭州的生活区，有菜市场和苍蝇馆子。', tip: '早上8点去吃早点' },
+        { name: '茅家埠', desc: '不是西湖边，是西湖上游的村子，人少水清。', tip: '坐公交到茅家埠站' },
+        { name: '小河直街', desc: '运河边的老街区，有咖啡馆和手作店。', tip: '傍晚去，灯亮起来' },
+        { name: '中国美院象山校区', desc: '王澍设计的校园，建筑本身就是展品。', tip: '工作日可进，带身份证' },
+        { name: '大马弄的早餐', desc: '本地人排队的早餐街，葱包桧5块。', tip: '早上7点去' },
+        { name: '九溪烟树的溪水', desc: '不是西湖，是山里的小溪，夏天踩水。', tip: '从九溪公交站走进去' }
+    ],
+    '青岛': [
+        { name: '大学路的黄县路', desc: '老舍故居旁的小路，有独立咖啡馆。', tip: '下午3点去' },
+        { name: '团岛农贸市场', desc: '本地人买海鲜的市场，买完旁边加工。', tip: '早上最鲜' },
+        { name: '小麦岛公园', desc: '不是栈桥，是本地人野餐看日落的草地。', tip: '日落前一小时去' },
+        { name: '纺织谷', desc: '旧纺织厂改造的艺术区，有展览和市集。', tip: '周末有市集' },
+        { name: '中山路劈柴院后巷', desc: '主街是游客的，后巷才是本地人的小馆。', tip: '从河北路绕进去' },
+        { name: '浮山后的野路', desc: '本地人爬的野山，能俯瞰整个青岛。', tip: '穿运动鞋，别走夜路' }
+    ],
+    '哈尔滨': [
+        { name: '老道外中华巴洛克', desc: '不是中央大街，是真正的老哈尔滨街区。', tip: '上午去，人少' },
+        { name: '红专街早市', desc: '本地人买菜吃早点的市场，冻梨冻柿子。', tip: '早上7点去' },
+        { name: '果戈里书店', desc: '老建筑里的书店，有俄文旧书。', tip: '下午去喝咖啡' },
+        { name: '群力音乐公园', desc: '松花江边的公园，本地人遛弯看江。', tip: '傍晚去看落日' },
+        { name: '师大夜市', desc: '学生价夜市，烤冷面5块。', tip: '晚上6点后' },
+        { name: '中华巴洛克的老澡堂', desc: '百年澡堂，体验东北搓澡文化。', tip: '下午人少' }
+    ],
+    '长沙': [
+        { name: '化龙池的夜', desc: '不是解放西，是化龙池的小酒吧，本地人。', tip: '晚上10点后' },
+        { name: '西园北里', desc: '老长沙的公馆区，有咖啡馆和旧宅。', tip: '下午去，安静' },
+        { name: '后湖艺术园', desc: '湖边的艺术区，有展览和独立书店。', tip: '周末有市集' },
+        { name: '四方坪夜市', desc: '本地人吃的夜市，不是游客街。', tip: '晚上8点后' },
+        { name: '潮宗街', desc: '老街区改造，有书店和咖啡馆。', tip: '下午去' },
+        { name: '岳麓山后山的小路', desc: '不是正门，是后山的野路，人少。', tip: '从湖大后山进' }
+    ],
+    '上海': [
+        { name: '武康路与安福路', desc: '梧桐区，本地人遛狗买咖啡的地方。', tip: '工作日下午去' },
+        { name: '永康路的咖啡', desc: '一条街上十家咖啡馆，都是本地客。', tip: '下午2点去' },
+        { name: 'M50创意园', desc: '苏州河边的旧厂房，有画廊和工作室。', tip: '工作日人少' },
+        { name: '定海桥的旧弄堂', desc: '杨浦滨江的老弄堂，有展览和社区食堂。', tip: '周末去' },
+        { name: '昌里路夜市', desc: '浦东本地人的夜市，不是城隍庙。', tip: '晚上7点后' },
+        { name: '苏州河步道', desc: '从外白渡桥走到长寿路，人少景好。', tip: '傍晚去' }
+    ],
+    '桂林': [
+        { name: '訾洲公园看象鼻山', desc: '不用买象鼻山门票，公园里能看到全景。', tip: '早上8点去' },
+        { name: '东西巷后街', desc: '不是正街，是后街的小馆和旧书店。', tip: '傍晚去' },
+        { name: '大圩古镇', desc: '不是阳朔，是大圩，本地人赶集的古镇。', tip: '赶集日更热闹' },
+        { name: '乌桕滩', desc: '漓江边的野滩，秋天红叶，本地人野餐。', tip: '11月最好看' },
+        { name: '尚水街夜市', desc: '本地人吃的夜市，米粉5块。', tip: '晚上7点后' },
+        { name: '会仙湿地的玻璃田', desc: '不是龙脊，是会仙的田野，人少。', tip: '清晨有雾最美' }
+    ]
+});
+
 function renderHiddenCities() {
     const cities = Object.keys(hiddenCities);
-    const html = cities.map(c => `<div class="hidden-city-btn" onclick="generateHidden('${c}')">${c}</div>`).join('');
+    const html = cities.map(c => `<div class="hidden-city-btn" onclick="generateHidden('${c}', this)">${c}</div>`).join('');
     document.getElementById('hiddenCityGrid').innerHTML = html;
 }
-function generateHidden(city) {
+
+function generateHidden(city, el) {
     document.querySelectorAll('.hidden-city-btn').forEach(b => b.classList.remove('selected'));
-    event.target.classList.add('selected');
-    const spots = hiddenCities[city];
-    const randomSpots = spots.sort(() => Math.random() - 0.5).slice(0, 3);
+    (el || window.event && window.event.target || { classList: { add() { } } }).classList.add('selected');
+    const spots = hiddenCities[city] || [];
+    const randomSpots = spots.slice().sort(() => Math.random() - 0.5).slice(0, 3);
     let html = `<div class="hidden-result-card">
         <h4>🎲 ${city} · 本地人才知道的隐藏玩法</h4>`;
     randomSpots.forEach(s => {
@@ -1966,16 +2029,18 @@ function generateHidden(city) {
             </div>
         </div>`;
     });
-    html += `<div style="text-align:center;margin-top:16px">
-        <button class="btn btn-outline btn-sm" onclick="generateHidden('${city}')">🔄 再生成一组</button>
-    </div></div>`;
+    html += `<div style="text-align:center;margin:16px 0">
+        <button class="btn btn-outline btn-sm" onclick="generateHidden('${city}', this)">🔄 再生成一组</button>
+    </div>`;
+    if (typeof renderPack === 'function' && ROUTE_LIBRARY && ROUTE_LIBRARY[city]) {
+        html += `<div class="hidden-route-title">🗺️ ${city} · 3 天隐藏线路（点开看地图与时间轴）</div>
+            ${renderPack(city, { label: city + ' · 深度玩法线路' })}`;
+    }
+    html += `</div>`;
     document.getElementById('hiddenResult').innerHTML = html;
     document.getElementById('hiddenResult').style.display = 'block';
 }
 
-// ============================================================
-//  新项目3：旅行遗憾博物馆
-// ============================================================
 let regrets = [
     { city: '冰岛', text: '待了7天，只看到10分钟极光，还是在云缝里。', likes: 23 },
     { city: '京都', text: '那家米其林寿司店提前一个月预约都没约上，在门口哭了。', likes: 18 },
@@ -2149,11 +2214,13 @@ function showMatchResult() {
                 <h4>📊 你的旅伴匹配度</h4>
                 ${compatHtml}
             </div>
+            <div id="matchRoutes"></div>
             <div style="margin-top:20px">
                 <button class="btn btn-outline btn-sm" onclick="startMatch()">重新测试</button>
             </div>
         </div>
     `;
+    try { renderPersonaRoutes('match', topType, 'matchRoutes', title); } catch (e) { console.error(e); }
 }
 
 // ============================================================
@@ -2209,6 +2276,406 @@ function getTransportInfo(destName) {
         flightUrl: 'https://flights.ctrip.com/',
         trainUrl: 'https://www.12306.cn/index/'
     };
+}
+
+// ============================================================
+//  MYL 精选线路库（后遗症 / 旅伴匹配 / 隐藏玩法 共用）
+//  每条线路：地图 + 时间轴 + 景点(图/价/预订) + 美食(图) + 交通
+// ============================================================
+const ROUTE_LIBRARY = {
+    '大理': {
+        theme: '风花雪月的慢生活', lat: 25.606, lng: 100.267, hotel: '洱海门白族民宿 ¥320/晚',
+        attrs: [
+            { name: '大理古城', price: '免费', desc: '人民路、洋人街随便逛', lat: 25.693, lng: 100.161, day: 1, time: '14:00' },
+            { name: '洱海生态廊道', price: '免费', desc: '骑行看苍山洱海', lat: 25.72, lng: 100.19, day: 1, time: '17:00' },
+            { name: '喜洲古镇', price: '免费', desc: '白族早市与稻田', lat: 25.856, lng: 100.127, day: 2, time: '09:30' },
+            { name: '苍山洗马潭', price: '¥282（含索道）', desc: '索道直上4000米', lat: 25.68, lng: 100.11, day: 2, time: '14:00' },
+            { name: '沙溪古镇', price: '免费', desc: '茶马古道上最后的集市', lat: 26.32, lng: 99.85, day: 3, time: '09:30' }
+        ],
+        foods: [
+            { name: '喜洲粑粑', desc: '现烤，甜咸都好吃', price: '¥10', day: 1, time: '12:00' },
+            { name: '白族石板烧', desc: '自己动手烤', price: '¥68', day: 1, time: '18:30' },
+            { name: '乳扇沙琪玛', desc: '奶香十足的白族零食', price: '¥15', day: 2, time: '12:00' },
+            { name: '洱海酸辣鱼', desc: '酸木瓜煮鱼', price: '¥88', day: 2, time: '18:30' }
+        ]
+    },
+    '成都': {
+        theme: '巴适得板的市井成都', lat: 30.5728, lng: 104.0668, hotel: '春熙路亚朵 ¥380/晚',
+        attrs: [
+            { name: '宽窄巷子', price: '免费', desc: '老成都街巷肌理', lat: 30.669, lng: 104.055, day: 1, time: '09:30' },
+            { name: '人民公园鹤鸣茶社', price: '¥30 茶位', desc: '竹椅盖碗茶，本地人打牌', lat: 30.657, lng: 104.057, day: 1, time: '14:00' },
+            { name: '大熊猫繁育基地', price: '¥55', desc: '早上看熊猫吃竹子', lat: 30.735, lng: 104.145, day: 2, time: '08:30' },
+            { name: '都江堰', price: '¥80', desc: '两千年水利工程', lat: 31.008, lng: 103.606, day: 2, time: '14:00' },
+            { name: '望江楼公园', price: '免费', desc: '竹林里喝茶发呆', lat: 30.63, lng: 104.09, day: 3, time: '09:30' }
+        ],
+        foods: [
+            { name: '锅巴土豆', desc: '建设巷5块一份', price: '¥8', day: 1, time: '12:00' },
+            { name: '冷锅串串', desc: '本地人排队那家', price: '¥45', day: 1, time: '18:30' },
+            { name: '甜水面', desc: '筷子粗的面，甜辣', price: '¥12', day: 2, time: '12:00' },
+            { name: '老火锅', desc: '九宫格牛油锅', price: '¥98', day: 2, time: '18:30' }
+        ]
+    },
+    '西安': {
+        theme: '十三朝古都的烟火', lat: 34.3416, lng: 108.9398, hotel: '钟楼附近 ¥300/晚',
+        attrs: [
+            { name: '西安城墙', price: '¥54', desc: '永宁门租车骑一圈', lat: 34.261, lng: 108.941, day: 1, time: '15:00' },
+            { name: '回民街', price: '免费', desc: '大皮院比主街好吃', lat: 34.265, lng: 108.94, day: 1, time: '18:30' },
+            { name: '秦始皇兵马俑', price: '¥120', desc: '一定要请讲解', lat: 34.385, lng: 109.278, day: 2, time: '08:30' },
+            { name: '大雁塔', price: '¥40', desc: '北广场音乐喷泉', lat: 34.219, lng: 108.964, day: 2, time: '15:00' },
+            { name: '华山', price: '¥160', desc: '长空栈道看日出', lat: 34.48, lng: 110.08, day: 3, time: '07:30' }
+        ],
+        foods: [
+            { name: '肉夹馍', desc: '腊汁肉现剁', price: '¥12', day: 1, time: '12:00' },
+            { name: '羊肉泡馍', desc: '自己掰馍才香', price: '¥38', day: 2, time: '12:00' },
+            { name: '甑糕', desc: '枣泥糯米，早上吃', price: '¥8', day: 1, time: '09:00' },
+            { name: '葫芦鸡', desc: '西安名菜，皮酥', price: '¥88', day: 2, time: '18:30' }
+        ]
+    },
+    '杭州': {
+        theme: '一半西湖一半烟火', lat: 30.2741, lng: 120.1551, hotel: '龙井路茶山民宿 ¥420/晚',
+        attrs: [
+            { name: '西湖', price: '免费', desc: '断桥—白堤—孤山', lat: 30.243, lng: 120.15, day: 1, time: '09:00' },
+            { name: '灵隐寺', price: '¥75', desc: '飞来峰石窟造像', lat: 30.24, lng: 120.102, day: 1, time: '14:00' },
+            { name: '龙井村', price: '免费', desc: '茶山上喝一杯明前', lat: 30.221, lng: 120.104, day: 2, time: '10:00' },
+            { name: '西溪湿地', price: '¥80', desc: '摇橹船穿芦苇荡', lat: 30.267, lng: 120.07, day: 2, time: '14:30' },
+            { name: '千岛湖', price: '¥130', desc: '环湖骑行一天', lat: 29.60, lng: 119.04, day: 3, time: '09:00' }
+        ],
+        foods: [
+            { name: '片儿川', desc: '雪菜笋片面', price: '¥22', day: 1, time: '12:00' },
+            { name: '西湖醋鱼', desc: '楼外楼经典', price: '¥128', day: 1, time: '18:30' },
+            { name: '龙井虾仁', desc: '茶香清口', price: '¥168', day: 2, time: '12:00' },
+            { name: '葱包桧', desc: '巷口小吃', price: '¥10', day: 2, time: '16:00' }
+        ]
+    },
+    '厦门': {
+        theme: '海风、老街和沙茶味', lat: 24.4798, lng: 118.0894, hotel: '沙坡尾设计民宿 ¥360/晚',
+        attrs: [
+            { name: '鼓浪屿', price: '船票¥35', desc: '早上第一班上岛', lat: 24.447, lng: 118.067, day: 1, time: '09:00' },
+            { name: '沙坡尾艺术西区', price: '免费', desc: '老渔港改造的艺术区', lat: 24.44, lng: 118.08, day: 1, time: '15:00' },
+            { name: '黄厝海滩', price: '免费', desc: '本地人看日出的海滩', lat: 24.43, lng: 118.12, day: 2, time: '05:30' },
+            { name: '南普陀寺', price: '免费', desc: '素饼周末才有', lat: 24.44, lng: 118.09, day: 2, time: '10:00' },
+            { name: '集美学村', price: '免费', desc: '嘉庚建筑，人少', lat: 24.57, lng: 118.10, day: 3, time: '09:30' }
+        ],
+        foods: [
+            { name: '沙茶面', desc: '乌糖沙茶面', price: '¥18', day: 1, time: '12:00' },
+            { name: '八市海鲜加工', desc: '自己买自己挑', price: '¥120', day: 1, time: '18:30' },
+            { name: '土笋冻', desc: '配芥末酱油', price: '¥15', day: 2, time: '12:00' },
+            { name: '花生汤', desc: '甜口收尾', price: '¥8', day: 2, time: '16:00' }
+        ]
+    },
+    '青岛': {
+        theme: '红瓦绿树，啤酒蛤蜊', lat: 36.0671, lng: 120.3826, hotel: '八大关海景房 ¥400/晚',
+        attrs: [
+            { name: '栈桥', price: '免费', desc: '清晨看海鸥', lat: 36.06, lng: 120.32, day: 1, time: '09:00' },
+            { name: '八大关', price: '免费', desc: '万国建筑群', lat: 36.05, lng: 120.35, day: 1, time: '14:00' },
+            { name: '小麦岛', price: '免费', desc: '日落草坪', lat: 36.05, lng: 120.42, day: 1, time: '18:00' },
+            { name: '崂山', price: '¥95', desc: '海上第一名山', lat: 36.16, lng: 120.63, day: 2, time: '08:30' },
+            { name: '青岛啤酒博物馆', price: '¥60', desc: '含两杯原浆', lat: 36.07, lng: 120.35, day: 2, time: '15:30' }
+        ],
+        foods: [
+            { name: '排骨米饭', desc: '青岛人的快餐', price: '¥28', day: 1, time: '12:00' },
+            { name: '辣炒蛤蜊', desc: '配袋装原浆', price: '¥38', day: 1, time: '19:00' },
+            { name: '鲅鱼水饺', desc: '皮薄馅大', price: '¥32', day: 2, time: '12:00' },
+            { name: '袋装原浆', desc: '塑料袋装才是正宗', price: '¥15', day: 2, time: '17:00' }
+        ]
+    },
+    '重庆': {
+        theme: '8D魔幻与麻辣江湖', lat: 29.5630, lng: 106.5516, hotel: '解放碑江景房 ¥360/晚',
+        attrs: [
+            { name: '李子坝轻轨站', price: '免费', desc: '观景台看轻轨穿楼', lat: 29.55, lng: 106.53, day: 1, time: '09:30' },
+            { name: '山城步道', price: '免费', desc: '老巷子里的火锅味', lat: 29.55, lng: 106.57, day: 1, time: '14:00' },
+            { name: '洪崖洞', price: '免费', desc: '晚上8点灯全亮', lat: 29.562, lng: 106.579, day: 1, time: '19:30' },
+            { name: '磁器口', price: '免费', desc: '从后门进人少', lat: 29.58, lng: 106.45, day: 2, time: '09:30' },
+            { name: '南山一棵树', price: '¥30', desc: '俯瞰整个渝中半岛', lat: 29.55, lng: 106.60, day: 2, time: '19:00' }
+        ],
+        foods: [
+            { name: '重庆小面', desc: '二两豌杂', price: '¥10', day: 1, time: '08:00' },
+            { name: '酸辣粉', desc: '好又来', price: '¥12', day: 1, time: '12:00' },
+            { name: '老火锅', desc: '九宫格毛肚鸭肠', price: '¥90', day: 1, time: '18:00' },
+            { name: '毛血旺', desc: '麻辣重口', price: '¥58', day: 2, time: '12:00' }
+        ]
+    },
+    '长沙': {
+        theme: '不夜城的辣与甜', lat: 28.2282, lng: 112.9388, hotel: '五一广场 ¥300/晚',
+        attrs: [
+            { name: '橘子洲', price: '免费', desc: '青年毛泽东雕像', lat: 28.19, lng: 112.96, day: 1, time: '09:00' },
+            { name: '岳麓山', price: '免费', desc: '爱晚亭与书院', lat: 28.18, lng: 112.94, day: 1, time: '14:00' },
+            { name: '太平老街', price: '免费', desc: '晚上最热闹', lat: 28.19, lng: 112.97, day: 1, time: '18:30' },
+            { name: '湖南博物院', price: '免费（需预约）', desc: '马王堆汉墓', lat: 28.21, lng: 112.99, day: 2, time: '09:00' },
+            { name: '超级文和友', price: '免费', desc: '复古市井空间', lat: 28.19, lng: 112.98, day: 2, time: '17:00' }
+        ],
+        foods: [
+            { name: '臭豆腐', desc: '黑色经典', price: '¥10', day: 1, time: '12:00' },
+            { name: '茶颜悦色', desc: '幽兰拿铁', price: '¥18', day: 1, time: '15:00' },
+            { name: '口味虾', desc: '夜宵主角', price: '¥98', day: 1, time: '20:00' },
+            { name: '长沙米粉', desc: '早上嗦一碗', price: '¥12', day: 2, time: '08:00' }
+        ]
+    },
+    '北京': {
+        theme: '皇城根下的四季', lat: 39.9042, lng: 116.4074, hotel: '前门四合院 ¥450/晚',
+        attrs: [
+            { name: '故宫博物院', price: '¥60', desc: '提前7天预约', lat: 39.916, lng: 116.397, day: 1, time: '08:30' },
+            { name: '景山公园', price: '¥2', desc: '万春亭看故宫全景', lat: 39.923, lng: 116.396, day: 1, time: '13:00' },
+            { name: '南锣鼓巷', price: '免费', desc: '钻进胡同里', lat: 39.937, lng: 116.403, day: 1, time: '16:00' },
+            { name: '八达岭长城', price: '¥40', desc: '早班车避开人流', lat: 40.36, lng: 116.02, day: 2, time: '08:00' },
+            { name: '颐和园', price: '¥30', desc: '昆明湖长廊', lat: 39.999, lng: 116.275, day: 2, time: '14:00' }
+        ],
+        foods: [
+            { name: '卤煮火烧', desc: '老北京重口', price: '¥25', day: 1, time: '12:00' },
+            { name: '铜锅涮肉', desc: '聚宝源排队也值', price: '¥120', day: 1, time: '18:30' },
+            { name: '豆汁焦圈', desc: '勇敢者早餐', price: '¥12', day: 2, time: '08:00' },
+            { name: '牛街小吃', desc: '清真一条街', price: '¥35', day: 2, time: '12:00' }
+        ]
+    },
+    '上海': {
+        theme: '梧桐区与摩天楼之间', lat: 31.2304, lng: 121.4737, hotel: '静安设计酒店 ¥480/晚',
+        attrs: [
+            { name: '武康路', price: '免费', desc: '梧桐树下的老洋房', lat: 31.21, lng: 121.44, day: 1, time: '09:30' },
+            { name: '外滩', price: '免费', desc: '18:00 亮灯最出片', lat: 31.24, lng: 121.49, day: 1, time: '18:00' },
+            { name: '豫园', price: '¥40', desc: '老城厢与九曲桥', lat: 31.227, lng: 121.492, day: 2, time: '09:30' },
+            { name: '朱家角', price: '免费', desc: '地铁可达的江南水乡', lat: 31.11, lng: 121.06, day: 2, time: '14:00' },
+            { name: '上海迪士尼', price: '¥475', desc: '早鸟入园刷项目', lat: 31.14, lng: 121.66, day: 3, time: '08:30' }
+        ],
+        foods: [
+            { name: '生煎包', desc: '大壶春', price: '¥15', day: 1, time: '08:00' },
+            { name: '本帮红烧肉', desc: '浓油赤酱', price: '¥68', day: 1, time: '12:00' },
+            { name: '蟹壳黄', desc: '酥到掉渣', price: '¥8', day: 2, time: '10:00' },
+            { name: '小笼包', desc: '先咬一小口', price: '¥35', day: 2, time: '12:00' }
+        ]
+    },
+    '桂林': {
+        theme: '山水之间的慢船', lat: 25.2736, lng: 110.2900, hotel: '阳朔遇龙河民宿 ¥330/晚',
+        attrs: [
+            { name: '象鼻山', price: '免费', desc: '桂林城徽', lat: 25.26, lng: 110.30, day: 1, time: '09:00' },
+            { name: '东西巷', price: '免费', desc: '老城墙下的街区', lat: 25.28, lng: 110.30, day: 1, time: '15:00' },
+            { name: '漓江竹筏', price: '¥215', desc: '杨堤—兴坪精华段', lat: 24.95, lng: 110.45, day: 2, time: '08:30' },
+            { name: '阳朔西街', price: '免费', desc: '晚上最有烟火气', lat: 24.78, lng: 110.49, day: 2, time: '19:00' },
+            { name: '龙脊梯田', price: '¥80', desc: '金坑大寨看日落', lat: 25.75, lng: 110.13, day: 3, time: '08:00' }
+        ],
+        foods: [
+            { name: '桂林米粉', desc: '卤菜粉加锅烧', price: '¥12', day: 1, time: '12:00' },
+            { name: '啤酒鱼', desc: '阳朔招牌', price: '¥88', day: 1, time: '18:30' },
+            { name: '荔浦芋扣肉', desc: '粉糯香', price: '¥58', day: 2, time: '12:00' },
+            { name: '恭城油茶', desc: '又苦又香', price: '¥15', day: 2, time: '16:00' }
+        ]
+    },
+    '敦煌': {
+        theme: '大漠、石窟与星空', lat: 40.1421, lng: 94.6619, hotel: '鸣沙山下客栈 ¥300/晚',
+        attrs: [
+            { name: '莫高窟', price: '¥238', desc: '需提前预约，含数字电影', lat: 40.04, lng: 94.80, day: 1, time: '09:00' },
+            { name: '鸣沙山月牙泉', price: '¥110', desc: '骑骆驼看日落', lat: 40.09, lng: 94.68, day: 1, time: '17:00' },
+            { name: '雅丹魔鬼城', price: '¥120', desc: '戈壁里的风蚀城堡', lat: 40.50, lng: 93.10, day: 2, time: '07:30' },
+            { name: '玉门关', price: '¥40', desc: '春风不度玉门关', lat: 40.36, lng: 93.87, day: 2, time: '14:00' },
+            { name: '沙洲夜市', price: '免费', desc: '杏皮水配烤串', lat: 40.14, lng: 94.66, day: 2, time: '20:00' }
+        ],
+        foods: [
+            { name: '驴肉黄面', desc: '敦煌第一名吃', price: '¥25', day: 1, time: '12:00' },
+            { name: '杏皮水', desc: '解暑酸甜', price: '¥8', day: 1, time: '16:00' },
+            { name: '烤羊排', desc: '夜市必点', price: '¥88', day: 1, time: '20:00' },
+            { name: '胡杨焖饼', desc: '面饼吸满肉汁', price: '¥45', day: 2, time: '12:00' }
+        ]
+    },
+    '哈尔滨': {
+        theme: '冰城、教堂与俄式面包', lat: 45.8038, lng: 126.5340, hotel: '中央大街俄式酒店 ¥420/晚',
+        attrs: [
+            { name: '中央大街', price: '免费', desc: '面包石路面', lat: 45.77, lng: 126.62, day: 1, time: '09:30' },
+            { name: '圣索菲亚教堂', price: '¥20', desc: '拜占庭穹顶', lat: 45.77, lng: 126.62, day: 1, time: '14:00' },
+            { name: '冰雪大世界', price: '¥328', desc: '17:30 入园看亮灯', lat: 45.78, lng: 126.58, day: 1, time: '17:30' },
+            { name: '太阳岛', price: '¥30', desc: '雪博会与松花江', lat: 45.79, lng: 126.60, day: 2, time: '09:30' },
+            { name: '老道外', price: '免费', desc: '中华巴洛克街区', lat: 45.77, lng: 126.65, day: 2, time: '14:00' }
+        ],
+        foods: [
+            { name: '锅包肉', desc: '酸甜脆', price: '¥48', day: 1, time: '12:00' },
+            { name: '红肠', desc: '秋林里道斯', price: '¥20', day: 1, time: '15:00' },
+            { name: '铁锅炖', desc: '大鹅配贴饼子', price: '¥88', day: 1, time: '19:00' },
+            { name: '马迭尔冰棍', desc: '零下20度也吃', price: '¥10', day: 2, time: '16:00' }
+        ]
+    },
+    '喀什': {
+        theme: '西域古城与帕米尔', lat: 39.4704, lng: 75.9898, hotel: '古城民宿 ¥260/晚',
+        attrs: [
+            { name: '喀什古城', price: '免费', desc: '开城仪式10:30', lat: 39.47, lng: 75.99, day: 1, time: '09:30' },
+            { name: '艾提尕尔清真寺', price: '¥45', desc: '新疆最大清真寺', lat: 39.47, lng: 75.98, day: 1, time: '14:00' },
+            { name: '香妃园', price: '¥30', desc: '维吾尔建筑与歌舞', lat: 39.49, lng: 76.02, day: 2, time: '10:00' },
+            { name: '白沙湖', price: '¥50', desc: '帕米尔高原的蓝', lat: 38.75, lng: 75.06, day: 2, time: '14:00' },
+            { name: '帕米尔高原', price: '免费', desc: '慕士塔格峰下', lat: 38.50, lng: 75.00, day: 3, time: '08:00' }
+        ],
+        foods: [
+            { name: '烤包子', desc: '馕坑现烤', price: '¥5', day: 1, time: '12:00' },
+            { name: '手抓饭', desc: '羊肉胡萝卜', price: '¥35', day: 1, time: '18:30' },
+            { name: '缸子肉', desc: '搪瓷缸炖羊肉', price: '¥25', day: 2, time: '12:00' },
+            { name: '馕坑肉', desc: '外焦里嫩', price: '¥68', day: 2, time: '18:30' }
+        ]
+    }
+};
+
+// 后遗症 / 旅伴匹配 → 线路推荐
+const AFTERMATH_ROUTES = {
+    '重度旅行后遗症': ['敦煌', '喀什', '哈尔滨'],
+    '中度旅行后遗症': ['大理', '杭州', '厦门'],
+    '轻度旅行后遗症': ['成都', '长沙', '重庆'],
+    '无旅行后遗症': ['西安', '北京', '上海']
+};
+const MATCH_ROUTES = {
+    'solo': ['敦煌', '大理', '哈尔滨', '桂林'],
+    'foodie': ['成都', '长沙', '重庆', '西安'],
+    'aesthetic': ['厦门', '青岛', '杭州'],
+    'social': ['上海', '北京', '重庆', '长沙'],
+    'slow': ['大理', '桂林', '杭州']
+};
+const MATCH_ROUTE_ALIAS = {
+    solo: 'solo', wild: 'solo', present: 'solo',
+    foodie: 'foodie', city: 'foodie',
+    aesthetic: 'aesthetic', photographer: 'aesthetic',
+    social: 'social', follower: 'social', friend: 'social', family: 'social', couple: 'social',
+    slow: 'slow', planner: 'slow', lazy: 'slow', luxury: 'slow', free: 'slow', casual: 'slow'
+};
+
+let packSeq = 0;
+const __packGeo = {};
+
+function renderPack(city, opts) {
+    opts = opts || {};
+    const p = ROUTE_LIBRARY[city];
+    if (!p) return '';
+    const seq = ++packSeq;
+    __packGeo[seq] = {
+        center: [p.lat, p.lng],
+        stops: p.attrs.map(a => [a.lat, a.lng, a.name])
+    };
+    const nodes = [];
+    p.attrs.forEach(a => nodes.push({ day: a.day, time: a.time, kind: 'attr', data: a }));
+    p.foods.forEach(f => nodes.push({ day: f.day, time: f.time, kind: 'food', data: f }));
+    const days = {};
+    nodes.forEach(n => { (days[n.day] = days[n.day] || []).push(n); });
+    const dayNums = Object.keys(days).map(Number).sort((a, b) => a - b);
+
+    let timeline = '';
+    dayNums.forEach(dn => {
+        timeline += `<div class="pack-day"><div class="pack-day-title">Day ${dn}</div>`;
+        days[dn].sort((a, b) => a.time < b.time ? -1 : 1).forEach(n => {
+            timeline += `<div class="pack-node">
+                <span class="pack-time">${n.time}</span>
+                <span class="pack-line"><i class="pack-dot ${n.kind}"></i></span>
+                <span class="pack-text">${n.data.name}<em>${n.data.desc || ''}</em></span>
+            </div>`;
+        });
+        timeline += '</div>';
+    });
+
+    const attrCards = p.attrs.map(a => {
+        const paid = a.price && !/免费|无需/.test(a.price);
+        const needReserve = /博物馆|故宫|兵马俑|温泉|索道|轮渡|游船|竹筏|国家公园|大峡谷|雪山|剧院|迪士尼|博物院/.test(a.name);
+        let links = `<a class="gl" href="https://you.ctrip.com/searchsite/?query=${encodeURIComponent(a.name)}" target="_blank" rel="noopener">🎫 携程</a>`;
+        if (paid) links += `<a class="gl gl-douyin" href="https://www.douyin.com/search/${encodeURIComponent(a.name)}?type=general" target="_blank" rel="noopener">🎵 抖音</a>`;
+        if (needReserve) links += `<a class="gl gl-wechat" href="https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(a.name + ' 预约')}" target="_blank" rel="noopener">💬 微信预约</a>`;
+        return `<div class="pack-place">
+            <img src="${mylImgUrl(a.name, 'sight')}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <div class="pp-body">
+                <div class="pp-name">${a.name}</div>
+                <div class="pp-desc">${a.desc || ''}</div>
+                <div class="pp-price">${a.price || '门票见携程'}</div>
+                <div class="pp-links">${links}</div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const foodCards = p.foods.map(f => `<div class="pack-food">
+            <img src="${mylImgUrl(f.name, 'food')}" alt="${f.name}" loading="lazy" onerror="this.onerror=null;this.src='images/food-fallback.jpg'" />
+            <div class="pf-body"><div class="pf-name">${f.name}</div><div class="pf-desc">${f.desc || ''}</div><div class="pf-price">${f.price || ''}</div></div>
+        </div>`).join('');
+
+    const stopCount = p.attrs.length;
+    return `<div class="pack-card" id="pack_${seq}">
+        <div class="pack-head" onclick="togglePack(${seq})">
+            <img class="pack-cover" src="${mylImgUrl(city + ' 城市风景', 'sight')}" alt="${city}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <div class="pack-head-info">
+                <div class="pack-city">${opts.label || city}</div>
+                <div class="pack-theme">${p.theme}</div>
+                <div class="pack-meta">3 天 2 晚 · ${stopCount} 个景点 · 含地图/时间轴/美食/交通</div>
+            </div>
+            <span class="pack-arrow">›</span>
+        </div>
+        <div class="pack-body">
+            <div class="pack-map" id="pmap_${seq}"></div>
+            <div class="pack-block"><div class="pack-block-title">🕘 每日时间轴</div>${timeline}</div>
+            <div class="pack-block"><div class="pack-block-title">🏞️ 必去景点</div><div class="pack-grid">${attrCards}</div></div>
+            <div class="pack-block"><div class="pack-block-title">🍜 必吃美食</div><div class="pack-grid food">${foodCards}</div></div>
+            <div class="pack-block pack-transport">
+                <div class="pack-block-title">🚄 大交通</div>
+                <div class="pack-dep">
+                    <label>出发城市</label>
+                    <input id="pdep_${seq}" data-seq="${seq}" placeholder="例如：上海" />
+                </div>
+                <div class="pack-tbtns">
+                    <button class="gl gl-flight" onclick="openPackTransport(this,'flight')" data-seq="${seq}" data-city="${city}">✈️ 携程机票</button>
+                    <button class="gl gl-train" onclick="openPackTransport(this,'train')" data-seq="${seq}" data-city="${city}">🚄 携程高铁</button>
+                    <button class="gl" onclick="openPackTransport(this,'rail')" data-seq="${seq}" data-city="${city}">🚉 12306</button>
+                </div>
+                <div class="pack-hotel">🏨 住宿建议：${p.hotel || '市中心交通便利处'}</div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function togglePack(seq) {
+    const card = document.getElementById('pack_' + seq);
+    if (!card) return;
+    const opening = !card.classList.contains('open');
+    card.classList.toggle('open', opening);
+    if (opening && !card.dataset.mapReady) {
+        card.dataset.mapReady = '1';
+        setTimeout(() => initPackMap(seq), 80);
+    }
+}
+
+function initPackMap(seq) {
+    const el = document.getElementById('pmap_' + seq);
+    const geo = __packGeo[seq];
+    if (!el || !geo || typeof L === 'undefined' || el.dataset.inited) return;
+    el.dataset.inited = '1';
+    const map = L.map(el, { zoomControl: false, scrollWheelZoom: false }).setView(geo.center, 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    const latlngs = [];
+    geo.stops.forEach((s, i) => {
+        const icon = L.divIcon({
+            className: 'pack-marker',
+            html: `<span>${i + 1}</span>`,
+            iconSize: [26, 26], iconAnchor: [13, 13]
+        });
+        L.marker([s[0], s[1]], { icon }).addTo(map).bindPopup(s[2]);
+        latlngs.push([s[0], s[1]]);
+    });
+    if (latlngs.length > 1) {
+        L.polyline(latlngs, { color: '#8b5cf6', weight: 3, opacity: .7, dashArray: '6 6' }).addTo(map);
+        map.fitBounds(latlngs, { padding: [28, 28] });
+    }
+    setTimeout(() => map.invalidateSize(), 120);
+}
+
+function openPackTransport(btn, kind) {
+    const seq = btn.getAttribute('data-seq');
+    const city = btn.getAttribute('data-city');
+    const input = document.getElementById('pdep_' + seq);
+    const dep = ((input && input.value) || '上海').trim() || '上海';
+    try { localStorage.setItem('mylDepartCity', dep); } catch (e) { }
+    let url = 'https://www.12306.cn/index/';
+    if (kind === 'flight' && typeof ctripFlightUrl === 'function') url = ctripFlightUrl(dep, city);
+    else if (kind === 'train' && typeof ctripTrainUrl === 'function') url = ctripTrainUrl(dep, city);
+    window.open(url, '_blank', 'noopener');
+}
+
+function renderPersonaRoutes(kind, key, elId, label) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const key2 = kind === 'match' ? (MATCH_ROUTE_ALIAS[key] || 'slow') : key;
+    const cities = (kind === 'aftermath' ? AFTERMATH_ROUTES[key] : MATCH_ROUTES[key2]) || [];
+    if (!cities.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `<div class="persona-routes">
+        <div class="persona-routes-title">🧭 为「${label || key}」定制的 ${cities.length} 条线路</div>
+        <div class="persona-routes-sub">点击线路展开：地图 · 时间轴 · 景点美食 · 交通预订</div>
+        ${cities.map(c => renderPack(c)).join('')}
+    </div>`;
 }
 
 // 初始化新项目（暂时关闭，先恢复网站正常）
