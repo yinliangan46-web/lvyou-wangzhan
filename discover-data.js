@@ -912,7 +912,8 @@ function renderBucketMarkers() {
             className: 'bucket-marker', iconSize: [24, 24]
         });
         const marker = L.marker([place.lat, place.lng], { icon }).addTo(bucketMap);
-        marker.bindPopup(`<div style="text-align:center;min-width:180px"><div style="font-size:28px;margin-bottom:4px">${place.icon}</div><div style="font-weight:700;margin-bottom:6px">${place.name}</div>${hasPhoto ? `<img src="${hasPhoto}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px"/>` : ''}<div style="font-size:.78rem;color:#64748b;margin-bottom:8px;text-align:left;background:#f8fafc;padding:8px;border-radius:6px">🗺️ ${place.route}</div><button onclick="openUpload(${idx})" style="background:${hasPhoto ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;">${hasPhoto ? '✓ 已打卡 · 换照片' : '上传照片打卡'}</button></div>`);
+        const photo = hasPhoto || (typeof mylImgUrl === 'function' ? mylImgUrl(place.name, 'sight') : 'images/city-fallback.jpg');
+        marker.bindPopup(`<div style="text-align:center;min-width:190px"><div style="font-size:26px;margin-bottom:4px">${place.icon}</div><div style="font-weight:700;margin-bottom:6px">${place.name}</div><img src="${photo}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px" alt="${place.name}" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />${hasPhoto ? '<div style="font-size:.72rem;color:#22c55e;margin-bottom:6px">✓ 你已打卡</div>' : ''}<div style="font-size:.78rem;color:#64748b;margin-bottom:8px;text-align:left;background:#f8fafc;padding:8px;border-radius:6px">🗺️ ${place.route}</div><button onclick="openUpload(${idx})" style="background:${hasPhoto ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;">${hasPhoto ? '✓ 已打卡 · 换照片' : '上传照片打卡'}</button></div>`);
     });
 }
 
@@ -1182,7 +1183,7 @@ function renderDrama() {
     let html = '';
     dramaData.forEach((d, i) => {
         const aiIdx = aiGuideStore.length;
-        aiGuideStore.push({ dest: d.title, ai: d.ai });
+        aiGuideStore.push({ dest: d.title, city: String(d.loc || '').split('·').pop().trim(), ai: d.ai });
         html += `<div class="drama-card"><div class="drama-img" style="background-image:url('${d.img}')" onclick="toggleDramaRoute(${i})"><span class="drama-tag">${d.tag}</span><span class="drama-expand-hint">${d.route.name} ▾</span></div><div class="drama-body"><h3 onclick="toggleDramaRoute(${i})">${d.title}</h3><div class="drama-loc"><i class="fas fa-map-marker-alt"></i> ${d.loc}</div><p>${d.desc}</p><div class="drama-spots">${d.spots.map(s => `<span class="drama-spot">${s}</span>`).join('')}</div><div class="drama-route-detail" id="dramaRoute${i}"><h5>🗺️ ${d.route.name}</h5>${d.route.days.map(day => `<div class="route-day" style="margin-bottom:8px"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'dramaGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="dramaGuide${aiIdx}"></div></div><button class="btn btn-outline btn-sm" style="width:100%" onclick="toggleDramaRoute(${i})" id="dramaToggle${i}">展开线路行程 ▾</button></div></div>`;
     });
     document.getElementById('dramaGrid').innerHTML = html;
@@ -1661,7 +1662,21 @@ function renderSeason() {
     seasonData.forEach((s, mi) => {
         html += `<div class="season-card"><div class="season-card-header" style="background:${s.color}"><span>${s.icon} ${s.month}</span><span style="font-size:.8rem;opacity:.8">最佳出行月</span></div><div class="season-card-body">`;
         s.dests.forEach((d, di) => {
-            html += `<div class="season-dest" id="seasonDest-${mi}-${di}" onclick="toggleSeasonDest(${mi},${di})"><div class="season-dest-header"><div class="season-dest-img" style="background-image:url('${d.img}')">${d.emoji}</div><div class="season-dest-info"><h5>${d.name}</h5><p>${d.reason}</p></div><i class="fas fa-chevron-down season-dest-arrow"></i></div><div class="season-dest-detail"><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-map"></i> 详细线路</div>${d.itinerary.map(day => `<div class="season-detail-text" style="margin-bottom:6px">📅 ${day}</div>`).join('')}</div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-utensils"></i> 必吃美食</div><div class="season-detail-food">${d.food.map(f => `<span class="food-tag">${f}</span>`).join('')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-camera"></i> 主要景点</div><div class="season-detail-text">${d.spots.join(' · ')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-car"></i> 交通建议</div><div class="season-detail-text">${d.transport}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-yen-sign"></i> 预估预算</div><div class="season-detail-text" style="font-weight:700;color:var(--primary)">${d.budget}</div></div></div></div>`;
+            const aiIdx = aiGuideStore.length;
+            aiGuideStore.push({ dest: d.name, city: d.name, ai: {
+                budget: d.budget,
+                bestTime: s.month + ' 最佳出行月',
+                transport: d.transport,
+                hotel: '建议住在景区或市区交通枢纽附近，节假日提前预订',
+                timeline: d.itinerary.map((t, dayIdx) => ({
+                    d: 'Day' + (dayIdx + 1),
+                    t: String(t).replace(/^Day\d+\s*[:：]\s*/, '')
+                })),
+                attractions: d.spots.map(n => ({ name: n, desc: '热门打卡点，建议预留 1–3 小时', price: '' })),
+                foods: d.food.map(n => ({ name: n, desc: '当地人气美食，就近选本地人常去的小店', price: '' })),
+                tips: d.reason + '。门票、开放时间与预约要求以景区当日公告为准。'
+            } });
+            html += `<div class="season-dest" id="seasonDest-${mi}-${di}" onclick="toggleSeasonDest(${mi},${di})"><div class="season-dest-header"><div class="season-dest-img" style="background-image:url('${d.img}')">${d.emoji}</div><div class="season-dest-info"><h5>${d.name}</h5><p>${d.reason}</p></div><i class="fas fa-chevron-down season-dest-arrow"></i></div><div class="season-dest-detail"><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-map"></i> 详细线路</div>${d.itinerary.map(day => `<div class="season-detail-text" style="margin-bottom:6px">📅 ${day}</div>`).join('')}</div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-utensils"></i> 必吃美食</div><div class="season-detail-food">${d.food.map(f => `<span class="food-tag">${f}</span>`).join('')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-camera"></i> 主要景点</div><div class="season-detail-text">${d.spots.join(' · ')}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-car"></i> 交通建议</div><div class="season-detail-text">${d.transport}</div></div><div class="season-detail-section"><div class="season-detail-label"><i class="fas fa-yen-sign"></i> 预估预算</div><div class="season-detail-text" style="font-weight:700;color:var(--primary)">${d.budget}</div></div><button class="ai-guide-btn" onclick="event.stopPropagation();toggleAIGuide(this,'seasonGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="seasonGuide${aiIdx}" onclick="event.stopPropagation()"></div></div></div>`;
         });
         html += `</div></div>`;
     });
@@ -1857,6 +1872,7 @@ function showAftermathResult() {
     }
     document.getElementById('aftermathResult').innerHTML = `
         <div class="aftermath-result">
+            <img class="result-banner" src="${typeof mylImgUrl === 'function' ? mylImgUrl('旅行归来整理照片与纪念品，午后阳光', 'sight') : 'images/city-fallback.jpg'}" alt="旅行后遗症" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="aftermath-emoji">${emoji}</div>
             <div class="aftermath-title">${title}</div>
             <div class="aftermath-score">余韵指数：${percent}%</div>
@@ -1940,10 +1956,14 @@ function generateHidden(city) {
     let html = `<div class="hidden-result-card">
         <h4>🎲 ${city} · 本地人才知道的隐藏玩法</h4>`;
     randomSpots.forEach(s => {
+        const img = typeof mylImgUrl === 'function' ? mylImgUrl(s.name, 'sight') : 'images/city-fallback.jpg';
         html += `<div class="hidden-spot">
-            <div class="hidden-spot-name">📍 ${s.name}</div>
-            <div class="hidden-spot-desc">${s.desc}</div>
-            <div class="hidden-spot-tip">💡 ${s.tip}</div>
+            <img class="hidden-spot-img" src="${img}" alt="${s.name}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+            <div class="hidden-spot-body">
+                <div class="hidden-spot-name">📍 ${s.name}</div>
+                <div class="hidden-spot-desc">${s.desc}</div>
+                <div class="hidden-spot-tip">💡 ${s.tip}</div>
+            </div>
         </div>`;
     });
     html += `<div style="text-align:center;margin-top:16px">
@@ -1967,10 +1987,15 @@ let regrets = [
 function renderRegrets() {
     const html = regrets.map((r, i) => `
         <div class="regret-card">
-            <div class="regret-city">📍 ${r.city}</div>
-            <div class="regret-text">${r.text}</div>
-            <div class="regret-actions">
-                <span class="regret-like" onclick="likeRegret(${i})">❤️ ${r.likes} 人有同感</span>
+            <div class="regret-main">
+                <img class="regret-img" src="${typeof mylImgUrl === 'function' ? mylImgUrl(r.city, 'sight') : 'images/city-fallback.jpg'}" alt="${r.city}" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
+                <div class="regret-body">
+                    <div class="regret-city">📍 ${r.city}</div>
+                    <div class="regret-text">${r.text}</div>
+                    <div class="regret-actions">
+                        <span class="regret-like" onclick="likeRegret(${i})">❤️ ${r.likes} 人有同感</span>
+                    </div>
+                </div>
             </div>
         </div>
     `).join('');
@@ -2115,6 +2140,7 @@ function showMatchResult() {
     `).join('');
     document.getElementById('matchResult').innerHTML = `
         <div class="match-result">
+            <img class="result-banner" src="${typeof mylImgUrl === 'function' ? mylImgUrl('旅行伙伴在机场出发大厅合影', 'sight') : 'images/city-fallback.jpg'}" alt="旅伴" loading="lazy" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />
             <div class="match-emoji">${emoji}</div>
             <div class="match-title">${title}</div>
             <div class="match-type">最佳旅伴类型</div>

@@ -80,8 +80,56 @@
         .ai-guide-btn { margin-top: 14px; width: 100%; padding: 11px; border: none; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-size: .88rem; font-weight: 600; cursor: pointer; transition: .2s; }
         .ai-guide-btn:hover { opacity: .9; }
         .ai-guide-btn:disabled { opacity: .6; cursor: wait; }
-        .ai-guide-panel { display: none; margin-top: 12px; padding: 16px; background: #f5f3ff; border-radius: 12px; font-size: .85rem; line-height: 1.8; color: #4c1d95; }
+        .ai-guide-panel { display: none; margin-top: 12px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; font-size: .85rem; line-height: 1.8; color: var(--text); }
         .ai-guide-panel.open { display: block; animation: fadeIn .3s; }
+
+        /* ===== 路书：时间轴 / 景点卡 / 预订链接 ===== */
+        .guide-head { margin-bottom: 14px; }
+        .guide-title { font-size: 1.05rem; font-weight: 800; color: var(--purple-dark); }
+        .guide-sub { font-size: .76rem; color: var(--text-light); margin-top: 2px; }
+        .guide-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-bottom: 16px; }
+        .guide-fact { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 12px; font-size: .8rem; }
+        .guide-fact b { display: block; color: var(--purple-dark); font-size: .76rem; margin-bottom: 2px; }
+        .guide-fact span { color: var(--text-light); }
+        .guide-h { font-size: .95rem; margin: 18px 0 10px; padding-left: 9px; border-left: 3px solid var(--purple); color: var(--text); }
+        .guide-day { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+        .guide-day-title { font-weight: 700; font-size: .88rem; color: var(--primary-dark); margin-bottom: 8px; }
+        .guide-node { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px dashed #eef2f7; }
+        .guide-node:last-child { border-bottom: none; }
+        .guide-time { flex: 0 0 48px; font-weight: 700; font-size: .78rem; color: var(--accent); padding-top: 2px; }
+        .guide-node-body { flex: 1; min-width: 0; }
+        .guide-node-text { font-size: .84rem; color: #334155; }
+        .guide-node-media { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+        .guide-node-media .guide-img { width: 84px; height: 56px; border-radius: 8px; object-fit: cover; flex: 0 0 auto; }
+        .guide-node-media.food .guide-img { width: 64px; height: 48px; }
+        .guide-node-links { display: flex; flex-wrap: wrap; gap: 6px; }
+        .guide-node-links a { font-size: .72rem; color: var(--primary); text-decoration: none; background: #eff6ff; padding: 2px 8px; border-radius: 10px; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+        .guide-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+        .guide-card .guide-img { width: 100%; height: 120px; object-fit: cover; display: block; background: #eef2f7; }
+        .guide-card.food .guide-img { height: 104px; }
+        .guide-card-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
+        .guide-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+        .guide-card-top b { font-size: .88rem; }
+        .guide-price { flex: 0 0 auto; font-size: .72rem; color: #047857; background: #ecfdf5; padding: 1px 8px; border-radius: 10px; white-space: nowrap; }
+        .guide-price.paid { color: #b45309; background: #fffbeb; }
+        .guide-card-body p { font-size: .78rem; color: var(--text-light); line-height: 1.6; flex: 1; }
+        .guide-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .gl { font-size: .74rem; padding: 5px 10px; border-radius: 14px; text-decoration: none; border: none; cursor: pointer; font-family: inherit; display: inline-block; }
+        .gl-ctrip { background: #eff6ff; color: #1d4ed8; }
+        .gl-douyin { background: #fdf2f8; color: #be185d; }
+        .gl-wechat { background: #ecfdf5; color: #047857; }
+        .gl-12306 { background: #eef2ff; color: #4338ca; }
+        .guide-transport { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; }
+        .guide-dep { display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--text-light); margin-bottom: 10px; }
+        .guide-dep input { width: 110px; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: .82rem; font-family: inherit; outline: none; }
+        .guide-dep input:focus { border-color: var(--primary); }
+        .guide-transport-links { display: flex; flex-wrap: wrap; gap: 8px; }
+        .guide-transport-links .gl { font-size: .78rem; padding: 7px 14px; }
+        .guide-dep-tip { margin-top: 8px; font-size: .74rem; color: var(--text-light); }
+        .guide-tips { margin-top: 14px; background: #f5f3ff; border-radius: 12px; padding: 12px 14px; font-size: .8rem; color: #4c1d95; }
+        .guide-tips b { display: block; margin-bottom: 4px; }
+        .guide-note { margin-top: 10px; font-size: .72rem; color: #94a3b8; }
         .ai-day { margin-bottom: 10px; }
         .ai-day b { color: var(--purple-dark); }
 
@@ -181,6 +229,7 @@
         .aftermath-desc, .match-desc { color: var(--text-light); text-align: left; max-width: 640px; margin: 0 auto 18px; font-size: .93rem; line-height: 1.8; }
         .aftermath-reco { background: #eff6ff; border-radius: 14px; padding: 16px; max-width: 540px; margin: 0 auto; text-align: left; font-size: .9rem; }
         .aftermath-reco h4 { margin-bottom: 8px; }
+        .result-banner { width: 100%; max-width: 520px; height: 170px; object-fit: cover; border-radius: 16px; margin: 0 auto 14px; display: block; background: #eef2f7; }
         .match-type { display: inline-block; background: #f5f3ff; color: var(--purple-dark); padding: 4px 14px; border-radius: 16px; font-size: .8rem; font-weight: 700; margin-bottom: 14px; }
         .match-compat { max-width: 560px; margin: 0 auto; text-align: left; }
         .match-compat h4 { text-align: center; margin-bottom: 14px; }
@@ -197,7 +246,9 @@
         #hiddenResult { display: none; }
         .hidden-result-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
         .hidden-result-card h4 { margin-bottom: 16px; }
-        .hidden-spot { border-left: 3px solid var(--purple); padding: 4px 0 4px 14px; margin-bottom: 14px; }
+        .hidden-spot { display: flex; gap: 12px; border-left: 3px solid var(--purple); padding: 4px 0 4px 12px; margin-bottom: 14px; }
+        .hidden-spot-img { width: 96px; height: 76px; border-radius: 10px; object-fit: cover; flex: 0 0 auto; background: #eef2f7; }
+        .hidden-spot-body { flex: 1; min-width: 0; }
         .hidden-spot-name { font-weight: 700; }
         .hidden-spot-desc { font-size: .87rem; color: var(--text-light); margin: 4px 0; }
         .hidden-spot-tip { font-size: .8rem; color: #b45309; }
@@ -207,7 +258,10 @@
         .regret-form { display: none; max-width: 560px; margin: 0 auto 24px; background:#fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
         .regret-form input, .regret-form textarea { width: 100%; padding: 11px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: .9rem; margin-bottom: 12px; outline: none; resize: vertical; }
         .regret-form input:focus, .regret-form textarea:focus { border-color: var(--primary); }
-        .regret-card { background: #fff; border-radius: 14px; box-shadow: var(--shadow); padding: 16px 18px; margin-bottom: 12px; }
+        .regret-card { background: #fff; border-radius: 14px; box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 12px; }
+        .regret-main { display: flex; gap: 12px; }
+        .regret-img { width: 88px; height: 72px; border-radius: 10px; object-fit: cover; flex: 0 0 auto; background: #eef2f7; }
+        .regret-body { flex: 1; min-width: 0; }
         .regret-city { font-weight: 700; font-size: .88rem; color: var(--purple-dark); margin-bottom: 4px; }
         .regret-text { font-size: .9rem; color: #334155; }
         .regret-like { display: inline-block; margin-top: 10px; font-size: .8rem; color: #ef4444; cursor: pointer; }
@@ -475,9 +529,231 @@
 <script src="vendor/leaflet/leaflet.js"></script>
 <script>
 /* =====================================================================
-   AI 路书（原页面脚本丢失后补回，供 discover-data.js 调用）
+   AI 路书：时间节点 + 景点/美食配图 + 携程/12306/抖音/微信预约链接
+   （供 discover-data.js 的人格线路、剧游、Solo、最佳时节共用）
    ===================================================================== */
 var aiGuideStore = [];
+var MYL_DEP_KEY = 'mylDepartCity';
+
+function mylEsc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+/* ---------- 图片：无图时用生图接口，失败回落本地图 ---------- */
+function mylImgUrl(name, kind) {
+    var prompt = name + '，' + (kind === 'food'
+        ? '当地特色美食实拍，热气腾腾，高清美食摄影'
+        : '真实旅游风景实景照片，自然光，高清旅行摄影');
+    return 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt='
+        + encodeURIComponent(prompt)
+        + '&image_size=' + (kind === 'food' ? 'square' : 'landscape_4_3');
+}
+function mylPic(src, name, kind) {
+    var url = src || mylImgUrl(name, kind);
+    var fb = kind === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
+    return '<img class="guide-img" src="' + mylEsc(url) + '" alt="' + mylEsc(name)
+        + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + fb + '\'">';
+}
+
+/* ---------- 预订链接 ---------- */
+function ctripSightUrl(name, url) {
+    return url || 'https://you.ctrip.com/searchresult?query=' + encodeURIComponent(name);
+}
+function douyinUrl(name) {
+    return 'https://www.douyin.com/search/' + encodeURIComponent(name + ' 门票');
+}
+function wechatUrl(name) {
+    return 'https://weixin.sogou.com/weixin?type=2&query=' + encodeURIComponent(name + ' 预约');
+}
+function ctripFlightUrl(from, to) {
+    return 'https://flights.ctrip.com/online/list/oneway-' + encodeURIComponent(from) + '-' + encodeURIComponent(to);
+}
+function ctripTrainUrl(from, to) {
+    return 'https://trains.ctrip.com/webapp/train/list?ticketType=0&dStation='
+        + encodeURIComponent(from) + '&aStation=' + encodeURIComponent(to);
+}
+function openTransport(btn, kind) {
+    var idx = btn.getAttribute('data-idx');
+    var city = btn.getAttribute('data-city') || '';
+    var input = document.getElementById('dep_' + idx);
+    var dep = (input && input.value || '上海').trim() || '上海';
+    try { localStorage.setItem(MYL_DEP_KEY, dep); } catch (e) { }
+    var url = 'https://www.12306.cn/index/';
+    if (kind === 'flight') url = ctripFlightUrl(dep, city);
+    else if (kind === 'train') url = ctripTrainUrl(dep, city);
+    window.open(url, '_blank', 'noopener');
+}
+
+/* ---------- 行程时间节点 ---------- */
+function guideTimes(label) {
+    var s = String(label || '');
+    if (/上午/.test(s)) return ['09:00', '10:30', '12:00'];
+    if (/下午/.test(s) && /晚上/.test(s)) return ['14:00', '15:30', '18:30', '20:00'];
+    if (/下午/.test(s)) return ['14:00', '15:30', '17:30', '18:30'];
+    if (/晚上|夜/.test(s)) return ['19:00', '20:30'];
+    return ['09:00', '10:30', '12:00', '14:00', '15:30', '18:30', '20:00'];
+}
+function guidePickTime(times, i, n) {
+    if (!times.length) return '';
+    if (n <= 1) return times[0];
+    var pos = Math.round(i / (n - 1) * (times.length - 1));
+    return times[pos];
+}
+function guideCityOf(item) {
+    var c = item.city || item.dest || '';
+    c = String(c).split(/[·|｜]/)[0]
+        .replace(/\s*[\d一二三四五六七八九十]+\s*[天日].*$/, '')
+        .replace(/(冰雪大世界|油菜花|梯田|古镇|古城|草原|沙漠|瀑布|雪山|大峡谷|温泉|国家公园|风景名胜区|景区|博物馆|美术馆)$/, '')
+        .replace(/(极光|治愈|小环线|大环线|环线|环岛|深度游|自由行|之旅|旅行|追光|慢游|滑雪|避冬|庙会|春节)$/, '')
+        .replace(/([\u4e00-\u9fa5]{2,6})(?:市|县)$/, '$1')
+        .trim();
+    return c || '目的地';
+}
+
+function renderGuide(item) {
+    var dest = item.dest || '目的地';
+    var ai = item.ai || {};
+    var attractions = ai.attractions || [];
+    var foods = ai.foods || [];
+    var hotels = ai.hotels || [];
+    var timeline = ai.timeline || ai.days || [];
+    var city = guideCityOf(item);
+    var dep = '上海';
+    try { dep = localStorage.getItem(MYL_DEP_KEY) || '上海'; } catch (e) { }
+    var idx = item._idx;
+
+    var html = '<div class="guide-head"><div class="guide-title">📖 ' + mylEsc(dest) + ' · AI 详细路书</div>'
+        + '<div class="guide-sub">时间节点 · 景点门票 · 美食 · 大交通预订</div></div>';
+
+    /* 概览 */
+    var facts = [];
+    if (ai.budget) facts.push(['💰 预算', ai.budget]);
+    if (ai.bestTime) facts.push(['🌤️ 最佳时间', ai.bestTime]);
+    if (ai.transport) facts.push(['🚗 当地交通', ai.transport]);
+    if (ai.hotel) facts.push(['🏨 住宿', ai.hotel]);
+    if (facts.length) {
+        html += '<div class="guide-facts">' + facts.map(function (f) {
+            return '<div class="guide-fact"><b>' + f[0] + '</b><span>' + mylEsc(f[1]) + '</span></div>';
+        }).join('') + '</div>';
+    }
+
+    /* 每日时间节点 */
+    if (timeline.length) {
+        html += '<h4 class="guide-h">🗓️ 每日行程 · 时间节点</h4><div class="guide-days">';
+        timeline.forEach(function (day, di) {
+            var label = String(day.d || ('Day ' + (di + 1)));
+            var text = String(day.t || '');
+            var parts = text.split(/\s*→\s*|\s*->\s*/).filter(Boolean);
+            if (!parts.length) parts = [text];
+            var times = guideTimes(label);
+            var nodes = parts.map(function (p, i) {
+                var t = guidePickTime(times, i, parts.length);
+                var attr = null;
+                for (var k = 0; k < attractions.length; k++) {
+                    var an = String(attractions[k].name || '');
+                    if (an && (p.indexOf(an) >= 0 || an.indexOf(p) >= 0)) { attr = attractions[k]; break; }
+                }
+                return { time: t, text: p, attr: attr };
+            });
+            // 补午/晚餐节点
+            var lunchFood = foods.length ? foods[di * 2 % foods.length] : null;
+            var dinnerFood = foods.length ? foods[(di * 2 + 1) % foods.length] : null;
+            var usedTimes = {};
+            nodes.forEach(function (n) { usedTimes[n.time] = true; });
+            var coversLunch = times.indexOf('12:00') >= 0 && !usedTimes['12:00'];
+            var coversDinner = (times.indexOf('18:30') >= 0 || times.indexOf('20:00') >= 0)
+                && !usedTimes['18:30'] && !usedTimes['19:00'];
+            if (coversLunch && lunchFood) {
+                nodes.push({ time: '12:00', text: '午餐 · ' + lunchFood.name + (lunchFood.desc ? '（' + lunchFood.desc + '）' : ''), food: lunchFood });
+            }
+            if (coversDinner && dinnerFood) {
+                nodes.push({ time: '18:30', text: '晚餐 · ' + dinnerFood.name + (dinnerFood.desc ? '（' + dinnerFood.desc + '）' : ''), food: dinnerFood });
+            }
+            nodes.sort(function (a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; });
+
+            html += '<div class="guide-day"><div class="guide-day-title">' + mylEsc(label) + '</div>';
+            nodes.forEach(function (n) {
+                var thumb = '';
+                if (n.attr) {
+                    thumb = '<div class="guide-node-media">' + mylPic(n.attr.img, n.attr.name, 'sight')
+                        + '<div class="guide-node-links">'
+                        + '<a href="' + mylEsc(ctripSightUrl(n.attr.name, n.attr.ctripUrl)) + '" target="_blank" rel="noopener">🎫 携程</a>'
+                        + (n.attr.price && !/免费/.test(n.attr.price) ? '<a href="' + douyinUrl(n.attr.name) + '" target="_blank" rel="noopener">🎵 抖音</a>' : '')
+                        + '</div></div>';
+                } else if (n.food) {
+                    thumb = '<div class="guide-node-media food">' + mylPic(n.food.img, n.food.name, 'food') + '</div>';
+                }
+                html += '<div class="guide-node"><span class="guide-time">' + n.time + '</span>'
+                    + '<div class="guide-node-body"><div class="guide-node-text">' + mylEsc(n.text) + '</div>' + thumb + '</div></div>';
+            });
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    /* 景点 */
+    if (attractions.length) {
+        html += '<h4 class="guide-h">🎫 必去景点 · 门票/预约</h4><div class="guide-grid">';
+        attractions.forEach(function (a) {
+            var name = String(a.name || '');
+            var paid = a.price && !/免费|无需/.test(a.price);
+            var reserve = !!a.wechatUrl || /博物馆|故宫|兵马俑|纪念馆|美术馆|科技馆|索道|轮渡|游船|温泉|国家公园|大峡谷|雪山|环球|迪士尼|预约/.test(name);
+            var links = '<a class="gl gl-ctrip" href="' + mylEsc(ctripSightUrl(name, a.ctripUrl)) + '" target="_blank" rel="noopener">🎫 携程' + (paid ? '门票' : '详情') + '</a>';
+            if (paid) links += '<a class="gl gl-douyin" href="' + douyinUrl(name) + '" target="_blank" rel="noopener">🎵 抖音看票</a>';
+            if (reserve) links += '<a class="gl gl-wechat" href="' + mylEsc(a.wechatUrl || wechatUrl(name)) + '" target="_blank" rel="noopener">💬 微信预约</a>';
+            html += '<div class="guide-card">' + mylPic(a.img, name, 'sight')
+                + '<div class="guide-card-body"><div class="guide-card-top"><b>' + mylEsc(name) + '</b>'
+                + (a.price ? '<span class="guide-price' + (paid ? ' paid' : '') + '">' + mylEsc(a.price) + '</span>' : '') + '</div>'
+                + (a.desc ? '<p>' + mylEsc(a.desc) + '</p>' : '')
+                + '<div class="guide-links">' + links + '</div></div></div>';
+        });
+        html += '</div>';
+    }
+
+    /* 美食 */
+    if (foods.length) {
+        html += '<h4 class="guide-h">🍜 必吃美食</h4><div class="guide-grid">';
+        foods.forEach(function (f) {
+            html += '<div class="guide-card food">' + mylPic(f.img, f.name, 'food')
+                + '<div class="guide-card-body"><div class="guide-card-top"><b>' + mylEsc(f.name) + '</b>'
+                + (f.price ? '<span class="guide-price">' + mylEsc(f.price) + '</span>' : '') + '</div>'
+                + (f.desc ? '<p>' + mylEsc(f.desc) + '</p>' : '') + '</div></div>';
+        });
+        html += '</div>';
+    }
+
+    /* 住宿 */
+    if (hotels.length) {
+        html += '<h4 class="guide-h">🏨 住宿推荐</h4><div class="guide-grid">';
+        hotels.forEach(function (h) {
+            html += '<div class="guide-card">' + mylPic(h.img, h.name, 'sight')
+                + '<div class="guide-card-body"><div class="guide-card-top"><b>' + mylEsc(h.name) + '</b>'
+                + (h.price ? '<span class="guide-price">' + mylEsc(h.price) + '</span>' : '') + '</div>'
+                + (h.desc ? '<p>' + mylEsc(h.desc) + '</p>' : '')
+                + '<div class="guide-links"><a class="gl gl-ctrip" href="' + mylEsc(h.ctripUrl || 'https://hotels.ctrip.com/') + '" target="_blank" rel="noopener">🏨 携程酒店</a></div>'
+                + '</div></div>';
+        });
+        html += '</div>';
+    }
+
+    /* 大交通 */
+    html += '<h4 class="guide-h">🚄 大交通 · 机票/高铁</h4>'
+        + '<div class="guide-transport">'
+        + '<label class="guide-dep">出发城市 <input id="dep_' + idx + '" type="text" value="' + mylEsc(dep) + '" placeholder="如：上海" /></label>'
+        + '<div class="guide-transport-links">'
+        + '<button class="gl gl-ctrip" type="button" data-idx="' + idx + '" data-city="' + mylEsc(city) + '" onclick="openTransport(this,\'flight\')">✈️ 携程机票</button>'
+        + '<button class="gl gl-ctrip" type="button" data-idx="' + idx + '" data-city="' + mylEsc(city) + '" onclick="openTransport(this,\'train\')">🚄 携程高铁</button>'
+        + '<button class="gl gl-12306" type="button" data-idx="' + idx + '" data-city="' + mylEsc(city) + '" onclick="openTransport(this,\'rail\')">🚉 12306</button>'
+        + '</div>'
+        + '<div class="guide-dep-tip">当前：' + mylEsc(dep) + ' → ' + mylEsc(city) + '（点开后在携程/12306 里可改日期与车次）</div>'
+        + '</div>';
+
+    if (ai.tips) html += '<div class="guide-tips"><b>💡 贴心提示</b><span>' + mylEsc(ai.tips) + '</span></div>';
+    html += '<div class="guide-note">＊ 门票价格、开放时间、班次与预约要求可能随季节调整，以景区及平台当日公告为准。</div>';
+    return html;
+}
 
 function toggleAIGuide(btn, panelId, idx) {
     var panel = document.getElementById(panelId);
@@ -488,28 +764,16 @@ function toggleAIGuide(btn, panelId, idx) {
         return;
     }
     var item = aiGuideStore[idx] || {};
+    item._idx = idx;
     btn.disabled = true;
     btn.textContent = '⏳ AI 正在生成路书...';
     setTimeout(function () {
-        var dest = item.dest || '目的地';
-        var ai = item.ai || {};
-        var days = ai.days || [
-            { d: 'Day 1', t: '抵达，入住酒店，周边闲逛找一家本地小馆' },
-            { d: 'Day 2', t: '核心景点深度游，避开人流的早鸟时段' },
-            { d: 'Day 3', t: '小众街区 + 咖啡馆，感受当地生活节奏' },
-            { d: 'Day 4', t: '自由活动，采购伴手礼，返程' }
-        ];
-        var html = '<div style="font-weight:700;margin-bottom:8px">📖 ' + dest + ' · AI 详细路书</div>';
-        days.forEach(function (d) {
-            html += '<div class="ai-day"><b>' + d.d + '</b>：' + d.t + '</div>';
-        });
-        if (ai.tips) html += '<div style="margin-top:8px;color:#6d28d9">💡 ' + ai.tips + '</div>';
-        html += '<div style="margin-top:10px;font-size:.78rem;color:#7c3aed">＊ 由 MYL AI 生成，实际行程可按需调整</div>';
-        panel.innerHTML = html;
+        panel.innerHTML = renderGuide(item);
         panel.classList.add('open');
+        panel.onclick = function (e) { e.stopPropagation(); };
         btn.disabled = false;
         btn.textContent = '📕 收起 AI 路书';
-    }, 900);
+    }, 500);
 }
 
 /* =====================================================================
