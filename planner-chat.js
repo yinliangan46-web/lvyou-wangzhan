@@ -134,7 +134,7 @@ function generate(){
 
   $('planBox').innerHTML=
   '<div class="plan">'+
-    '<div class="plan-cover"><h2>'+name+' · '+days+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+(pd.isA?'':' · 轻量参考')+' · 由 MYL 对话生成</div></div>'+
+    '<div class="plan-cover"><h2>'+name+' · '+days+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+' · 由 MYL 对话生成</div></div>'+
     '<div class="section"><h3><i class="fas fa-plane-departure"></i> 交通安排</h3>'+traffic+
       '<div class="link-grid" style="margin-top:12px">'+
         '<a class="link-card" href="'+pd.flight+'" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
