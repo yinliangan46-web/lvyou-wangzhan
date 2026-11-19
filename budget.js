@@ -121,11 +121,40 @@ function calc(){
     return '<div class="tier-row'+(hot?' hot':'')+'"><div class="tier-label">'+x.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+w+'%"></div></div><div class="v">¥'+x.total.toLocaleString()+'</div></div>';
   }).join('');
 
+  /* 逐日花费节奏：机票计入首日，住宿按晚分摊，餐饮/门票/交通按天计入 */
+  var hotelPerNight=city.hotel[tier]*rooms;
+  var perDay=(city.food[tier]+city.ticket[tier]+city.local[tier])*ppl;
+  var daily=[];
+  for(var d=0;d<days;d++){
+    daily.push(perDay+(d<nights?hotelPerNight:0)+(d===0?flight:0));
+  }
+  var maxDaily=Math.max.apply(null,daily);
+  var W=320,H=130,P=26;
+  var pts=daily.map(function(v,i){
+    var x=P+i*(W-2*P)/Math.max(days-1,1);
+    var y=H-P-(v/maxDaily)*(H-2*P);
+    return [x,y];
+  });
+  var trendLine=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' ');
+  var trendArea=trendLine+' L'+pts[pts.length-1][0].toFixed(1)+' '+(H-P)+' L'+pts[0][0].toFixed(1)+' '+(H-P)+' Z';
+  var trendDots=pts.map(function(p,i){
+    return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="#fff" stroke="'+COLORS[0]+'" stroke-width="2.5"/>'+
+      '<text x="'+p[0].toFixed(1)+'" y="'+(p[1]-8).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#1a2433">¥'+Math.round(daily[i]).toLocaleString()+'</text>';
+  }).join('');
+  var trendX=daily.map(function(v,i){
+    return '<text x="'+pts[i][0].toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle" font-size="10" fill="#6b7787">D'+(i+1)+'</text>';
+  }).join('');
+  var trend='<div class="chart-sec"><h4><i class="fas fa-wave-square"></i> 逐日花费节奏</h4><div class="trend"><svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="逐日花费折线图">'+
+    '<defs><linearGradient id="trendG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2563eb" stop-opacity=".32"/><stop offset="1" stop-color="#2563eb" stop-opacity=".03"/></linearGradient></defs>'+
+    '<path d="'+trendArea+'" fill="url(#trendG)"/><path d="'+trendLine+'" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+
+    trendDots+trendX+'</svg><div class="trend-note">首日含往返机票，住宿按晚分摊；折线为当日总花费。</div></div></div>';
+
   $('out').innerHTML =
     '<div class="panel"><div class="total-row"><span class="num">¥'+total.toLocaleString()+'</span><span class="per">合计 · 人均 ¥'+per.toLocaleString()+'（'+(c?c.name:'所选城市')+' · '+days+' 天 '+ppl+' 人）</span></div>'+
       '<div class="wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+arcs+'<text x="90" y="86" text-anchor="middle" font-size="18" font-weight="900" fill="#1a2433">¥'+per.toLocaleString()+'</text><text x="90" y="106" text-anchor="middle" font-size="11" fill="#6b7787">人均</text></svg><div class="legend">'+legend+'</div></div>'+
       '<div class="chart-sec"><h4><i class="fas fa-chart-bar"></i> 分项占比条形图（点击行可显隐）</h4><div class="bars">'+bars+'</div></div>'+
       '<div class="chart-sec"><h4><i class="fas fa-scale-balanced"></i> 三档预算对比</h4><div class="tbars">'+tbars+'</div></div>'+
+      trend+
       '<div style="margin-top:16px">'+details+'</div>'+
       '<div class="note">未列入精细基准的城市为中性参考价，实际以平台实时报价为准。</div>'+
       detailSection(c)+
