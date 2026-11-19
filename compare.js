@@ -1,5 +1,5 @@
 
-/* 评分统一取自 city-score 分片；缺省城市用关键词生成具体参考口径 */
+/* 评分统一取自 city-score 分片；缺省城市用中性参考分 */
 var DEF = {tag:'目的地',price:'参考预算（以平台实时为准）',days:'2–3天',drive:'见市内交通',season:'见出行贴士',who:'—',avoid:'—',transport:'见交通方案',risk:'参考评分，最终以实际为准',food:3,value:3,relax:3,photo:3,scenery:3,culture:3,night:2,walk:3};
 
 var DIM = [
@@ -165,8 +165,8 @@ function detailCard(c){
   } else {
     foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
   }
-  var spots = isA ? '' : (c.bLandmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
-  var history = (!isA && c.bHistory) ? '<div class="li">'+c.bHistory+'</div>' : '';
+  var spots = (c.landmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
+  var history = c.history ? '<div class="li">'+c.history+'</div>' : '';
 
   var hotels=(c.hotels||[]).map(function(h){
     var link=h.bookingUrl?'<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span><span>'+(h.highlight||'')+'</span></a>':'<div class="link-card"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></div>';
@@ -184,7 +184,7 @@ function detailCard(c){
   }).join('');
 
   var generic='';
-  if(!isA){
+  if(c.generic){
     generic='<div class="link-grid">'+
       '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
       '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
@@ -194,10 +194,9 @@ function detailCard(c){
 
   var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+lp(b.value)+'</div>';}).join('');
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
-  var lightTag = isA?'':' · 轻量参考';
+  var lightTag = '';
 
   return '<div class="dcard"><div class="dhead"><h3>'+c.name+'</h3><div class="sub">'+(c.country||'中国')+' · '+(c.days||s.days)+' · '+s.tag+lightTag+'</div></div><div class="dbody">'
-    + (!isA?'<div class="note" style="margin-bottom:12px">轻量参考：该城完整路书整理中，下方为已有地标、美食与通用交通住宿入口。</div>':'')
     + (itinerary?'<div class="dsec"><h4><i class="fas fa-route"></i> 行程节点</h4>'+itinerary+'</div>':'')
     + (spots?'<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>':'')
     + (foods?'<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>':'')
