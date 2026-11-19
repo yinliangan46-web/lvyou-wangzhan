@@ -12,25 +12,40 @@ function findCity(name){
   return MYL.getCity(main);
 }
 
+function cleanTheme(t){
+  return (t||'').replace(/深度(游玩|游览|体验|游)/g,'当地休闲体验');
+}
+
 function routeData(route){
   var c=findCity(route.city);
-  var isA=c&&c.tier==='A';
-  var nodes=[], foods=[], traffic=[];
-  if(isA){
-    nodes=(c.itinerary||[]).reduce(function(a,day){
-      (day.timeline||[]).forEach(function(t){a.push({n:t.activity||'',d:t.detail||'',t:[t.ticket,t.duration].filter(Boolean).join(' · ')});});
-      return a;
-    },[]);
-    foods=(c.foods||[]).map(function(f){return {n:f.name,d:f.desc||'',p:f.price||''};});
+  var days=[];
+  if(c){
+    (c.itinerary||[]).forEach(function(d){
+      var nodes=(d.timeline||[]).map(function(t){
+        return {
+          n:cleanTheme((t.activity||'').trim()),
+          d:cleanTheme(t.detail||''),
+          t:[t.ticket,t.duration].filter(Boolean).join(' · ')
+        };
+      }).filter(function(x){return x.n;});
+      if(nodes.length) days.push({day:d.day||'Day', theme:cleanTheme(d.theme||''), nodes:nodes});
+    });
+    if(!days.length){
+      var lm=(c.landmarks||c.bLandmarks||[]).map(function(x){return {n:x,d:'当地代表性地标',t:''};});
+      if(lm.length) days=[{day:'Day 1',theme:'当地概览',nodes:lm}];
+    }
+  }
+  var foods=[],traffic=[];
+  if(c){
+    foods=(c.foods||[]).map(function(f){
+      return typeof f==='string' ? {n:f,d:'',p:''} : {n:f.name,d:f.desc||'',p:f.price||''};
+    });
     traffic=(c.transport||[]).map(function(t){return t.label+'：'+t.value;});
-  } else if(c){
-    nodes=(c.bLandmarks||[]).map(function(x){return {n:x,d:'当地代表性地标',t:''};});
-    foods=(c.bFoods||[]).map(function(f){return {n:f,d:'',p:''};});
   }
   var flight=(c&&c.airfare&&c.airfare[0])?c.airfare[0].bookingUrl:'https://flights.ctrip.com';
   var train=(c&&c.trains&&c.trains[0])?c.trains[0].bookingUrl:'https://www.12306.cn';
   var hotelsUrl=(c&&c.hotels&&c.hotels[0]&&c.hotels[0].bookingUrl)||'https://hotels.ctrip.com';
-  return {c:c,isA:isA,nodes:nodes,foods:foods,traffic:traffic,flight:flight,train:train,hotelsUrl:hotelsUrl};
+  return {c:c,days:days,foods:foods,traffic:traffic,flight:flight,train:train,hotelsUrl:hotelsUrl};
 }
 
 function viewThemes(){
@@ -68,7 +83,11 @@ function viewRoute(tid,idx){
   var r=t?t.routes[+idx]:null;
   if(!r){location.hash='#/themes';return;}
   var pd=routeData(r);
-  var nodes=pd.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+tag(s.t)+'</div><div class="d">'+(s.d||'')+'</div></div>';}).join('')
+  var nodes=pd.days.map(function(g){
+    return '<div class="day-group"><div class="day-t">'+g.day+(g.theme?' · '+g.theme:'')+'</div>'+
+      g.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+tag(s.t)+'</div><div class="d">'+(s.d||'')+'</div></div>';}).join('')+
+    '</div>';
+  }).join('')
     ||'<div class="node"><div class="d">该城景点节点整理中，可参考下方入口查询。</div></div>';
   var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+tag(f.p)+'</div><div class="d">'+(f.d||'')+'</div></div>';}).join('')
     ||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';

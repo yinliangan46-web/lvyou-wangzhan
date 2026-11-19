@@ -35,6 +35,9 @@
   .detail-cover .sub{opacity:.9;margin-top:4px;font-size:14px}
   .section{padding:18px 22px;border-top:1px solid var(--line)}
   .section h3{font-size:15px;color:var(--primary);margin-bottom:12px}
+  .day-group{margin-bottom:14px}
+  .day-group:last-child{margin-bottom:0}
+  .day-t{font-weight:700;font-size:13px;color:var(--primary);margin-bottom:6px}
   .node{padding:10px 0;border-bottom:1px dashed var(--line)}
   .node:last-child{border-bottom:none}
   .node .t{font-weight:700;font-size:14px}
