@@ -185,6 +185,7 @@ ul {
 .nav {
     display: flex;
     gap: 32px;
+    flex-wrap: nowrap;
 }
 
 .nav a {
@@ -193,6 +194,8 @@ ul {
     font-weight: 500;
     transition: var(--transition);
     position: relative;
+    white-space: nowrap;
+    flex: none;
 }
 
 /* 仅在三横线（移动端）菜单中显示的导航项 */
@@ -1755,7 +1758,7 @@ body.modal-open {
 }
 
 /* 平板：顶部导览收紧字号与间距，保证一行放得下不拥挤 */
-@media (min-width: 769px) and (max-width: 1180px) {
+@media (min-width: 769px) and (max-width: 1240px) {
     .header {
         padding: 12px 0;
     }
