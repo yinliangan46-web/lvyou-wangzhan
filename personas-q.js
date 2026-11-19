@@ -1,0 +1,123 @@
+// 人格测试 20 型 · 题目映射 + 多键计分（增量，须在 discover-data.js 之后）
+quizQuestions.length = 0;
+[
+    { q: '早上旅行时，你通常几点醒？', options: [
+        { text: '🌅 7点前，爬起来看日出', score: ['A','I'] },
+        { text: '☕ 9-10点，慢慢起床觅食', score: ['B','F'] },
+        { text: '😴 12点后，睡到自然醒', score: ['D','F'] }
+    ]},
+    { q: '旅行最重要的是什么？', options: [
+        { text: '🏔️ 看到震撼到失语的风景', score: ['A','AC'] },
+        { text: '🍜 吃到当地人排队的馆子', score: ['B','AB'] },
+        { text: '📸 拍一组能封神的照片', score: ['C','CD'] },
+        { text: '👥 认识有趣的旅伴故事', score: ['D','M'] }
+    ]},
+    { q: '你更喜欢住哪里？', options: [
+        { text: '🛏️ 青旅多人间，热闹拼饭', score: ['D','M'] },
+        { text: '🏠 设计感民宿，有故事', score: ['C','G'] },
+        { text: '🏨 五星酒店，躺平舒服', score: ['F','P'] }
+    ]},
+    { q: '你能接受的旅行节奏？', options: [
+        { text: '🏃 一天跑5个景点，特种兵', score: ['E'] },
+        { text: '🚶 一天2-3个，慢慢逛', score: ['F','G'] },
+        { text: '🛋️ 一天1个，躺平不赶路', score: ['F','P'] }
+    ]},
+    { q: '你最怕遇到什么？', options: [
+        { text: '👨‍👩‍👧‍👦 人挤人，拍不了照', score: ['A','K'] },
+        { text: '🗣️ 语言不通吃不到好吃的', score: ['B','M'] },
+        { text: '🛌 住得差影响心情', score: ['P','F'] },
+        { text: '📵 没网拍不了照发不了圈', score: ['L','C'] }
+    ]},
+    { q: '旅行回来你最想发什么朋友圈？', options: [
+        { text: '🏔️ 雪山/极光/星空大片', score: ['A','I'] },
+        { text: '🍱 九宫格美食图配文"绝了"', score: ['B','BC'] },
+        { text: '🧏 文艺风景+一句短句', score: ['C','AC'] },
+        { text: '🥂 和旅伴的合照+故事', score: ['D','N'] }
+    ]},
+    { q: '你更喜欢哪种旅行方式？', options: [
+        { text: '🏕️ 自驾/徒步，深入荒野', score: ['J','A'] },
+        { text: '🚌 坐公交逛菜市场吃小吃', score: ['B','G'] },
+        { text: '🏛️ 逛博物馆/老街区慢慢走', score: ['C','O'] },
+        { text: '👫 拼团/青旅，有人带', score: ['D','M'] }
+    ]},
+    { q: '旅行预算你最愿意花在哪？', options: [
+        { text: '🎫 门票/户外体验/跳伞', score: ['H','J'] },
+        { text: '🍜 吃！吃！吃！', score: ['B','AB'] },
+        { text: '🛏️ 住有设计感的酒店/民宿', score: ['L','P'] },
+        { text: '🍹 酒吧/社交活动/拼餐', score: ['D','H'] }
+    ]},
+    { q: '你最喜欢的旅行天气？', options: [
+        { text: '❄️ 雪天/极光/极端天气', score: ['I','A'] },
+        { text: '☀️ 晴天，逛街吃小吃', score: ['B','E'] },
+        { text: '🌧️ 阴雨天，拍文艺照', score: ['C','G'] },
+        { text: '🤷 无所谓，关键是和谁', score: ['N','M'] }
+    ]},
+    { q: '旅途中你最想做的事？', options: [
+        { text: '🌅 看日出/日落/极光', score: ['I','A'] },
+        { text: '🥘 找当地老字号苍蝇馆', score: ['B','BC'] },
+        { text: '📚 逛独立书店/咖啡馆', score: ['C','G'] },
+        { text: '🎉 参加当地人的聚会/夜市', score: ['D','H'] }
+    ]},
+    { q: '你更喜欢哪种交通方式？', options: [
+        { text: '🚗 自驾/徒步，自由掌控', score: ['J','E'] },
+        { text: '🚇 地铁/公交，穿梭市井', score: ['B','G'] },
+        { text: '🚞 高铁/慢车，看风景', score: ['F','J'] },
+        { text: '🚐 拼车/搭便车，认识人', score: ['D','M'] }
+    ]},
+    { q: '旅行纪念品你会买什么？', options: [
+        { text: '🪨 石头/树叶/自然标本', score: ['A','K'] },
+        { text: '🌶️ 当地调味料/零食伴手礼', score: ['B','L'] },
+        { text: '🖼️ 明信片/文创周边', score: ['C','L'] },
+        { text: '🤝 和旅伴的合影/签名', score: ['D','N'] }
+    ]},
+    { q: '你更喜欢哪种类型的目的地？', options: [
+        { text: '🏞️ 国家公园/荒野/无人区', score: ['A','K'] },
+        { text: '🍢 美食之都/夜市/小吃街', score: ['B','H'] },
+        { text: '🏘️ 古城/文艺小镇/美术馆', score: ['G','C'] },
+        { text: '🏄 派对城市/冲浪小镇', score: ['H','D'] }
+    ]},
+    { q: '旅行中你最在意什么？', options: [
+        { text: '🏔️ 看到别人没看过的风景', score: ['A','K'] },
+        { text: '🍜 吃到别人不知道的馆子', score: ['B','AB'] },
+        { text: '📷 拍到别人拍不到的角度', score: ['C','CD'] },
+        { text: '👥 认识别人不认识的朋友', score: ['D','M'] }
+    ]},
+    { q: '如果只能选一个地方待一周，你选？', options: [
+        { text: '🏔️ 雪山脚下的小木屋', score: ['I','A'] },
+        { text: '🌶️ 美食之都的市中心', score: ['B','E'] },
+        { text: '🌊 海边的文艺小镇', score: ['H','C'] },
+        { text: '🏝️ 有很多青旅的度假岛', score: ['D','N'] }
+    ]}
+].forEach(function (q) { quizQuestions.push(q); });
+
+function selectOption(score, el) {
+    if (quizLocked) return;
+    quizLocked = true;
+    document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[currentQ] = Array.isArray(score) ? score : [score];
+    setTimeout(() => {
+        currentQ++;
+        quizLocked = false;
+        if (currentQ < quizQuestions.length) showQuestion(); else showResult();
+    }, 250);
+}
+function showResult() {
+    document.getElementById('quizPlaying').style.display = 'none';
+    const resultEl = document.getElementById('quizResult');
+    resultEl.style.display = 'block';
+    const scores = {};
+    answers.forEach(a => (Array.isArray(a) ? a : [a]).forEach(k => { scores[k] = (scores[k] || 0) + 1; }));
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const fallbackKey = Object.keys(personalityTypes)[0];
+    const typeKey = sorted[0] ? sorted[0][0] : fallbackKey;
+    const r = personalityTypes[typeKey] || personalityTypes[fallbackKey];
+    let html = `<div class="quiz-result"><div class="quiz-result-icon">${r.icon}</div><h2 class="quiz-result-title">${r.title}</h2><div class="quiz-result-badge">${r.badge}</div><p class="quiz-result-desc">${r.desc}</p><div style="text-align:left;margin:24px 0"><h4 style="font-size:1.1rem;margin-bottom:16px;text-align:center">🎯 为你定制的专属线路</h4>`;
+    r.routes.forEach((rt, i) => {
+        const aiIdx = aiGuideStore.length;
+        aiGuideStore.push({ dest: rt.dest, ai: rt.ai });
+        html += `<div class="route-detail-card"><div class="route-card-img" style="background-image:url('${rt.img || mylImgUrl(rt.dest,'sight')}')"><span class="days-badge">${rt.days}</span></div><div class="route-card-body"><h5>${rt.dest}</h5><div class="route-sub">MYL 专属定制线路 · 含住宿+门票+交通</div>${rt.itinerary.map(day => `<div class="route-day"><span class="route-day-label">${day.d}</span> <span class="route-day-text">${day.t}</span></div>`).join('')}<button class="ai-guide-btn" onclick="toggleAIGuide(this,'pGuide${aiIdx}',${aiIdx})">✨ AI 生成详细路书</button><div class="ai-guide-panel" id="pGuide${aiIdx}"></div></div></div>`;
+    });
+    html += `</div><button class="btn" onclick="startQuiz()">重新测试</button><a href="index.html#china" class="btn btn-outline" style="margin-left:8px">看看更多目的地</a></div>`;
+    resultEl.innerHTML = html;
+}
