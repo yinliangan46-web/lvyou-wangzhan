@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>主题线路库 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:1120px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:18px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .nav-links a:hover{color:var(--primary)}
+  .hero{padding:30px 0 16px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin:20px 0}
+  .theme-card{background:var(--card);border-radius:var(--radius);padding:20px;cursor:pointer;border:1.5px solid transparent;transition:.18s;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .theme-card:hover{transform:translateY(-3px)}
+  .theme-card.active{border-color:var(--primary);background:var(--soft)}
+  .theme-icon{width:46px;height:46px;border-radius:14px;background:var(--soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+  .theme-card.active .theme-icon{background:var(--primary);color:#fff}
+  .theme-card h3{font-size:16px;margin-bottom:4px}
+  .theme-card .desc{color:var(--muted);font-size:13px}
+  .theme-meta{display:flex;gap:10px;margin-top:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .route-list{margin:10px 0 30px}
+  .route-list h2{font-size:19px;margin:18px 0 14px}
+  .route-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .route-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 4px 18px rgba(20,50,100,.06);display:flex;flex-direction:column}
+  .route-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .city-tag{background:var(--soft);color:var(--primary);border-radius:8px;padding:3px 10px;font-size:12px}
+  .price{font-weight:900;color:var(--primary)}
+  .route-card h4{font-size:15px;margin-bottom:6px}
+  .route-card .hl{color:var(--muted);font-size:13px;margin-bottom:10px}
+  .route-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+  .rtag{background:#f2f5fa;border-radius:8px;padding:3px 10px;font-size:12px;color:var(--muted)}
+  .route-link{margin-top:12px;color:var(--primary);text-decoration:none;font-size:13px;font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="cheatsheet.html">行前备忘单</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>主题线路库</h1>
+    <p>不先定城市，按兴趣挑主题：漫步、博物馆、美食、夜景、亲子、摄影、古镇、海岛、文化、购物，跨城市拼线路。</p>
+  </section>
+
+  <section class="theme-grid" id="themeGrid"></section>
+  <section class="route-list" id="routeList"></section>
+</div>
+
+<script>
+var THEMES = [
+  {id:'walk', icon:'fa-person-walking', name:'城市漫步', desc:'老街、巷弄、湖滨骑行，用脚步感受城市节奏。', who:'休闲放松、情侣、慢游', budget:'¥1,200–2,500', days:'2–4天', season:'春秋最佳',
+    routes:[
+      {city:'成都', name:'宽窄巷子—锦里慢逛线', days:'2天', price:'¥1,500起', hl:'宽窄巷子喝茶、锦里夜景、奎星楼街觅食', tags:['老城','美食','茶馆']},
+      {city:'杭州', name:'西湖环湖漫步线', days:'2–3天', price:'¥1,800起', hl:'断桥—苏堤—杨公堤，湖边骑行与咖啡馆', tags:['湖景','骑行','休闲']},
+      {city:'厦门', name:'环岛路—曾厝垵海岸线', days:'2–3天', price:'¥1,800起', hl:'海滨步道、渔村小巷、海边日落', tags:['海滨','步道','日落']},
+      {city:'重庆', name:'解放碑—十八梯山城巷', days:'2天', price:'¥1,500起', hl:'爬坡上坎看山城层次，夜景与老街交错', tags:['山城','夜景','老街']}
+    ]},
+  {id:'museum', icon:'fa-building-columns', name:'博物馆线', desc:'场馆、古迹、研学讲解，把历史看进行程里。', who:'历史爱好者、亲子研学、文化探访', budget:'¥1,600–3,000', days:'3–5天', season:'避开节假日高峰',
+    routes:[
+      {city:'西安', name:'陕博—兵马俑古都线', days:'3–4天', price:'¥1,800起', hl:'陕西历史博物馆、兵马俑、西安城墙', tags:['遗址','研学','古迹']},
+      {city:'南京', name:'南博—中山陵六朝线', days:'3天', price:'¥1,600起', hl:'南京博物院、中山陵、明孝陵、夫子庙', tags:['博物','陵寝','人文']},
+      {city:'苏州', name:'园林—苏博江南线', days:'2–3天', price:'¥1,700起', hl:'拙政园、苏州博物馆、平江路、虎丘', tags:['园林','建筑','江南']},
+      {city:'北京', name:'故宫—国博中轴线', days:'4–5天', price:'¥2,500起', hl:'故宫、国家博物馆、天坛、什刹海胡同', tags:['皇城','国宝','胡同']}
+    ]},
+  {id:'food', icon:'fa-utensils', name:'美食扫街', desc:'按吃什么排路线，老字号、夜市、街头小吃一路打卡。', who:'美食爱好者、年轻人、独行友好', budget:'¥1,400–2,600', days:'2–4天', season:'全年',
+    routes:[
+      {city:'长沙', name:'五一广场夜宵扫街线', days:'2–3天', price:'¥1,400起', hl:'小龙虾、臭豆腐、糖油粑粑、茶颜路线', tags:['夜宵','小吃','市井']},
+      {city:'成都', name:'奎星楼—玉林美食线', days:'3天', price:'¥1,500起', hl:'串串、冒菜、凉粉、盖碗茶', tags:['火锅','串串','茶馆']},
+      {city:'曼谷', name:'街头美食巡礼线', days:'4–5天', price:'¥3,000起', hl:'水上市场、夜市小吃、芒果糯米饭、冬阴功', tags:['夜市','东南亚','街头']},
+      {city:'广州', name:'老城区早茶扫街线', days:'2–3天', price:'¥1,600起', hl:'早茶点心、烧腊、糖水、上下九老街', tags:['早茶','烧腊','糖水']}
+    ]},
+  {id:'night', icon:'fa-moon', name:'夜景打卡', desc:'灯光、江景、夜市与天台，城市入夜后的另一面。', who:'摄影、年轻人、情侣', budget:'¥1,500–2,800', days:'2–3天', season:'全年',
+    routes:[
+      {city:'重庆', name:'洪崖洞—两江夜景线', days:'2天', price:'¥1,500起', hl:'洪崖洞亮灯、两江游船、南山一棵树', tags:['江景','灯光','山城']},
+      {city:'上海', name:'外滩—陆家嘴夜景线', days:'2–3天', price:'¥2,200起', hl:'外滩万国建筑、陆家嘴天际线、浦江夜景', tags:['都市','江景','天际线']},
+      {city:'青岛', name:'五四广场—浮山湾夜景', days:'2–3天', price:'¥1,700起', hl:'浮山湾灯光秀、海边步道、啤酒街', tags:['海滨','灯光','啤酒']},
+      {city:'曼谷', name:'夜市—湄南河夜景线', days:'3天', price:'¥2,800起', hl:'河畔夜市、摩天轮、街头酒吧', tags:['夜市','河畔','东南亚']}
+    ]},
+  {id:'family', icon:'fa-child', name:'亲子轻松', desc:'节奏宽松、设施友好，少赶路多停留，适合带娃出行。', who:'亲子家庭、带老人同行', budget:'¥2,000–4,000', days:'3–5天', season:'寒暑假/春秋',
+    routes:[
+      {city:'青岛', name:'海滨亲子轻松线', days:'3–4天', price:'¥2,000起', hl:'八大关、栈桥、崂山、海洋乐园', tags:['海滨','平缓','亲子']},
+      {city:'三亚', name:'亚龙湾度假亲子线', days:'4–5天', price:'¥3,500起', hl:'沙滩戏水、海洋公园、度假酒店', tags:['海岛','度假','酒店']},
+      {city:'哈尔滨', name:'冰雪亲子玩雪线', days:'3–4天', price:'¥2,200起', hl:'冰雪大世界、雪乡、中央大街', tags:['冰雪','玩雪','冬季']},
+      {city:'厦门', name:'海岛休闲亲子线', days:'3天', price:'¥1,800起', hl:'鼓浪屿、环岛路、科技馆、海滨步道', tags:['海岛','平缓','科普']}
+    ]},
+  {id:'photo', icon:'fa-camera-retro', name:'摄影机位', desc:'按出片点排路线，光线、机位、打卡角度提前标好。', who:'摄影爱好者、情侣、出片需求', budget:'¥1,800–3,500', days:'3–5天', season:'按主题季节',
+    routes:[
+      {city:'大理', name:'环海摄影出片线', days:'4天', price:'¥2,000起', hl:'洱海廊道、双廊、喜洲稻田、日落机位', tags:['湖景','田园','日落']},
+      {city:'重庆', name:'山城立体机位线', days:'3天', price:'¥1,500起', hl:'洪崖洞、李子坝、南山夜景、梯坎老街', tags:['立体','夜景','都市']},
+      {city:'青海', name:'青海湖—茶卡天空线', days:'4–5天', price:'¥3,000起', hl:'青海湖、茶卡盐湖、翡翠湖、雅丹', tags:['大景','湖泊','公路']},
+      {city:'喀什', name:'古城人文机位线', days:'4天', price:'¥2,800起', hl:'高台民居、老城街巷、巴扎人文', tags:['人文','古城','西域']}
+    ]},
+  {id:'ancient', icon:'fa-house-chimney', name:'古镇慢游', desc:'古村、水乡、老城，住下来慢慢逛，不赶景点。', who:'慢游放空、情侣、文化休闲', budget:'¥1,500–2,800', days:'3–5天', season:'春秋/秋色',
+    routes:[
+      {city:'黄山·宏村', name:'宏村—西递徽村线', days:'3天', price:'¥1,800起', hl:'月沼、承志堂、塔川秋色、木坑竹海', tags:['徽派','古村','秋色']},
+      {city:'丽江', name:'大研古城—束河线', days:'3–4天', price:'¥2,000起', hl:'四方街、束河古镇、玉龙雪山远眺', tags:['古城','慢生活','山水']},
+      {city:'乌镇', name:'乌镇—西塘水乡线', days:'2–3天', price:'¥1,600起', hl:'西栅夜景、烟雨长廊、摇橹船', tags:['水乡','夜景','江南']},
+      {city:'凤凰', name:'沱江古城慢游线', days:'2–3天', price:'¥1,500起', hl:'沱江泛舟、吊脚楼、老街夜景', tags:['江景','吊脚楼','湘西']}
+    ]},
+  {id:'island', icon:'fa-umbrella-beach', name:'海边度假', desc:'沙滩、海浪、度假村，以放松和海景为主。', who:'度假、情侣、亲子、避寒', budget:'¥3,000–6,000', days:'4–6天', season:'避寒/避暑',
+    routes:[
+      {city:'三亚', name:'亚龙湾—海棠湾度假线', days:'4–5天', price:'¥3,500起', hl:'沙滩、海岛项目、度假酒店、海鲜', tags:['热带','酒店','沙滩']},
+      {city:'厦门', name:'鼓浪屿—环岛度假线', days:'3–4天', price:'¥2,000起', hl:'海岛漫步、海滨步道、咖啡民宿', tags:['海岛','文艺','步道']},
+      {city:'青岛', name:'胶东半岛海滨线', days:'3–4天', price:'¥1,800起', hl:'八大关、崂山、海滨浴场、啤酒', tags:['北方海滨','避暑','德式建筑']},
+      {city:'巴厘岛', name:'南部海滩度假线', days:'5天', price:'¥4,500起', hl:'情人崖、海神庙、金巴兰海滩、乌布', tags:['热带','度假','冲浪']}
+    ]},
+  {id:'culture', icon:'fa-landmark', name:'文化探访', desc:'古迹、宗教、街巷民俗，理解一座城的来处。', who:'深度游、人文爱好者、研学', budget:'¥1,800–3,500', days:'3–6天', season:'春秋',
+    routes:[
+      {city:'西安', name:'周秦汉唐古都线', days:'4天', price:'¥2,000起', hl:'兵马俑、古城墙、回民街、博物馆', tags:['古都','古迹','人文']},
+      {city:'敦煌', name:'丝路文化探访线', days:'3–4天', price:'¥2,800起', hl:'莫高窟、鸣沙山月牙泉、阳关遗址', tags:['丝路','石窟','沙漠']},
+      {city:'京都', name:'古寺町屋文化线', days:'4–5天', price:'¥4,500起', hl:'清水寺、祇园、金阁寺、町屋小巷', tags:['古寺','街巷','东亚文化']},
+      {city:'北京', name:'胡同皇城文化线', days:'4天', price:'¥2,400起', hl:'故宫、胡同、什刹海、国子监', tags:['皇城','胡同','民俗']}
+    ]},
+  {id:'shop', icon:'fa-bag-shopping', name:'购物都市', desc:'商圈、免税、潮流街区，边走边买的都市行程。', who:'购物、年轻人、都市休闲', budget:'¥2,500–5,000', days:'3–5天', season:'按促销季',
+    routes:[
+      {city:'东京', name:'东京潮流购物线', days:'5天', price:'¥5,000起', hl:'涩谷、新宿、浅草、银座、药妆', tags:['潮流','商圈','药妆']},
+      {city:'上海', name:'静安—陆家嘴购物线', days:'3天', price:'¥2,500起', hl:'南京西路、淮海路、陆家嘴、设计师店', tags:['都市','商圈','潮流']},
+      {city:'曼谷', name:'商圈—夜市淘货线', days:'4天', price:'¥2,800起', hl:'购物中心、恰图恰周末市场、夜市', tags:['夜市','平价','东南亚']},
+      {city:'首尔', name:'明洞—弘大潮流线', days:'4天', price:'¥3,500起', hl:'明洞美妆、弘大街头、东大门', tags:['美妆','潮流','街头']}
+    ]}
+];
+
+var cur = THEMES[0].id;
+function $(id){return document.getElementById(id);}
+
+function renderGrid(){
+  $('themeGrid').innerHTML = THEMES.map(function(t){
+    return '<div class="theme-card'+(cur===t.id?' active':'')+'" data-id="'+t.id+'">'+
+      '<div class="theme-icon"><i class="fas '+t.icon+'"></i></div>'+
+      '<h3>'+t.name+'</h3><div class="desc">'+t.desc+'</div>'+
+      '<div class="theme-meta"><span><i class="fas fa-users"></i> '+t.who+'</span><span><i class="fas fa-wallet"></i> '+t.budget+'</span><span><i class="far fa-clock"></i> '+t.days+'</span></div>'+
+    '</div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.theme-card'),function(c){
+    c.onclick=function(){cur=c.dataset.id;renderGrid();renderRoutes();};
+  });
+}
+
+function renderRoutes(){
+  var t=THEMES.find(function(x){return x.id===cur;});
+  var cards=t.routes.map(function(r){
+    return '<div class="route-card">'+
+      '<div class="route-top"><span class="city-tag"><i class="fas fa-map-marker-alt"></i> '+r.city+'</span><span class="price">'+r.price+'</span></div>'+
+      '<h4>'+r.name+'</h4><div class="hl">'+r.hl+'</div>'+
+      '<div class="route-tags">'+r.tags.map(function(x){return '<span class="rtag">'+x+'</span>';}).join('')+'<span class="rtag">'+r.days+'</span></div>'+
+      '<a class="route-link" href="discover.html">查看同类线路 →</a>'+
+    '</div>';
+  }).join('');
+  $('routeList').innerHTML='<h2>'+t.name+' · 推荐线路 <span style="font-size:13px;color:var(--muted);font-weight:400">（'+t.season+'）</span></h2><div class="route-grid">'+cards+'</div>';
+}
+
+renderGrid();renderRoutes();
+</script>
+</body>
+</html>
