@@ -1282,6 +1282,9 @@
     }
 
     if (!IS_FOOD) {
+        if (window.MYL_PANO && window.MYL_PANO.has(NAME)) {
+            html += S('pano', '全景漫游', 'Panorama', window.MYL_PANO.render(NAME));
+        }
         var v = verdictOf();
         html += S('identity', '身份档案', 'Identity',
             factsGrid([
@@ -1466,6 +1469,8 @@
 
     $('sdMain').innerHTML = galleryBlock() +
         '<div class="sd-grid"><div class="sd-col">' + html + '</div>' + asideBlock() + '</div>';
+
+    if (window.MYL_PANO) window.MYL_PANO.mountAll();
 
     /* ---------- 导航 ---------- */
     var secs = Array.prototype.slice.call(document.querySelectorAll('.sd-sec'));
