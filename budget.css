@@ -65,3 +65,5 @@
   .tier-row.hot .tier-label{color:var(--primary);font-weight:700}
   .tier-row .bar-fill{background:#9db8e8}
   .tier-row.hot .bar-fill{background:var(--primary)}
+
+@media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
