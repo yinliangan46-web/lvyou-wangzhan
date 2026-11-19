@@ -20,6 +20,9 @@
   .hero{padding:30px 0 14px}
   .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
   .hero p{color:var(--muted);font-size:15px}
+  .searchbar{display:flex;gap:10px;align-items:center;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;margin:16px 0}
+  .searchbar i{color:var(--muted)}
+  .searchbar input{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;background:transparent;color:var(--text)}
   .city-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
   .ct{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;font-size:14px;cursor:pointer}
   .ct.active{background:var(--primary);border-color:var(--primary);color:#fff}
@@ -64,6 +67,10 @@
   </section>
 
   <div class="counter">已收集印记 <b id="count">0</b> 枚 · 照片仅存于本机浏览器，不上传服务器</div>
+  <div class="searchbar">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="搜索全部城市，如：六安、成都、海边" />
+  </div>
   <section class="city-tabs" id="tabs"></section>
   <section class="spot-grid" id="spots"></section>
 
@@ -74,27 +81,50 @@
 </div>
 
 <input type="file" id="fileInput" accept="image/*" hidden />
+<script src="city-data.js"></script>
+<script src="city-foods.js"></script>
+<script src="city-history.js"></script>
+<script src="city-landmarks.js"></script>
+<script src="city-poi-bank.js"></script>
+<script src="province-data-all.js"></script>
+<script src="city-index.js"></script>
 <script>
-var SPOTS = {
-  chengdu:[{n:'宽窄巷子',d:'老成都巷弄与茶馆'},{n:'大熊猫繁育基地',d:'看熊猫的核心点位'},{n:'锦里古街',d:'武侯祠旁夜景街区'},{n:'人民公园',d:'鹤鸣茶社盖碗茶'}],
-  xian:[{n:'西安城墙',d:'明城墙骑行散步'},{n:'陕西历史博物馆',d:'周秦汉唐国宝'},{n:'秦始皇兵马俑',d:'临潼地下军阵'},{n:'回民街',d:'老城美食片区'}],
-  xiamen:[{n:'鼓浪屿',d:'轮渡上岛老别墅'},{n:'环岛路',d:'滨海步道骑行'},{n:'南普陀寺',d:'临海古刹'},{n:'曾厝垵',d:'渔村文艺片区'}],
-  changsha:[{n:'橘子洲',d:'湘江江心洲'},{n:'湖南省博物馆',d:'马王堆文物'},{n:'太平老街',d:'老城小吃街'},{n:'五一广场',d:'夜生活商圈'}],
-  chongqing:[{n:'洪崖洞',d:'吊脚楼夜景'},{n:'解放碑',d:'城市中心地标'},{n:'李子坝',d:'轻轨穿楼机位'},{n:'南滨路',d:'沿江观景带'}],
-  dali:[{n:'洱海生态廊道',d:'环海骑行散步'},{n:'大理古城',d:'老城街巷'},{n:'双廊',d:'临海村落'},{n:'崇圣寺三塔',d:'古塔倒影'}]
-};
-var CITY_NAME={chengdu:'成都',xian:'西安',xiamen:'厦门',changsha:'长沙',chongqing:'重庆',dali:'大理'};
 var KEY='myl-stamps';
-var cur='chengdu';
+var cur=null;
 var pending=null;
 
 function $(id){return document.getElementById(id);}
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}}
 function save(a){localStorage.setItem(KEY,JSON.stringify(a));}
 
+function cities(){ return window.MYL ? MYL.indexCities() : []; }
+function findCity(name){ return MYL.getCity(name); }
+
+function spotsOf(c){
+  var arr=[], seen={};
+  if(c.tier==='A'){
+    (c.itinerary||[]).forEach(function(d){
+      (d.timeline||[]).forEach(function(t){ if(t.activity){arr.push({n:t.activity,d:t.detail||'行程节点'});} });
+    });
+  }
+  (c.bLandmarks||[]).forEach(function(x){arr.push({n:x,d:'当地代表性地标'});});
+  (c.foods||[]).forEach(function(f){arr.push({n:f.name,d:'当地美食点位'});});
+  return arr.filter(function(x){ if(seen[x.n]) return false; seen[x.n]=1; return true; }).slice(0,12);
+}
+
+function tabList(){
+  var q=$('searchInput').value.trim();
+  var all=cities();
+  var list = q ? MYL.searchCities(q) : all;
+  return list.slice(0,30);
+}
+
 function renderTabs(){
-  $('tabs').innerHTML=Object.keys(SPOTS).map(function(k){
-    return '<button class="ct'+(cur===k?' active':'')+'" data-k="'+k+'">'+CITY_NAME[k]+'</button>';
+  var list=tabList();
+  if(cur && !list.some(function(c){return c.name===cur;})) cur=list[0]?list[0].name:null;
+  if(!cur && list.length) cur=list[0].name;
+  $('tabs').innerHTML=list.map(function(c){
+    return '<button class="ct'+(cur===c.name?' active':'')+'" data-k="'+c.name+'">'+c.name+'</button>';
   }).join('');
   Array.prototype.forEach.call(document.querySelectorAll('.ct'),function(b){
     b.onclick=function(){cur=b.dataset.k;renderTabs();renderSpots();};
@@ -102,18 +132,22 @@ function renderTabs(){
 }
 
 function renderSpots(){
+  var c=cur?findCity(cur):null;
   var stamps=load();
-  $('spots').innerHTML=SPOTS[cur].map(function(s){
-    var key=cur+'-'+s.n;
+  if(!c){$('spots').innerHTML='<div class="empty">选择城市后查看可打卡点位。</div>';return;}
+  var spots=spotsOf(c);
+  if(!spots.length){$('spots').innerHTML='<div class="empty">该城景点整理中，可先到印记墙记录已上传的现场照片。</div>';return;}
+  $('spots').innerHTML=spots.map(function(s){
+    var key=c.name+'-'+s.n;
     var hit=stamps.find(function(x){return x.key===key;});
     return '<div class="spot"><h4>'+s.n+'</h4><div class="d">'+s.d+'</div>'+
-      (hit?'<button class="btn btn-ghost" data-key="'+key+'"><i class="fas fa-check"></i> 已打卡</button>':'<button class="btn btn-primary" data-key="'+key+'" data-city="'+CITY_NAME[cur]+'"><i class="fas fa-camera"></i> 上传照片打卡</button>')+
+      (hit?'<button class="btn btn-ghost" data-key="'+key+'"><i class="fas fa-check"></i> 已打卡</button>':'<button class="btn btn-primary" data-key="'+key+'" data-city="'+c.name+'"><i class="fas fa-camera"></i> 上传照片打卡</button>')+
     '</div>';
   }).join('');
   Array.prototype.forEach.call(document.querySelectorAll('.spot .btn'),function(b){
     b.onclick=function(){
       if(b.classList.contains('btn-ghost'))return;
-      pending={key:b.dataset.key,city:b.dataset.city,spot:b.dataset.key.split('-')[1]};
+      pending={key:b.dataset.key,city:b.dataset.city,spot:b.dataset.key.split('-').slice(1).join('-')};
       $('fileInput').click();
     };
   });
@@ -147,6 +181,7 @@ function renderWall(){
   });
 }
 
+$('searchInput').addEventListener('input',function(){renderTabs();renderSpots();});
 renderTabs();renderSpots();renderWall();
 </script>
 </body>
