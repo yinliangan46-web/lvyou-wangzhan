@@ -85,6 +85,7 @@
   .link-card{border:1px solid var(--line);border-radius:12px;padding:10px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:3px}
   .link-card b{font-size:13px}
   .link-card span{font-size:12px;color:var(--muted)}
+  .tier-B{background:#f2f5fa}
 </style>
 </head>
 <body>
@@ -103,7 +104,7 @@
 <div class="container">
   <section class="hero">
     <h1>目的地横向对比</h1>
-    <p>搜索全部城市，勾选 2–4 个 A 级目的地并排比较；点进详情可看行程节点、美食、住宿、市内交通、航班与高铁入口。</p>
+    <p>搜索全部城市，勾选 2–4 个目的地并排比较；完整城市可看行程节点、美食、住宿、市内交通、航班与高铁入口，轻量城市展示地标、美食与通用预订入口。</p>
   </section>
 
   <div class="searchbar">
@@ -113,7 +114,7 @@
   </div>
 
   <section class="picker">
-    <div class="picker-title"><i class="fas fa-list-check"></i> 选择要对比的目的地（A 级可对比，B 级仅展示美食地标）</div>
+    <div class="picker-title"><i class="fas fa-list-check"></i> 选择要对比的目的地（最多 4 个，轻量城市展示地标美食与通用入口）</div>
     <div class="chips" id="chips"></div>
     <div class="basket" id="basket"></div>
   </section>
@@ -162,11 +163,11 @@ function renderChips(){
   $('chips').innerHTML = list.map(function(c){
     var on = selected.indexOf(c.name) >= 0;
     if (c.tier !== 'A') {
-      return '<button class="chip disabled" title="B 级：仅美食/地标，暂不支持完整对比">'+c.name+'<span class="cnt">B级</span></button>';
+      return '<button class="chip'+(on?' active':'')+'" data-name="'+c.name+'">'+c.name+'<span class="cnt">轻量</span></button>';
     }
     return '<button class="chip'+(on?' active':'')+'" data-name="'+c.name+'">'+c.name+'<span class="cnt">'+(scoreOf(c).tag)+'</span></button>';
   }).join('') || '<div class="empty">没有匹配的城市</div>';
-  Array.prototype.forEach.call(document.querySelectorAll('.chip:not(.disabled)'),function(btn){
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(btn){
     btn.onclick=function(){
       var name=btn.dataset.name, i=selected.indexOf(name);
       if(i>=0){selected.splice(i,1);}
@@ -177,7 +178,7 @@ function renderChips(){
       renderChips(); renderResult();
     };
   });
-  $('basket').innerHTML = selected.length? '已选 <b>'+selected.length+'</b> 个：'+selected.join('、')+'（可再点取消）' : '还未选择，勾选 A 级城市后这里生成对比表与详情。';
+  $('basket').innerHTML = selected.length? '已选 <b>'+selected.length+'</b> 个：'+selected.join('、')+'（可再点取消）' : '还未选择，勾选城市后这里生成对比表与详情。';
 }
 
 function bar(n){return '<div class="score"><div class="bar"><i style="width:'+(n/5*100)+'%"></i></div><span>'+n+'/5</span></div>';}
@@ -246,6 +247,7 @@ function conclusion(list){
 
 function detailCard(c){
   var s=scoreOf(c);
+  var isA=c.tier==='A';
   var itinerary=(c.itinerary||[]).map(function(d){
     var tl=(d.timeline||[]).map(function(t){
       var extra=(t.duration?' · '+t.duration:'')+(t.ticket?' · '+t.ticket:'')+(t.tip?'（'+t.tip+'）':'');
@@ -253,29 +255,57 @@ function detailCard(c){
     }).join('');
     return '<div class="day"><div class="day-t">'+(d.day||'')+' · '+(d.theme||'')+'</div>'+tl+'</div>';
   }).join('');
-  var foods=(c.foods||[]).map(function(f){
-    return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
-  }).join('');
+
+  var foods;
+  if(isA){
+    foods=(c.foods||[]).map(function(f){
+      return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+    }).join('');
+  } else {
+    foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
+  }
+  var spots = isA ? '' : (c.bLandmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
+  var history = (!isA && c.bHistory) ? '<div class="li">'+c.bHistory+'</div>' : '';
+
   var hotels=(c.hotels||[]).map(function(h){
     var link=h.bookingUrl?'<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span><span>'+(h.highlight||'')+'</span></a>':'<div class="link-card"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></div>';
     return link;
   }).join('');
+
   var transport=(c.transport||[]).map(function(t){return '<div class="li"><b>'+t.label+'</b> <span class="lp">'+t.value+'</span></div>';}).join('');
+
   var air=(c.airfare||[]).map(function(a){
     return '<a class="link-card" href="'+a.bookingUrl+'" target="_blank" rel="noopener"><b>'+a.platform+'</b><span>'+a.from+' → '+a.to+' · '+a.price+'</span><span>'+(a.time||'')+'</span></a>';
   }).join('');
+
   var rail=(c.trains||[]).map(function(t){
     return '<a class="link-card" href="'+t.bookingUrl+'" target="_blank" rel="noopener"><b>'+t.platform+'</b><span>'+t.from+' → '+t.to+' · '+t.price+'</span><span>'+(t.duration||'')+' '+(t.time||'')+'</span></a>';
   }).join('');
+
+  var generic='';
+  if(!isA){
+    generic='<div class="link-grid">'+
+      '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
+      '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
+      '<a class="link-card" href="https://hotels.ctrip.com" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+
+    '</div>';
+  }
+
   var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+' <span class="lp">'+b.value+'</span></div>';}).join('');
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
-  return '<div class="dcard"><div class="dhead"><h3>'+c.name+'</h3><div class="sub">'+(c.country||'中国')+' · '+(c.days||s.days)+' · '+s.tag+'</div></div><div class="dbody">'
+  var lightTag = isA?'':' · 轻量参考';
+
+  return '<div class="dcard"><div class="dhead"><h3>'+c.name+'</h3><div class="sub">'+(c.country||'中国')+' · '+(c.days||s.days)+' · '+s.tag+lightTag+'</div></div><div class="dbody">'
+    + (!isA?'<div class="note" style="margin-bottom:12px">轻量参考：该城完整路书整理中，下方为已有地标、美食与通用交通住宿入口。</div>':'')
     + (itinerary?'<div class="dsec"><h4><i class="fas fa-route"></i> 行程节点</h4>'+itinerary+'</div>':'')
+    + (spots?'<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>':'')
     + (foods?'<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>':'')
+    + (history?'<div class="dsec"><h4><i class="fas fa-landmark"></i> 城市简介</h4>'+history+'</div>':'')
     + (hotels?'<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>':'')
     + (transport?'<div class="dsec"><h4><i class="fas fa-bus"></i> 市内交通</h4>'+transport+'</div>':'')
     + (air?'<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>':'')
     + (rail?'<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>':'<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车</h4><div class="note">该城暂无火车直达参考，可在 12306 查询出发地线路。</div></div>')
+    + (generic?'<div class="dsec"><h4><i class="fas fa-link"></i> 通用预订入口</h4>'+generic+'</div>':'')
     + (budget?'<div class="dsec"><h4><i class="fas fa-wallet"></i> 预算拆分</h4>'+budget+'</div>':'')
     + (tips?'<div class="dsec"><h4><i class="fas fa-lightbulb"></i> 出行贴士</h4>'+tips+'</div>':'')
     + '</div></div>';
@@ -283,7 +313,7 @@ function detailCard(c){
 
 function renderResult(){
   var box=$('result');
-  if(!selected.length){box.innerHTML='<div class="card empty"><i class="fas fa-route"></i><div>勾选上方 A 级目的地后，这里会出现对比矩阵、五维画像、选择建议和各城详情。</div></div>';return;}
+  if(!selected.length){box.innerHTML='<div class="card empty"><i class="fas fa-route"></i><div>勾选上方城市后，这里会出现对比矩阵、五维画像、选择建议和各城详情。</div></div>';return;}
   var list=selected.map(function(n){return MYL.getCity(n);}).filter(Boolean);
   var layout=list.length<=2?'<div class="grid"><div>'+renderTable(list)+'</div>'+radarSVG(list)+'</div>':renderTable(list)+'<div style="margin-top:18px">'+radarSVG(list)+'</div>';
   var details='<div class="card"><h3><i class="fas fa-map-location-dot"></i> 所选目的地详情</h3><div class="detail-grid">'+list.map(detailCard).join('')+'</div></div>';
