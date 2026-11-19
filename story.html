@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>线路剧情 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:880px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .hero{padding:30px 0 14px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .route-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:18px 0}
+  .route-card{background:var(--card);border-radius:var(--radius);padding:18px;cursor:pointer;border:1.5px solid transparent;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .route-card.active{border-color:var(--primary);background:var(--soft)}
+  .route-card h3{font-size:16px;margin-bottom:4px}
+  .route-card .desc{color:var(--muted);font-size:13px}
+  .route-card .meta{margin-top:8px;font-size:12px;color:var(--muted)}
+  .chapter{background:var(--card);border-radius:var(--radius);margin:16px 0;overflow:hidden;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .ch-head{padding:18px 20px;display:flex;gap:14px;align-items:center;cursor:pointer}
+  .ch-no{width:40px;height:40px;border-radius:12px;background:var(--soft);color:var(--primary);font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ch-head.open .ch-no{background:var(--primary);color:#fff}
+  .ch-title{flex:1}
+  .ch-title h4{font-size:15px}
+  .ch-title .loc{font-size:12px;color:var(--muted)}
+  .ch-toggle{color:var(--muted)}
+  .ch-body{display:none;padding:0 20px 20px;border-top:1px dashed var(--line)}
+  .ch-body.open{display:block}
+  .ch-body .scene{font-size:14px;margin:14px 0;color:var(--text)}
+  .nodes{margin:10px 0}
+  .node{padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .node:last-child{border-bottom:none}
+  .node b{color:var(--primary)}
+  .know{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:13px;margin-top:10px}
+  .know i{color:var(--primary)}
+  .collect{margin-top:12px}
+  .btn{border:none;border-radius:10px;padding:9px 15px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-ghost{background:var(--soft);color:var(--primary)}
+  .album{background:var(--card);border-radius:var(--radius);padding:18px;margin:18px 0 30px;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .album h3{font-size:15px;color:var(--primary);margin-bottom:10px}
+  .album-grid{display:flex;gap:10px;flex-wrap:wrap}
+  .stamp{border:1.5px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--muted)}
+  .stamp.hit{border-style:solid;border-color:var(--primary);color:var(--primary);background:var(--soft)}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="themes.html">主题线路</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>线路剧情叙事</h1>
+    <p>把一条线路拆成几个章节，像读故事一样走进场景；读完一章可收入剧情收集册，进度保存在本机。</p>
+  </section>
+
+  <section class="route-list" id="routeList"></section>
+  <section id="chapters"></section>
+  <section class="album">
+    <h3><i class="fas fa-bookmark"></i> 我的剧情收集册</h3>
+    <div class="album-grid" id="album"></div>
+  </section>
+</div>
+
+<script>
+var STORIES = [
+  {id:'xian', name:'长安三日 · 古都线', desc:'从城墙根走到兵马俑，读懂周秦汉唐的层叠记忆。', meta:'西安 · 3天',
+    chapters:[
+      {title:'第一章 · 城墙下的晨光', loc:'西安城墙 · 钟鼓楼', scene:'清晨从南门登上城墙，砖石在脚下延伸，老城的屋脊与街巷在两侧铺开。城墙上骑行一圈，是认识这座城最快的方式。', nodes:[{n:'西安城墙', d:'明城墙现存最完整的古城墙之一，可步行或骑行。'},{n:'钟鼓楼', d:'古城中轴地标，晨钟暮鼓的方位原点。'}], know:'城墙周长约13.7公里，一圈骑下来约1.5小时，傍晚光线更适合拍照。'},
+      {title:'第二章 · 博物院里的国宝', loc:'陕西历史博物馆', scene:'走进展馆，器物按年代排列：商周青铜、汉唐陶俑、金银器与壁画。慢慢看，一件文物就是一段被压缩的时间。', nodes:[{n:'陕西历史博物馆', d:'馆藏涵盖周秦汉唐，基本陈列免费但需提前预约。'},{n:'何家村窖藏', d:'唐代金银器代表，需看特展。'}], know:'博物馆周一闭馆，节假日票量紧张，建议提前在官方渠道分时段预约。'},
+      {title:'第三章 · 临潼地下军阵', loc:'秦始皇兵马俑', scene:'离开城区向东到临潼，入坑道的瞬间会被军阵的规模压住。每一张面孔都不同，站坑边静静看，比听讲解更直接。', nodes:[{n:'一号坑', d:'主力军阵，视野最开阔。'},{n:'铜车马展', d:'工艺精细，建议预留时间。'}], know:'兵马俑距市区约40公里，地铁转公交或包车前往，整段行程预留半天以上。'},
+      {title:'第四章 · 回民街的夜味', loc:'回民街 · 大皮院', scene:'夜色落下，街巷被食物的香气填满。泡馍、肉夹馍、凉皮、甑糕，边走边吃，为三天古都行程收尾。', nodes:[{n:'回民街', d:'老城美食片区，分主街与小巷。'},{n:'大皮院', d:'本地老店更集中的支路。'}], know:'热门主街价格偏高，想吃本地味可钻进旁边的支巷，看哪家本地人多。'}
+    ]},
+  {id:'chongqing', name:'山城四日 · 立体线', desc:'爬坡上坎，在江景与梯坎之间感受一座长在山上的城市。', meta:'重庆 · 4天',
+    chapters:[
+      {title:'第一章 · 十八梯的层叠', loc:'十八梯 · 解放碑', scene:'重庆的路不在同一平面。从解放碑往下走十八梯，石阶把高城与低城接起来，一层一层是不同年代的生活。', nodes:[{n:'十八梯', d:'连接上下半城的传统梯坎老街。'},{n:'解放碑', d:'城市中心商圈与地标。'}], know:'这座城导航容易失效，认路多看楼层与出入口，步行比直线距离更准。'},
+      {title:'第二章 · 洪崖洞亮灯时', loc:'洪崖洞 · 嘉陵江边', scene:'傍晚等到灯光亮起，吊脚楼沿崖壁层叠而上。别挤在正面，沿江边走一段，视角更完整。', nodes:[{n:'洪崖洞', d:'依山而建的吊脚楼式建筑群，夜景为主。'},{n:'千厮门大桥', d:'过街可拍全景。'}], know:'洪崖洞入夜人流大，观景位需排队；节假日建议错峰到江边或桥上。'},
+      {title:'第三章 · 李子坝与南山', loc:'李子坝轻轨 · 南山一棵树', scene:'白天看轻轨穿楼，傍晚登南山一棵树，把两江与城景收进视野，夜景在入夜后达到最好。', nodes:[{n:'李子坝站', d:'轻轨穿楼的知名机位。'},{n:'南山一棵树', d:'俯瞰渝中半岛的观景台。'}], know:'南山距市区有一段距离，晚间下山注意公交与打车班次。'},
+      {title:'第四章 · 火锅与江风', loc:'南滨路 · 火锅', scene:'最后一晚坐在南滨路，火锅滚着红汤，江风从江面吹来。山城的味道，麻、辣、热，和这座城一样直接。', nodes:[{n:'南滨路', d:'沿江餐饮与夜景观赏带。'},{n:'本地火锅', d:'优先选牛油锅底，不能吃辣提前说。'}], know:'火锅分量足，两人点小锅即可；备肠胃药，辣度循序渐进。'}
+    ]},
+  {id:'xiamen', name:'海岛三日 · 慢游线', desc:'轮渡、老街与海岸，把节奏放慢，沿着海岸线看完这座城。', meta:'厦门 · 3天',
+    chapters:[
+      {title:'第一章 · 渡轮上的初见', loc:'轮渡码头 · 鼓浪屿', scene:'乘渡轮出海，海面风把城市推到身后。上岛后汽车消失，只剩步行、小巷和老建筑。', nodes:[{n:'鼓浪屿轮渡', d:'需提前购票，注意区分出发码头。'},{n:'岛上街巷', d:'步行游览，不通机动车。'}], know:'船票分本地与游客航线，买票时确认码头与班次，别走错码头。'},
+      {title:'第二章 · 老别墅与日光岩', loc:'鼓浪屿老建筑群 · 日光岩', scene:'岛上老别墅藏在树影里，爬到日光岩高处，红屋顶与海面一起铺开。这里适合慢慢走，不必赶景点。', nodes:[{n:'万国建筑', d:'多国风格老建筑集中分布。'},{n:'日光岩', d:'岛上高处观景点。'}], know:'岛上台阶多、坡陡，拖行李不便，建议轻装登岛。'},
+      {title:'第三章 · 环岛路的海岸', loc:'环岛路 · 曾厝垵', scene:'回到本岛沿环岛路慢行，沙滩、礁石与椰树交替。骑一段车，在海边等到日落。', nodes:[{n:'环岛路', d:'滨海步道与骑行道。'},{n:'曾厝垵', d:'渔村改造的文艺片区与民宿集中地。'}], know:'夏秋季关注台风与风浪预警，雨天与大风天海边行程需调整。'},
+      {title:'第四章 · 闽南味收尾', loc:'中山路 · 沙茶面', scene:'最后走进老城街巷，一碗沙茶面、一份海蛎煎，把海岛的味道记住，行程在市井烟火里结束。', nodes:[{n:'中山路', d:'骑楼老街与商业区。'},{n:'闽南小吃', d:'沙茶面、海蛎煎、土笋冻等。'}], know:'海蛎煎趁热吃；土笋冻口感特殊，敢尝试再点。'}
+    ]}
+];
+
+var cur = STORIES[0].id;
+var KEY='myl-story-album';
+function $(id){return document.getElementById(id);}
+function getAlbum(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return {};}}
+function saveAlbum(a){localStorage.setItem(KEY,JSON.stringify(a));}
+
+function renderRoutes(){
+  $('routeList').innerHTML=STORIES.map(function(s){
+    return '<div class="route-card'+(cur===s.id?' active':'')+'" data-id="'+s.id+'"><h3>'+s.name+'</h3><div class="desc">'+s.desc+'</div><div class="meta"><i class="fas fa-location-dot"></i> '+s.meta+'</div></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.route-card'),function(c){
+    c.onclick=function(){cur=c.dataset.id;renderRoutes();renderChapters();};
+  });
+}
+
+function renderChapters(){
+  var s=STORIES.find(function(x){return x.id===cur;});
+  var album=getAlbum();
+  $('chapters').innerHTML=s.chapters.map(function(ch,ci){
+    var key=s.id+'-'+ci;
+    var hit=album[key];
+    var nodes=ch.nodes.map(function(n){return '<div class="node"><b>'+n.n+'</b> — '+n.d+'</div>';}).join('');
+    return '<div class="chapter">'+
+      '<div class="ch-head" data-ci="'+ci+'"><div class="ch-no">'+(ci+1)+'</div>'+
+      '<div class="ch-title"><h4>'+ch.title+'</h4><div class="loc">'+ch.loc+'</div></div>'+
+      '<i class="fas fa-chevron-down ch-toggle"></i></div>'+
+      '<div class="ch-body" id="body-'+ci+'">'+
+        '<div class="scene">'+ch.scene+'</div>'+
+        '<div class="nodes">'+nodes+'</div>'+
+        '<div class="know"><i class="fas fa-lightbulb"></i> '+ch.know+'</div>'+
+        '<div class="collect"><button class="btn '+(hit?'btn-ghost':'btn-primary')+'" data-key="'+key+'" data-title="'+ch.title+'">'+(hit?'<i class="fas fa-bookmark"></i> 已收入收集册':'<i class="far fa-bookmark"></i> 收入收集册')+'</button></div>'+
+      '</div></div>';
+  }).join('');
+
+  Array.prototype.forEach.call(document.querySelectorAll('.ch-head'),function(h){
+    h.onclick=function(){var b=$('body-'+h.dataset.ci);b.classList.toggle('open');h.classList.toggle('open');};
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.collect .btn'),function(b){
+    b.onclick=function(){
+      var a=getAlbum();
+      if(a[b.dataset.key]){delete a[b.dataset.key];}else{a[b.dataset.key]=b.dataset.title;}
+      saveAlbum(a);renderChapters();renderAlbum();
+    };
+  });
+  renderAlbum();
+}
+
+function renderAlbum(){
+  var a=getAlbum();
+  var keys=Object.keys(a);
+  if(!keys.length){$('album').innerHTML='<div class="stamp">还没有收藏章节，读完一段就收入来吧。</div>';return;}
+  $('album').innerHTML=keys.map(function(k){return '<div class="stamp hit"><i class="fas fa-bookmark"></i> '+a[k]+'</div>';}).join('');
+}
+
+renderRoutes();renderChapters();
+</script>
+</body>
+</html>
