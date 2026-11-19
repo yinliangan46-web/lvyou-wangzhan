@@ -3,6 +3,7 @@ var SHEETS = window.MYLSHEETS || [];
 
 var cur = null;
 function $(id){return document.getElementById(id);}
+function tag(v){return v?'<span class="tag">'+v+'</span>':'';}
 var GENERIC_PACK=['舒服的步行鞋','身份证、手机充电宝','常备肠胃药与常用药','薄外套，按目的地温差准备'];
 
 function genSheet(c){
@@ -65,10 +66,12 @@ function renderSheet(){
   if(!d){$('sheetBox').innerHTML='<div class="empty">未找到该城市。</div>';return;}
   var today=new Date().toLocaleDateString('zh-CN');
   var ticket=(d.ticket||[]).map(function(t){
-    return '<div class="item"><div class="t">'+t.spot+' <span class="tag">'+t.channel+'</span></div><div class="d">开放：'+t.open+' ｜ 票价：'+t.price+' ｜ '+t.reserve+'</div></div>';
+    var free=/免费/.test(t.price||'');
+    var ch=free?'微信预约':'携程购票';
+    return '<div class="item"><div class="t">'+t.spot+tag(ch)+'</div><div class="d">开放：'+t.open+' ｜ 票价：'+t.price+' ｜ '+t.reserve+'</div></div>';
   }).join('')||'<div class="item"><div class="d">景点预约信息整理中，可点下方入口查询。</div></div>';
   var hotel=(d.hotel||[]).map(function(h){return '<div class="item"><div class="t">'+h.area+'</div><div class="d">'+h.level+' ｜ '+h.price+'</div></div>';}).join('')||'<div class="item"><div class="d">住宿推荐整理中，可点下方酒店入口查询。</div></div>';
-  var food=(d.foods||[]).map(function(f){return '<div class="item"><div class="t">'+f.name+' <span class="tag">'+(f.price||'')+'</span></div><div class="d">'+(f.note||'')+'</div></div>';}).join('')||'<div class="item"><div class="d">本地美食清单整理中。</div></div>';
+  var food=(d.foods||[]).map(function(f){return '<div class="item"><div class="t">'+f.name+tag(f.price)+'</div><div class="d">'+(f.note||'')+'</div></div>';}).join('')||'<div class="item"><div class="d">本地美食清单整理中。</div></div>';
   var pack=(d.pack||[]).map(function(p){return '<li><i class="fas fa-check"></i>'+p+'</li>';}).join('');
   var tips=(d.tips||[]).map(function(t){return '<div class="item"><div class="d"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
   var links=(d.links||[]).map(function(l){return '<a class="link-card" href="'+l.u+'" target="_blank" rel="noopener"><b>'+l.t+'</b><span>前往平台查询/预订</span></a>';}).join('');
@@ -78,13 +81,13 @@ function renderSheet(){
   $('sheetBox').innerHTML =
   '<div class="sheet" id="printSheet">'+
     '<div class="sheet-cover"><h2>'+d.name+' · 行前备忘单</h2><div class="sub">'+d.tag+' ｜ '+d.summary+'</div><div class="meta"><span><i class="far fa-calendar"></i> 生成于 '+today+'</span><span><i class="fas fa-location-dot"></i> '+d.name+'</span></div></div>'+
-    '<div class="section"><h3><i class="fas fa-ticket"></i> 预约与门票</h3>'+ticket+'</div>'+
+    '<div class="section"><h3><i class="fas fa-map-location-dot"></i> 景点 · 门票与预约</h3>'+ticket+'</div>'+
     '<div class="section"><h3><i class="fas fa-plane-departure"></i> 交通</h3>'+
       '<div class="item"><div class="t">到达大交通</div><div class="d">'+(d.transport.go||[]).join('<br>')+'</div></div>'+
       '<div class="item"><div class="t">市内交通</div><div class="d">'+d.transport.local+'</div></div>'+
     '</div>'+
     '<div class="section"><h3><i class="fas fa-hotel"></i> 住宿建议</h3>'+hotel+'</div>'+
-    '<div class="section"><h3><i class="fas fa-utensils"></i> 必吃推荐</h3>'+food+'</div>'+
+    '<div class="section"><h3><i class="fas fa-utensils"></i> 必吃美食</h3>'+food+'</div>'+
     '<div class="section"><h3><i class="fas fa-suitcase-rolling"></i> 必备物品</h3><ul class="pack">'+pack+'</ul></div>'+
     '<div class="section"><h3><i class="fas fa-triangle-exclamation"></i> 注意事项</h3>'+tips+'</div>'+
     '<div class="section"><h3><i class="fas fa-link"></i> 预订入口</h3><div class="link-grid">'+links+'</div></div>'+
