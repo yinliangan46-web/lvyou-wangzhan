@@ -76,7 +76,7 @@ function viewRoute(tid,idx){
     ||'<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';
   $('view').innerHTML='<a class="back" href="#/theme/'+t.id+'"><i class="fas fa-arrow-left"></i> 返回「'+t.name+'」线路</a>'+
   '<div class="detail">'+
-    '<div class="detail-cover"><h2>'+r.name+'</h2><div class="sub">'+r.city+' · '+r.days+' · '+r.price+(pd.isA?'':' · 轻量参考')+' · 主题：'+t.name+'</div></div>'+
+    '<div class="detail-cover"><h2>'+r.name+'</h2><div class="sub">'+r.city+' · '+r.days+' · '+r.price+' · 主题：'+t.name+'</div></div>'+
     '<div class="section"><h3><i class="fas fa-star"></i> 线路亮点</h3><div class="node"><div class="d">'+r.hl+'</div><div class="route-tags" style="margin-top:8px">'+r.tags.map(function(x){return '<span class="rtag">'+x+'</span>';}).join('')+'</div></div></div>'+
     '<div class="section"><h3><i class="fas fa-map-location-dot"></i> 景点节点</h3>'+nodes+'</div>'+
     '<div class="section"><h3><i class="fas fa-utensils"></i> 美食推荐</h3>'+foods+'</div>'+
