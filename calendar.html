@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>出行日历 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:920px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .nav-links a:hover{color:var(--primary)}
+  .hero{padding:30px 0 14px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  .m{background:var(--card);border-radius:14px;padding:14px;text-align:center;cursor:pointer;border:1.5px solid transparent;transition:.15s;box-shadow:0 4px 14px rgba(20,50,100,.05)}
+  .m.active{border-color:var(--primary);background:var(--soft)}
+  .m .mn{font-weight:900;font-size:15px}
+  .m .mt{font-size:12px;color:var(--muted);margin-top:4px}
+  .m .best{font-size:11px;color:var(--primary);margin-top:6px}
+  .panel{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .panel h3{font-size:15px;color:var(--primary);margin-bottom:12px}
+  .route{padding:12px 0;border-bottom:1px dashed var(--line)}
+  .route:last-child{border-bottom:none}
+  .route .rt{font-weight:700;font-size:14px}
+  .route .rd{color:var(--muted);font-size:13px;margin-top:3px}
+  .meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .chip{background:#f2f5fa;border-radius:8px;padding:4px 11px;font-size:12px;color:var(--muted)}
+  @media(max-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="themes.html">主题线路</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>交互出行日历</h1>
+    <p>按月份挑目的地：看当月天气、推荐线路、穿搭与出行提示，再决定什么时候出发最合适。</p>
+  </section>
+
+  <section class="grid" id="grid"></section>
+  <section id="detail"></section>
+</div>
+
+<script>
+var MONTHS = [
+  {m:1, label:'1月', tip:'避寒与冰雪季', weather:'北方严寒、南方温和', wear:'羽绒服/保暖层，南方薄外套',
+    routes:[
+      {city:'哈尔滨', name:'冰雪大世界—中央大街玩雪线', days:'3–4天', note:'冰雪亮灯在夜间，注意防寒与手机续航'},
+      {city:'三亚', name:'亚龙湾避寒度假线', days:'4–5天', note:'冬季为旺季，酒店需提前预订'}
+    ]},
+  {m:2, label:'2月', tip:'春节错峰 · 温泉与古镇', weather:'气温偏低，南方回暖慢', wear:'厚外套，备薄内搭',
+    routes:[
+      {city:'厦门', name:'鼓浪屿—环岛慢游线', days:'3天', note:'春节假期船票紧俏，提前购买'},
+      {city:'丽江', name:'大研古城—束河暖阳线', days:'3–4天', note:'昼夜温差大，备外套'}
+    ]},
+  {m:3, label:'3月', tip:'初春踏青 · 花开季', weather:'由冷转暖，早晚温差大', wear:'洋葱式穿搭，风衣+薄毛衣',
+    routes:[
+      {city:'杭州', name:'西湖—苏堤春花线', days:'2–3天', note:'周末游人多，工作日出行更从容'},
+      {city:'苏州', name:'园林—平江路探春线', days:'2–3天', note:'拙政园花期建议早到'}
+    ]},
+  {m:4, label:'4月', tip:'气候舒适 · 最佳出行档', weather:'温和少雨，紫外线渐强', wear:'长袖+薄外套，防晒',
+    routes:[
+      {city:'大理', name:'环海—喜洲田园线', days:'4天', note:'骑行环海注意补水与防晒'},
+      {city:'青岛', name:'八大关—海滨休闲线', days:'3天', note:'海风较大，备薄外套'}
+    ]},
+  {m:5, label:'5月', tip:'初夏 · 人少景美', weather:'温暖干燥，临近梅雨', wear:'短袖+轻便外套',
+    routes:[
+      {city:'西安', name:'陕博—兵马俑古都线', days:'3–4天', note:'节假日热门，提前预约门票'},
+      {city:'成都', name:'宽窄巷子—奎星楼美食线', days:'2–3天', note:'火锅串串错峰用餐'}
+    ]},
+  {m:6, label:'6月', tip:'初夏避暑 · 梅雨前夕', weather:'南方闷热多雨', wear:'透气衣物，带雨具',
+    routes:[
+      {city:'青岛', name:'胶东半岛海滨线', days:'3–4天', note:'海水尚凉，以城市与海岸为主'},
+      {city:'重庆', name:'洪崖洞—山城夜景线', days:'2–3天', note:'爬坡走路多，穿舒适鞋'}
+    ]},
+  {m:7, label:'7月', tip:'盛夏避暑 · 海滨与高原', weather:'高温，北方海滨舒适', wear:'防晒+透气，备解暑药',
+    routes:[
+      {city:'青岛', name:'海滨亲子轻松线', days:'3–4天', note:'暑期旺季，住宿提前订'},
+      {city:'大理', name:'洱海—苍山避暑线', days:'4–5天', note:'高原日晒强，注意防晒补水'}
+    ]},
+  {m:8, label:'8月', tip:'暑期高峰 · 错峰出行', weather:'高温多雨，局地台风', wear:'轻薄透气，备雨具',
+    routes:[
+      {city:'厦门', name:'海岛休闲亲子线', days:'3天', note:'关注台风与船班动态'},
+      {city:'长沙', name:'五一广场夜宵线', days:'2–3天', note:'夏夜闷热，注意肠胃'}
+    ]},
+  {m:9, label:'9月', tip:'秋高气爽 · 性价比高', weather:'转凉舒适，雨水减少', wear:'长袖为主，早晚加外套',
+    routes:[
+      {city:'西安', name:'周秦汉唐古都线', days:'4天', note:'暑期结束后人流回落'},
+      {city:'成都', name:'玉林—青城山休闲线', days:'3天', note:'山区比市区低几度'}
+    ]},
+  {m:10, label:'10月', tip:'金秋 · 景色最佳档', weather:'晴朗凉爽，昼夜温差大', wear:'长袖+薄外套',
+    routes:[
+      {city:'黄山·宏村', name:'宏村—塔川秋色线', days:'3天', note:'秋景热门，提前订房'},
+      {city:'北京', name:'故宫—胡同皇城线', days:'4–5天', note:'黄金周人多，尽量错峰'}
+    ]},
+  {m:11, label:'11月', tip:'深秋 · 人少价优', weather:'渐冷，南方温暖', wear:'厚外套，北方备保暖',
+    routes:[
+      {city:'长沙', name:'省博—太平老街线', days:'2–3天', note:'室内展馆为主，适合降温天'},
+      {city:'厦门', name:'环岛路—曾厝垵慢线', days:'3天', note:'气温宜人，海边风大'}
+    ]},
+  {m:12, label:'12月', tip:'冬景 · 跨年与玩雪', weather:'北方进入严寒', wear:'羽绒服/保暖装备',
+    routes:[
+      {city:'哈尔滨', name:'冰雪季跨年线', days:'3–4天', note:'冰雪大世界需线上分时段购票'},
+      {city:'三亚', name:'热带避寒度假线', days:'4–5天', note:'跨年酒店价格上浮，早订'}
+    ]}
+];
+
+var cur = 10;
+function $(id){return document.getElementById(id);}
+
+function renderGrid(){
+  $('grid').innerHTML = MONTHS.map(function(o){
+    return '<div class="m'+(cur===o.m?' active':'')+'" data-m="'+o.m+'"><div class="mn">'+o.label+'</div><div class="mt">'+o.tip+'</div><div class="best"><i class="fas fa-location-dot"></i> '+o.routes[0].city+'</div></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.m'),function(el){
+    el.onclick=function(){cur=+el.dataset.m;renderGrid();renderDetail();};
+  });
+}
+
+function renderDetail(){
+  var o=MONTHS.find(function(x){return x.m===cur;});
+  var routes=o.routes.map(function(r){
+    return '<div class="route"><div class="rt"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> '+r.city+' · '+r.name+'</div>'+
+      '<div class="rd">'+r.note+'</div><div class="meta-row"><span class="chip"><i class="far fa-clock"></i> '+r.days+'</span></div></div>';
+  }).join('');
+  $('detail').innerHTML =
+    '<div class="panel"><h3><i class="fas fa-cloud-sun"></i> '+o.label+' · 天气与穿搭</h3>'+
+      '<div class="meta-row"><span class="chip"><i class="fas fa-temperature-half"></i> '+o.weather+'</span><span class="chip"><i class="fas fa-shirt"></i> '+o.wear+'</span></div></div>'+
+    '<div class="panel"><h3><i class="fas fa-route"></i> 推荐线路</h3>'+routes+'</div>';
+}
+
+renderGrid();renderDetail();
+</script>
+</body>
+</html>
