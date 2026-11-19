@@ -69,6 +69,7 @@
   .link-card span{font-size:12px;color:var(--muted)}
   .empty{text-align:center;color:var(--muted);padding:30px 10px}
   .note{font-size:12px;color:#c2620a;background:#fff4ec;border-radius:10px;padding:8px 10px;margin-bottom:10px}
+  @media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
 </style>
 </head>
 <body>
@@ -141,7 +142,6 @@ var DIMS = [
   {k:'pace', name:'轻松度'},
   {k:'fun', name:'好玩度'}
 ];
-/* 评分统一取自 city-score 分片；缺省城市用中性参考分 */
 var DEF = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'综合站内标签与素材给出的参考推荐；具体行程、美食与交通见下方详情。'};
 var DEF_LIGHT = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'该城目前为轻量参考，路书整理中；可先看地标、本地美食与历史简介，交通住宿点下方入口查询。'};
 
