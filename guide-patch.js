@@ -3,7 +3,9 @@
  * 1. 清理无文字的空胶囊节点
  * 2. 把“景区深度游览”等占位活动替换为该城 routePins 真实景点名
  * 3. 规整三餐占位活动文案；泛化详情兜底为本地特色餐食提示
- * 不改动大数据文件；完整城市（真实景点名）不会被命中替换。
+ * 4. 全量城市统一按 A 级口径对齐：美食/地标/简介/兜底行程节点补齐，
+ *    缺航班高铁酒店的城市标记 generic，由页面保留通用查询入口。
+ * 不改动大数据文件；不编造具体班次、票价与酒店价格。
  * ============================================================ */
 (function () {
   var M = window.MYL;
@@ -57,7 +59,37 @@
       });
       return Object.assign({}, d, { timeline: tl });
     });
-    return Object.assign({}, c, { itinerary: itin });
+
+    /* ---- 全量 A 级口径对齐 ---- */
+    var bFoods = (c.bFoods || []).map(function (x) {
+      return typeof x === 'string' ? { name: x, desc: '', price: '' } : x;
+    });
+    var foods = (c.foods || []).length ? c.foods : bFoods;
+    var landmarks = (c.bLandmarks || []).slice();
+    var history = c.bHistory || null;
+
+    /* 行程节点为空时，用地标生成一天概览兜底行程 */
+    if (!itin.length && landmarks.length) {
+      itin = [{
+        day: '当地概览',
+        theme: '当地休闲体验',
+        timeline: landmarks.map(function (n) {
+          return { time: '', activity: n, detail: '当地代表性地标' };
+        })
+      }];
+    }
+
+    var hasTraffic = (c.airfare && c.airfare.length) || (c.trains && c.trains.length);
+    var hasHotel = c.hotels && c.hotels.length;
+
+    return Object.assign({}, c, {
+      itinerary: itin,
+      foods: foods,
+      landmarks: landmarks,
+      history: history,
+      tier: 'A',
+      generic: !hasTraffic && !hasHotel
+    });
   }
 
   var origIndex = M.indexCities, origSearch = M.searchCities, origGet = M.getCity;
