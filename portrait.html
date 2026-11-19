@@ -58,6 +58,7 @@
   .link-card b{font-size:13px}
   .link-card span{font-size:12px;color:var(--muted)}
   .empty{text-align:center;color:var(--muted);padding:30px 10px}
+  .note{font-size:12px;color:#c2620a;background:#fff4ec;border-radius:10px;padding:8px 10px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -76,12 +77,12 @@
 <div class="container">
   <section class="hero">
     <h1>城市画像卡</h1>
-    <p>用标签和性格描述概括一座城：适合谁、强项是什么、需要注意什么；点开下方可看美食、住宿与往返交通入口。</p>
+    <p>用标签和性格描述概括一座城：适合谁、强项是什么、需要注意什么；点开可看美食、住宿与往返交通入口。</p>
   </section>
 
   <div class="searchbar">
     <i class="fas fa-search"></i>
-    <input type="text" id="searchInput" placeholder="搜索城市名、国家或标签，如：海边、古都、美食" />
+    <input type="text" id="searchInput" placeholder="搜索全部城市，如：六安、海边、古都、美食" />
     <span class="cnt" id="count"></span>
   </div>
 
@@ -90,8 +91,15 @@
 </div>
 
 <script src="city-data.js"></script>
+<script src="city-foods.js"></script>
+<script src="city-history.js"></script>
+<script src="city-landmarks.js"></script>
+<script src="city-poi-bank.js"></script>
+<script src="province-data-all.js"></script>
 <script src="city-index.js"></script>
 <script>
+var KEY = ['成都','西安','杭州','厦门','长沙','重庆','青岛','大理','哈尔滨','三亚','北京','上海','广州','南京','苏州','桂林','丽江','敦煌','武汉','昆明','兰州','拉萨'];
+
 var P = {
   '成都':{slogan:'一座把“慢”和“辣”都写进日常的城市', who:'适合：美食爱好者、慢生活追求者、独行与休闲游',
     tags:['美食之都','慢节奏','茶馆文化','消费友好','熊猫','市井烟火'],
@@ -128,19 +136,27 @@ var P = {
 var cur = null;
 function $(id){return document.getElementById(id);}
 
-function list(){
+function pool(){
   var q=$('searchInput').value.trim();
-  var all = window.MYL ? MYL.indexA级() : [];
-  return q ? MYL.searchCities(q).filter(function(c){return c.tier==='A';}) : all;
+  var all = window.MYL ? MYL.indexCities() : [];
+  if(q) return MYL.searchCities(q);
+  return all.filter(function(c){return KEY.indexOf(c.name)>=0;}).slice(0,12);
 }
 
 function autoPortrait(c){
-  var tags=(c.tags&&c.tags.length)?c.tags.slice(0,6):['目的地','休闲出行'];
+  var isA=c.tier==='A';
+  var tags=(c.tags&&c.tags.length)?c.tags.slice(0,6):((c.bLandmarks||[]).slice(0,4).length?c.bLandmarks.slice(0,4):['目的地','休闲出行']);
   var strong=[], weak=[];
-  if(c.foods.length>=3) strong.push('本地美食选择丰富（'+c.foods.length+' 道参考）');
-  if(c.hotels.length) strong.push('住宿档位齐全（'+c.hotels.length+' 家参考）');
-  if(c.airfare.length||c.trains.length) strong.push('往返航班与高铁方案齐全');
-  if(c.itinerary.length) strong.push('行程节点完整，可按天规划');
+  if(isA){
+    if(c.foods.length>=3) strong.push('本地美食选择丰富（'+c.foods.length+' 道参考）');
+    if(c.hotels.length) strong.push('住宿档位齐全（'+c.hotels.length+' 家参考）');
+    if(c.airfare.length||c.trains.length) strong.push('往返航班与高铁方案齐全');
+    if(c.itinerary.length) strong.push('行程节点完整，可按天规划');
+  } else {
+    if((c.bFoods||[]).length) strong.push('本地特色美食 '+(c.bFoods||[]).length+' 道参考');
+    if((c.bLandmarks||[]).length) strong.push('收录地标景点 '+(c.bLandmarks||[]).length+' 处');
+    if(c.bHistory) strong.push('有城市历史简介可参考');
+  }
   if(!strong.length) strong.push('配套信息已收录，可参考下方贴士安排');
   var kw=/排队|提前|预约|防晒|高原|距离|炎热|闷热|雨|台风|温差|爬坡|山路/;
   (c.tips||[]).forEach(function(t){ if(kw.test(t)) weak.push(t); });
@@ -154,9 +170,17 @@ function autoPortrait(c){
 }
 
 function detailBlock(c){
-  var foods=(c.foods||[]).map(function(f){
-    return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
-  }).join('');
+  var isA=c.tier==='A';
+  var foods;
+  if(isA){
+    foods=(c.foods||[]).map(function(f){
+      return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+    }).join('');
+  } else {
+    foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
+  }
+  var spots = isA ? '' : (c.bLandmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
+  var history = (!isA && c.bHistory) ? '<div class="li">'+c.bHistory+'</div>' : '';
   var hotels=(c.hotels||[]).map(function(h){
     return h.bookingUrl
       ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></a>'
@@ -171,23 +195,35 @@ function detailBlock(c){
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
   var stats=[
     '<span class="badge"><i class="fas fa-route"></i> '+(c.itinerary.length)+' 节点</span>',
-    '<span class="badge"><i class="fas fa-utensils"></i> '+(c.foods.length)+' 美食</span>',
+    '<span class="badge"><i class="fas fa-utensils"></i> '+(isA?c.foods.length:(c.bFoods||[]).length)+' 美食</span>',
     '<span class="badge"><i class="fas fa-hotel"></i> '+(c.hotels.length)+' 住宿</span>'
   ];
   if(c.airfare.length) stats.push('<span class="badge"><i class="fas fa-plane"></i> 航班</span>');
   if(c.trains.length) stats.push('<span class="badge"><i class="fas fa-train"></i> 高铁</span>');
-  var html='<div class="dsec"><h4>配套概况</h4><div class="stats">'+stats.join('')+'</div></div>';
+  var html='';
+  if(!isA) html+='<div class="note">轻量参考：该城完整路书整理中，下方为已有地标、美食与通用交通住宿入口。</div>';
+  html+='<div class="dsec"><h4>配套概况</h4><div class="stats">'+stats.join('')+'</div></div>';
+  if(spots) html+='<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>';
   if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>';
+  if(history) html+='<div class="dsec"><h4><i class="fas fa-landmark"></i> 城市简介</h4>'+history+'</div>';
   if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
   if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
   if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
+  if(!isA){
+    html+='<div class="dsec"><h4><i class="fas fa-link"></i> 通用预订入口</h4><div class="link-grid">'+
+      '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
+      '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
+      '<a class="link-card" href="https://hotels.ctrip.com" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+
+    '</div></div>';
+  }
   if(tips) html+='<div class="dsec"><h4><i class="fas fa-lightbulb"></i> 出行贴士</h4>'+tips+'</div>';
   return html;
 }
 
 function renderTabs(){
-  var listArr=list();
-  $('count').textContent='共 '+listArr.length+' 城';
+  var listArr=pool();
+  var allCount = window.MYL ? MYL.indexCities().length : 0;
+  $('count').textContent='共 '+allCount+' 城';
   if(cur && !listArr.some(function(c){return c.name===cur;})) cur=listArr[0]?listArr[0].name:null;
   if(!cur && listArr.length) cur=listArr[0].name;
   $('tabs').innerHTML=listArr.map(function(c){
@@ -205,9 +241,10 @@ function render(){
   var cloud=p.tags.map(function(t,i){return '<span class="cloud'+(i===0?' big':'')+'">'+t+'</span>';}).join('');
   var strong=p.strong.map(function(x){return '<li><i class="fas fa-check"></i>'+x+'</li>';}).join('');
   var weak=p.weak.map(function(x){return '<li><i class="fas fa-xmark"></i>'+x+'</li>';}).join('');
+  var lightTag = c.tier!=='A' ? ' · 轻量参考' : '';
   $('portrait').innerHTML=
   '<div class="card">'+
-    '<div class="cover"><h2>'+c.name+'</h2><div class="slogan">“'+p.slogan+'”</div><div class="who"><i class="fas fa-users"></i> '+p.who+'</div></div>'+
+    '<div class="cover"><h2>'+c.name+lightTag+'</h2><div class="slogan">“'+p.slogan+'”</div><div class="who"><i class="fas fa-users"></i> '+p.who+'</div></div>'+
     '<div class="body">'+
       '<div class="tag-cloud">'+cloud+'</div>'+
       '<div class="cols">'+
