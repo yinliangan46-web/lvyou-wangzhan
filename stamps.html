@@ -88,6 +88,10 @@
 <script src="city-poi-bank.js"></script>
 <script src="province-data-all.js"></script>
 <script src="city-index.js"></script>
+<script src="city-score-a.js"></script>
+<script src="city-score-b.js"></script>
+<script src="city-score.js"></script>
+<script src="guide-patch.js"></script>
 <script>
 var KEY='myl-stamps';
 var cur=null;
@@ -114,15 +118,14 @@ function spotsOf(c){
 
 function tabList(){
   var q=$('searchInput').value.trim();
-  var all=cities();
-  var list = q ? MYL.searchCities(q) : all;
-  return list.slice(0,30);
+  return q ? MYL.searchCities(q).slice(0,30) : [];
 }
 
 function renderTabs(){
   var list=tabList();
   if(cur && !list.some(function(c){return c.name===cur;})) cur=list[0]?list[0].name:null;
   if(!cur && list.length) cur=list[0].name;
+  if(!list.length){ $('tabs').innerHTML='<div class="empty">输入城市名或标签，从匹配结果中选择要打卡的目的地。</div>'; return; }
   $('tabs').innerHTML=list.map(function(c){
     return '<button class="ct'+(cur===c.name?' active':'')+'" data-k="'+c.name+'">'+c.name+'</button>';
   }).join('');
