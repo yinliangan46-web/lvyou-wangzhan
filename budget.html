@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>花费拆解 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:920px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .nav-links a:hover{color:var(--primary)}
+  .hero{padding:30px 0 14px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .panel{background:var(--card);border-radius:var(--radius);padding:20px;margin:16px 0;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+  .field select,.field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer}
+  .seg button.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .btn{border:none;border-radius:10px;padding:11px 18px;font-size:14px;cursor:pointer;background:var(--primary);color:#fff;display:inline-flex;align-items:center;gap:8px;margin-top:16px}
+  .total-row{display:flex;align-items:baseline;gap:10px;margin:6px 0}
+  .total-row .num{font-size:30px;font-weight:900;color:var(--primary)}
+  .total-row .per{color:var(--muted);font-size:14px}
+  .wrap{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center}
+  @media(max-width:600px){.wrap{grid-template-columns:1fr}}
+  .legend{display:flex;flex-direction:column;gap:10px}
+  .lg{display:flex;align-items:center;gap:8px;font-size:13px}
+  .lg i{width:12px;height:12px;border-radius:4px;display:inline-block}
+  .lg .v{margin-left:auto;font-weight:700}
+  .detail-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .detail-item:last-child{border-bottom:none}
+  .detail-item .d{color:var(--muted);font-size:12px}
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:600px){.plans{grid-template-columns:1fr}}
+  .plan{border:1px solid var(--line);border-radius:14px;padding:16px}
+  .plan.hot{border-color:var(--primary);background:var(--soft)}
+  .plan h4{font-size:15px;margin-bottom:8px}
+  .plan .p{font-weight:900;color:var(--primary);font-size:18px}
+  .plan ul{list-style:none;margin-top:8px}
+  .plan li{font-size:13px;color:var(--muted);padding:3px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="themes.html">主题线路</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>花费拆解可视化</h1>
+    <p>按目的地、天数、人数和预算档测算出行总花费，环形图拆分机票、住宿、餐饮、门票与当地交通，并给出经济/舒适两档方案。</p>
+  </section>
+
+  <section class="panel">
+    <div class="form-grid">
+      <div class="field">
+        <label>目的地</label>
+        <select id="city"></select>
+      </div>
+      <div class="field">
+        <label>天数</label>
+        <select id="days"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select>
+      </div>
+      <div class="field">
+        <label>出行人数</label>
+        <select id="ppl"><option value="1">1 人</option><option value="2" selected>2 人</option><option value="3">3 人及以上</option></select>
+      </div>
+      <div class="field">
+        <label>预算档</label>
+        <div class="seg" id="tier">
+          <button data-t="budget">经济</button>
+          <button data-t="comfort" class="active">舒适</button>
+          <button data-t="luxury">品质</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn" id="calcBtn"><i class="fas fa-calculator"></i> 生成花费拆解</button>
+  </section>
+
+  <section id="out"></section>
+</div>
+
+<script>
+var CITIES = [
+  {name:'成都', flight:600, hotel:{budget:220,comfort:360,luxury:600}, food:{budget:70,comfort:110,luxury:180}, ticket:{budget:60,comfort:100,luxury:160}, local:{budget:30,comfort:50,luxury:90}},
+  {name:'西安', flight:600, hotel:{budget:220,comfort:340,luxury:560}, food:{budget:60,comfort:100,luxury:160}, ticket:{budget:80,comfort:120,luxury:180}, local:{budget:30,comfort:50,luxury:90}},
+  {name:'厦门', flight:700, hotel:{budget:240,comfort:380,luxury:620}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:140}, local:{budget:30,comfort:50,luxury:90}},
+  {name:'青岛', flight:650, hotel:{budget:220,comfort:360,luxury:600}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:140}, local:{budget:30,comfort:50,luxury:90}},
+  {name:'大理', flight:700, hotel:{budget:200,comfort:340,luxury:560}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:60,comfort:100,luxury:150}, local:{budget:40,comfort:60,luxury:100}},
+  {name:'哈尔滨', flight:800, hotel:{budget:260,comfort:400,luxury:660}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:100,comfort:150,luxury:220}, local:{budget:30,comfort:50,luxury:90}},
+  {name:'三亚', flight:900, hotel:{budget:300,comfort:560,luxury:900}, food:{budget:90,comfort:150,luxury:240}, ticket:{budget:70,comfort:120,luxury:200}, local:{budget:40,comfort:70,luxury:110}},
+  {name:'长沙', flight:500, hotel:{budget:200,comfort:320,luxury:520}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:30,comfort:60,luxury:100}, local:{budget:25,comfort:40,luxury:80}},
+  {name:'重庆', flight:550, hotel:{budget:200,comfort:320,luxury:520}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:40,comfort:70,luxury:110}, local:{budget:25,comfort:40,luxury:80}}
+];
+var COLORS = ['#2563eb','#4f86f7','#7fb0ff','#a8c8ff','#c9dcfd'];
+var tier='comfort';
+
+function $(id){return document.getElementById(id);}
+
+function renderCities(){
+  $('city').innerHTML=CITIES.map(function(c,i){return '<option'+(i===0?' selected':'')+'>'+c.name+'</option>';}).join('');
+}
+
+function calc(){
+  var city=CITIES.find(function(c){return c.name===$('city').value;});
+  var days=+$('days').value, ppl=+$('ppl').value;
+  var nights=days-1;
+  var rooms = ppl===1?1:ppl===2?1:2;
+  var flight=city.flight*ppl;
+  var hotel=city.hotel[tier]*nights*rooms;
+  var food=city.food[tier]*days*ppl;
+  var ticket=city.ticket[tier]*days*ppl;
+  var local=city.local[tier]*days*ppl;
+  var items=[
+    {label:'往返机票', val:flight, d:'按人均往返估算'},
+    {label:'住宿', val:hotel, d:nights+' 晚 × '+rooms+' 间房'},
+    {label:'餐饮', val:food, d:days+' 天 × '+ppl+' 人'},
+    {label:'门票/活动', val:ticket, d:'景点与体验项目'},
+    {label:'当地交通', val:local, d:'地铁/打车/接驳'}
+  ];
+  var total=items.reduce(function(a,b){return a+b.val;},0);
+  var per=Math.round(total/ppl);
+
+  var r=70, cx=90, cy=90, C=2*Math.PI*r;
+  var offset=0;
+  var arcs=items.map(function(it,i){
+    var frac=total?it.val/total:0;
+    var seg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+COLORS[i]+'" stroke-width="22" stroke-dasharray="'+(frac*C).toFixed(1)+' '+(C).toFixed(1)+'" stroke-dashoffset="'+(-offset*C).toFixed(1)+'"/>';
+    offset+=frac;
+    return seg;
+  }).join('');
+  var legend=items.map(function(it,i){
+    return '<div class="lg"><i style="background:'+COLORS[i]+'"></i>'+it.label+'<span class="v">¥'+it.val.toLocaleString()+'</span></div>';
+  }).join('');
+  var details=items.map(function(it){
+    return '<div class="detail-item"><div>'+it.label+'<div class="d">'+it.d+'</div></div><div>¥'+it.val.toLocaleString()+'</div></div>';
+  }).join('');
+
+  var plans=planCards(city,days,ppl);
+
+  $('out').innerHTML =
+    '<div class="panel"><div class="total-row"><span class="num">¥'+total.toLocaleString()+'</span><span class="per">合计 · 人均 ¥'+per.toLocaleString()+'（'+days+' 天 '+ppl+' 人）</span></div>'+
+      '<div class="wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+arcs+'<text x="90" y="86" text-anchor="middle" font-size="18" font-weight="900" fill="#1a2433">¥'+per.toLocaleString()+'</text><text x="90" y="106" text-anchor="middle" font-size="11" fill="#6b7787">人均</text></svg><div class="legend">'+legend+'</div></div>'+
+      '<div style="margin-top:16px">'+details+'</div></div>'+
+    '<div class="plans">'+plans+'</div>';
+}
+
+function planCards(city,days,ppl){
+  var nights=days-1;
+  function pack(t,label,hot,note,opts){
+    var flight=city.flight*ppl, hotel=city.hotel[t]*nights*(ppl===3?2:1), food=city.food[t]*days*ppl, ticket=city.ticket[t]*days*ppl, local=city.local[t]*days*ppl;
+    var total=flight+hotel+food+ticket+local;
+    return '<div class="plan'+(hot?' hot':'')+'"><h4>'+label+'</h4><div class="p">¥'+total.toLocaleString()+' <span style="font-size:12px;color:var(--muted);font-weight:400">人均 ¥'+Math.round(total/ppl).toLocaleString()+'</span></div><ul>'+
+      opts.map(function(o){return '<li><i class="fas fa-check" style="color:var(--primary)"></i> '+o+'</li>';}).join('')+'</ul><div class="d" style="font-size:12px;color:var(--muted);margin-top:8px">'+note+'</div></div>';
+  }
+  var b=pack('budget','经济档',false,'青旅/连锁酒店，公共交通为主，精选收费景点',['住宿：连锁酒店或青旅标间','餐饮：本地小吃与家常菜','交通：地铁公交为主','适合学生与独行游客']);
+  var c=pack('comfort','舒适档',true,'品质酒店，行程松紧适中，体验更完整',['住宿：商圈中档酒店','餐饮：正餐+特色店兼顾','交通：打车与地铁结合','含主要景点与一次特色体验']);
+  return b+c;
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('#tier button'),function(b){
+  b.onclick=function(){
+    tier=b.dataset.t;
+    Array.prototype.forEach.call(document.querySelectorAll('#tier button'),function(x){x.classList.remove('active');});
+    b.classList.add('active');calc();
+  };
+});
+$('calcBtn').onclick=calc;
+renderCities();calc();
+</script>
+</body>
+</html>
