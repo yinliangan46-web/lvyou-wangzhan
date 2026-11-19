@@ -7,7 +7,6 @@
   .logo{display:flex;align-items:center;gap:6px;font-weight:900;font-size:17px;color:var(--primary);text-decoration:none}
   .nav-links{display:flex;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .nav-links a{color:var(--muted);text-decoration:none;font-size:12.5px;white-space:nowrap}
-  .nav-links a:hover{color:var(--primary)}
   .hero{padding:30px 0 14px}
   .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
   .hero p{color:var(--muted);font-size:15px}
@@ -65,5 +64,8 @@
   .tier-row.hot .tier-label{color:var(--primary);font-weight:700}
   .tier-row .bar-fill{background:#9db8e8}
   .tier-row.hot .bar-fill{background:var(--primary)}
+  .trend{margin-top:6px}
+  .trend svg{display:block;width:100%}
+  .trend-note{font-size:12px;color:var(--muted);margin-top:6px}
 
 @media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}

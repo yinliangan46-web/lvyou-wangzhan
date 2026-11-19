@@ -62,5 +62,7 @@
   .detail-cover h2{font-size:21px;margin-bottom:6px}
   .detail-cover .desc{opacity:.92;font-size:14px}
   .detail-cover .meta{margin-top:8px;font-size:12px;opacity:.85}
+  .detail-cover .mood-line{margin-top:8px;font-size:13px;opacity:.95;display:flex;align-items:center;gap:6px}
+  .route-card .meta .chip{margin-left:6px;background:rgba(37,99,235,.1);color:var(--primary)}
 
 @media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
