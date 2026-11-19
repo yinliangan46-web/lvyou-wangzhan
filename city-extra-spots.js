@@ -53,3 +53,19 @@ window.CITY_EXTRA_SPOTS = {
   "张家界": ["武陵源","袁家界","金鞭溪","十里画廊","黄龙洞","宝峰湖","土家风情园"],
   "郑州": ["康百万庄园","郑州方特欢乐世界","建业电影小镇","伏羲山大峡谷","黄帝千古情"]
 };
+
+/* 运行时注入：智能工具箱导航入口（不改动首页大文件，无 #nav 的页面自动跳过） */
+(function () {
+  function addToolsNav() {
+    var nav = document.getElementById('nav');
+    if (!nav || nav.querySelector('a[href="tools.html"]')) return;
+    var a = document.createElement('a');
+    a.href = 'tools.html';
+    a.textContent = '🧰 智能工具';
+    var anchor = nav.querySelector('a[href="discover.html"]');
+    if (anchor && anchor.nextSibling) { nav.insertBefore(a, anchor.nextSibling); }
+    else { nav.appendChild(a); }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', addToolsNav); }
+  else { addToolsNav(); }
+})();
