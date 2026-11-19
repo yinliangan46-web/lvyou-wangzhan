@@ -1,0 +1,155 @@
+
+/* 5 城手写路书；其余城市由索引真实数据生成 */
+var DB = {
+  '成都':{flight:'https://flights.ctrip.com/online/list/oneway-chengdu', train:'https://www.12306.cn',
+    traffic:['飞机：双流/天府机场，地铁进城','高铁：成都东站，地铁2/7号线接驳','市内：地铁+打车，景点集中'],
+    spots:[{n:'宽窄巷子',d:'老城巷弄喝茶闲逛',t:'免费'},{n:'大熊猫繁育基地',d:'建议上午前往看熊猫活跃',t:'¥55 · 需预约'},{n:'锦里古街',d:'傍晚看夜景吃小吃',t:'免费'}],
+    foods:[{n:'串串香',d:'奎星楼街，吧台位友好',p:'¥60/人'},{n:'甜水面/凉粉',d:'文殊院旁老字号',p:'¥15/人'},{n:'盖碗茶',d:'人民公园鹤鸣茶社',p:'¥15/位'}],
+    hotel:[{a:'春熙路/太古里',l:'商圈便利',p:'¥300–500/晚'},{a:'武侯祠/宽窄巷子',l:'近美食区',p:'¥260–420/晚'}],
+    ctrip:'https://you.ctrip.com/sight/chengdu104.html', hotels:'https://hotels.ctrip.com/hotels/chengdu104.html'},
+  '西安':{flight:'https://flights.ctrip.com/online/list/oneway-xian', train:'https://www.12306.cn',
+    traffic:['飞机：咸阳机场，城际地铁进城','高铁：西安北站，地铁2号线直达钟楼','市内：地铁可达，兵马俑需赴临潼'],
+    spots:[{n:'西安城墙',d:'骑行或散步看老城',t:'¥54'},{n:'陕西历史博物馆',d:'国宝研学，提前预约',t:'基本陈列免费'},{n:'秦始皇兵马俑',d:'临潼军阵，预留半天',t:'¥120 · 分时段预约'}],
+    foods:[{n:'肉夹馍+凉皮',d:'老字号看本地客流',p:'¥15–25/份'},{n:'羊肉泡馍',d:'自己掰馍',p:'¥40/碗'},{n:'biangbiang面',d:'油泼辣子香',p:'¥20/碗'}],
+    hotel:[{a:'钟楼/鼓楼',l:'老城中心',p:'¥280–450/晚'},{a:'大雁塔/小寨',l:'近博物馆',p:'¥260–420/晚'}],
+    ctrip:'https://you.ctrip.com/sight/xian5.html', hotels:'https://hotels.ctrip.com/hotels/xian5.html'},
+  '厦门':{flight:'https://flights.ctrip.com/online/list/oneway-xiamen', train:'https://www.12306.cn',
+    traffic:['飞机：高崎机场，地铁进岛','高铁：厦门北站，地铁1号线进岛','市内：公交+BRT+打车，鼓浪屿需轮渡'],
+    spots:[{n:'鼓浪屿',d:'轮渡上岛，步行游览',t:'船票¥35起 · 提前购票'},{n:'南普陀寺',d:'临海古刹，需预约',t:'免费'},{n:'环岛路',d:'滨海步道骑行',t:'免费'}],
+    foods:[{n:'沙茶面',d:'本地早餐常见',p:'¥20/碗'},{n:'海蛎煎',d:'闽南特色趁热吃',p:'¥30/份'},{n:'土笋冻',d:'风味小吃',p:'¥15/份'}],
+    hotel:[{a:'中山路/轮渡',l:'近码头老城',p:'¥280–450/晚'},{a:'曾厝垵/环岛路',l:'临海休闲',p:'¥300–500/晚'}],
+    ctrip:'https://you.ctrip.com/sight/xiamen14.html', hotels:'https://hotels.ctrip.com/hotels/xiamen14.html'},
+  '长沙':{flight:'https://flights.ctrip.com/online/list/oneway-changsha', train:'https://www.12306.cn',
+    traffic:['飞机：黄花机场，磁浮快线进市区','高铁：长沙南站，地铁2/4号线接驳','市内：地铁覆盖商圈与景点'],
+    spots:[{n:'橘子洲',d:'湘江江心洲，小火车另购',t:'免费 · 预约入园'},{n:'湖南省博物馆',d:'马王堆文物，周一闭馆',t:'免费 · 提前预约'},{n:'太平老街',d:'老城小吃街',t:'免费'}],
+    foods:[{n:'小龙虾',d:'夜宵主力',p:'¥90/人'},{n:'臭豆腐',d:'街边老字号',p:'¥15/份'},{n:'糖油粑粑',d:'甜食小食趁热吃',p:'¥10/份'}],
+    hotel:[{a:'五一广场/黄兴路',l:'夜生活核心',p:'¥260–420/晚'},{a:'岳麓山/溁湾镇',l:'安静近景区',p:'¥240–380/晚'}],
+    ctrip:'https://you.ctrip.com/sight/changsha19.html', hotels:'https://hotels.ctrip.com/hotels/changsha19.html'},
+  '重庆':{flight:'https://flights.ctrip.com/online/list/oneway-chongqing', train:'https://www.12306.cn',
+    traffic:['飞机：江北机场，轨道进城','高铁：重庆西站/北站，轨道接驳','市内：轨道+打车，山城地形多爬坡'],
+    spots:[{n:'洪崖洞',d:'吊脚楼夜景，入夜亮灯',t:'免费'},{n:'解放碑',d:'城市中心商圈',t:'免费'},{n:'李子坝',d:'轻轨穿楼机位',t:'免费'}],
+    foods:[{n:'重庆火锅',d:'牛油锅底，不能吃辣提前说',p:'¥80/人'},{n:'小面',d:'街头早餐代表',p:'¥12/碗'},{n:'酸辣粉',d:'老城小吃',p:'¥15/份'}],
+    hotel:[{a:'解放碑/洪崖洞',l:'夜景核心',p:'¥280–450/晚'},{a:'南滨路',l:'沿江观景',p:'¥300–480/晚'}],
+    ctrip:'https://you.ctrip.com/sight/chongqing158.html', hotels:'https://hotels.ctrip.com/hotels/chongqing158.html'}
+};
+
+var QS = [
+  {key:'city', q:'第一站，你想去哪座城市？（可输入搜索）'},
+  {key:'days', q:'打算玩几天？', opts:[{v:'2',label:'2 天'},{v:'3',label:'3 天'},{v:'4',label:'4 天'},{v:'5',label:'5 天以上'}]},
+  {key:'ppl', q:'几个人出行？', opts:[{v:'1',label:'1 人独行'},{v:'2',label:'2 人同行'},{v:'3',label:'3 人及以上'}]},
+  {key:'budget', q:'预算偏向哪一档？', opts:[{v:'budget',label:'经济省钱'},{v:'comfort',label:'舒适适中'},{v:'luxury',label:'品质度假'}]},
+  {key:'pref', q:'行程更看重什么？', opts:[{v:'food',label:'美食优先'},{v:'sight',label:'景观拍照'},{v:'culture',label:'人文研学'},{v:'relax',label:'轻松休闲'}]}
+];
+
+var ans={};
+var qi=0;
+function $(id){return document.getElementById(id);}
+var LABEL={city:'城市',days:'天数',ppl:'人数',budget:'预算',pref:'偏好'};
+var A = window.MYL ? MYL.indexCities() : [];
+
+function renderSteps(){
+  $('steps').innerHTML=QS.map(function(q,i){return '<span class="step'+(i<=qi?' on':'')+'">'+(i+1)+'.'+LABEL[q.key]+'</span>';}).join(' · ');
+}
+
+function ask(){
+  if(qi>=QS.length){generate();return;}
+  var q=QS[qi];
+  if(q.key==='city'){
+    var opts=A.map(function(c){return '<option value="'+c.name+'">';}).join('');
+    $('chat').innerHTML+='<div class="bubble bot"><div class="q">'+q.q+'</div>'+
+      '<div class="city-input"><input list="cityList" id="cityInput" placeholder="输入城市名，如：杭州" autocomplete="off" /><datalist id="cityList">'+opts+'</datalist>'+
+      '<button class="opt" id="cityOk">确认</button></div></div>';
+    $('cityOk').onclick=function(){
+      var v=$('cityInput').value.trim();
+      if(!MYL.getCity(v)){alert('请从列表中选择一座收录城市');return;}
+      ans.city=v;
+      $('chat').innerHTML+='<div class="bubble me">'+v+'</div>';
+      qi++;renderSteps();ask();
+    };
+    return;
+  }
+  var opts=q.opts.map(function(o){return '<button class="opt" data-v="'+o.v+'">'+o.label+'</button>';}).join('');
+  $('chat').innerHTML+='<div class="bubble bot"><div class="q">'+q.q+'</div><div class="opts">'+opts+'</div></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('.opt'),function(b){
+    if(b.id==='cityOk')return;
+    b.onclick=function(){
+      ans[q.key]=b.dataset.v;
+      $('chat').innerHTML+='<div class="bubble me">'+b.textContent+'</div>';
+      qi++;renderSteps();ask();
+    };
+  });
+}
+
+function cleanTheme(t){return (t||'').replace(/深度(游玩|游览|体验|游)/g,'当地休闲体验');}
+
+function planData(name){
+  var c=MYL.getCity(name);
+  var d=DB[name];
+  var isA=c&&c.tier==='A';
+  var spots, foods, hotels, traffic, dayGroups=[];
+  if(d){
+    spots=d.spots; foods=d.foods; hotels=d.hotel; traffic=d.traffic;
+    dayGroups=[{label:'推荐行程', nodes:d.spots}];
+    return {spots:spots,foods:foods,hotels:hotels,traffic:traffic,dayGroups:dayGroups,
+      flight:d.flight,train:d.train,ctrip:d.ctrip,hotelsUrl:d.hotels,isA:true};
+  }
+  if(isA){
+    dayGroups=(c.itinerary||[]).map(function(day){
+      return {label:day.day+' · '+cleanTheme(day.theme), nodes:(day.timeline||[]).map(function(t){
+        return {n:t.activity||'', d:t.detail||'', t:[t.ticket,t.duration].filter(Boolean).join(' · ')};
+      })};
+    });
+    spots=dayGroups.reduce(function(a,g){return a.concat(g.nodes);},[]);
+    foods=(c.foods||[]).map(function(f){return {n:f.name,d:f.desc||'',p:f.price||''};});
+    hotels=(c.hotels||[]).map(function(h){return {a:h.name,l:h.area||h.highlight||'',p:h.price||''};});
+    traffic=(c.transport||[]).map(function(t){return t.label+'：'+t.value;});
+  } else {
+    spots=(c.bLandmarks||[]).map(function(x){return {n:x,d:'当地代表性地标',t:''};});
+    foods=(c.bFoods||[]).map(function(f){return {n:f,d:'',p:''};});
+    hotels=[]; traffic=[];
+    dayGroups=[{label:'当地概览', nodes:spots}];
+  }
+  var flight=(c.airfare&&c.airfare[0])?c.airfare[0].bookingUrl:'https://flights.ctrip.com';
+  var train=(c.trains&&c.trains[0])?c.trains[0].bookingUrl:'https://www.12306.cn';
+  var hotelsUrl=(c.hotels&&c.hotels[0]&&c.hotels[0].bookingUrl)||'https://hotels.ctrip.com';
+  return {spots:spots,foods:foods,hotels:hotels,traffic:traffic,dayGroups:dayGroups,flight:flight,train:train,ctrip:'https://you.ctrip.com',hotelsUrl:hotelsUrl,isA:isA};
+}
+
+function generate(){
+  var name=ans.city;
+  var c=MYL.getCity(name);
+  var pd=planData(name);
+  var days=ans.days, ppl=ans.ppl;
+  var prefLabel=QS[4].opts.find(function(o){return o.v===ans.pref;}).label;
+  var bname=ans.budget==='budget'?'经济':ans.budget==='comfort'?'舒适':'品质';
+  var dayHtml=pd.dayGroups.map(function(g){
+    var nodes=g.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+'<span class="tag">'+(s.t||'')+'</span></div><div class="d">'+(s.d||'')+'</div></div>';}).join('');
+    return '<div class="node"><div class="t">'+g.label+'</div>'+nodes+'</div>';
+  }).join('')||'<div class="node"><div class="d">该城行程节点整理中，可参考下方景点与交通安排。</div></div>';
+  var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+'<span class="tag">'+(f.p||'')+'</span></div><div class="d">'+(f.d||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';
+  var hotels=pd.hotels.map(function(h){return '<div class="node"><div class="t">'+h.a+'<span class="tag">'+(h.p||'')+'</span></div><div class="d">'+(h.l||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">住宿推荐整理中，可点下方酒店入口查询。</div></div>';
+  var traffic=pd.traffic.map(function(t){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
+  if(!traffic){traffic='<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';}
+
+  $('planBox').innerHTML=
+  '<div class="plan">'+
+    '<div class="plan-cover"><h2>'+name+' · '+days+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+(pd.isA?'':' · 轻量参考')+' · 由 MYL 对话生成</div></div>'+
+    '<div class="section"><h3><i class="fas fa-plane-departure"></i> 交通安排</h3>'+traffic+
+      '<div class="link-grid" style="margin-top:12px">'+
+        '<a class="link-card" href="'+pd.flight+'" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
+        '<a class="link-card" href="'+pd.train+'" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
+      '</div></div>'+
+    '<div class="section"><h3><i class="fas fa-map-location-dot"></i> 景点节点（按天分段）</h3>'+dayHtml+'</div>'+
+    '<div class="section"><h3><i class="fas fa-utensils"></i> 美食推荐</h3>'+foods+'</div>'+
+    '<div class="section"><h3><i class="fas fa-hotel"></i> 住宿建议</h3>'+hotels+'</div>'+
+    '<div class="section"><h3><i class="fas fa-link"></i> 预订入口</h3><div class="link-grid">'+
+      '<a class="link-card" href="'+pd.ctrip+'" target="_blank" rel="noopener"><b>携程景点</b><span>门票与预约查询</span></a>'+
+      '<a class="link-card" href="'+pd.hotelsUrl+'" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+
+      '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306</b><span>火车票预订</span></a>'+
+    '</div></div>'+
+  '</div>'+
+  '<div style="margin-bottom:30px"><button class="btn btn-ghost" onclick="location.reload()"><i class="fas fa-rotate-left"></i> 重新生成一份</button></div>';
+  $('planBox').scrollIntoView({behavior:'smooth'});
+}
+
+renderSteps();ask();
