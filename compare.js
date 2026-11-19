@@ -1,5 +1,5 @@
 
-/* 评分统一取自 city-score 分片；缺省城市用中性参考分 */
+/* 评分统一取自 city-score 分片；缺省城市用关键词生成具体参考口径 */
 var DEF = {tag:'目的地',price:'参考预算（以平台实时为准）',days:'2–3天',drive:'见市内交通',season:'见出行贴士',who:'—',avoid:'—',transport:'见交通方案',risk:'参考评分，最终以实际为准',food:3,value:3,relax:3,photo:3,scenery:3,culture:3,night:2,walk:3};
 
 var DIM = [
@@ -12,9 +12,45 @@ var COLORS = ['#2563eb','#16a34a','#d97706','#7c3aed'];
 var selected = [];
 
 function $(id){return document.getElementById(id);}
+function lp(v){return v?' <span class="lp">'+v+'</span>':'';}
+function lpJoin(){var a=[].slice.call(arguments).filter(Boolean);return a.length?' <span class="lp">'+a.join(' · ')+'</span>':'';}
+function hashStr(s){var h=0;s=String(s||'');for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}return h;}
+/* 无评分分片的城市：按标签/地标/美食关键词生成具体参考口径，评分按城名稳定差异化，不编造班次票价 */
+function fallbackOf(c){
+  var h=hashStr(c.name);
+  var r=function(base,spread){return Math.max(2,Math.min(5,base+(h%spread)-Math.floor(spread/2)));};
+  var foods=(c.bFoods||[]), landmarks=(c.bLandmarks||[]);
+  var text=(c.name+' '+(c.bHistory||'')+' '+foods.join(' ')+' '+landmarks.join(' '));
+  var sea=/海|滨|岛|湾|滩|江|湖|河|溪/.test(text);
+  var mountain=/山|岭|峰|峡谷|沟|寨|林|雪/.test(text);
+  var ice=/冰|雪/.test(text);
+  var hist=/古|寺|庙|陵|塔|祠|古城|遗址|博物馆|历史/.test(text);
+  var night=/夜市|商|夜景|街/.test(text);
+  var priceTier=['¥1,200–2,000','¥1,600–2,600','¥2,000–3,200'][h%3];
+  var season=ice?'12–2月（冰雪季）':(sea?'3–5月 / 10–11月':(mountain?'4–6月 / 9–10月':'3–5月 / 9–11月'));
+  var who=[];
+  if(foods.length) who.push('本地美食探访');
+  if(landmarks.length) who.push('城市观光与地标打卡');
+  who.push('休闲短途游');
+  var avoid=[];
+  if(!sea) avoid.push('纯海岛度假');
+  if(!night) avoid.push('高密度夜生活');
+  avoid.push('高强度长线徒步');
+  return {
+    tag:hist?'老城人文':(sea?'滨海休闲':(mountain?'山水休闲':'城市休闲')),
+    price:priceTier+'（参考）', days:c.days||'2–3天',
+    drive:mountain?'近郊景点需车程':'市区公共交通为主',
+    season:season, who:who.join('、'), avoid:avoid.join('、'),
+    transport:'低—中（市内公交/打车为主，往返大交通另计）',
+    risk:'热门场馆与餐店建议提前预约，票价班次以平台当日公示为准',
+    food:foods.length>=3?4:r(3,3), value:r(4,3), relax:r(4,3),
+    photo:mountain||sea?4:r(3,3), scenery:mountain||sea?4:r(3,3),
+    culture:hist?4:r(3,3), night:night?3:2, walk:r(3,3)
+  };
+}
 function scoreOf(c){
   var s = window.MYLSCORE && window.MYLSCORE.get(c.name);
-  if(!s) return DEF;
+  if(!s) return fallbackOf(c);
   return Object.assign({food:s.c.food,value:s.c.value,relax:s.c.relax,photo:s.c.photo,scenery:s.c.scenery,culture:s.c.culture,night:s.c.night,walk:s.c.walk}, s);
 }
 
@@ -28,10 +64,7 @@ function renderChips(){
   } else {
     $('chips').innerHTML = list.map(function(c){
       var on = selected.indexOf(c.name) >= 0;
-      if (c.tier !== 'A') {
-        return '<button class="chip'+(on?' active':'')+'" data-name="'+c.name+'">'+c.name+'<span class="cnt">轻量</span></button>';
-      }
-      return '<button class="chip'+(on?' active':'')+'" data-name="'+c.name+'">'+c.name+'<span class="cnt">'+(scoreOf(c).tag)+'</span></button>';
+      return '<button class="chip'+(on?' active':'')+'" data-name="'+c.name+'">'+c.name+'<span class="cnt">'+scoreOf(c).tag+'</span></button>';
     }).join('') || '<div class="empty">没有匹配的城市</div>';
   }
   Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(btn){
@@ -127,7 +160,7 @@ function detailCard(c){
   var foods;
   if(isA){
     foods=(c.foods||[]).map(function(f){
-      return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+      return '<div class="li">'+f.name+lpJoin(f.price,f.desc)+'</div>';
     }).join('');
   } else {
     foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
@@ -140,7 +173,7 @@ function detailCard(c){
     return link;
   }).join('');
 
-  var transport=(c.transport||[]).map(function(t){return '<div class="li"><b>'+t.label+'</b> <span class="lp">'+t.value+'</span></div>';}).join('');
+  var transport=(c.transport||[]).map(function(t){return '<div class="li"><b>'+t.label+'</b>'+lp(t.value)+'</div>';}).join('');
 
   var air=(c.airfare||[]).map(function(a){
     return '<a class="link-card" href="'+a.bookingUrl+'" target="_blank" rel="noopener"><b>'+a.platform+'</b><span>'+a.from+' → '+a.to+' · '+a.price+'</span><span>'+(a.time||'')+'</span></a>';
@@ -159,7 +192,7 @@ function detailCard(c){
     '</div>';
   }
 
-  var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+' <span class="lp">'+b.value+'</span></div>';}).join('');
+  var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+lp(b.value)+'</div>';}).join('');
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
   var lightTag = isA?'':' · 轻量参考';
 
