@@ -2,6 +2,7 @@
 var THEMES = window.MYTHEMES || [];
 
 function $(id){return document.getElementById(id);}
+function tag(v){return v?'<span class="tag">'+v+'</span>':'';}
 
 function findCity(name){
   if(!window.MYL) return null;
@@ -67,9 +68,9 @@ function viewRoute(tid,idx){
   var r=t?t.routes[+idx]:null;
   if(!r){location.hash='#/themes';return;}
   var pd=routeData(r);
-  var nodes=pd.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+'<span class="tag">'+(s.t||'')+'</span></div><div class="d">'+(s.d||'')+'</div></div>';}).join('')
+  var nodes=pd.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+tag(s.t)+'</div><div class="d">'+(s.d||'')+'</div></div>';}).join('')
     ||'<div class="node"><div class="d">该城景点节点整理中，可参考下方入口查询。</div></div>';
-  var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+'<span class="tag">'+(f.p||'')+'</span></div><div class="d">'+(f.d||'')+'</div></div>';}).join('')
+  var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+tag(f.p)+'</div><div class="d">'+(f.d||'')+'</div></div>';}).join('')
     ||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';
   var traffic=pd.traffic.map(function(x){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+x+'</div></div>';}).join('')
     ||'<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';
