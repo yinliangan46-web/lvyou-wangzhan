@@ -16,6 +16,8 @@ var COLORS = ['#2563eb','#4f86f7','#7fb0ff','#a8c8ff','#c9dcfd'];
 var tier='comfort';
 
 function $(id){return document.getElementById(id);}
+function lp(v){return v?' <span class="lp">'+v+'</span>':'';}
+function lpJoin(){var a=[].slice.call(arguments).filter(Boolean);return a.length?' <span class="lp">'+a.join(' · ')+'</span>':'';}
 function cityList(){ return window.MYL ? MYL.indexCities() : []; }
 function baseOf(name){ return BASE[name] || DEF; }
 
@@ -28,9 +30,9 @@ function renderCities(){
 function detailSection(c){
   if(!c) return '';
   var isA=c.tier==='A';
-  var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+' <span class="lp">'+b.value+'</span></div>';}).join('');
+  var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+lp(b.value)+'</div>';}).join('');
   var foods=isA
-    ? (c.foods||[]).map(function(f){return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+'</span></div>';}).join('')
+    ? (c.foods||[]).map(function(f){return '<div class="li">'+f.name+lp(f.price)+'</div>';}).join('')
     : (c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
   var spots=(!isA&&c.bLandmarks)?(c.bLandmarks.map(function(x){return '<div class="li">'+x+'</div>';}).join('')):'';
   var history=(!isA&&c.bHistory)?'<div class="li">'+c.bHistory+'</div>':'';
@@ -100,14 +102,40 @@ function calc(){
   }).join('');
 
   var plans=planCards(city,days,ppl);
+
+  /* 分项占比条形图（点击行可显隐该项） */
+  var maxItem=Math.max.apply(null,items.map(function(x){return x.val;}));
+  var bars=items.map(function(it,i){
+    var w=total?(it.val/total*100).toFixed(1):0;
+    return '<div class="bar-row" data-i="'+i+'"><div class="bar-head"><span>'+it.label+'</span><span class="v">¥'+it.val.toLocaleString()+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+COLORS[i]+'"></div></div></div>';
+  }).join('');
+
+  /* 三档预算对比条形图 */
+  var tierTotals=['budget','comfort','luxury'].map(function(t){
+    var f=city.flight*ppl, h=city.hotel[t]*nights*(ppl===3?2:1), fo=city.food[t]*days*ppl, ti=city.ticket[t]*days*ppl, lo=city.local[t]*days*ppl;
+    return {t:t,label:t==='budget'?'经济':t==='comfort'?'舒适':'品质',total:f+h+fo+ti+lo};
+  });
+  var maxTier=Math.max.apply(null,tierTotals.map(function(x){return x.total;}));
+  var tbars=tierTotals.map(function(x){
+    var w=(x.total/maxTier*100).toFixed(1);
+    var hot=x.t===tier;
+    return '<div class="tier-row'+(hot?' hot':'')+'"><div class="tier-label">'+x.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+w+'%"></div></div><div class="v">¥'+x.total.toLocaleString()+'</div></div>';
+  }).join('');
+
   $('out').innerHTML =
     '<div class="panel"><div class="total-row"><span class="num">¥'+total.toLocaleString()+'</span><span class="per">合计 · 人均 ¥'+per.toLocaleString()+'（'+(c?c.name:'所选城市')+' · '+days+' 天 '+ppl+' 人）</span></div>'+
       '<div class="wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+arcs+'<text x="90" y="86" text-anchor="middle" font-size="18" font-weight="900" fill="#1a2433">¥'+per.toLocaleString()+'</text><text x="90" y="106" text-anchor="middle" font-size="11" fill="#6b7787">人均</text></svg><div class="legend">'+legend+'</div></div>'+
+      '<div class="chart-sec"><h4><i class="fas fa-chart-bar"></i> 分项占比条形图（点击行可显隐）</h4><div class="bars">'+bars+'</div></div>'+
+      '<div class="chart-sec"><h4><i class="fas fa-scale-balanced"></i> 三档预算对比</h4><div class="tbars">'+tbars+'</div></div>'+
       '<div style="margin-top:16px">'+details+'</div>'+
       '<div class="note">未列入精细基准的城市为中性参考价，实际以平台实时报价为准。</div>'+
       detailSection(c)+
     '</div>'+
     '<div class="plans">'+plans+'</div>';
+
+  Array.prototype.forEach.call(document.querySelectorAll('.bar-row'),function(row){
+    row.onclick=function(){row.classList.toggle('off');};
+  });
 }
 
 function planCards(city,days,ppl){
