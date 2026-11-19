@@ -29,7 +29,7 @@ function genSheet(c){
     local='该城交通方案整理中，建议出行前用地图与票务平台核对班次。';
     if(!tips.length) tips=['该城详细备忘整理中，交通、门票与开放时间请以平台当日公示为准'];
   }
-  return {name:c.name,tag:(c.country||'中国')+(isA?' · 完整参考':' · 轻量参考'),summary:c.bHistory||(c.tags&&c.tags.join('、'))||'目的地备忘整理中，下方入口可查询交通与住宿。',
+  return {name:c.name,tag:(c.country||'中国')+' · 完整参考',summary:c.bHistory||c.history||(c.tags&&c.tags.join('、'))||'目的地备忘整理中，下方入口可查询交通与住宿。',
     ticket:ticket,transport:{go:go.length?go:['飞机/高铁：请在下方机票与火车票入口查询班次'],local:local,flight:flight,train:train},
     hotel:hotel,foods:foods,pack:GENERIC_PACK,tips:tips,
     links:[{t:'携程 · '+c.name+'酒店',u:hotelsUrl},{t:'携程 · '+c.name+'景点',u:'https://you.ctrip.com'},{t:'12306 火车票',u:'https://www.12306.cn'}]};
