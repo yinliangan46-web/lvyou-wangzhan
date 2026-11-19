@@ -36,6 +36,7 @@ var P = {
 
 var cur = null;
 function $(id){return document.getElementById(id);}
+function lpJoin(){var a=[].slice.call(arguments).filter(Boolean);return a.length?' <span class="lp">'+a.join(' · ')+'</span>':'';}
 
 function pool(){
   var q=$('searchInput').value.trim();
@@ -75,7 +76,7 @@ function detailBlock(c){
   var foods;
   if(isA){
     foods=(c.foods||[]).map(function(f){
-      return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+      return '<div class="li">'+f.name+lpJoin(f.price,f.desc)+'</div>';
     }).join('');
   } else {
     foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
