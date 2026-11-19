@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>打卡印记 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:920px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .hero{padding:30px 0 14px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .city-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .ct{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;font-size:14px;cursor:pointer}
+  .ct.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .spot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:16px 0}
+  .spot{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .spot h4{font-size:15px;margin-bottom:4px}
+  .spot .d{color:var(--muted);font-size:13px;margin-bottom:10px}
+  .btn{border:none;border-radius:10px;padding:9px 15px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-ghost{background:var(--soft);color:var(--primary)}
+  .wall{margin:20px 0 30px}
+  .wall h3{font-size:16px;margin:18px 0 12px}
+  .wall-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+  .stamp-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .stamp-card img{width:100%;height:120px;object-fit:cover}
+  .stamp-card .sc{padding:12px}
+  .stamp-card .sn{font-weight:700;font-size:14px}
+  .stamp-card .sm{font-size:12px;color:var(--muted);margin-top:3px}
+  .stamp-card .del{margin-top:8px;font-size:12px;color:#d94848;cursor:pointer}
+  .empty{color:var(--muted);text-align:center;padding:30px;font-size:14px}
+  .counter{background:var(--soft);border-radius:12px;padding:12px 16px;font-size:14px;margin:10px 0}
+  .counter b{color:var(--primary);font-size:18px}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="themes.html">主题线路</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>打卡印记墙</h1>
+    <p>到过的景点上传一张现场照片才算打卡，印记与照片保存在本机，汇成属于你的旅行墙。</p>
+  </section>
+
+  <div class="counter">已收集印记 <b id="count">0</b> 枚 · 照片仅存于本机浏览器，不上传服务器</div>
+  <section class="city-tabs" id="tabs"></section>
+  <section class="spot-grid" id="spots"></section>
+
+  <section class="wall">
+    <h3><i class="fas fa-stamp"></i> 我的印记墙</h3>
+    <div class="wall-grid" id="wall"></div>
+  </section>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" hidden />
+<script>
+var SPOTS = {
+  chengdu:[{n:'宽窄巷子',d:'老成都巷弄与茶馆'},{n:'大熊猫繁育基地',d:'看熊猫的核心点位'},{n:'锦里古街',d:'武侯祠旁夜景街区'},{n:'人民公园',d:'鹤鸣茶社盖碗茶'}],
+  xian:[{n:'西安城墙',d:'明城墙骑行散步'},{n:'陕西历史博物馆',d:'周秦汉唐国宝'},{n:'秦始皇兵马俑',d:'临潼地下军阵'},{n:'回民街',d:'老城美食片区'}],
+  xiamen:[{n:'鼓浪屿',d:'轮渡上岛老别墅'},{n:'环岛路',d:'滨海步道骑行'},{n:'南普陀寺',d:'临海古刹'},{n:'曾厝垵',d:'渔村文艺片区'}],
+  changsha:[{n:'橘子洲',d:'湘江江心洲'},{n:'湖南省博物馆',d:'马王堆文物'},{n:'太平老街',d:'老城小吃街'},{n:'五一广场',d:'夜生活商圈'}],
+  chongqing:[{n:'洪崖洞',d:'吊脚楼夜景'},{n:'解放碑',d:'城市中心地标'},{n:'李子坝',d:'轻轨穿楼机位'},{n:'南滨路',d:'沿江观景带'}],
+  dali:[{n:'洱海生态廊道',d:'环海骑行散步'},{n:'大理古城',d:'老城街巷'},{n:'双廊',d:'临海村落'},{n:'崇圣寺三塔',d:'古塔倒影'}]
+};
+var CITY_NAME={chengdu:'成都',xian:'西安',xiamen:'厦门',changsha:'长沙',chongqing:'重庆',dali:'大理'};
+var KEY='myl-stamps';
+var cur='chengdu';
+var pending=null;
+
+function $(id){return document.getElementById(id);}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}}
+function save(a){localStorage.setItem(KEY,JSON.stringify(a));}
+
+function renderTabs(){
+  $('tabs').innerHTML=Object.keys(SPOTS).map(function(k){
+    return '<button class="ct'+(cur===k?' active':'')+'" data-k="'+k+'">'+CITY_NAME[k]+'</button>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.ct'),function(b){
+    b.onclick=function(){cur=b.dataset.k;renderTabs();renderSpots();};
+  });
+}
+
+function renderSpots(){
+  var stamps=load();
+  $('spots').innerHTML=SPOTS[cur].map(function(s){
+    var key=cur+'-'+s.n;
+    var hit=stamps.find(function(x){return x.key===key;});
+    return '<div class="spot"><h4>'+s.n+'</h4><div class="d">'+s.d+'</div>'+
+      (hit?'<button class="btn btn-ghost" data-key="'+key+'"><i class="fas fa-check"></i> 已打卡</button>':'<button class="btn btn-primary" data-key="'+key+'" data-city="'+CITY_NAME[cur]+'"><i class="fas fa-camera"></i> 上传照片打卡</button>')+
+    '</div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.spot .btn'),function(b){
+    b.onclick=function(){
+      if(b.classList.contains('btn-ghost'))return;
+      pending={key:b.dataset.key,city:b.dataset.city,spot:b.dataset.key.split('-')[1]};
+      $('fileInput').click();
+    };
+  });
+}
+
+$('fileInput').onchange=function(){
+  var f=this.files[0];
+  if(!f||!pending)return;
+  if(f.size>2*1024*1024){alert('图片请控制在 2MB 以内，便于本机保存');this.value='';return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var a=load();
+    a=a.filter(function(x){return x.key!==pending.key;});
+    a.push({key:pending.key,city:pending.city,spot:pending.spot,img:e.target.result,date:new Date().toLocaleDateString('zh-CN')});
+    save(a);pending=null;$('fileInput').value='';renderSpots();renderWall();
+  };
+  reader.readAsDataURL(f);
+};
+
+function renderWall(){
+  var a=load();
+  $('count').textContent=a.length;
+  if(!a.length){$('wall').innerHTML='<div class="empty">还没有印记，上传现场照片开始收集吧。</div>';return;}
+  $('wall').innerHTML=a.map(function(x,i){
+    return '<div class="stamp-card"><img src="'+x.img+'" alt="'+x.spot+'"/><div class="sc"><div class="sn">'+x.spot+'</div><div class="sm">'+x.city+' · '+x.date+'</div><div class="del" data-i="'+i+'"><i class="fas fa-trash"></i> 移除印记</div></div></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.del'),function(d){
+    d.onclick=function(){
+      var arr=load();arr.splice(+d.dataset.i,1);save(arr);renderSpots();renderWall();
+    };
+  });
+}
+
+renderTabs();renderSpots();renderWall();
+</script>
+</body>
+</html>
