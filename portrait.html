@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>城市画像 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:920px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .hero{padding:30px 0 14px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .city-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .ct{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;font-size:14px;cursor:pointer}
+  .ct.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 24px rgba(20,50,100,.08);margin:16px 0 30px}
+  .cover{padding:28px 24px;color:#fff;background:linear-gradient(135deg,#2563eb,#4f86f7)}
+  .cover h2{font-size:24px;font-weight:900}
+  .cover .slogan{opacity:.92;margin-top:6px;font-size:15px}
+  .cover .who{margin-top:12px;font-size:13px;opacity:.95}
+  .body{padding:22px 24px}
+  .tag-cloud{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .cloud{border-radius:12px;padding:8px 14px;background:var(--soft);color:var(--primary);font-size:13px}
+  .cloud.big{font-size:15px;font-weight:700}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:600px){.cols{grid-template-columns:1fr}}
+  .col h3{font-size:14px;color:var(--primary);margin-bottom:10px}
+  .col ul{list-style:none}
+  .col li{font-size:13px;padding:6px 0;color:var(--text);display:flex;gap:8px}
+  .col li i{color:var(--primary);margin-top:5px;font-size:11px}
+  .match{background:var(--soft);border-radius:14px;padding:16px;margin-top:18px}
+  .match h3{font-size:14px;color:var(--primary);margin-bottom:8px}
+  .match p{font-size:13px;color:var(--text)}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="themes.html">主题线路</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>城市画像卡</h1>
+    <p>用一组标签和性格描述概括一座城：适合谁、强项是什么、需要注意什么，帮你快速判断它对不对味。</p>
+  </section>
+
+  <section class="city-tabs" id="tabs"></section>
+  <section id="portrait"></section>
+</div>
+
+<script>
+var PORTRAITS = [
+  {name:'成都', slogan:'一座把“慢”和“辣”都写进日常的城市', who:'适合：美食爱好者、慢生活追求者、独行与休闲游',
+    tags:[{t:'美食之都',big:1},{t:'慢节奏'},{t:'茶馆文化'},{t:'消费友好'},{t:'熊猫'},{t:'市井烟火'}],
+    strong:['小吃与火锅密度高，选择多','地铁方便，市区景点集中','生活气息浓，节奏松弛'],
+    weak:['夏季闷热潮湿','网红餐排队较久','景点分散度一般'],
+    match:'如果你不想赶路、想把时间花在吃上和茶馆里，成都的松弛感会很对味；偏好高强度观光的人可能觉得节奏偏慢。'},
+  {name:'西安', slogan:'把周秦汉唐叠在一座城里的历史现场', who:'适合：人文研学、亲子教育、古迹爱好者',
+    tags:[{t:'古都底蕴',big:1},{t:'博物馆'},{t:'遗迹'},{t:'研学'},{t:'面食'},{t:'城墙'}],
+    strong:['人文资源密集，讲解与展陈成熟','城区地铁可达，住宿选择多','美食以面食为主，性价比高'],
+    weak:['热门场馆需提前预约','临潼景点路程较远','夏季户外较热'],
+    match:'喜欢读历史、愿意花时间看文物的人会收获很大；只想拍照打卡、对古迹没兴趣的话，部分行程会偏枯燥。'},
+  {name:'厦门', slogan:'海风、老街与慢节奏揉在一起的海岛', who:'适合：情侣度假、休闲放松、亲子海岛游',
+    tags:[{t:'海滨休闲',big:1},{t:'文艺'},{t:'慢节奏'},{t:'情侣'},{t:'闽南味'},{t:'轮渡'}],
+    strong:['气候宜人，海岸步道适合散步骑行','城市干净，休闲配套成熟','美食偏闽南，口味温和'],
+    weak:['旺季船票与住宿紧张','夏秋季受台风影响','岛上台阶多，拖行李不便'],
+    match:'想找个海边城市放空、散步、喝咖啡，厦门很合适；追求刺激玩法或高密度景点的人会觉得偏安静。'},
+  {name:'长沙', slogan:'夜宵、辣味与夜生活堆出来的年轻城市', who:'适合：年轻人、美食夜生活、短周末出行',
+    tags:[{t:'夜宵之城',big:1},{t:'辣味'},{t:'夜生活'},{t:'市井'},{t:'网红'},{t:'低成本'}],
+    strong:['美食与夜生活密集，夜间热闹','地铁覆盖主要商圈','消费适中，短途性价比高'],
+    weak:['湘菜偏辣，肠胃敏感需注意','网红店排队久','夏季闷热'],
+    match:'能吃辣、喜欢热闹和夜宵的年轻人会玩得很尽兴；不吃辣、偏好安静休闲的人需要挑店出行。'},
+  {name:'重庆', slogan:'长在山上、夜景立体的江湖城市', who:'适合：摄影、夜景爱好者、喜欢山城地形的游客',
+    tags:[{t:'山城立体',big:1},{t:'夜景'},{t:'江湖气'},{t:'火锅'},{t:'机位多'},{t:'爬坡上坎'}],
+    strong:['夜景与立体地形独特，出片点多','火锅与小面风味鲜明','商圈集中，交通便利'],
+    weak:['地形起伏大，走路爬坡多','导航在立体路况下易失效','夏季炎热'],
+    match:'喜欢探索街巷、拍夜景、吃火锅的人会觉得重庆很有性格；腿脚不便或怕热的人需要控制步行强度。'},
+  {name:'大理', slogan:'苍山洱海之间，用来放空的慢节奏目的地', who:'适合：摄影、放空度假、情侣与慢游',
+    tags:[{t:'湖景田园',big:1},{t:'慢游'},{t:'摄影'},{t:'骑行'},{t:'高原日晒'},{t:'民宿'}],
+    strong:['洱海廊道与田园景观开阔','节奏慢，民宿与咖啡馆多','适合骑行与摄影出片'],
+    weak:['海拔约2000米，需放缓节奏','雨季山路受天气影响','商业片区节假日较挤'],
+    match:'想逃离快节奏、对着湖景发呆拍照的人会很放松；追求城市便利与密集景点的人可能觉得配套偏散。'}
+];
+
+var cur=0;
+function $(id){return document.getElementById(id);}
+
+function renderTabs(){
+  $('tabs').innerHTML=PORTRAITS.map(function(p,i){
+    return '<button class="ct'+(cur===i?' active':'')+'" data-i="'+i+'">'+p.name+'</button>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.ct'),function(b){
+    b.onclick=function(){cur=+b.dataset.i;renderTabs();render();};
+  });
+}
+
+function render(){
+  var p=PORTRAITS[cur];
+  var cloud=p.tags.map(function(t){return '<span class="cloud'+(t.big?' big':'')+'">'+t.t+'</span>';}).join('');
+  var strong=p.strong.map(function(x){return '<li><i class="fas fa-check"></i>'+x+'</li>';}).join('');
+  var weak=p.weak.map(function(x){return '<li><i class="fas fa-xmark"></i>'+x+'</li>';}).join('');
+  $('portrait').innerHTML=
+  '<div class="card">'+
+    '<div class="cover"><h2>'+p.name+'</h2><div class="slogan">“'+p.slogan+'”</div><div class="who"><i class="fas fa-users"></i> '+p.who+'</div></div>'+
+    '<div class="body">'+
+      '<div class="tag-cloud">'+cloud+'</div>'+
+      '<div class="cols">'+
+        '<div class="col"><h3><i class="fas fa-thumbs-up"></i> 强项</h3><ul>'+strong+'</ul></div>'+
+        '<div class="col"><h3><i class="fas fa-thumbs-down"></i> 需要注意</h3><ul>'+weak+'</ul></div>'+
+      '</div>'+
+      '<div class="match"><h3><i class="fas fa-heart"></i> 匹配判断</h3><p>'+p.match+'</p></div>'+
+    '</div>'+
+  '</div>';
+}
+
+renderTabs();render();
+</script>
+</body>
+</html>
