@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>对话路书 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:880px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .hero{padding:30px 0 14px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .chat{margin:16px 0}
+  .bubble{max-width:80%;padding:14px 16px;border-radius:16px;margin-bottom:14px}
+  .bot{background:var(--card);box-shadow:0 4px 14px rgba(20,50,100,.06)}
+  .bot .q{font-weight:700;font-size:15px;margin-bottom:10px}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer}
+  .opt.active{border-color:var(--primary);background:var(--soft);color:var(--primary)}
+  .me{margin-left:auto;background:var(--primary);color:#fff}
+  .steps{display:flex;gap:6px;margin:10px 0 18px;flex-wrap:wrap}
+  .step{font-size:12px;color:var(--muted)}
+  .step.on{color:var(--primary);font-weight:700}
+  .plan{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 24px rgba(20,50,100,.08);margin:16px 0 30px}
+  .plan-cover{padding:24px;color:#fff;background:linear-gradient(135deg,#2563eb,#4f86f7)}
+  .plan-cover h2{font-size:22px;font-weight:900}
+  .plan-cover .sub{opacity:.9;margin-top:4px;font-size:14px}
+  .section{padding:18px 22px;border-top:1px solid var(--line)}
+  .section h3{font-size:15px;color:var(--primary);margin-bottom:12px}
+  .node{padding:10px 0;border-bottom:1px dashed var(--line)}
+  .node:last-child{border-bottom:none}
+  .node .t{font-weight:700;font-size:14px}
+  .node .d{color:var(--muted);font-size:13px;margin-top:2px}
+  .tag{background:var(--soft);color:var(--primary);border-radius:8px;padding:2px 9px;font-size:12px;margin-left:6px}
+  .link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .link-card{border:1px solid var(--line);border-radius:12px;padding:12px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:4px}
+  .link-card b{font-size:14px}
+  .link-card span{font-size:12px;color:var(--muted)}
+  .btn{border:none;border-radius:10px;padding:11px 18px;font-size:14px;cursor:pointer;background:var(--primary);color:#fff;display:inline-flex;align-items:center;gap:8px}
+  .btn-ghost{background:var(--soft);color:var(--primary)}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="compare.html">目的地对比</a>
+      <a href="themes.html">主题线路</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>对话式路书生成</h1>
+    <p>像聊天一样回答几个问题，自动生成含交通、景点、美食、住宿与预订入口的结构化路书。</p>
+  </section>
+
+  <div class="steps" id="steps"></div>
+  <div class="chat" id="chat"></div>
+  <div id="planBox"></div>
+</div>
+
+<script>
+var DB = {
+  chengdu:{name:'成都', flight:'https://flights.ctrip.com/online/list/oneway-chengdu', train:'https://www.12306.cn',
+    traffic:['飞机：双流/天府机场，地铁进城','高铁：成都东站，地铁2/7号线接驳','市内：地铁+打车，景点集中'],
+    spots:[{n:'宽窄巷子',d:'老城巷弄喝茶闲逛',t:'免费'},{n:'大熊猫繁育基地',d:'建议上午前往看熊猫活跃',t:'¥55 · 需预约'},{n:'锦里古街',d:'傍晚看夜景吃小吃',t:'免费'}],
+    foods:[{n:'串串香',d:'奎星楼街，吧台位友好',p:'¥60/人'},{n:'甜水面/凉粉',d:'文殊院旁老字号',p:'¥15/人'},{n:'盖碗茶',d:'人民公园鹤鸣茶社',p:'¥15/位'}],
+    hotel:[{a:'春熙路/太古里',l:'商圈便利',p:'¥300–500/晚'},{a:'武侯祠/宽窄巷子',l:'近美食区',p:'¥260–420/晚'}],
+    ctrip:'https://you.ctrip.com/sight/chengdu104.html', hotels:'https://hotels.ctrip.com/hotels/chengdu104.html'},
+  xian:{name:'西安', flight:'https://flights.ctrip.com/online/list/oneway-xian', train:'https://www.12306.cn',
+    traffic:['飞机：咸阳机场，城际地铁进城','高铁：西安北站，地铁2号线直达钟楼','市内：地铁可达，兵马俑需赴临潼'],
+    spots:[{n:'西安城墙',d:'骑行或散步看老城',t:'¥54'},{n:'陕西历史博物馆',d:'国宝研学，提前预约',t:'基本陈列免费'},{n:'秦始皇兵马俑',d:'临潼军阵，预留半天',t:'¥120 · 分时段预约'}],
+    foods:[{n:'肉夹馍+凉皮',d:'老字号看本地客流',p:'¥15–25/份'},{n:'羊肉泡馍',d:'自己掰馍',p:'¥40/碗'},{n:'biangbiang面',d:'油泼辣子香',p:'¥20/碗'}],
+    hotel:[{a:'钟楼/鼓楼',l:'老城中心',p:'¥280–450/晚'},{a:'大雁塔/小寨',l:'近博物馆',p:'¥260–420/晚'}],
+    ctrip:'https://you.ctrip.com/sight/xian5.html', hotels:'https://hotels.ctrip.com/hotels/xian5.html'},
+  xiamen:{name:'厦门', flight:'https://flights.ctrip.com/online/list/oneway-xiamen', train:'https://www.12306.cn',
+    traffic:['飞机：高崎机场，地铁进岛','高铁：厦门北站，地铁1号线进岛','市内：公交+BRT+打车，鼓浪屿需轮渡'],
+    spots:[{n:'鼓浪屿',d:'轮渡上岛，步行游览',t:'船票¥35起 · 提前购票'},{n:'南普陀寺',d:'临海古刹，需预约',t:'免费'},{n:'环岛路',d:'滨海步道骑行',t:'免费'}],
+    foods:[{n:'沙茶面',d:'本地早餐常见',p:'¥20/碗'},{n:'海蛎煎',d:'闽南特色趁热吃',p:'¥30/份'},{n:'土笋冻',d:'风味小吃',p:'¥15/份'}],
+    hotel:[{a:'中山路/轮渡',l:'近码头老城',p:'¥280–450/晚'},{a:'曾厝垵/环岛路',l:'临海休闲',p:'¥300–500/晚'}],
+    ctrip:'https://you.ctrip.com/sight/xiamen14.html', hotels:'https://hotels.ctrip.com/hotels/xiamen14.html'},
+  changsha:{name:'长沙', flight:'https://flights.ctrip.com/online/list/oneway-changsha', train:'https://www.12306.cn',
+    traffic:['飞机：黄花机场，磁浮快线进市区','高铁：长沙南站，地铁2/4号线接驳','市内：地铁覆盖商圈与景点'],
+    spots:[{n:'橘子洲',d:'湘江江心洲，小火车另购',t:'免费 · 预约入园'},{n:'湖南省博物馆',d:'马王堆文物，周一闭馆',t:'免费 · 提前预约'},{n:'太平老街',d:'老城小吃街',t:'免费'}],
+    foods:[{n:'小龙虾',d:'夜宵主力',p:'¥90/人'},{n:'臭豆腐',d:'街边老字号',p:'¥15/份'},{n:'糖油粑粑',d:'甜食小食趁热吃',p:'¥10/份'}],
+    hotel:[{a:'五一广场/黄兴路',l:'夜生活核心',p:'¥260–420/晚'},{a:'岳麓山/溁湾镇',l:'安静近景区',p:'¥240–380/晚'}],
+    ctrip:'https://you.ctrip.com/sight/changsha19.html', hotels:'https://hotels.ctrip.com/hotels/changsha19.html'},
+  chongqing:{name:'重庆', flight:'https://flights.ctrip.com/online/list/oneway-chongqing', train:'https://www.12306.cn',
+    traffic:['飞机：江北机场，轨道进城','高铁：重庆西站/北站，轨道接驳','市内：轨道+打车，山城地形多爬坡'],
+    spots:[{n:'洪崖洞',d:'吊脚楼夜景，入夜亮灯',t:'免费'},{n:'解放碑',d:'城市中心商圈',t:'免费'},{n:'李子坝',d:'轻轨穿楼机位',t:'免费'}],
+    foods:[{n:'重庆火锅',d:'牛油锅底，不能吃辣提前说',p:'¥80/人'},{n:'小面',d:'街头早餐代表',p:'¥12/碗'},{n:'酸辣粉',d:'老城小吃',p:'¥15/份'}],
+    hotel:[{a:'解放碑/洪崖洞',l:'夜景核心',p:'¥280–450/晚'},{a:'南滨路',l:'沿江观景',p:'¥300–480/晚'}],
+    ctrip:'https://you.ctrip.com/sight/chongqing158.html', hotels:'https://hotels.ctrip.com/hotels/chongqing158.html'}
+};
+
+var QS = [
+  {key:'city', q:'第一站，你想去哪座城市？', opts:Object.keys(DB).map(function(k){return {v:k,label:DB[k].name};})},
+  {key:'days', q:'打算玩几天？', opts:[{v:'2',label:'2 天'},{v:'3',label:'3 天'},{v:'4',label:'4 天'},{v:'5',label:'5 天以上'}]},
+  {key:'ppl', q:'几个人出行？', opts:[{v:'1',label:'1 人独行'},{v:'2',label:'2 人同行'},{v:'3',label:'3 人及以上'}]},
+  {key:'budget', q:'预算偏向哪一档？', opts:[{v:'budget',label:'经济省钱'},{v:'comfort',label:'舒适适中'},{v:'luxury',label:'品质度假'}]},
+  {key:'pref', q:'行程更看重什么？', opts:[{v:'food',label:'美食优先'},{v:'sight',label:'景观拍照'},{v:'culture',label:'人文研学'},{v:'relax',label:'轻松休闲'}]}
+];
+
+var ans={};
+var qi=0;
+function $(id){return document.getElementById(id);}
+
+var LABEL={city:'城市',days:'天数',ppl:'人数',budget:'预算',pref:'偏好'};
+function renderSteps(){
+  $('steps').innerHTML=QS.map(function(q,i){return '<span class="step'+(i<=qi?' on':'')+'">'+(i+1)+'.'+LABEL[q.key]+'</span>';}).join(' · ');
+}
+
+function ask(){
+  if(qi>=QS.length){generate();return;}
+  var q=QS[qi];
+  var opts=q.opts.map(function(o){return '<button class="opt" data-v="'+o.v+'">'+o.label+'</button>';}).join('');
+  $('chat').innerHTML+='<div class="bubble bot"><div class="q">'+q.q+'</div><div class="opts">'+opts+'</div></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('.opt'),function(b){
+    b.onclick=function(){
+      ans[q.key]=b.dataset.v;
+      $('chat').innerHTML+='<div class="bubble me">'+b.textContent+'</div>';
+      qi++;renderSteps();ask();
+    };
+  });
+}
+
+function generate(){
+  var d=DB[ans.city];
+  var days=ans.days, ppl=ans.ppl;
+  var prefLabel=QS[4].opts.find(function(o){return o.v===ans.pref;}).label;
+  var bname=ans.budget==='budget'?'经济':ans.budget==='comfort'?'舒适':'品质';
+  var spots=d.spots.map(function(s){return '<div class="node"><div class="t">'+s.n+'<span class="tag">'+s.t+'</span></div><div class="d">'+s.d+'</div></div>';}).join('');
+  var foods=d.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+'<span class="tag">'+f.p+'</span></div><div class="d">'+f.d+'</div></div>';}).join('');
+  var hotels=d.hotel.map(function(h){return '<div class="node"><div class="t">'+h.a+'<span class="tag">'+h.p+'</span></div><div class="d">'+h.l+'</div></div>';}).join('');
+  var traffic=d.traffic.map(function(t){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
+
+  $('planBox').innerHTML=
+  '<div class="plan">'+
+    '<div class="plan-cover"><h2>'+d.name+' · '+days+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · 由 MYL 对话生成</div></div>'+
+    '<div class="section"><h3><i class="fas fa-plane-departure"></i> 交通安排</h3>'+traffic+
+      '<div class="link-grid" style="margin-top:12px">'+
+        '<a class="link-card" href="'+d.flight+'" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
+        '<a class="link-card" href="'+d.train+'" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
+      '</div></div>'+
+    '<div class="section"><h3><i class="fas fa-map-location-dot"></i> 景点节点</h3>'+spots+'</div>'+
+    '<div class="section"><h3><i class="fas fa-utensils"></i> 美食推荐</h3>'+foods+'</div>'+
+    '<div class="section"><h3><i class="fas fa-hotel"></i> 住宿建议</h3>'+hotels+'</div>'+
+    '<div class="section"><h3><i class="fas fa-link"></i> 预订入口</h3><div class="link-grid">'+
+      '<a class="link-card" href="'+d.ctrip+'" target="_blank" rel="noopener"><b>携程景点</b><span>门票与预约查询</span></a>'+
+      '<a class="link-card" href="'+d.hotels+'" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+
+      '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306</b><span>火车票预订</span></a>'+
+    '</div></div>'+
+  '</div>'+
+  '<div style="margin-bottom:30px"><button class="btn btn-ghost" onclick="location.reload()"><i class="fas fa-rotate-left"></i> 重新生成一份</button></div>';
+  $('planBox').scrollIntoView({behavior:'smooth'});
+}
+
+renderSteps();ask();
+</script>
+</body>
+</html>
