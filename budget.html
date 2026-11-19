@@ -24,7 +24,7 @@
   .panel{background:var(--card);border-radius:var(--radius);padding:20px;margin:16px 0;box-shadow:0 4px 18px rgba(20,50,100,.06)}
   .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
   .field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
-  .field select,.field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
+  .field select,.field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;font-family:inherit}
   .seg{display:flex;gap:8px;flex-wrap:wrap}
   .seg button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer}
   .seg button.active{background:var(--primary);border-color:var(--primary);color:#fff}
@@ -49,6 +49,16 @@
   .plan .p{font-weight:900;color:var(--primary);font-size:18px}
   .plan ul{list-style:none;margin-top:8px}
   .plan li{font-size:13px;color:var(--muted);padding:3px 0}
+  .dsec{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+  .dsec h4{font-size:13px;color:var(--primary);margin-bottom:8px}
+  .link-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .link-card{border:1px solid var(--line);border-radius:12px;padding:10px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:3px}
+  .link-card b{font-size:13px}
+  .link-card span{font-size:12px;color:var(--muted)}
+  .li{font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .li:last-child{border-bottom:none}
+  .li .lp{color:var(--muted);font-size:12px}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
 </style>
 </head>
 <body>
@@ -58,8 +68,8 @@
     <nav class="nav-links">
       <a href="index.html">首页</a>
       <a href="discover.html">✨ 发现 MYL</a>
-      <a href="compare.html">目的地对比</a>
-      <a href="themes.html">主题线路</a>
+      <a href="tools.html">🧰 智能工具</a>
+      <a href="budget.html">花费拆解</a>
     </nav>
   </div>
 </header>
@@ -67,14 +77,15 @@
 <div class="container">
   <section class="hero">
     <h1>花费拆解可视化</h1>
-    <p>按目的地、天数、人数和预算档测算出行总花费，环形图拆分机票、住宿、餐饮、门票与当地交通，并给出经济/舒适两档方案。</p>
+    <p>按目的地、天数、人数和预算档测算总花费，环形图拆分机票、住宿、餐饮、门票与交通；下方附站内预算参考、美食、住宿与往返交通入口。</p>
   </section>
 
   <section class="panel">
     <div class="form-grid">
       <div class="field">
-        <label>目的地</label>
-        <select id="city"></select>
+        <label>目的地（可输入搜索）</label>
+        <input list="cityList" id="cityInput" autocomplete="off" />
+        <datalist id="cityList"></datalist>
       </div>
       <div class="field">
         <label>天数</label>
@@ -99,29 +110,62 @@
   <section id="out"></section>
 </div>
 
+<script src="city-data.js"></script>
+<script src="city-index.js"></script>
 <script>
-var CITIES = [
-  {name:'成都', flight:600, hotel:{budget:220,comfort:360,luxury:600}, food:{budget:70,comfort:110,luxury:180}, ticket:{budget:60,comfort:100,luxury:160}, local:{budget:30,comfort:50,luxury:90}},
-  {name:'西安', flight:600, hotel:{budget:220,comfort:340,luxury:560}, food:{budget:60,comfort:100,luxury:160}, ticket:{budget:80,comfort:120,luxury:180}, local:{budget:30,comfort:50,luxury:90}},
-  {name:'厦门', flight:700, hotel:{budget:240,comfort:380,luxury:620}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:140}, local:{budget:30,comfort:50,luxury:90}},
-  {name:'青岛', flight:650, hotel:{budget:220,comfort:360,luxury:600}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:140}, local:{budget:30,comfort:50,luxury:90}},
-  {name:'大理', flight:700, hotel:{budget:200,comfort:340,luxury:560}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:60,comfort:100,luxury:150}, local:{budget:40,comfort:60,luxury:100}},
-  {name:'哈尔滨', flight:800, hotel:{budget:260,comfort:400,luxury:660}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:100,comfort:150,luxury:220}, local:{budget:30,comfort:50,luxury:90}},
-  {name:'三亚', flight:900, hotel:{budget:300,comfort:560,luxury:900}, food:{budget:90,comfort:150,luxury:240}, ticket:{budget:70,comfort:120,luxury:200}, local:{budget:40,comfort:70,luxury:110}},
-  {name:'长沙', flight:500, hotel:{budget:200,comfort:320,luxury:520}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:30,comfort:60,luxury:100}, local:{budget:25,comfort:40,luxury:80}},
-  {name:'重庆', flight:550, hotel:{budget:200,comfort:320,luxury:520}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:40,comfort:70,luxury:110}, local:{budget:25,comfort:40,luxury:80}}
-];
+var BASE = {
+  '成都':{flight:600, hotel:{budget:220,comfort:360,luxury:600}, food:{budget:70,comfort:110,luxury:180}, ticket:{budget:60,comfort:100,luxury:160}, local:{budget:30,comfort:50,luxury:90}},
+  '西安':{flight:600, hotel:{budget:220,comfort:340,luxury:560}, food:{budget:60,comfort:100,luxury:160}, ticket:{budget:80,comfort:120,luxury:180}, local:{budget:30,comfort:50,luxury:90}},
+  '厦门':{flight:700, hotel:{budget:240,comfort:380,luxury:620}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:140}, local:{budget:30,comfort:50,luxury:90}},
+  '青岛':{flight:650, hotel:{budget:220,comfort:360,luxury:600}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:140}, local:{budget:30,comfort:50,luxury:90}},
+  '大理':{flight:700, hotel:{budget:200,comfort:340,luxury:560}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:60,comfort:100,luxury:150}, local:{budget:40,comfort:60,luxury:100}},
+  '哈尔滨':{flight:800, hotel:{budget:260,comfort:400,luxury:660}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:100,comfort:150,luxury:220}, local:{budget:30,comfort:50,luxury:90}},
+  '三亚':{flight:900, hotel:{budget:300,comfort:560,luxury:900}, food:{budget:90,comfort:150,luxury:240}, ticket:{budget:70,comfort:120,luxury:200}, local:{budget:40,comfort:70,luxury:110}},
+  '长沙':{flight:500, hotel:{budget:200,comfort:320,luxury:520}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:30,comfort:60,luxury:100}, local:{budget:25,comfort:40,luxury:80}},
+  '重庆':{flight:550, hotel:{budget:200,comfort:320,luxury:520}, food:{budget:70,comfort:100,luxury:160}, ticket:{budget:40,comfort:70,luxury:110}, local:{budget:25,comfort:40,luxury:80}}
+};
+var DEF = {flight:650, hotel:{budget:200,comfort:340,luxury:560}, food:{budget:70,comfort:110,luxury:170}, ticket:{budget:50,comfort:90,luxury:150}, local:{budget:30,comfort:50,luxury:90}};
 var COLORS = ['#2563eb','#4f86f7','#7fb0ff','#a8c8ff','#c9dcfd'];
 var tier='comfort';
 
 function $(id){return document.getElementById(id);}
+function cityList(){ return window.MYL ? MYL.indexA级() : []; }
+function baseOf(name){ return BASE[name] || DEF; }
 
 function renderCities(){
-  $('city').innerHTML=CITIES.map(function(c,i){return '<option'+(i===0?' selected':'')+'>'+c.name+'</option>';}).join('');
+  var all=cityList();
+  $('cityList').innerHTML=all.map(function(c){return '<option value="'+c.name+'">';}).join('');
+  if(!$('cityInput').value && all.length) $('cityInput').value=all[0].name;
+}
+
+function detailSection(c){
+  if(!c) return '';
+  var budget=(c.budget||[]).map(function(b){return '<div class="li">'+b.label+' <span class="lp">'+b.value+'</span></div>';}).join('');
+  var foods=(c.foods||[]).map(function(f){return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+'</span></div>';}).join('');
+  var hotels=(c.hotels||[]).map(function(h){
+    return h.bookingUrl
+      ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></a>'
+      : '<div class="link-card"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></div>';
+  }).join('');
+  var air=(c.airfare||[]).map(function(a){
+    return '<a class="link-card" href="'+a.bookingUrl+'" target="_blank" rel="noopener"><b>'+a.platform+'</b><span>'+a.from+' → '+a.to+' · '+a.price+'</span></a>';
+  }).join('');
+  var rail=(c.trains||[]).map(function(t){
+    return '<a class="link-card" href="'+t.bookingUrl+'" target="_blank" rel="noopener"><b>'+t.platform+'</b><span>'+t.from+' → '+t.to+' · '+t.price+'</span></a>';
+  }).join('');
+  var html='';
+  if(budget) html+='<div class="dsec"><h4><i class="fas fa-wallet"></i> 站内预算参考</h4>'+budget+'</div>';
+  if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 当地美食</h4>'+foods+'</div>';
+  if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
+  if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
+  if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
+  return html;
 }
 
 function calc(){
-  var city=CITIES.find(function(c){return c.name===$('city').value;});
+  var name=$('cityInput').value.trim();
+  var c=MYL.getCity(name);
+  var city=c?baseOf(c.name):DEF;
   var days=+$('days').value, ppl=+$('ppl').value;
   var nights=days-1;
   var rooms = ppl===1?1:ppl===2?1:2;
@@ -140,13 +184,11 @@ function calc(){
   var total=items.reduce(function(a,b){return a+b.val;},0);
   var per=Math.round(total/ppl);
 
-  var r=70, cx=90, cy=90, C=2*Math.PI*r;
-  var offset=0;
+  var r=70, cx=90, cy=90, C=2*Math.PI*r, offset=0;
   var arcs=items.map(function(it,i){
     var frac=total?it.val/total:0;
     var seg='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+COLORS[i]+'" stroke-width="22" stroke-dasharray="'+(frac*C).toFixed(1)+' '+(C).toFixed(1)+'" stroke-dashoffset="'+(-offset*C).toFixed(1)+'"/>';
-    offset+=frac;
-    return seg;
+    offset+=frac; return seg;
   }).join('');
   var legend=items.map(function(it,i){
     return '<div class="lg"><i style="background:'+COLORS[i]+'"></i>'+it.label+'<span class="v">¥'+it.val.toLocaleString()+'</span></div>';
@@ -156,24 +198,26 @@ function calc(){
   }).join('');
 
   var plans=planCards(city,days,ppl);
-
   $('out').innerHTML =
-    '<div class="panel"><div class="total-row"><span class="num">¥'+total.toLocaleString()+'</span><span class="per">合计 · 人均 ¥'+per.toLocaleString()+'（'+days+' 天 '+ppl+' 人）</span></div>'+
+    '<div class="panel"><div class="total-row"><span class="num">¥'+total.toLocaleString()+'</span><span class="per">合计 · 人均 ¥'+per.toLocaleString()+'（'+(c?c.name:'所选城市')+' · '+days+' 天 '+ppl+' 人）</span></div>'+
       '<div class="wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+arcs+'<text x="90" y="86" text-anchor="middle" font-size="18" font-weight="900" fill="#1a2433">¥'+per.toLocaleString()+'</text><text x="90" y="106" text-anchor="middle" font-size="11" fill="#6b7787">人均</text></svg><div class="legend">'+legend+'</div></div>'+
-      '<div style="margin-top:16px">'+details+'</div></div>'+
+      '<div style="margin-top:16px">'+details+'</div>'+
+      '<div class="note">未列入精细基准的城市为中性参考价，实际以平台实时报价为准。</div>'+
+      detailSection(c)+
+    '</div>'+
     '<div class="plans">'+plans+'</div>';
 }
 
 function planCards(city,days,ppl){
   var nights=days-1;
-  function pack(t,label,hot,note,opts){
+  function pack(t,label,hot,opts){
     var flight=city.flight*ppl, hotel=city.hotel[t]*nights*(ppl===3?2:1), food=city.food[t]*days*ppl, ticket=city.ticket[t]*days*ppl, local=city.local[t]*days*ppl;
     var total=flight+hotel+food+ticket+local;
     return '<div class="plan'+(hot?' hot':'')+'"><h4>'+label+'</h4><div class="p">¥'+total.toLocaleString()+' <span style="font-size:12px;color:var(--muted);font-weight:400">人均 ¥'+Math.round(total/ppl).toLocaleString()+'</span></div><ul>'+
-      opts.map(function(o){return '<li><i class="fas fa-check" style="color:var(--primary)"></i> '+o+'</li>';}).join('')+'</ul><div class="d" style="font-size:12px;color:var(--muted);margin-top:8px">'+note+'</div></div>';
+      opts.map(function(o){return '<li><i class="fas fa-check" style="color:var(--primary)"></i> '+o+'</li>';}).join('')+'</ul></div>';
   }
-  var b=pack('budget','经济档',false,'青旅/连锁酒店，公共交通为主，精选收费景点',['住宿：连锁酒店或青旅标间','餐饮：本地小吃与家常菜','交通：地铁公交为主','适合学生与独行游客']);
-  var c=pack('comfort','舒适档',true,'品质酒店，行程松紧适中，体验更完整',['住宿：商圈中档酒店','餐饮：正餐+特色店兼顾','交通：打车与地铁结合','含主要景点与一次特色体验']);
+  var b=pack('budget','经济档',false,['住宿：连锁酒店或青旅标间','餐饮：本地小吃与家常菜','交通：地铁公交为主','适合学生与独行游客']);
+  var c=pack('comfort','舒适档',true,['住宿：商圈中档酒店','餐饮：正餐+特色店兼顾','交通：打车与地铁结合','含主要景点与一次特色体验']);
   return b+c;
 }
 
@@ -185,6 +229,7 @@ Array.prototype.forEach.call(document.querySelectorAll('#tier button'),function(
   };
 });
 $('calcBtn').onclick=calc;
+$('cityInput').addEventListener('change',calc);
 renderCities();calc();
 </script>
 </body>
