@@ -44,6 +44,7 @@ var QS = [
 var ans={};
 var qi=0;
 function $(id){return document.getElementById(id);}
+function tag(v){return v?'<span class="tag">'+v+'</span>':'';}
 var LABEL={city:'城市',days:'天数',ppl:'人数',budget:'预算',pref:'偏好'};
 var A = window.MYL ? MYL.indexCities() : [];
 
@@ -123,11 +124,11 @@ function generate(){
   var prefLabel=QS[4].opts.find(function(o){return o.v===ans.pref;}).label;
   var bname=ans.budget==='budget'?'经济':ans.budget==='comfort'?'舒适':'品质';
   var dayHtml=pd.dayGroups.map(function(g){
-    var nodes=g.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+'<span class="tag">'+(s.t||'')+'</span></div><div class="d">'+(s.d||'')+'</div></div>';}).join('');
+    var nodes=g.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+tag(s.t)+'</div><div class="d">'+(s.d||'')+'</div></div>';}).join('');
     return '<div class="node"><div class="t">'+g.label+'</div>'+nodes+'</div>';
   }).join('')||'<div class="node"><div class="d">该城行程节点整理中，可参考下方景点与交通安排。</div></div>';
-  var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+'<span class="tag">'+(f.p||'')+'</span></div><div class="d">'+(f.d||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';
-  var hotels=pd.hotels.map(function(h){return '<div class="node"><div class="t">'+h.a+'<span class="tag">'+(h.p||'')+'</span></div><div class="d">'+(h.l||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">住宿推荐整理中，可点下方酒店入口查询。</div></div>';
+  var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+tag(f.p)+'</div><div class="d">'+(f.d||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';
+  var hotels=pd.hotels.map(function(h){return '<div class="node"><div class="t">'+h.a+tag(h.p)+'</div><div class="d">'+(h.l||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">住宿推荐整理中，可点下方酒店入口查询。</div></div>';
   var traffic=pd.traffic.map(function(t){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
   if(!traffic){traffic='<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';}
 
