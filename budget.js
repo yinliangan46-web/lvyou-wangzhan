@@ -34,8 +34,8 @@ function detailSection(c){
   var foods=isA
     ? (c.foods||[]).map(function(f){return '<div class="li">'+f.name+lp(f.price)+'</div>';}).join('')
     : (c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
-  var spots=(!isA&&c.bLandmarks)?(c.bLandmarks.map(function(x){return '<div class="li">'+x+'</div>';}).join('')):'';
-  var history=(!isA&&c.bHistory)?'<div class="li">'+c.bHistory+'</div>':'';
+  var spots=(c.landmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
+  var history=c.history?'<div class="li">'+c.history+'</div>':'';
   var hotels=(c.hotels||[]).map(function(h){
     return h.bookingUrl
       ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></a>'
@@ -48,7 +48,6 @@ function detailSection(c){
     return '<a class="link-card" href="'+t.bookingUrl+'" target="_blank" rel="noopener"><b>'+t.platform+'</b><span>'+t.from+' → '+t.to+' · '+t.price+'</span></a>';
   }).join('');
   var html='';
-  if(!isA) html+='<div class="note">轻量参考：该城完整路书整理中，预算为中性参考价，下方附已有美食、地标与通用交通住宿入口。</div>';
   if(budget) html+='<div class="dsec"><h4><i class="fas fa-wallet"></i> 站内预算参考</h4>'+budget+'</div>';
   if(spots) html+='<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>';
   if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 当地美食</h4>'+foods+'</div>';
@@ -56,7 +55,7 @@ function detailSection(c){
   if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
   if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
   if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
-  if(!isA){
+  if(c.generic){
     html+='<div class="dsec"><h4><i class="fas fa-link"></i> 通用预订入口</h4><div class="link-grid">'+
       '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
       '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
