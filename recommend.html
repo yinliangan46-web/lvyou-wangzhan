@@ -45,6 +45,7 @@
   .score{font-weight:900;color:var(--primary)}
   .rec-tags{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
   .rtag{background:#f2f5fa;border-radius:8px;padding:3px 10px;font-size:12px;color:var(--muted)}
+  .rtag.light{background:#fff4ec;color:#c2620a}
   .rec-reason{font-size:13px;color:var(--muted)}
   .bars{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px}
   .bar{font-size:12px;color:var(--muted)}
@@ -67,6 +68,7 @@
   .link-card b{font-size:13px}
   .link-card span{font-size:12px;color:var(--muted)}
   .empty{text-align:center;color:var(--muted);padding:30px 10px}
+  .note{font-size:12px;color:#c2620a;background:#fff4ec;border-radius:10px;padding:8px 10px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -85,12 +87,12 @@
 <div class="container">
   <section class="hero">
     <h1>个性权重推荐</h1>
-    <p>拖动滑块设置各维度看重程度，按加权模型（AHP 思路）为全部 A 级目的地打分排序；点开卡片可看行程节点、美食、住宿与航班高铁入口。</p>
+    <p>拖动滑块设置各维度看重程度，按加权模型（AHP 思路）为站内全部城市打分排序；点开卡片可看行程节点、美食、住宿与航班高铁入口。</p>
   </section>
 
   <div class="searchbar">
     <i class="fas fa-search"></i>
-    <input type="text" id="searchInput" placeholder="搜索城市名、国家或标签，如：海边、古都、美食" />
+    <input type="text" id="searchInput" placeholder="搜索城市名、国家或标签，如：六安、海边、古都、美食" />
     <span class="cnt" id="count"></span>
   </div>
 
@@ -107,6 +109,11 @@
 </div>
 
 <script src="city-data.js"></script>
+<script src="city-foods.js"></script>
+<script src="city-history.js"></script>
+<script src="city-landmarks.js"></script>
+<script src="city-poi-bank.js"></script>
+<script src="province-data-all.js"></script>
 <script src="city-index.js"></script>
 <script>
 var DIMS = [
@@ -129,11 +136,12 @@ var REC = {
   '长沙':{score:{food:5,sight:3,culture:3,budget:4,pace:3,fun:5}, reason:'美食与夜生活密集，年轻人友好，好玩度高。'},
   '重庆':{score:{food:4,sight:4,culture:3,budget:4,pace:2,fun:5}, reason:'夜景与立体感强，好玩度高，走路爬坡较多。'}
 };
-var DEF = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'综合站内标签与行程数据给出的参考推荐；具体行程、美食与交通见下方详情。'};
+var DEF = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'综合站内标签与素材给出的参考推荐；具体行程、美食与交通见下方详情。'};
+var DEF_LIGHT = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'该城目前为轻量参考，路书整理中；可先看地标、本地美食与历史简介，交通住宿点下方入口查询。'};
 
 var weights = {food:3,sight:3,culture:3,budget:3,pace:3,fun:3};
 function $(id){return document.getElementById(id);}
-function recOf(c){ return REC[c.name] || DEF; }
+function recOf(c){ return REC[c.name] || (c.tier==='A' ? DEF : DEF_LIGHT); }
 
 function renderWeights(){
   $('weights').innerHTML = DIMS.map(function(d){
@@ -153,6 +161,7 @@ function weighted(c){
 }
 
 function detailBlock(c){
+  var isA = c.tier==='A';
   var itinerary=(c.itinerary||[]).map(function(d){
     var tl=(d.timeline||[]).map(function(t){
       var extra=(t.duration?' · '+t.duration:'')+(t.ticket?' · '+t.ticket:'')+(t.tip?'（'+t.tip+'）':'');
@@ -160,9 +169,19 @@ function detailBlock(c){
     }).join('');
     return '<div class="day"><div class="day-t">'+(d.day||'')+' · '+(d.theme||'')+'</div>'+tl+'</div>';
   }).join('');
-  var foods=(c.foods||[]).map(function(f){
-    return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
-  }).join('');
+
+  var foods;
+  if(isA){
+    foods=(c.foods||[]).map(function(f){
+      return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+    }).join('');
+  } else {
+    foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
+  }
+
+  var spots = isA ? '' : (c.bLandmarks||[]).map(function(s){return '<div class="li">'+s+'</div>';}).join('');
+  var history = (!isA && c.bHistory) ? '<div class="li">'+c.bHistory+'</div>' : '';
+
   var hotels=(c.hotels||[]).map(function(h){
     return h.bookingUrl
       ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span><span>'+(h.highlight||'')+'</span></a>'
@@ -175,9 +194,23 @@ function detailBlock(c){
     return '<a class="link-card" href="'+t.bookingUrl+'" target="_blank" rel="noopener"><b>'+t.platform+'</b><span>'+t.from+' → '+t.to+' · '+t.price+'</span><span>'+(t.duration||'')+' '+(t.time||'')+'</span></a>';
   }).join('');
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
+
+  var generic='';
+  if(!isA){
+    generic='<div class="note">轻量参考：该城完整路书整理中，下方为通用交通与住宿查询入口。</div>'+
+      '<div class="link-grid">'+
+        '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
+        '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
+        '<a class="link-card" href="https://hotels.ctrip.com" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+
+      '</div>';
+  }
+
   var html='';
+  if(!isA && generic) html+='<div class="dsec">'+generic+'</div>';
   if(itinerary) html+='<div class="dsec"><h4><i class="fas fa-route"></i> 行程节点</h4>'+itinerary+'</div>';
+  if(spots) html+='<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>';
   if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>';
+  if(history) html+='<div class="dsec"><h4><i class="fas fa-landmark"></i> 城市简介</h4>'+history+'</div>';
   if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
   if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
   if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
@@ -187,23 +220,29 @@ function detailBlock(c){
 
 function run(){
   var q=$('searchInput').value.trim();
-  var all = window.MYL ? MYL.indexA级() : [];
-  var list = q ? MYL.searchCities(q).filter(function(c){return c.tier==='A';}) : all;
-  $('count').textContent = '共 ' + list.length + ' 城';
-  var ranked=list.map(function(c){return {c:c,s:weighted(c)};}).sort(function(a,b){return b.s-a.s;});
-  if(!ranked.length){$('result').innerHTML='<div class="empty">没有匹配的城市</div>';return;}
-  var html=ranked.map(function(r,i){
+  var all = window.MYL ? MYL.indexCities() : [];
+  var list = q ? MYL.searchCities(q) : all;
+  var ranked=list.map(function(c){return {c:c,s:weighted(c)};})
+    .sort(function(a,b){
+      if(a.c.tier!==b.c.tier) return a.c.tier==='A' ? -1 : 1;
+      return b.s-a.s;
+    });
+  var shown = ranked.slice(0, 30);
+  $('count').textContent = '共 ' + list.length + ' 城' + (ranked.length>30?'，显示前 30':'');
+  if(!shown.length){$('result').innerHTML='<div class="empty">没有匹配的城市</div>';return;}
+  var html=shown.map(function(r,i){
     var rc=recOf(r.c);
     var dims=DIMS.map(function(d){
       return '<div class="bar"><i style="width:'+rc.score[d.k]*10+'px"></i>'+d.name+' '+rc.score[d.k]+'</div>';
     }).join('');
     var tags=(r.c.tags||[]).slice(0,4).map(function(t){return '<span class="rtag">'+t+'</span>';}).join('');
+    var lightTag = r.c.tier!=='A' ? '<span class="rtag light">轻量参考</span>' : '';
     return '<div class="rec-card" data-name="'+r.c.name+'">'+
       '<div class="rec-head">'+
         '<div class="rec-rank'+(i<3?' top':'')+'">'+(i+1)+'</div>'+
         '<div class="rec-body">'+
           '<div class="rec-top"><h4>'+r.c.name+'</h4><span class="score">'+r.s+' 分</span></div>'+
-          '<div class="rec-tags">'+tags+'<span class="rtag">'+(r.c.days||'2–3天')+'</span></div>'+
+          '<div class="rec-tags">'+tags+lightTag+'<span class="rtag">'+(r.c.days||'2–3天')+'</span></div>'+
           '<div class="rec-reason"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+rc.reason+'</div>'+
           '<div class="bars">'+dims+'</div>'+
         '</div>'+
@@ -217,10 +256,10 @@ function run(){
   });
 }
 
+renderWeights();run();
 $('runBtn').onclick=run;
 $('resetBtn').onclick=function(){weights={food:3,sight:3,culture:3,budget:3,pace:3,fun:3};renderWeights();run();};
 $('searchInput').addEventListener('input',run);
-renderWeights();run();
 </script>
 </body>
 </html>
