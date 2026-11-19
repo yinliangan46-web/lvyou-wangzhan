@@ -29,12 +29,35 @@
   .m .best{font-size:11px;color:var(--primary);margin-top:6px}
   .panel{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:0 4px 18px rgba(20,50,100,.06)}
   .panel h3{font-size:15px;color:var(--primary);margin-bottom:12px}
-  .route{padding:12px 0;border-bottom:1px dashed var(--line)}
-  .route:last-child{border-bottom:none}
-  .route .rt{font-weight:700;font-size:14px}
-  .route .rd{color:var(--muted);font-size:13px;margin-top:3px}
   .meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
   .chip{background:#f2f5fa;border-radius:8px;padding:4px 11px;font-size:12px;color:var(--muted)}
+  .dest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .dest{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;transition:.15s;background:#fff}
+  .dest.open{border-color:var(--primary);box-shadow:0 6px 20px rgba(37,99,235,.12)}
+  .dest-head{padding:14px 16px;cursor:pointer}
+  .dest-head .dt{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .dest-head .ds{color:var(--muted);font-size:12px;margin-top:3px}
+  .dest-head .stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .badge{font-size:11px;border-radius:8px;padding:3px 9px;background:var(--soft);color:var(--primary)}
+  .badge.gray{background:#f2f5fa;color:var(--muted)}
+  .dest-body{padding:0 16px 16px;display:none}
+  .dest.open .dest-body{display:block}
+  .dsec{margin-bottom:12px}
+  .dsec h4{font-size:13px;color:var(--primary);margin-bottom:6px}
+  .day{margin-bottom:8px}
+  .day-t{font-weight:700;font-size:13px;margin-bottom:3px}
+  .tl{display:grid;grid-template-columns:58px 1fr;gap:6px;font-size:13px;padding:3px 0}
+  .tm{color:var(--muted);font-size:12px}
+  .ta{font-weight:500}
+  .td{grid-column:2;color:var(--muted);font-size:12px}
+  .li{font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .li:last-child{border-bottom:none}
+  .li .lp{color:var(--muted);font-size:12px}
+  .link-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .link-card{border:1px solid var(--line);border-radius:12px;padding:10px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:3px}
+  .link-card b{font-size:13px}
+  .link-card span{font-size:12px;color:var(--muted)}
+  .empty{text-align:center;color:var(--muted);padding:30px 10px}
   @media(max-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
@@ -45,8 +68,8 @@
     <nav class="nav-links">
       <a href="index.html">首页</a>
       <a href="discover.html">✨ 发现 MYL</a>
-      <a href="compare.html">目的地对比</a>
-      <a href="themes.html">主题线路</a>
+      <a href="tools.html">🧰 智能工具</a>
+      <a href="calendar.html">出行日历</a>
     </nav>
   </div>
 </header>
@@ -54,99 +77,127 @@
 <div class="container">
   <section class="hero">
     <h1>交互出行日历</h1>
-    <p>按月份挑目的地：看当月天气、推荐线路、穿搭与出行提示，再决定什么时候出发最合适。</p>
+    <p>按月份挑目的地：当月气候适宜的城市自动聚合进来，点开可看行程节点、美食、住宿、航班与高铁入口。</p>
   </section>
 
   <section class="grid" id="grid"></section>
   <section id="detail"></section>
 </div>
 
+<script src="city-data.js"></script>
+<script src="city-index.js"></script>
 <script>
+/* 城市最佳出行月份（按气候与景观适宜度）；命中即归入当月推荐 */
+var SEASON = {
+  '哈尔滨':[12,1,2],'长春':[12,1,2],'沈阳':[5,9,10],'呼和浩特':[6,7,8,9],'乌鲁木齐':[6,7,8,9],
+  '银川':[5,9,10],'西宁':[6,7,8],'兰州':[5,9,10],'拉萨':[5,6,9,10],'敦煌':[5,9,10],
+  '九寨沟':[9,10],'黄果树':[7,8],'昆明':[3,4,5,9,10,11],'大理':[3,4,5,9,10,11],'丽江':[3,4,5,9,10,11],
+  '西双版纳':[11,12,1,2,3],'三亚':[11,12,1,2,3],'海口':[11,12,1,2,3],'青岛':[6,7,8,9],'厦门':[3,4,5,10,11],
+  '桂林':[4,5,9,10],'黄山':[4,5,9,10],'张家界':[4,5,9,10],'西安':[3,4,5,9,10],'北京':[4,5,9,10],
+  '济南':[5,9,10],'郑州':[4,5,9,10],'太原':[5,9,10],'石家庄':[5,9,10],'南京':[3,4,5,9,10,11],
+  '苏州':[3,4,5,9,10],'上海':[3,4,5,9,10,11],'杭州':[3,4,5,9,10],'合肥':[4,5,9,10],'南昌':[4,5,9,10],
+  '福州':[3,4,10,11],'广州':[10,11,12,1,2,3],'深圳':[10,11,12,1,2,3],'武汉':[3,4,5,9,10],'长沙':[3,4,5,9,10,11],
+  '重庆':[3,4,5,9,10],'成都':[3,4,5,9,10,11],'贵阳':[6,7,8,9],'乐山':[3,4,5,9,10],'南宁':[10,11,12,3,4],
+  '巴黎':[5,6,9],'伦敦':[5,6,7,9],'东京':[3,4,10,11],'迪拜':[11,12,1,2,3],'曼谷':[11,12,1,2,3],
+  '巴厘岛':[4,5,6,9,10],'香港':[10,11,12,3,4]
+};
+
 var MONTHS = [
-  {m:1, label:'1月', tip:'避寒与冰雪季', weather:'北方严寒、南方温和', wear:'羽绒服/保暖层，南方薄外套',
-    routes:[
-      {city:'哈尔滨', name:'冰雪大世界—中央大街玩雪线', days:'3–4天', note:'冰雪亮灯在夜间，注意防寒与手机续航'},
-      {city:'三亚', name:'亚龙湾避寒度假线', days:'4–5天', note:'冬季为旺季，酒店需提前预订'}
-    ]},
-  {m:2, label:'2月', tip:'春节错峰 · 温泉与古镇', weather:'气温偏低，南方回暖慢', wear:'厚外套，备薄内搭',
-    routes:[
-      {city:'厦门', name:'鼓浪屿—环岛慢游线', days:'3天', note:'春节假期船票紧俏，提前购买'},
-      {city:'丽江', name:'大研古城—束河暖阳线', days:'3–4天', note:'昼夜温差大，备外套'}
-    ]},
-  {m:3, label:'3月', tip:'初春踏青 · 花开季', weather:'由冷转暖，早晚温差大', wear:'洋葱式穿搭，风衣+薄毛衣',
-    routes:[
-      {city:'杭州', name:'西湖—苏堤春花线', days:'2–3天', note:'周末游人多，工作日出行更从容'},
-      {city:'苏州', name:'园林—平江路探春线', days:'2–3天', note:'拙政园花期建议早到'}
-    ]},
-  {m:4, label:'4月', tip:'气候舒适 · 最佳出行档', weather:'温和少雨，紫外线渐强', wear:'长袖+薄外套，防晒',
-    routes:[
-      {city:'大理', name:'环海—喜洲田园线', days:'4天', note:'骑行环海注意补水与防晒'},
-      {city:'青岛', name:'八大关—海滨休闲线', days:'3天', note:'海风较大，备薄外套'}
-    ]},
-  {m:5, label:'5月', tip:'初夏 · 人少景美', weather:'温暖干燥，临近梅雨', wear:'短袖+轻便外套',
-    routes:[
-      {city:'西安', name:'陕博—兵马俑古都线', days:'3–4天', note:'节假日热门，提前预约门票'},
-      {city:'成都', name:'宽窄巷子—奎星楼美食线', days:'2–3天', note:'火锅串串错峰用餐'}
-    ]},
-  {m:6, label:'6月', tip:'初夏避暑 · 梅雨前夕', weather:'南方闷热多雨', wear:'透气衣物，带雨具',
-    routes:[
-      {city:'青岛', name:'胶东半岛海滨线', days:'3–4天', note:'海水尚凉，以城市与海岸为主'},
-      {city:'重庆', name:'洪崖洞—山城夜景线', days:'2–3天', note:'爬坡走路多，穿舒适鞋'}
-    ]},
-  {m:7, label:'7月', tip:'盛夏避暑 · 海滨与高原', weather:'高温，北方海滨舒适', wear:'防晒+透气，备解暑药',
-    routes:[
-      {city:'青岛', name:'海滨亲子轻松线', days:'3–4天', note:'暑期旺季，住宿提前订'},
-      {city:'大理', name:'洱海—苍山避暑线', days:'4–5天', note:'高原日晒强，注意防晒补水'}
-    ]},
-  {m:8, label:'8月', tip:'暑期高峰 · 错峰出行', weather:'高温多雨，局地台风', wear:'轻薄透气，备雨具',
-    routes:[
-      {city:'厦门', name:'海岛休闲亲子线', days:'3天', note:'关注台风与船班动态'},
-      {city:'长沙', name:'五一广场夜宵线', days:'2–3天', note:'夏夜闷热，注意肠胃'}
-    ]},
-  {m:9, label:'9月', tip:'秋高气爽 · 性价比高', weather:'转凉舒适，雨水减少', wear:'长袖为主，早晚加外套',
-    routes:[
-      {city:'西安', name:'周秦汉唐古都线', days:'4天', note:'暑期结束后人流回落'},
-      {city:'成都', name:'玉林—青城山休闲线', days:'3天', note:'山区比市区低几度'}
-    ]},
-  {m:10, label:'10月', tip:'金秋 · 景色最佳档', weather:'晴朗凉爽，昼夜温差大', wear:'长袖+薄外套',
-    routes:[
-      {city:'黄山·宏村', name:'宏村—塔川秋色线', days:'3天', note:'秋景热门，提前订房'},
-      {city:'北京', name:'故宫—胡同皇城线', days:'4–5天', note:'黄金周人多，尽量错峰'}
-    ]},
-  {m:11, label:'11月', tip:'深秋 · 人少价优', weather:'渐冷，南方温暖', wear:'厚外套，北方备保暖',
-    routes:[
-      {city:'长沙', name:'省博—太平老街线', days:'2–3天', note:'室内展馆为主，适合降温天'},
-      {city:'厦门', name:'环岛路—曾厝垵慢线', days:'3天', note:'气温宜人，海边风大'}
-    ]},
-  {m:12, label:'12月', tip:'冬景 · 跨年与玩雪', weather:'北方进入严寒', wear:'羽绒服/保暖装备',
-    routes:[
-      {city:'哈尔滨', name:'冰雪季跨年线', days:'3–4天', note:'冰雪大世界需线上分时段购票'},
-      {city:'三亚', name:'热带避寒度假线', days:'4–5天', note:'跨年酒店价格上浮，早订'}
-    ]}
+  {m:1, label:'1月', tip:'避寒与冰雪季', weather:'北方严寒、南方温和', wear:'羽绒服/保暖层，南方薄外套'},
+  {m:2, label:'2月', tip:'春节错峰 · 温泉与古镇', weather:'气温偏低，南方回暖慢', wear:'厚外套，备薄内搭'},
+  {m:3, label:'3月', tip:'初春踏青 · 花开季', weather:'由冷转暖，早晚温差大', wear:'洋葱式穿搭，风衣+薄毛衣'},
+  {m:4, label:'4月', tip:'气候舒适 · 最佳出行档', weather:'温和少雨，紫外线渐强', wear:'长袖+薄外套，防晒'},
+  {m:5, label:'5月', tip:'初夏 · 人少景美', weather:'温暖干燥，临近梅雨', wear:'短袖+轻便外套'},
+  {m:6, label:'6月', tip:'初夏避暑 · 梅雨前夕', weather:'南方闷热多雨', wear:'透气衣物，带雨具'},
+  {m:7, label:'7月', tip:'盛夏避暑 · 海滨与高原', weather:'高温，北方海滨舒适', wear:'防晒+透气，备解暑药'},
+  {m:8, label:'8月', tip:'暑期高峰 · 错峰出行', weather:'高温多雨，局地台风', wear:'轻薄透气，备雨具'},
+  {m:9, label:'9月', tip:'秋高气爽 · 性价比高', weather:'转凉舒适，雨水减少', wear:'长袖为主，早晚加外套'},
+  {m:10, label:'10月', tip:'金秋 · 景色最佳档', weather:'晴朗凉爽，昼夜温差大', wear:'长袖+薄外套'},
+  {m:11, label:'11月', tip:'深秋 · 人少价优', weather:'渐冷，南方温暖', wear:'厚外套，北方备保暖'},
+  {m:12, label:'12月', tip:'冬景 · 跨年与玩雪', weather:'北方进入严寒', wear:'羽绒服/保暖装备'}
 ];
 
-var cur = 10;
+var cur = new Date().getMonth() + 1;
 function $(id){return document.getElementById(id);}
+
+function citiesOfMonth(m){
+  var all = window.MYL ? MYL.indexA级() : [];
+  return all.filter(function(c){
+    var months = SEASON[c.name];
+    return months && months.indexOf(m) >= 0;
+  });
+}
 
 function renderGrid(){
   $('grid').innerHTML = MONTHS.map(function(o){
-    return '<div class="m'+(cur===o.m?' active':'')+'" data-m="'+o.m+'"><div class="mn">'+o.label+'</div><div class="mt">'+o.tip+'</div><div class="best"><i class="fas fa-location-dot"></i> '+o.routes[0].city+'</div></div>';
+    var n = citiesOfMonth(o.m).length;
+    return '<div class="m'+(cur===o.m?' active':'')+'" data-m="'+o.m+'"><div class="mn">'+o.label+'</div><div class="mt">'+o.tip+'</div><div class="best"><i class="fas fa-location-dot"></i> '+n+' 个目的地</div></div>';
   }).join('');
   Array.prototype.forEach.call(document.querySelectorAll('.m'),function(el){
     el.onclick=function(){cur=+el.dataset.m;renderGrid();renderDetail();};
   });
 }
 
+function detailBlock(c){
+  var itinerary=(c.itinerary||[]).map(function(d){
+    var tl=(d.timeline||[]).map(function(t){
+      var extra=(t.duration?' · '+t.duration:'')+(t.ticket?' · '+t.ticket:'')+(t.tip?'（'+t.tip+'）':'');
+      return '<div class="tl"><span class="tm">'+(t.time||'')+'</span><span class="ta">'+(t.activity||'')+'</span><span class="td">'+(t.detail||'')+extra+'</span></div>';
+    }).join('');
+    return '<div class="day"><div class="day-t">'+(d.day||'')+' · '+(d.theme||'')+'</div>'+tl+'</div>';
+  }).join('');
+  var foods=(c.foods||[]).map(function(f){
+    return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+  }).join('');
+  var hotels=(c.hotels||[]).map(function(h){
+    return h.bookingUrl
+      ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span><span>'+(h.highlight||'')+'</span></a>'
+      : '<div class="link-card"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></div>';
+  }).join('');
+  var air=(c.airfare||[]).map(function(a){
+    return '<a class="link-card" href="'+a.bookingUrl+'" target="_blank" rel="noopener"><b>'+a.platform+'</b><span>'+a.from+' → '+a.to+' · '+a.price+'</span><span>'+(a.time||'')+'</span></a>';
+  }).join('');
+  var rail=(c.trains||[]).map(function(t){
+    return '<a class="link-card" href="'+t.bookingUrl+'" target="_blank" rel="noopener"><b>'+t.platform+'</b><span>'+t.from+' → '+t.to+' · '+t.price+'</span><span>'+(t.duration||'')+' '+(t.time||'')+'</span></a>';
+  }).join('');
+  var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
+  var html='';
+  if(itinerary) html+='<div class="dsec"><h4><i class="fas fa-route"></i> 行程节点</h4>'+itinerary+'</div>';
+  if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>';
+  if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
+  if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
+  if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
+  if(tips) html+='<div class="dsec"><h4><i class="fas fa-lightbulb"></i> 出行贴士</h4>'+tips+'</div>';
+  return html;
+}
+
 function renderDetail(){
   var o=MONTHS.find(function(x){return x.m===cur;});
-  var routes=o.routes.map(function(r){
-    return '<div class="route"><div class="rt"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> '+r.city+' · '+r.name+'</div>'+
-      '<div class="rd">'+r.note+'</div><div class="meta-row"><span class="chip"><i class="far fa-clock"></i> '+r.days+'</span></div></div>';
+  var list=citiesOfMonth(o.m);
+  var cards=list.map(function(c,idx){
+    var tags=(c.tags||[]).slice(0,3).map(function(t){return '<span class="badge gray">'+t+'</span>';}).join('');
+    var stats=[
+      '<span class="badge"><i class="fas fa-route"></i> '+(c.itinerary.length)+' 节点</span>',
+      '<span class="badge"><i class="fas fa-utensils"></i> '+(c.foods.length)+' 美食</span>',
+      '<span class="badge"><i class="fas fa-hotel"></i> '+(c.hotels.length)+' 住宿</span>'
+    ];
+    if(c.airfare.length) stats.push('<span class="badge"><i class="fas fa-plane"></i> 航班</span>');
+    if(c.trains.length) stats.push('<span class="badge"><i class="fas fa-train"></i> 高铁</span>');
+    return '<div class="dest" data-idx="'+idx+'">'
+      +'<div class="dest-head"><div class="dt"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i>'+c.name+'</div>'
+      +'<div class="ds">'+(c.country||'中国')+' · '+(c.days||'2–3天')+'</div>'
+      +'<div class="stats">'+stats.join('')+tags+'</div></div>'
+      +'<div class="dest-body">'+detailBlock(c)+'</div></div>';
   }).join('');
   $('detail').innerHTML =
     '<div class="panel"><h3><i class="fas fa-cloud-sun"></i> '+o.label+' · 天气与穿搭</h3>'+
       '<div class="meta-row"><span class="chip"><i class="fas fa-temperature-half"></i> '+o.weather+'</span><span class="chip"><i class="fas fa-shirt"></i> '+o.wear+'</span></div></div>'+
-    '<div class="panel"><h3><i class="fas fa-route"></i> 推荐线路</h3>'+routes+'</div>';
+    '<div class="panel"><h3><i class="fas fa-route"></i> 当月适宜目的地（'+list.length+'）</h3>'+
+      (cards || '<div class="empty">本月暂无收录的最佳目的地，可查看其他月份。</div>')+
+    '</div>';
+  Array.prototype.forEach.call(document.querySelectorAll('.dest'),function(el){
+    el.querySelector('.dest-head').onclick=function(){el.classList.toggle('open');};
+  });
 }
 
 renderGrid();renderDetail();
