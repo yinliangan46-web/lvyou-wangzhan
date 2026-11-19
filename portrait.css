@@ -49,3 +49,5 @@
   .link-card span{font-size:12px;color:var(--muted)}
   .empty{text-align:center;color:var(--muted);padding:30px 10px}
   .note{font-size:12px;color:#c2620a;background:#fff4ec;border-radius:10px;padding:8px 10px;margin-bottom:10px}
+
+@media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
