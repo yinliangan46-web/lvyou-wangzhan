@@ -42,6 +42,12 @@
   .node{padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
   .node:last-child{border-bottom:none}
   .node b{color:var(--primary)}
+.node-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.node-meta{font-size:11px;color:var(--muted);background:#f2f5fa;border-radius:6px;padding:2px 8px}
+.node-desc{font-size:12.5px;color:var(--muted);margin-top:3px}
+.node-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}
+.node-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;text-decoration:none;color:var(--primary);border:1px solid var(--line);border-radius:9px;padding:5px 10px;background:#fff;cursor:pointer;font-family:inherit}
+.node-wx{color:#16a34a;border-color:#bbe9c9;background:#f2fbf5}
   .know{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:13px;margin-top:10px}
   .know i{color:var(--primary)}
   .collect{margin-top:12px}
