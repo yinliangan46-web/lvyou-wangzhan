@@ -44,7 +44,7 @@ function buildAuto(){
       };
     });
     if(!chapters.length){
-      chapters=[{title:'当地概览',loc:c.name,scene:(c.bHistory||'该城完整路书整理中，可参考下方地标与美食安排。'),nodes:(c.bLandmarks||[]).map(function(x){return {n:x,d:'当地代表性地标'};}),know:'完整行程节点整理中，建议通过下方交通入口查询班次与住宿。'}];
+      chapters=[{title:'当地概览',loc:c.name,scene:(c.history||'该城完整路书整理中，可参考下方地标与美食安排。'),nodes:(c.landmarks||[]).map(function(x){return {n:x,d:'当地代表性地标'};}),know:'完整行程节点整理中，建议通过下方交通入口查询班次与住宿。'}];
     }
     return {id:'auto-'+c.key, city:c.name, name:c.name+' · '+(c.days||'3天')+'日线', desc:(c.tags||[]).join('、'), meta:(c.country||'中国')+' · '+(c.days||'3天'), chapters:chapters};
   });
@@ -114,7 +114,7 @@ function supportPanel(c){
   if(foods) html+='<div class="panel"><h3><i class="fas fa-utensils"></i> 当地美食</h3>'+foods+'</div>';
   if(air) html+='<div class="panel"><h3><i class="fas fa-plane-departure"></i> 航班入口</h3><div class="link-grid">'+air+'</div></div>';
   if(rail) html+='<div class="panel"><h3><i class="fas fa-train"></i> 高铁/火车入口</h3><div class="link-grid">'+rail+'</div></div>';
-  if(!isA){
+  if(c.generic){
     html+='<div class="panel"><h3><i class="fas fa-link"></i> 通用预订入口</h3><div class="link-grid">'+
       '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
       '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
