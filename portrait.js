@@ -81,8 +81,8 @@ function detailBlock(c){
   } else {
     foods=(c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
   }
-  var spots = isA ? '' : (c.bLandmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
-  var history = (!isA && c.bHistory) ? '<div class="li">'+c.bHistory+'</div>' : '';
+  var spots = (c.landmarks||[]).map(function(x){return '<div class="li">'+x+'</div>';}).join('');
+  var history = c.history ? '<div class="li">'+c.history+'</div>' : '';
   var hotels=(c.hotels||[]).map(function(h){
     return h.bookingUrl
       ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></a>'
@@ -97,13 +97,12 @@ function detailBlock(c){
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
   var stats=[
     '<span class="badge"><i class="fas fa-route"></i> '+(c.itinerary.length)+' 节点</span>',
-    '<span class="badge"><i class="fas fa-utensils"></i> '+(isA?c.foods.length:(c.bFoods||[]).length)+' 美食</span>',
+    '<span class="badge"><i class="fas fa-utensils"></i> '+c.foods.length+' 美食</span>',
     '<span class="badge"><i class="fas fa-hotel"></i> '+(c.hotels.length)+' 住宿</span>'
   ];
   if(c.airfare.length) stats.push('<span class="badge"><i class="fas fa-plane"></i> 航班</span>');
   if(c.trains.length) stats.push('<span class="badge"><i class="fas fa-train"></i> 高铁</span>');
   var html='';
-  if(!isA) html+='<div class="note">轻量参考：该城完整路书整理中，下方为已有地标、美食与通用交通住宿入口。</div>';
   html+='<div class="dsec"><h4>配套概况</h4><div class="stats">'+stats.join('')+'</div></div>';
   if(spots) html+='<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>';
   if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>';
@@ -111,7 +110,7 @@ function detailBlock(c){
   if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
   if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
   if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
-  if(!isA){
+  if(c.generic){
     html+='<div class="dsec"><h4><i class="fas fa-link"></i> 通用预订入口</h4><div class="link-grid">'+
       '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
       '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
@@ -143,7 +142,7 @@ function render(){
   var cloud=p.tags.map(function(t,i){return '<span class="cloud'+(i===0?' big':'')+'">'+t+'</span>';}).join('');
   var strong=p.strong.map(function(x){return '<li><i class="fas fa-check"></i>'+x+'</li>';}).join('');
   var weak=p.weak.map(function(x){return '<li><i class="fas fa-xmark"></i>'+x+'</li>';}).join('');
-  var lightTag = c.tier!=='A' ? ' · 轻量参考' : '';
+  var lightTag = '';
   $('portrait').innerHTML=
   '<div class="card">'+
     '<div class="cover"><h2>'+c.name+lightTag+'</h2><div class="slogan">“'+p.slogan+'”</div><div class="who"><i class="fas fa-users"></i> '+p.who+'</div></div>'+
