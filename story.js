@@ -54,6 +54,7 @@ var STORIES = HAND.concat(buildAuto());
 var cur = STORIES[0].id;
 var KEY='myl-story-album';
 function $(id){return document.getElementById(id);}
+function lpJoin(){var a=[].slice.call(arguments).filter(Boolean);return a.length?' <span class="lp">'+a.join(' · ')+'</span>':'';}
 function getAlbum(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return {};}}
 function saveAlbum(a){localStorage.setItem(KEY,JSON.stringify(a));}
 
@@ -68,18 +69,40 @@ function cityOf(s){ return s.city ? MYL.getCity(s.city) : null; }
 function renderRoutes(){
   var list=filtered();
   $('routeList').innerHTML=list.map(function(s){
-    return '<div class="route-card'+(cur===s.id?' active':'')+'" data-id="'+s.id+'"><h3>'+s.name+'</h3><div class="desc">'+s.desc+'</div><div class="meta"><i class="fas fa-location-dot"></i> '+s.meta+'</div></div>';
+    return '<div class="route-card" data-id="'+s.id+'"><h3>'+s.name+'</h3><div class="desc">'+s.desc+'</div><div class="meta"><i class="fas fa-location-dot"></i> '+s.meta+'</div><div class="go">查看线路详情 →</div></div>';
   }).join('');
   Array.prototype.forEach.call(document.querySelectorAll('.route-card'),function(c){
-    c.onclick=function(){cur=c.dataset.id;renderRoutes();renderChapters();};
+    c.onclick=function(){openStory(c.dataset.id);};
   });
+}
+
+function openStory(id){
+  cur=id;
+  $('listView').style.display='none';
+  $('detailView').style.display='block';
+  renderDetailHead();
+  renderChapters();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeStory(){
+  $('detailView').style.display='none';
+  $('listView').style.display='block';
+  renderRoutes();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderDetailHead(){
+  var s=STORIES.find(function(x){return x.id===cur;});
+  if(!s){$('detailHead').innerHTML='';return;}
+  $('detailHead').innerHTML='<div class="detail-cover"><h2>'+s.name+'</h2><div class="desc">'+s.desc+'</div><div class="meta"><i class="fas fa-location-dot"></i> '+s.meta+'</div></div>';
 }
 
 function supportPanel(c){
   if(!c) return '';
   var isA=c.tier==='A';
   var foods=isA
-    ? (c.foods||[]).map(function(f){return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';}).join('')
+    ? (c.foods||[]).map(function(f){return '<div class="li">'+f.name+lpJoin(f.price,f.desc)+'</div>';}).join('')
     : (c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
   var air=(c.airfare||[]).map(function(a){
     return '<a class="link-card" href="'+a.bookingUrl+'" target="_blank" rel="noopener"><b>'+a.platform+'</b><span>'+a.from+' → '+a.to+' · '+a.price+'</span></a>';
@@ -144,5 +167,8 @@ function renderAlbum(){
   $('album').innerHTML=keys.map(function(k){return '<div class="stamp hit"><i class="fas fa-bookmark"></i> '+a[k]+'</div>';}).join('');
 }
 
-$('searchInput').addEventListener('input',function(){renderRoutes();});
-renderRoutes();renderChapters();
+$('searchInput').addEventListener('input',function(){
+  if($('detailView').style.display!=='none'){closeStory();} else {renderRoutes();}
+});
+$('backBtn').onclick=closeStory;
+renderRoutes();
