@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>智能工具箱 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--primary:#2563eb;--bg:#f4f7fc;--card:#fff;--text:#1a2433;--muted:#6b7787;--line:#e6ecf5;--soft:#eef3ff;--radius:16px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .container{max-width:1000px;margin:0 auto;padding:0 18px}
+  header{background:#fff;box-shadow:0 2px 12px rgba(20,50,100,.08);position:sticky;top:0;z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:var(--primary);text-decoration:none}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+  .hero{padding:30px 0 10px}
+  .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
+  .hero p{color:var(--muted);font-size:15px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;margin:22px 0 36px}
+  .tool{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:10px;transition:transform .18s,box-shadow .18s}
+  .tool:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(20,50,100,.12)}
+  .tool .ico{width:46px;height:46px;border-radius:13px;background:var(--soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .tool h3{font-size:17px;font-weight:700}
+  .tool p{font-size:13px;color:var(--muted)}
+  .tool .go{margin-top:auto;color:var(--primary);font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><i class="fas fa-compass"></i><span>MYL</span></a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="discover.html">✨ 发现 MYL</a>
+      <a href="tools.html">🧰 智能工具</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="hero">
+    <h1>MYL 智能工具箱</h1>
+    <p>十个差异化小工具，从选目的地、对比、算预算到做路书、记打卡，帮你把出行决策一步步拆清楚。</p>
+  </section>
+
+  <section class="grid" id="grid"></section>
+</div>
+
+<script>
+var TOOLS = [
+  {href:'recommend.html', ico:'fa-sliders', title:'个性推荐', desc:'拖动美食、景观、人文、性价比等六维权重，按加权匹配给城市排名并说明理由。'},
+  {href:'compare.html', ico:'fa-scale-balanced', title:'目的地对比', desc:'选 2–4 座城进对比篮，五维雷达图叠加，按规则给出适配结论。'},
+  {href:'cheatsheet.html', ico:'fa-clipboard-list', title:'行前备忘单', desc:'按城市生成预约门票、交通、住宿、必吃、必备物品与注意事项，可打印存 PDF。'},
+  {href:'calendar.html', ico:'fa-calendar-days', title:'出行日历', desc:'12 个月网格，点开月份看天气、穿搭与当月推荐线路及提示。'},
+  {href:'story.html', ico:'fa-book-open', title:'线路剧情', desc:'把线路拆成分章故事，含场景文案、节点与知识点，读过的章节收入收集册。'},
+  {href:'stamps.html', ico:'fa-stamp', title:'打卡印记墙', desc:'上传现场照片才算打卡，印记墙留存缩略图、城市与日期，记录只存在本机。'},
+  {href:'planner-chat.html', ico:'fa-comments', title:'对话路书', desc:'像聊天一样回答城市、天数、人数、预算与偏好，生成含交通、景点、美食、住宿和预订入口的路书。'},
+  {href:'themes.html', ico:'fa-palette', title:'主题线路库', desc:'城市漫步、美食扫街、夜景打卡、古镇慢游等十种主题，每条跨城精选线路。'},
+  {href:'budget.html', ico:'fa-chart-pie', title:'花费拆解', desc:'按天数、人数与预算档，环形图拆出机票、住宿、餐饮、门票、当地交通并给两档方案。'},
+  {href:'portrait.html', ico:'fa-id-card', title:'城市画像卡', desc:'标签云加性格画像，列出强项与注意事项，判断这座城适不适合你。'}
+];
+
+document.getElementById('grid').innerHTML = TOOLS.map(function(t){
+  return '<a class="tool" href="'+t.href+'">'
+    + '<div class="ico"><i class="fas '+t.ico+'"></i></div>'
+    + '<h3>'+t.title+'</h3>'
+    + '<p>'+t.desc+'</p>'
+    + '<span class="go">打开工具 <i class="fas fa-arrow-right"></i></span>'
+    + '</a>';
+}).join('');
+</script>
+</body>
+</html>
