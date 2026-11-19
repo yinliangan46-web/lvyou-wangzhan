@@ -23,6 +23,10 @@
   .hero p{color:var(--muted);font-size:15px}
   .panel{background:var(--card);border-radius:var(--radius);padding:20px;margin:16px 0;box-shadow:0 4px 18px rgba(20,50,100,.06)}
   .panel h3{font-size:15px;color:var(--primary);margin-bottom:14px}
+  .searchbar{display:flex;gap:10px;align-items:center;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;margin:16px 0;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .searchbar i{color:var(--muted)}
+  .searchbar input{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;background:transparent;color:var(--text)}
+  .searchbar .cnt{font-size:12px;color:var(--muted);white-space:nowrap}
   .weight-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
   .weight-row:last-child{border-bottom:none}
   .weight-row .lbl{width:96px;font-size:14px;font-weight:700;flex-shrink:0}
@@ -31,7 +35,8 @@
   .btn{border:none;border-radius:10px;padding:11px 18px;font-size:14px;cursor:pointer;background:var(--primary);color:#fff;display:inline-flex;align-items:center;gap:8px}
   .btn-ghost{background:var(--soft);color:var(--primary)}
   .result{margin:16px 0 30px}
-  .rec-card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(20,50,100,.06);display:flex;gap:16px}
+  .rec-card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(20,50,100,.06)}
+  .rec-head{display:flex;gap:16px;cursor:pointer}
   .rec-rank{width:38px;height:38px;border-radius:12px;background:var(--soft);color:var(--primary);font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .rec-rank.top{background:var(--primary);color:#fff}
   .rec-body{flex:1}
@@ -44,6 +49,24 @@
   .bars{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px}
   .bar{font-size:12px;color:var(--muted)}
   .bar i{display:inline-block;height:6px;border-radius:4px;background:var(--primary);margin-right:5px}
+  .rec-detail{display:none;margin-top:14px;border-top:1px dashed var(--line);padding-top:14px}
+  .rec-card.open .rec-detail{display:block}
+  .dsec{margin-bottom:12px}
+  .dsec h4{font-size:13px;color:var(--primary);margin-bottom:6px}
+  .day{margin-bottom:8px}
+  .day-t{font-weight:700;font-size:13px;margin-bottom:3px}
+  .tl{display:grid;grid-template-columns:58px 1fr;gap:6px;font-size:13px;padding:3px 0}
+  .tm{color:var(--muted);font-size:12px}
+  .ta{font-weight:500}
+  .td{grid-column:2;color:var(--muted);font-size:12px}
+  .li{font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .li:last-child{border-bottom:none}
+  .li .lp{color:var(--muted);font-size:12px}
+  .link-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .link-card{border:1px solid var(--line);border-radius:12px;padding:10px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:3px}
+  .link-card b{font-size:13px}
+  .link-card span{font-size:12px;color:var(--muted)}
+  .empty{text-align:center;color:var(--muted);padding:30px 10px}
 </style>
 </head>
 <body>
@@ -53,8 +76,8 @@
     <nav class="nav-links">
       <a href="index.html">首页</a>
       <a href="discover.html">✨ 发现 MYL</a>
-      <a href="compare.html">目的地对比</a>
-      <a href="themes.html">主题线路</a>
+      <a href="tools.html">🧰 智能工具</a>
+      <a href="recommend.html">个性推荐</a>
     </nav>
   </div>
 </header>
@@ -62,8 +85,14 @@
 <div class="container">
   <section class="hero">
     <h1>个性权重推荐</h1>
-    <p>拖动滑块设置你对各维度的看重程度，系统按加权模型（AHP 思路）为目的地打分排序，并给出匹配理由。</p>
+    <p>拖动滑块设置各维度看重程度，按加权模型（AHP 思路）为全部 A 级目的地打分排序；点开卡片可看行程节点、美食、住宿与航班高铁入口。</p>
   </section>
+
+  <div class="searchbar">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="搜索城市名、国家或标签，如：海边、古都、美食" />
+    <span class="cnt" id="count"></span>
+  </div>
 
   <section class="panel">
     <h3><i class="fas fa-sliders"></i> 我的偏好权重</h3>
@@ -77,6 +106,8 @@
   <section class="result" id="result"></section>
 </div>
 
+<script src="city-data.js"></script>
+<script src="city-index.js"></script>
 <script>
 var DIMS = [
   {k:'food', name:'美食'},
@@ -86,20 +117,23 @@ var DIMS = [
   {k:'pace', name:'轻松度'},
   {k:'fun', name:'好玩度'}
 ];
-var CITIES = [
-  {name:'成都', tags:['美食','慢生活','茶馆'], score:{food:5,sight:3,culture:4,budget:4,pace:4,fun:4}, reason:'美食与慢节奏突出，消费友好，适合以吃和休闲为主的行程。'},
-  {name:'杭州', tags:['湖景','休闲','江南'], score:{food:3,sight:5,culture:4,budget:3,pace:5,fun:3}, reason:'景观与轻松度高，环湖节奏慢，适合散心与亲子。'},
-  {name:'西安', tags:['古迹','研学','历史'], score:{food:4,sight:4,culture:5,budget:4,pace:3,fun:4}, reason:'人文底蕴最强，博物馆与遗迹集中，适合文化探访。'},
-  {name:'厦门', tags:['海岛','海滨','文艺'], score:{food:3,sight:4,culture:3,budget:3,pace:5,fun:4}, reason:'海岛慢节奏、休闲度高，适合情侣与度假。'},
-  {name:'青岛', tags:['海滨','德式建筑','啤酒'], score:{food:3,sight:4,culture:3,budget:3,pace:4,fun:4}, reason:'海滨与城市建筑兼具，气候舒适，适合夏季休闲。'},
-  {name:'大理', tags:['湖景','田园','摄影'], score:{food:2,sight:5,culture:3,budget:3,pace:4,fun:3}, reason:'自然景观与出片度高，节奏慢，适合放空与摄影。'},
-  {name:'哈尔滨', tags:['冰雪','冬季','都市'], score:{food:3,sight:4,culture:3,budget:2,pace:3,fun:5}, reason:'冬季冰雪体验与好玩度突出，适合避寒玩雪。'},
-  {name:'三亚', tags:['热带','度假','海岛'], score:{food:2,sight:4,culture:2,budget:2,pace:5,fun:4}, reason:'度假松弛感强，适合亲子与避寒，预算偏高。'},
-  {name:'长沙', tags:['夜宵','夜生活','市井'], score:{food:5,sight:3,culture:3,budget:4,pace:3,fun:5}, reason:'美食与夜生活密集，年轻人友好，好玩度高。'},
-  {name:'重庆', tags:['山城','夜景','立体'], score:{food:4,sight:4,culture:3,budget:4,pace:2,fun:5}, reason:'夜景与立体感强，好玩度高，走路爬坡较多。'}
-];
+var REC = {
+  '成都':{score:{food:5,sight:3,culture:4,budget:4,pace:4,fun:4}, reason:'美食与慢节奏突出，消费友好，适合以吃和休闲为主的行程。'},
+  '杭州':{score:{food:3,sight:5,culture:4,budget:3,pace:5,fun:3}, reason:'景观与轻松度高，环湖节奏慢，适合散心与亲子。'},
+  '西安':{score:{food:4,sight:4,culture:5,budget:4,pace:3,fun:4}, reason:'人文底蕴最强，博物馆与遗迹集中，适合文化探访。'},
+  '厦门':{score:{food:3,sight:4,culture:3,budget:3,pace:5,fun:4}, reason:'海岛慢节奏、休闲度高，适合情侣与度假。'},
+  '青岛':{score:{food:3,sight:4,culture:3,budget:3,pace:4,fun:4}, reason:'海滨与城市建筑兼具，气候舒适，适合夏季休闲。'},
+  '大理':{score:{food:2,sight:5,culture:3,budget:3,pace:4,fun:3}, reason:'自然景观与出片度高，节奏慢，适合放空与摄影。'},
+  '哈尔滨':{score:{food:3,sight:4,culture:3,budget:2,pace:3,fun:5}, reason:'冬季冰雪体验与好玩度突出，适合避寒玩雪。'},
+  '三亚':{score:{food:2,sight:4,culture:2,budget:2,pace:5,fun:4}, reason:'度假松弛感强，适合亲子与避寒，预算偏高。'},
+  '长沙':{score:{food:5,sight:3,culture:3,budget:4,pace:3,fun:5}, reason:'美食与夜生活密集，年轻人友好，好玩度高。'},
+  '重庆':{score:{food:4,sight:4,culture:3,budget:4,pace:2,fun:5}, reason:'夜景与立体感强，好玩度高，走路爬坡较多。'}
+};
+var DEF = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'综合站内标签与行程数据给出的参考推荐；具体行程、美食与交通见下方详情。'};
 
 var weights = {food:3,sight:3,culture:3,budget:3,pace:3,fun:3};
+function $(id){return document.getElementById(id);}
+function recOf(c){ return REC[c.name] || DEF; }
 
 function renderWeights(){
   $('weights').innerHTML = DIMS.map(function(d){
@@ -112,34 +146,80 @@ function renderWeights(){
   });
 }
 
-function $(id){return document.getElementById(id);}
-
 function weighted(c){
   var total=0,sum=0;
-  DIMS.forEach(function(d){total+=weights[d.k]*c.score[d.k];sum+=weights[d.k]*5;});
+  DIMS.forEach(function(d){total+=weights[d.k]*recOf(c).score[d.k];sum+=weights[d.k]*5;});
   return Math.round(total/sum*100);
 }
 
-function run(){
-  var ranked=CITIES.map(function(c){return {c:c,s:weighted(c)};}).sort(function(a,b){return b.s-a.s;});
-  var html=ranked.map(function(r,i){
-    var dims=DIMS.map(function(d){
-      return '<div class="bar"><i style="width:'+r.c.score[d.k]*10+'px"></i>'+d.name+' '+r.c.score[d.k]+'</div>';
+function detailBlock(c){
+  var itinerary=(c.itinerary||[]).map(function(d){
+    var tl=(d.timeline||[]).map(function(t){
+      var extra=(t.duration?' · '+t.duration:'')+(t.ticket?' · '+t.ticket:'')+(t.tip?'（'+t.tip+'）':'');
+      return '<div class="tl"><span class="tm">'+(t.time||'')+'</span><span class="ta">'+(t.activity||'')+'</span><span class="td">'+(t.detail||'')+extra+'</span></div>';
     }).join('');
-    return '<div class="rec-card">'+
-      '<div class="rec-rank'+(i<3?' top':'')+'">'+(i+1)+'</div>'+
-      '<div class="rec-body">'+
-        '<div class="rec-top"><h4>'+r.c.name+'</h4><span class="score">'+r.s+' 分</span></div>'+
-        '<div class="rec-tags">'+r.c.tags.map(function(t){return '<span class="rtag">'+t+'</span>';}).join('')+'</div>'+
-        '<div class="rec-reason"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+r.c.reason+'</div>'+
-        '<div class="bars">'+dims+'</div>'+
-      '</div></div>';
+    return '<div class="day"><div class="day-t">'+(d.day||'')+' · '+(d.theme||'')+'</div>'+tl+'</div>';
+  }).join('');
+  var foods=(c.foods||[]).map(function(f){
+    return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+  }).join('');
+  var hotels=(c.hotels||[]).map(function(h){
+    return h.bookingUrl
+      ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span><span>'+(h.highlight||'')+'</span></a>'
+      : '<div class="link-card"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span></div>';
+  }).join('');
+  var air=(c.airfare||[]).map(function(a){
+    return '<a class="link-card" href="'+a.bookingUrl+'" target="_blank" rel="noopener"><b>'+a.platform+'</b><span>'+a.from+' → '+a.to+' · '+a.price+'</span><span>'+(a.time||'')+'</span></a>';
+  }).join('');
+  var rail=(c.trains||[]).map(function(t){
+    return '<a class="link-card" href="'+t.bookingUrl+'" target="_blank" rel="noopener"><b>'+t.platform+'</b><span>'+t.from+' → '+t.to+' · '+t.price+'</span><span>'+(t.duration||'')+' '+(t.time||'')+'</span></a>';
+  }).join('');
+  var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
+  var html='';
+  if(itinerary) html+='<div class="dsec"><h4><i class="fas fa-route"></i> 行程节点</h4>'+itinerary+'</div>';
+  if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>';
+  if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
+  if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
+  if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
+  if(tips) html+='<div class="dsec"><h4><i class="fas fa-lightbulb"></i> 出行贴士</h4>'+tips+'</div>';
+  return html;
+}
+
+function run(){
+  var q=$('searchInput').value.trim();
+  var all = window.MYL ? MYL.indexA级() : [];
+  var list = q ? MYL.searchCities(q).filter(function(c){return c.tier==='A';}) : all;
+  $('count').textContent = '共 ' + list.length + ' 城';
+  var ranked=list.map(function(c){return {c:c,s:weighted(c)};}).sort(function(a,b){return b.s-a.s;});
+  if(!ranked.length){$('result').innerHTML='<div class="empty">没有匹配的城市</div>';return;}
+  var html=ranked.map(function(r,i){
+    var rc=recOf(r.c);
+    var dims=DIMS.map(function(d){
+      return '<div class="bar"><i style="width:'+rc.score[d.k]*10+'px"></i>'+d.name+' '+rc.score[d.k]+'</div>';
+    }).join('');
+    var tags=(r.c.tags||[]).slice(0,4).map(function(t){return '<span class="rtag">'+t+'</span>';}).join('');
+    return '<div class="rec-card" data-name="'+r.c.name+'">'+
+      '<div class="rec-head">'+
+        '<div class="rec-rank'+(i<3?' top':'')+'">'+(i+1)+'</div>'+
+        '<div class="rec-body">'+
+          '<div class="rec-top"><h4>'+r.c.name+'</h4><span class="score">'+r.s+' 分</span></div>'+
+          '<div class="rec-tags">'+tags+'<span class="rtag">'+(r.c.days||'2–3天')+'</span></div>'+
+          '<div class="rec-reason"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+rc.reason+'</div>'+
+          '<div class="bars">'+dims+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="rec-detail">'+detailBlock(r.c)+'</div>'+
+    '</div>';
   }).join('');
   $('result').innerHTML = '<h3 style="margin:18px 0 12px">按你的权重排序</h3>'+html;
+  Array.prototype.forEach.call(document.querySelectorAll('.rec-head'),function(h){
+    h.onclick=function(){h.parentElement.classList.toggle('open');};
+  });
 }
 
 $('runBtn').onclick=run;
 $('resetBtn').onclick=function(){weights={food:3,sight:3,culture:3,budget:3,pace:3,fun:3};renderWeights();run();};
+$('searchInput').addEventListener('input',run);
 renderWeights();run();
 </script>
 </body>
