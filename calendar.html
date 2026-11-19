@@ -85,9 +85,13 @@
 </div>
 
 <script src="city-data.js"></script>
+<script src="city-foods.js"></script>
+<script src="city-history.js"></script>
+<script src="city-landmarks.js"></script>
+<script src="city-poi-bank.js"></script>
+<script src="province-data-all.js"></script>
 <script src="city-index.js"></script>
 <script>
-/* 城市最佳出行月份（按气候与景观适宜度）；命中即归入当月推荐 */
 var SEASON = {
   '哈尔滨':[12,1,2],'长春':[12,1,2],'沈阳':[5,9,10],'呼和浩特':[6,7,8,9],'乌鲁木齐':[6,7,8,9],
   '银川':[5,9,10],'西宁':[6,7,8],'兰州':[5,9,10],'拉萨':[5,6,9,10],'敦煌':[5,9,10],
@@ -121,7 +125,7 @@ var cur = new Date().getMonth() + 1;
 function $(id){return document.getElementById(id);}
 
 function citiesOfMonth(m){
-  var all = window.MYL ? MYL.indexA级() : [];
+  var all = window.MYL ? MYL.indexCities() : [];
   return all.filter(function(c){
     var months = SEASON[c.name];
     return months && months.indexOf(m) >= 0;
@@ -138,17 +142,25 @@ function renderGrid(){
   });
 }
 
+function cleanTheme(t){
+  return (t||'').replace(/深度(游玩|游览|体验|游)/g,'当地休闲体验');
+}
 function detailBlock(c){
+  var isA=c.tier==='A';
   var itinerary=(c.itinerary||[]).map(function(d){
     var tl=(d.timeline||[]).map(function(t){
       var extra=(t.duration?' · '+t.duration:'')+(t.ticket?' · '+t.ticket:'')+(t.tip?'（'+t.tip+'）':'');
       return '<div class="tl"><span class="tm">'+(t.time||'')+'</span><span class="ta">'+(t.activity||'')+'</span><span class="td">'+(t.detail||'')+extra+'</span></div>';
     }).join('');
-    return '<div class="day"><div class="day-t">'+(d.day||'')+' · '+(d.theme||'')+'</div>'+tl+'</div>';
+    return '<div class="day"><div class="day-t">'+(d.day||'')+' · '+cleanTheme(d.theme)+'</div>'+tl+'</div>';
   }).join('');
-  var foods=(c.foods||[]).map(function(f){
-    return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
-  }).join('');
+  var foods=isA
+    ? (c.foods||[]).map(function(f){
+        return '<div class="li">'+f.name+' <span class="lp">'+(f.price||'')+(f.desc?' · '+f.desc:'')+'</span></div>';
+      }).join('')
+    : (c.bFoods||[]).map(function(f){return '<div class="li">'+f+'</div>';}).join('');
+  var spots=(!isA&&c.bLandmarks)?(c.bLandmarks.map(function(x){return '<div class="li">'+x+'</div>';}).join('')):'';
+  var history=(!isA&&c.bHistory)?'<div class="li">'+c.bHistory+'</div>':'';
   var hotels=(c.hotels||[]).map(function(h){
     return h.bookingUrl
       ? '<a class="link-card" href="'+h.bookingUrl+'" target="_blank" rel="noopener"><b>'+h.name+'</b><span>'+(h.area||'')+' · '+(h.price||'')+'</span><span>'+(h.highlight||'')+'</span></a>'
@@ -162,11 +174,21 @@ function detailBlock(c){
   }).join('');
   var tips=(c.tips||[]).map(function(t){return '<div class="li"><i class="fas fa-circle-info" style="color:var(--primary)"></i> '+t+'</div>';}).join('');
   var html='';
+  if(!isA) html+='<div class="li" style="color:#c2620a">轻量参考：该城完整路书整理中，下方为已有地标、美食与通用交通住宿入口。</div>';
   if(itinerary) html+='<div class="dsec"><h4><i class="fas fa-route"></i> 行程节点</h4>'+itinerary+'</div>';
-  if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食</h4>'+foods+'</div>';
+  if(spots) html+='<div class="dsec"><h4><i class="fas fa-map-location-dot"></i> 地标景点</h4>'+spots+'</div>';
+  if(foods) html+='<div class="dsec"><h4><i class="fas fa-utensils"></i> 美食（早/中/晚参考）</h4>'+foods+'</div>';
+  if(history) html+='<div class="dsec"><h4><i class="fas fa-landmark"></i> 城市简介</h4>'+history+'</div>';
   if(hotels) html+='<div class="dsec"><h4><i class="fas fa-hotel"></i> 住宿建议</h4><div class="link-grid">'+hotels+'</div></div>';
   if(air) html+='<div class="dsec"><h4><i class="fas fa-plane-departure"></i> 航班入口</h4><div class="link-grid">'+air+'</div></div>';
   if(rail) html+='<div class="dsec"><h4><i class="fas fa-train"></i> 高铁/火车入口</h4><div class="link-grid">'+rail+'</div></div>';
+  if(!isA){
+    html+='<div class="dsec"><h4><i class="fas fa-link"></i> 通用预订入口</h4><div class="link-grid">'+
+      '<a class="link-card" href="https://flights.ctrip.com" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
+      '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306 火车票</b><span>查询高铁/动车</span></a>'+
+      '<a class="link-card" href="https://hotels.ctrip.com" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+
+    '</div></div>';
+  }
   if(tips) html+='<div class="dsec"><h4><i class="fas fa-lightbulb"></i> 出行贴士</h4>'+tips+'</div>';
   return html;
 }
@@ -178,7 +200,7 @@ function renderDetail(){
     var tags=(c.tags||[]).slice(0,3).map(function(t){return '<span class="badge gray">'+t+'</span>';}).join('');
     var stats=[
       '<span class="badge"><i class="fas fa-route"></i> '+(c.itinerary.length)+' 节点</span>',
-      '<span class="badge"><i class="fas fa-utensils"></i> '+(c.foods.length)+' 美食</span>',
+      '<span class="badge"><i class="fas fa-utensils"></i> '+(c.tier==='A'?c.foods.length:(c.bFoods||[]).length)+' 美食</span>',
       '<span class="badge"><i class="fas fa-hotel"></i> '+(c.hotels.length)+' 住宿</span>'
     ];
     if(c.airfare.length) stats.push('<span class="badge"><i class="fas fa-plane"></i> 航班</span>');
