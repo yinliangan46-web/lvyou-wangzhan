@@ -115,6 +115,10 @@
 <script src="city-poi-bank.js"></script>
 <script src="province-data-all.js"></script>
 <script src="city-index.js"></script>
+<script src="city-score-a.js"></script>
+<script src="city-score-b.js"></script>
+<script src="city-score.js"></script>
+<script src="guide-patch.js"></script>
 <script>
 var DIMS = [
   {k:'food', name:'美食'},
@@ -124,24 +128,17 @@ var DIMS = [
   {k:'pace', name:'轻松度'},
   {k:'fun', name:'好玩度'}
 ];
-var REC = {
-  '成都':{score:{food:5,sight:3,culture:4,budget:4,pace:4,fun:4}, reason:'美食与慢节奏突出，消费友好，适合以吃和休闲为主的行程。'},
-  '杭州':{score:{food:3,sight:5,culture:4,budget:3,pace:5,fun:3}, reason:'景观与轻松度高，环湖节奏慢，适合散心与亲子。'},
-  '西安':{score:{food:4,sight:4,culture:5,budget:4,pace:3,fun:4}, reason:'人文底蕴最强，博物馆与遗迹集中，适合文化探访。'},
-  '厦门':{score:{food:3,sight:4,culture:3,budget:3,pace:5,fun:4}, reason:'海岛慢节奏、休闲度高，适合情侣与度假。'},
-  '青岛':{score:{food:3,sight:4,culture:3,budget:3,pace:4,fun:4}, reason:'海滨与城市建筑兼具，气候舒适，适合夏季休闲。'},
-  '大理':{score:{food:2,sight:5,culture:3,budget:3,pace:4,fun:3}, reason:'自然景观与出片度高，节奏慢，适合放空与摄影。'},
-  '哈尔滨':{score:{food:3,sight:4,culture:3,budget:2,pace:3,fun:5}, reason:'冬季冰雪体验与好玩度突出，适合避寒玩雪。'},
-  '三亚':{score:{food:2,sight:4,culture:2,budget:2,pace:5,fun:4}, reason:'度假松弛感强，适合亲子与避寒，预算偏高。'},
-  '长沙':{score:{food:5,sight:3,culture:3,budget:4,pace:3,fun:5}, reason:'美食与夜生活密集，年轻人友好，好玩度高。'},
-  '重庆':{score:{food:4,sight:4,culture:3,budget:4,pace:2,fun:5}, reason:'夜景与立体感强，好玩度高，走路爬坡较多。'}
-};
+/* 评分统一取自 city-score 分片；缺省城市用中性参考分 */
 var DEF = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'综合站内标签与素材给出的参考推荐；具体行程、美食与交通见下方详情。'};
 var DEF_LIGHT = {score:{food:3,sight:3,culture:3,budget:3,pace:3,fun:3}, reason:'该城目前为轻量参考，路书整理中；可先看地标、本地美食与历史简介，交通住宿点下方入口查询。'};
 
 var weights = {food:3,sight:3,culture:3,budget:3,pace:3,fun:3};
 function $(id){return document.getElementById(id);}
-function recOf(c){ return REC[c.name] || (c.tier==='A' ? DEF : DEF_LIGHT); }
+function recOf(c){
+  var s = window.MYLSCORE && window.MYLSCORE.get(c.name);
+  if (s) return {score:s.r, reason:s.reason};
+  return c.tier==='A' ? DEF : DEF_LIGHT;
+}
 
 function renderWeights(){
   $('weights').innerHTML = DIMS.map(function(d){
