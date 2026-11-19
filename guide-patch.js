@@ -9,6 +9,20 @@
   var M = window.MYL;
   if (!M) return;
 
+  var AUG = window.CITY_AUGMENT || {};
+
+  function mergeAug(c) {
+    if (!c) return c;
+    var a = AUG[c.name];
+    if (!a) return c;
+    var out = Object.assign({}, c);
+    if (a.foods) out.foods = a.foods;
+    if (a.itinerary) out.itinerary = a.itinerary;
+    if (a.hotels) out.hotels = a.hotels;
+    if (a.tags) out.tags = a.tags;
+    return out;
+  }
+
   var SCENE = ['景区深度游览', '全天游览自然风光或人文景点', '前往核心景区'];
   var LUNCH = ['午餐', '景区内午餐'];
   var DINNER = ['晚餐', '晚餐时间', '当地招牌晚餐', '当地口碑餐厅', '最后一次品尝当地特色美食'];
@@ -17,6 +31,7 @@
 
   function cleanCity(c) {
     if (!c) return c;
+    c = mergeAug(c);
     var pins = (c.routePins || []).slice();
     var used = {};
     var itin = (c.itinerary || []).map(function (d) {
