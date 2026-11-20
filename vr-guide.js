@@ -154,6 +154,7 @@
     }
     return null;
   }
+  window.MYL_findCoord = findCoord; /* 供其他板块（地图等）复用坐标查找 */
 
   /* ---------- Google 可达性探测（2.5s 超时） ---------- */
   function probeGoogle() {
@@ -208,42 +209,127 @@
     return s;
   }
 
-  /* ---------- 解说器 ---------- */
+  /* ---------- 解说器（v3：百度语音合成 mp3 为主引擎，Web Speech 备用） ----------
+     背景：Web Speech API 在很多手机浏览器（微信内置、部分安卓 WebView）里没有
+     可用语音包，表现为“点开始解说没声音”。改用百度 TTS 音频引擎：
+     返回真实 mp3 音频，任何设备都能出声；若音频加载失败再降级 Web Speech，
+     最后兜底字幕按节奏推进，解说永不卡住。 */
+  function chunkText(t, max) {
+    t = String(t == null ? '' : t).trim();
+    if (!t) return [];
+    if (t.length <= max) return [t];
+    var parts = [], buf = '';
+    var seps = t.match(/[^。！？；\n]+[。！？；\n]?/g) || [t];
+    seps.forEach(function (p) {
+      while (p.length > max) {
+        var cut = p.lastIndexOf('，', max) > 12 ? p.lastIndexOf('，', max) + 1 : max;
+        parts.push(p.slice(0, cut));
+        p = p.slice(cut);
+      }
+      if ((buf + p).length > max) { if (buf) parts.push(buf); buf = p; }
+      else buf += p;
+    });
+    if (buf) parts.push(buf);
+    return parts;
+  }
+  function ttsUrl(text, lang) {
+    return 'https://fanyi.baidu.com/gettts?lan=' + (lang === 'en-US' ? 'en' : 'zh') +
+      '&text=' + encodeURIComponent(text) + '&spd=' + (lang === 'en-US' ? 3 : 4) + '&source=web';
+  }
   function Narrator(onSentence, onState) {
     this.queue = [];
     this.idx = 0;
     this.on = false;
+    this.engine = 'audio'; /* audio=百度TTS音频 / web=浏览器本地语音 */
+    this._a = null;
     this.onSentence = onSentence;
     this.onState = onState;
     this._stopped = true;
   }
   Narrator.prototype.play = function (script) {
-    var self = this;
     this.queue = script;
     this.idx = 0;
     this.on = true;
+    this.engine = 'audio';
     this._stopped = false;
     this.onState(true);
     this._next();
   };
+  Narrator.prototype._advance = function (delay) {
+    var self = this;
+    if (this._stopped) return;
+    setTimeout(function () { self._next(); }, delay || 380);
+  };
   Narrator.prototype._next = function () {
     var self = this;
-    if (this._stopped || !('speechSynthesis' in window)) { this.onState(false); return; }
-    if (this.idx >= this.queue.length) { this.onState(false); this.on = false; return; }
-    var item = this.queue[this.idx++];
+    if (this._stopped) { this.onState(false); return; }
+    if (this.idx >= this.queue.length) { this.on = false; this.onState(false); return; }
+    var item = this.queue[this.idx];
+    var parts = chunkText(item.t, 190);
+    var pi = 0;
+    this.onSentence(item, this.idx + 1, this.queue.length);
+    (function nextPart() {
+      if (self._stopped) return;
+      if (pi >= parts.length) { self.idx++; self._advance(); return; }
+      var text = parts[pi++];
+      if (self.engine === 'audio') {
+        self._speakAudio(text, item.lang, nextPart, function () {
+          self.engine = 'web';
+          nextPart();
+        });
+      } else {
+        self._speakWeb(text, item.lang, nextPart, function () { self._advance(650); });
+      }
+    })();
+  };
+  /* 引擎 1：百度 TTS 音频（真实 mp3，全设备出声） */
+  Narrator.prototype._speakAudio = function (text, lang, done, fail) {
+    var self = this;
+    try { this._a && this._a.pause(); } catch (e) {}
+    var a = new Audio();
+    a.src = ttsUrl(text, lang);
+    a.volume = 1;
+    a.preload = 'auto';
+    this._a = a;
+    var started = false, over = false;
+    var guard = setTimeout(function () { if (!started && !over) { over = true; fail(); } }, 6000);
+    a.onplaying = function () { started = true; clearTimeout(guard); };
+    a.onended = function () { if (!over) { over = true; clearTimeout(guard); done(); } };
+    a.onerror = function () { if (!over) { over = true; clearTimeout(guard); fail(); } };
+    try {
+      var p = a.play();
+      if (p && p.catch) p.catch(function () { if (!over) { over = true; clearTimeout(guard); fail(); } });
+    } catch (e) { if (!over) { over = true; clearTimeout(guard); fail(); } }
+    /* 音频停留看门狗：开始播放但超时未结束（网络卡顿）→ 放行继续，绝不卡解说 */
+    setTimeout(function () {
+      if (!over && started && !self._stopped) { over = true; done(); }
+    }, Math.max(9000, text.length * 480));
+  };
+  /* 引擎 2：浏览器本地语音（备用）；无语音包时静音看门狗放行字幕 */
+  Narrator.prototype._speakWeb = function (text, lang, done, fail) {
+    var self = this;
+    if (!('speechSynthesis' in window)) { fail(); return; }
     try { speechSynthesis.cancel(); } catch (e) {}
-    var u = new SpeechSynthesisUtterance(item.t);
-    u.lang = item.lang || 'zh-CN';
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = lang || 'zh-CN';
     u.rate = u.lang === 'en-US' ? 0.92 : 0.95;
     u.pitch = 1;
-    u.onend = function () { if (!self._stopped) setTimeout(function () { self._next(); }, 350); };
-    u.onerror = function () { if (!self._stopped) setTimeout(function () { self._next(); }, 350); };
-    speechSynthesis.speak(u);
-    this.onSentence(item, this.idx, this.queue.length);
+    var fin = false;
+    function finish() { if (!fin) { fin = true; done(); } }
+    u.onend = finish;
+    u.onerror = finish;
+    setTimeout(function () {
+      if (self._stopped) return;
+      try { speechSynthesis.speak(u); } catch (e) { finish(); return; }
+      setTimeout(function () {
+        if (!fin && !(speechSynthesis.speaking || speechSynthesis.pending)) finish();
+      }, 1300);
+    }, 120);
   };
   Narrator.prototype.stop = function () {
     this._stopped = true;
     this.on = false;
+    try { this._a && this._a.pause(); } catch (e) {}
     try { speechSynthesis.cancel(); } catch (e) {}
     this.onState(false);
   };
@@ -424,43 +510,6 @@
     this._onResize && window.removeEventListener('resize', this._onResize);
   };
 
-  /* ---------- POI 精确地理编码（Nominatim，3.5s 超时，缓存 7 天） ---------- */
-  function geoCacheGet(k) {
-    try {
-      var c = JSON.parse(localStorage.getItem('myl_geo_cache') || '{}');
-      var hit = c[k];
-      if (hit && Date.now() - hit.t < 7 * 86400 * 1000) return hit.v;
-    } catch (e) {}
-    return null;
-  }
-  function geoCacheSet(k, v) {
-    try {
-      var c = JSON.parse(localStorage.getItem('myl_geo_cache') || '{}');
-      c[k] = { t: Date.now(), v: v };
-      localStorage.setItem('myl_geo_cache', JSON.stringify(c));
-    } catch (e) {}
-  }
-  function geocodePoi(city, name) {
-    var q = (city ? city + ' ' : '') + name;
-    var ck = 'nom:' + q;
-    var cached = geoCacheGet(ck);
-    if (cached !== null) return Promise.resolve(cached);
-    return new Promise(function (res) {
-      var done = false;
-      var t = setTimeout(function () { if (!done) { done = true; res(null); } }, 3500);
-      fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1&q=' + encodeURIComponent(q))
-        .then(function (r) { return r.ok ? r.json() : []; })
-        .then(function (list) {
-          if (done) return;
-          done = true; clearTimeout(t);
-          var v = (list && list[0]) ? [parseFloat(list[0].lon), parseFloat(list[0].lat)] : null;
-          geoCacheSet(ck, v);
-          res(v);
-        })
-        .catch(function () { if (!done) { done = true; clearTimeout(t); res(null); } });
-    });
-  }
-
   /* ---------- 全网真 360° 全景检索（Wikimedia Commons，免费无 Key） ----------
      只认 2:1 附近的等距柱状全景（equirectangular），宽幅普通照片一律不冒充 VR：
      点进「VR 全景」必须是可 360° 环视的真全景，否则降级走沉浸实景漫游。 */
@@ -519,8 +568,10 @@
     });
   }
 
-  /* ---------- 模式 A：真实街景（Google 街景实景拍摄，POI 精确定位） ---------- */
-  function StreetView(stage, lat, lng) {
+  /* ---------- 模式 A：真实街景（按景点名称在 Google 地图实景搜索并引用） ----------
+     不再按坐标抓“最近全景”——坐标定位会把邻近其他景点（如玄武湖）的全景错配过来。
+     改用 Google 地图对「景点名 + 城市」的实景搜索结果，命中的一定是该景点本体的画面。 */
+  function StreetView(stage, query) {
     this.stage = stage;
     this.wrap = document.createElement('div');
     this.wrap.className = 'vr-street';
@@ -528,8 +579,8 @@
     fr.setAttribute('allowfullscreen', 'true');
     fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
     fr.loading = 'eager';
-    fr.src = 'https://maps.google.com/maps?q=&layer=c&cbll=' + lat + ',' + lng +
-      '&cbp=11,0,0,0,0&output=svembed&hl=zh-CN';
+    fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent(query) +
+      '&layer=c&output=svembed&hl=zh-CN';
     this.wrap.appendChild(fr);
     stage.appendChild(this.wrap);
   }
@@ -550,7 +601,7 @@
     root.innerHTML =
       '<h3><i class="fas fa-vr-cardboard" style="color:#0e9f8a"></i> 实景云游 · AI 解说' +
         '<span class="vr-badge">实景拍摄 · 语音导览</span><span class="vr-sub">' + esc(spot.name) + '</span></h3>' +
-      '<p class="vr-intro">画面可以上下左右自由环视；点「开始解说」，AI 导游带你边看边讲。境外城市接入 Google 实景街景，国内城市接入腾讯街景实拍与 720° 真全景漫游。</p>' +
+      '<p class="vr-intro">画面可以上下左右自由环视；点「开始解说」，AI 导游用真人语音带你边看边讲（中英双语）。实景画面来自 Google 地图对该景点的实景搜索结果，语音由百度语音合成提供，任何手机都能出声。</p>' +
       '<div class="vr-stage" id="vrStage">' +
         '<span class="vr-compass" id="vrCompass">0°</span>' +
         '<span class="vr-modechip" id="vrMode">加载中</span>' +
@@ -577,6 +628,8 @@
     var noteEl = root.querySelector('#vrNote');
 
     var view = null, pano = null, mode = null, streetOK = false, lastStreetCoord = null;
+    /* Google 实景搜索关键词：景点名 + 城市（引用该景点自己的画面，杜绝邻近景点错配） */
+    var streetQuery = (spot.city ? spot.city + ' ' : '') + spot.name;
     var country = countryOf(spot.city);
 
     function setCompassText(t) { compassEl.textContent = t; }
@@ -603,7 +656,7 @@
 
     /* --- 模式装配 --- */
     var pendingPano = null;
-    function applyMode(m, streetCoord) {
+    function applyMode(m, streetQuery) {
       clearView();
       mode = m;
       cruiseBtn = null; gyroBtn = null;
@@ -641,9 +694,9 @@
         modeChip.textContent = '真实街景 · 实景拍摄';
         modeChip.className = 'vr-modechip google';
         hintEl.textContent = '在街景画面内拖动即可环视 · 双指缩放';
-        lastStreetCoord = streetCoord;
-        view = new StreetView(stage, streetCoord[1], streetCoord[0]);
-        noteEl.innerHTML = '街景画面由 Google 街景实景拍摄车采集。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
+        lastStreetCoord = streetQuery;
+        view = new StreetView(stage, streetQuery);
+        noteEl.innerHTML = '画面为 Google 地图对「' + esc(streetQuery) + '」的实景搜索结果（该景点实拍）。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
         compassEl.textContent = '实景';
       } else if (m === 'qy') {
         /* 芊云全景 VR 作品：iframe 页面内嵌入（不跳转网站），上下遮幅屏蔽平台品牌标识 */
@@ -840,7 +893,7 @@
       }
     }
 
-    /* --- 启动：Google 街景优先（国内外一致），并网检索真全景与芊云作品互为备选 ---
+    /* --- 启动：Google 实景搜索优先（按景点名引用该景点自己的画面），并网检索真全景互为备选 ---
        probeGoogle 与 commonsPano 同时发起，任何一路都不阻塞另一路，板块永不卡住
        芊云城市兜底作品（cityFallback）只保留在手动切换按钮里，绝不自动顶替景点 */
     var PANO = window.PANO_DATA || {};
@@ -855,11 +908,7 @@
         streetOK = ok;
         if (ok) {
           pCommons.then(function (hit) { if (hit) pendingPano = hit; });
-          geocodePoi(spot.city, spot.name).then(function (g) {
-            var coord = g || findCoord(spot.city, spot.name);
-            if (coord) applyMode('street', coord);
-            else applyMode(qyOwn ? 'qy' : 'immerse');
-          });
+          applyMode('street', streetQuery);
         } else {
           pCommons.then(function (hit) {
             if (hit) { pendingPano = hit; applyMode('net'); return; }
