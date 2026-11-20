@@ -7,7 +7,7 @@
 <title>分享中心 · MYL旅行</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="share.css?v=20261130a" />
+<link rel="stylesheet" href="share.css?v=20261202a" />
 </head>
 <body>
 <nav class="sh-nav">
@@ -34,6 +34,11 @@
     <label>所在城市<input id="fCity" type="text" placeholder="如：重庆" /></label>
     <label>一句话安利<textarea id="fDesc" rows="2" placeholder="如：入夜亮灯的吊脚楼，江边拍照超出片"></textarea></label>
     <label>门票/贴士<input id="fTicket" type="text" placeholder="如：免费 · 建议傍晚前往" /></label>
+    <div class="style-row" id="styleRow">
+      <button class="style-btn on" data-style="cover"><i class="fas fa-mountain-sun"></i>封面大片</button>
+      <button class="style-btn" data-style="magazine"><i class="fas fa-book-open"></i>杂志画报</button>
+      <button class="style-btn" data-style="collage"><i class="fas fa-images"></i>拍立得拼贴</button>
+    </div>
     <button class="go" id="genSpot"><i class="fas fa-wand-magic-sparkles"></i> 生成海报</button>
   </section>
 
@@ -66,6 +71,8 @@
 
 <footer class="sh-foot">MYL旅行 · 分享中心 —— 数据均在你的浏览器本地生成，不会上传。</footer>
 
-<script src="share.js?v=20261130a"></script>
+<script src="poi-img.js"></script>
+<script src="city-index.js"></script>
+<script src="share.js?v=20261202a"></script>
 </body>
 </html>

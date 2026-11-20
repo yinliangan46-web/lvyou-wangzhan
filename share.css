@@ -84,3 +84,10 @@ body {
   .sh-wrap { padding: 18px 12px 46px; }
   .sh-form { padding: 16px; }
 }
+
+/* ========== 海报风格选择（新增） ========== */
+.style-row{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 14px}
+.style-btn{flex:1;min-width:110px;border:1.5px solid var(--line,#e3e8ef);background:#fff;border-radius:12px;padding:10px 8px;font-size:13.5px;font-weight:700;color:#445;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.style-btn i{font-size:14px}
+.style-btn:hover{border-color:#ff5e7e;color:#ff5e7e}
+.style-btn.on{background:#ff5e7e;border-color:#ff5e7e;color:#fff}
