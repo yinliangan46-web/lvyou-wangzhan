@@ -43,3 +43,27 @@
   .btn-ghost{background:var(--soft);color:var(--primary)}
 
 @media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:6px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
+
+/* ========== AI 增强：一句话生成 & 对话式调整（新增） ========== */
+.smart{background:linear-gradient(135deg,#eef3ff,#fff7f2);border:1.5px solid #dbe6ff;border-radius:var(--radius);padding:20px;margin:14px 0 18px}
+.smart-head{font-weight:800;font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.smart-head i{color:var(--primary)}
+.smart-head .new{font-size:11px;font-weight:700;color:#ff7a45;border:1px solid #ffc9ad;border-radius:99px;padding:2px 8px;background:#fff4ee}
+.smart-input{display:flex;gap:10px;flex-wrap:wrap}
+.smart-input input{flex:1;min-width:220px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14.5px;font-family:inherit;outline:none}
+.smart-input input:focus{border-color:var(--primary)}
+.smart-input button{border:none;border-radius:12px;padding:12px 20px;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+.smart-input button:hover{opacity:.9}
+.smart-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.smart-chips .chip{font-size:12.5px;color:#445;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer}
+.smart-chips .chip:hover{border-color:var(--primary);color:var(--primary)}
+.smart-alt{margin-top:12px;font-size:12.5px}
+.smart-alt a{color:var(--muted);text-decoration:underline}
+.tune-box{padding:20px;margin:16px 0}
+.tune-box h3{font-size:15px;display:flex;align-items:center;gap:8px;color:var(--primary);margin-bottom:12px}
+.tune-box .tune-new{font-size:11px;color:#ff7a45;border:1px solid #ffc9ad;border-radius:99px;padding:2px 8px;background:#fff4ee}
+.tune-row{display:flex;gap:10px;flex-wrap:wrap}
+.tune-row input{flex:1;min-width:220px;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none}
+.tune-row input:focus{border-color:var(--primary)}
+.tune-row button{border:none;border-radius:12px;padding:11px 18px;background:var(--primary);color:#fff;font-weight:700;cursor:pointer;font-family:inherit}
+.tune-tip{font-size:12.5px;color:var(--muted);margin-top:10px}

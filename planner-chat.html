@@ -28,8 +28,22 @@
     <p>回答几个问题，自动生成含行程节点、景点、美食、住宿、交通与预订入口的结构化路书，覆盖站内全部 A 级城市。</p>
   </section>
 
-  <div class="steps" id="steps"></div>
-  <div class="chat" id="chat"></div>
+  <section class="smart" id="smartBox">
+    <div class="smart-head"><i class="fas fa-wand-magic-sparkles"></i> 一句话生成路书 <span class="new">AI 增强 · 新</span></div>
+    <div class="smart-input">
+      <input id="smartInput" placeholder="试试：12月带爸妈去成都4天，预算5000，不吃太辣" autocomplete="off" />
+      <button id="smartGo"><i class="fas fa-paper-plane"></i> 生成</button>
+    </div>
+    <div class="smart-chips">
+      <span class="chip" data-t="周末两天去重庆，美食优先">🍜 周末两天去重庆，美食优先</span>
+      <span class="chip" data-t="带爸妈去西安玩4天，人文研学，预算充足">🏛️ 带爸妈去西安玩4天，人文研学</span>
+      <span class="chip" data-t="和小伙伴去厦门3天，喜欢拍照，经济省钱">📷 去厦门3天拍照，经济省钱</span>
+    </div>
+    <div class="smart-alt"><a href="javascript:void(0)" id="skipSmart">不想打字？使用分步问答 →</a></div>
+  </section>
+
+  <div class="steps" id="steps" style="display:none"></div>
+  <div class="chat" id="chat" style="display:none"></div>
   <div id="planBox"></div>
 </div>
 

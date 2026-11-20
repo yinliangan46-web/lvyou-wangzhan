@@ -132,6 +132,15 @@ function generate(){
   var traffic=pd.traffic.map(function(t){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
   if(!traffic){traffic='<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';}
 
+  var shareLines=[];
+  if(pd.dayGroups.length && pd.dayGroups[0].label!=='推荐行程'){
+    pd.dayGroups.forEach(function(g,i){
+      shareLines.push('第'+(i+1)+'天 '+String(g.label).replace(/^Day\s*\d+\s*·\s*/,'')+'：'+g.nodes.map(function(s){return s.n;}).filter(Boolean).slice(0,4).join(' → '));
+    });
+  } else {
+    pd.dayGroups.forEach(function(g){ g.nodes.forEach(function(s,j){ if(j<6) shareLines.push(s.n+(s.t?('（'+s.t+'）'):'')); }); });
+  }
+  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(name+' '+days+'天'+ppl+'人路书')+'&lines='+encodeURIComponent(JSON.stringify(shareLines.slice(0,12)));
   $('planBox').innerHTML=
   '<div class="plan">'+
     '<div class="plan-cover"><h2>'+name+' · '+days+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+' · 由 MYL 对话生成</div></div>'+
@@ -149,8 +158,140 @@ function generate(){
       '<a class="link-card" href="https://www.12306.cn" target="_blank" rel="noopener"><b>12306</b><span>火车票预订</span></a>'+
     '</div></div>'+
   '</div>'+
-  '<div style="margin-bottom:30px"><button class="btn btn-ghost" onclick="location.reload()"><i class="fas fa-rotate-left"></i> 重新生成一份</button></div>';
+  '<div class="plan tune-box" id="tuneBox">'+
+    '<h3><i class="fas fa-wand-magic-sparkles"></i> 对话式调整 <span class="tune-new">AI 增强 · 新</span></h3>'+
+    '<div class="tune-row"><input id="tuneInput" placeholder="如：改成5天 / 预算紧凑一点 / 换成美食优先 / 换个城市去杭州" autocomplete="off" /><button id="tuneGo"><i class="fas fa-arrows-rotate"></i> 调整</button></div>'+
+    '<div class="tune-tip">支持：改天数、改预算档、改偏好、换城市；调整后立即重新生成路书。</div>'+
+  '</div>'+
+  '<div style="margin-bottom:30px"><button class="btn btn-ghost" onclick="location.reload()"><i class="fas fa-rotate-left"></i> 重新生成一份</button>'+
+  ' <a class="btn btn-ghost" href="'+shareUrl+'" target="_blank" rel="noopener"><i class="fas fa-share-nodes"></i> 生成分享海报</a></div>';
+  bindTune();
   $('planBox').scrollIntoView({behavior:'smooth'});
 }
 
-renderSteps();ask();
+/* ============ AI 增强：意图解析 + 对话式调整（新增模块） ============ */
+function matchCity(text){
+  if(!window.MYL||!text) return null;
+  var best=null;
+  MYL.indexCities().forEach(function(c){
+    var n=c&&c.name||'';
+    if(n.length>=2 && text.indexOf(n)>=0 && (!best||n.length>best.length)) best=n;
+  });
+  return best;
+}
+function detectDays(t){
+  var m=t.match(/(\d+)\s*天/);
+  if(m){var n=parseInt(m[1],10);return n>=5?'5':String(Math.max(1,n));}
+  if(/周末|两天|2天/.test(t))return '2';
+  if(/一周|七天|7天|5天|五六天|一周以上/.test(t))return '5';
+  if(/三天|3天/.test(t))return '3';
+  if(/四天|4天/.test(t))return '4';
+  return null;
+}
+function detectPpl(t){
+  if(/独行|一个人|自己去|独自|单人/.test(t))return '1';
+  if(/情侣|闺蜜|夫妻|两个人|二人|双人|2人|两人/.test(t))return '2';
+  if(/爸妈|父母|家人|家庭|孩子|娃|老人|一群|朋友|团队|3人|四人|一家/.test(t))return '3';
+  var m=t.match(/(\d+)\s*人/);
+  if(m){var n=parseInt(m[1],10);return n<=1?'1':(n===2?'2':'3');}
+  return null;
+}
+function detectBudget(t){
+  var m=t.match(/(\d{3,6})\s*(?:块|元|预算)?/);
+  if(m){
+    var n=parseInt(m[1],10);
+    if(n<=1500)return 'budget';
+    if(n<=5000)return 'comfort';
+    return 'luxury';
+  }
+  if(/穷游|省钱|经济|便宜|紧凑|省着/.test(t))return 'budget';
+  if(/豪华|高端|品质|奢华|不差钱|预算充足|住好/.test(t))return 'luxury';
+  if(/舒适|适中|标准/.test(t))return 'comfort';
+  return null;
+}
+function detectPref(t){
+  if(/美食|吃|小吃|火锅|面食|夜市|逛吃/.test(t))return 'food';
+  if(/拍照|出片|打卡|风景|景观|景色|看海|雪山|日落|日出/.test(t))return 'sight';
+  if(/博物馆|人文|历史|研学|文化|古建|寺庙|遗址|研学/.test(t))return 'culture';
+  if(/休闲|躺|慢游|放松|度假|泡酒店|发呆|不赶/.test(t))return 'relax';
+  return null;
+}
+function parseIntent(t){
+  return {
+    city:matchCity(t),
+    days:detectDays(t),
+    ppl:detectPpl(t),
+    budget:detectBudget(t),
+    pref:detectPref(t)
+  };
+}
+function smartStart(raw){
+  var text=(raw||'').trim();
+  if(!text){alert('先输入你的旅行想法吧');return;}
+  var iv=parseIntent(text);
+  Object.keys(iv).forEach(function(k){ if(iv[k]) ans[k]=iv[k]; });
+  var got=['city','days','ppl','budget','pref'].filter(function(k){return ans[k];});
+  if(!got.length){
+    $('chat').style.display='block';
+    $('chat').innerHTML+='<div class="bubble bot"><div class="q">这句话里的信息我还没读懂 😅</div><div>可以带上城市、天数、偏好，比如「带爸妈去西安玩4天，人文研学」；或者点击下方按钮改用分步问答。</div></div>';
+    return;
+  }
+  $('smartBox').style.display='none';
+  $('steps').style.display='block';
+  $('chat').style.display='block';
+  $('chat').innerHTML+='<div class="bubble me">'+text+'</div>';
+  var tags=got.map(function(k){
+    if(k==='city')return '📍 '+ans.city;
+    if(k==='days')return '🗓️ '+ans.days+'天'+(ans.days==='5'?'以上':'');
+    if(k==='ppl')return '👥 '+ans.ppl+'人';
+    if(k==='budget')return '💰 '+({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget];
+    return '🎯 '+({food:'美食',sight:'景观',culture:'人文',relax:'休闲'})[ans.pref];
+  }).join(' ');
+  var missing=QS.filter(function(q){return !ans[q.key];}).map(function(q){return LABEL[q.key];});
+  $('chat').innerHTML+='<div class="bubble bot"><div class="q">已识别你的需求：'+tags+'</div>'+
+    (missing.length?('还差：'+missing.join('、')+'，我继续问你 👇'):'信息齐全，正在生成路书…')+'</div>';
+  qi=QS.findIndex(function(q){return !ans[q.key];});
+  if(qi<0){generate();}else{renderSteps();ask();}
+}
+function parseTune(t){
+  var msgs=[], iv=parseIntent(t);
+  if(iv.city && iv.city!==ans.city){ans.city=iv.city;msgs.push('目的地 → '+iv.city);}
+  if(iv.days && iv.days!==ans.days){ans.days=iv.days;msgs.push('天数 → '+ans.days+'天'+(ans.days==='5'?'+':''));}
+  if(iv.ppl && iv.ppl!==ans.ppl){ans.ppl=iv.ppl;msgs.push('人数 → '+ans.ppl+'人');}
+  if(iv.budget && iv.budget!==ans.budget){ans.budget=iv.budget;msgs.push('预算 → '+({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]);}
+  if(iv.pref && iv.pref!==ans.pref){ans.pref=iv.pref;msgs.push('偏好 → '+({food:'美食',sight:'景观',culture:'人文',relax:'休闲'})[ans.pref]);}
+  return msgs;
+}
+function bindTune(){
+  var input=$('tuneInput'), go=$('tuneGo');
+  if(!input||!go)return;
+  function doTune(){
+    var t=input.value.trim();
+    if(!t)return;
+    var msgs=parseTune(t);
+    if(!msgs.length){
+      $('tuneBox').querySelector('.tune-tip').textContent='没听懂这个调整，试试：改成5天 / 预算紧凑一点 / 换成美食优先 / 换个城市去杭州';
+      return;
+    }
+    $('tuneBox').querySelector('.tune-tip').textContent='已按「'+msgs.join('，')+'」重新生成 ✅';
+    generate();
+  }
+  go.onclick=doTune;
+  input.addEventListener('keydown',function(e){if(e.key==='Enter')doTune();});
+}
+function initSmart(){
+  var input=$('smartInput'), go=$('smartGo');
+  if(!input||!go)return;
+  go.onclick=function(){smartStart(input.value);};
+  input.addEventListener('keydown',function(e){if(e.key==='Enter')smartStart(input.value);});
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(c){
+    c.onclick=function(){input.value=c.dataset.t;smartStart(c.dataset.t);};
+  });
+  $('skipSmart').onclick=function(){
+    $('smartBox').style.display='none';
+    $('steps').style.display='block';
+    $('chat').style.display='block';
+    qi=0;renderSteps();ask();
+  };
+}
+initSmart();
