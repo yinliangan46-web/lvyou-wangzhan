@@ -46,8 +46,19 @@
         if (wname.indexOf(nm) > -1 || nm.indexOf(wname) > -1) return { id: list[i][0], name: wname };
       }
     }
-    /* 无本景点专属作品时返回 null：不拿其他作品冒充，VR 走街景/全景链路 */
-    return null;
+    /* 城市级兜底：本景点无专属作品时，选该城市最像「景点实拍」的作品，
+       保证所有景点都有芊云全景可切换（Google 街景失效时的保底体验） */
+    var good = /(景区|风景区|古镇|古城|公园|湖|山|寺|塔|园|街|博物馆|纪念馆|广场|大桥|湿地|峡谷|森林|老街|街区|码头|遗址|石窟|乐园|世界|都|城|村|湾|岛|滩|泉|梯田|瀑布|草原)/;
+    var bad = /(验收|家装|小区|房间|家乡|婚礼|测试|室内|样板|装修|民宿|店铺|幼儿园|宿舍|报告厅|直播间|工地|车位|办公室)/;
+    var best = null, bestScore = -1;
+    for (i = 0; i < list.length; i++) {
+      wname = list[i][1] || '';
+      if (bad.test(wname)) continue;
+      var s = good.test(wname) ? 2 : 0;
+      if (s > bestScore) { bestScore = s; best = list[i]; }
+    }
+    if (best) return { id: best[0], name: best[1], cityFallback: true };
+    return { id: list[0][0], name: list[0][1], cityFallback: true };
   }
 
   var CSS = ''
@@ -654,7 +665,8 @@
         cBottom.className = 'vr-qy-cover bottom';
         stage.appendChild(cBottom);
         var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
-        noteEl.innerHTML = '全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视';
+        noteEl.innerHTML = '全景作品：' + qyLabel +
+          (qyHit && qyHit.cityFallback ? '（' + esc(spot.city || '') + '城市实拍）' : '') + ' · 实景拍摄可 360° 环视';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';
