@@ -154,6 +154,47 @@
       return r.json();
     });
   }
+  /* 备用源：wttr.in（Open-Meteo 国内网络不稳时自动降级） */
+  /* wttr 的天气码是自家编码（113=晴），转成 WMO 码复用现有图标表 */
+  var WTTR2WMO = {
+    113:0, 116:2, 119:3, 122:3, 143:45, 176:61, 179:71, 182:67, 185:56,
+    200:95, 227:71, 230:75, 248:45, 260:45, 263:51, 266:51, 281:56,
+    293:61, 296:61, 299:63, 302:63, 305:65, 308:65, 311:66, 314:67,
+    317:67, 320:67, 323:71, 326:71, 329:73, 332:73, 335:75, 338:75,
+    350:77, 353:80, 356:81, 359:82, 362:66, 365:67, 368:85, 371:85,
+    374:77, 377:77, 386:95, 389:95, 392:95, 395:95
+  };
+  function wttrToWmo(c) { return WTTR2WMO[c] != null ? WTTR2WMO[c] : 3; }
+  function wttrWeather(city, name) {
+    var q = encodeURIComponent(city || name || '北京');
+    return fetch('https://wttr.in/' + q + '?format=j1&lang=zh').then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (d) {
+      if (!d || !d.weather || !d.weather.length) throw new Error('empty');
+      var cc = (d.current_condition || [])[0] || {};
+      var days = d.weather.slice(0, 7).map(function (w) {
+        var hrs = w.hourly || [];
+        var noon = hrs.filter(function (h) { return +h.time === 1200; })[0] || hrs[0] || {};
+        var pops = hrs.map(function (h) { return +h.chanceofrain || 0; });
+        return {
+          date: w.date,
+          code: wttrToWmo(+noon.weatherCode),
+          max: Math.round(+w.maxtempC),
+          min: Math.round(+w.mintempC),
+          pop: pops.length ? Math.max.apply(null, pops) : null
+        };
+      });
+      var minAll = Math.min.apply(null, days.map(function (x) { return x.min; }).concat([99]));
+      var maxAll = Math.max.apply(null, days.map(function (x) { return x.max; }).concat([0]));
+      var rainy = days.some(function (x) { return x.pop != null && x.pop >= 50; });
+      return {
+        src: 'wttr.in',
+        now: cc.temp_C != null ? { t: Math.round(+cc.temp_C), info: wmoInfo(wttrToWmo(+cc.weatherCode)) } : null,
+        days: days, tip: outfitTip(minAll, maxAll, rainy)
+      };
+    });
+  }
   function getWeather(city, name) {
     var cKey = city + '|' + name;
     var cached = cacheGet(cKey);
@@ -185,12 +226,19 @@
           var maxAll = Math.max.apply(null, days.map(function (x) { return x.max; }).concat([0]));
           var rainy = days.some(function (x) { return x.pop != null && x.pop >= 50; });
           var out = {
+            src: 'Open-Meteo',
             now: w.current ? { t: Math.round(w.current.temperature_2m), info: wmoInfo(w.current.weather_code) } : null,
             days: days, tip: outfitTip(minAll, maxAll, rainy)
           };
           cacheSet(cKey, out);
           return out;
         });
+    }).catch(function () {
+      /* 主源失败 → 备用源 wttr.in，同样写入缓存 */
+      return wttrWeather(city, name).then(function (w) {
+        cacheSet(cKey, w);
+        return w;
+      });
     });
   }
 
@@ -205,6 +253,8 @@
     '.me-wday .ic{font-size:22px}.me-wday .d{font-size:12px;color:#666;margin-top:4px}' +
     '.me-wday .t{font-size:13px;font-weight:600;color:#222}.me-wday .p{font-size:11px;color:#4a90d9}' +
     '.me-tip{margin-top:12px;font-size:13px;color:#555;background:#f0f7ff;border-radius:10px;padding:9px 12px}' +
+    '.me-retry{margin-left:10px;border:1px solid #2c9ca8;background:#fff;color:#2c9ca8;border-radius:8px;padding:4px 12px;font-size:12.5px;cursor:pointer;font-weight:600}' +
+    '.me-retry:hover{background:#2c9ca8;color:#fff}' +
     '.me-map{height:300px;border-radius:12px;overflow:hidden;position:relative;z-index:0}' +
     '.me-navrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}' +
     '.me-btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:600;color:#fff;text-decoration:none;transition:opacity .15s}' +
@@ -247,9 +297,25 @@
         '<span class="me-sub">OpenStreetMap</span></h3><div class="me-body"><div class="me-empty">地图加载中…</div></div></div>';
     host.insertBefore(root, host.firstChild);
 
-    /* 天气卡片 */
+    /* 天气卡片（双源降级：Open-Meteo → wttr.in，均失败显示重试按钮） */
     var wBody = root.querySelector('#meWeather .me-body');
-    getWeather(spot.city, spot.name).then(function (w) {
+    function weatherFail() {
+      wBody.innerHTML = '<div class="me-empty">天气加载失败（可能是网络波动，两个数据源都没连通）' +
+        '<button type="button" class="me-retry" id="wxRetry">↻ 重试</button></div>';
+      var rb = wBody.querySelector('#wxRetry');
+      if (rb) rb.addEventListener('click', function () {
+        wBody.innerHTML = '<div class="me-empty">天气加载中…</div>';
+        try {
+          var c = JSON.parse(localStorage.getItem('myl_weather_cache') || '{}');
+          delete c[(spot.city || '') + '|' + spot.name];
+          localStorage.setItem('myl_weather_cache', JSON.stringify(c));
+        } catch (e) {}
+        getWeather(spot.city, spot.name).then(renderW).catch(weatherFail);
+      });
+    }
+    function renderW(w) {
+      var sub = root.querySelector('#meWeather .me-sub');
+      if (sub && w.src) sub.textContent = esc(spot.city || spot.name) + ' · ' + w.src;
       var rows = w.days.map(function (d) {
         var info = wmoInfo(d.code);
         var dt = new Date(d.date + 'T12:00:00');
@@ -260,9 +326,8 @@
       }).join('');
       var nowLine = w.now ? '<div class="d" style="text-align:right;font-size:12px;color:#888;margin-bottom:8px">当前 ' + w.now.t + '°C ' + w.now.info[0] + '</div>' : '';
       wBody.innerHTML = nowLine + '<div class="me-wrow">' + rows + '</div><div class="me-tip"><i class="fas fa-shirt"></i> ' + esc(w.tip) + '</div>';
-    }).catch(function () {
-      wBody.innerHTML = '<div class="me-empty">天气服务暂不可用（离线或网络受限）</div>';
-    });
+    }
+    getWeather(spot.city, spot.name).then(renderW).catch(weatherFail);
 
     /* 地图与导航（三级坐标兜底，确保每个景点都有地图） */
     loadLeaflet(function () {

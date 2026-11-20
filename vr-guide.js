@@ -415,7 +415,9 @@
     });
   }
 
-  /* ---------- 全网真 360° 全景检索（Wikimedia Commons，免费无 Key） ---------- */
+  /* ---------- 全网真 360° 全景检索（Wikimedia Commons，免费无 Key） ----------
+     只认 2:1 附近的等距柱状全景（equirectangular），宽幅普通照片一律不冒充 VR：
+     点进「VR 全景」必须是可 360° 环视的真全景，否则降级走沉浸实景漫游。 */
   function commonsPano(spot) {
     return new Promise(function (res) {
       var key = 'myl_cm_pano_' + (spot.city || '') + '_' + spot.name;
@@ -434,7 +436,7 @@
             if (!ii || !ii.url || !/jpe?g$/i.test(ii.url)) return;
             var w = ii.width || 0, h = ii.height || 1;
             var ratio = w / h;
-            if (w >= 1400 && ratio >= minRatio && ratio <= 4) {
+            if (w >= 1400 && ratio >= minRatio && ratio <= 2.6) {
               if (!best || w * h > best.w * best.h) {
                 best = { src: ii.thumburl || ii.url, w: w, h: h, credit: String(pages[k].title || '').replace(/^File:/, '') };
               }
@@ -443,12 +445,20 @@
           return best;
         }).catch(function () { return null; });
       }
-      /* 两轮检索：先「景点+panorama」找真全景，找不到再放宽比例搜宽幅实景 */
-      query(spot.name + ' ' + (spot.city || '') + ' panorama', 2.0).then(function (hit1) {
-        if (hit1) { try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit1 })); } catch (e) {} return res(hit1); }
-        query(spot.name + ' ' + (spot.city || ''), 2.5).then(function (hit2) {
-          try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit2 })); } catch (e) {}
-          res(hit2);
+      function keep(hit) {
+        try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit })); } catch (e) {}
+        res(hit);
+      }
+      var city = spot.city || '';
+      /* 轮 1：明确标注 equirectangular 的真全景；轮 2：360 panorama 关键词；
+         轮 3：退回景点名检索，比例仍限制在 2:1 附近。三轮都空 → 确认无真全景。 */
+      query(spot.name + ' ' + city + ' panorama equirectangular', 1.9).then(function (hit1) {
+        if (hit1) return keep(hit1);
+        query(spot.name + ' ' + city + ' 360 panorama', 1.9).then(function (hit2) {
+          if (hit2) return keep(hit2);
+          query(spot.name + ' ' + city, 2.0).then(function (hit3) {
+            keep(hit3);
+          });
         });
       });
     });
@@ -558,10 +568,10 @@
           applyMode('immerse');
         });
       } else if (m === 'net') {
-        modeChip.textContent = '全网实景全景 · 360°';
+        modeChip.textContent = '真实 VR · 360° 全景实拍';
         modeChip.className = 'vr-modechip';
         hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
-        noteEl.innerHTML = '全景素材：' + esc(pendingPano.credit || 'Wikimedia Commons 实景拍摄');
+        noteEl.innerHTML = '<i class="fas fa-vr-cardboard"></i> 真实 VR 全景：' + esc(pendingPano.credit || 'Wikimedia Commons 实景拍摄') + ' · 想看官方全景可点「官方 VR 全景」直达';
         pano = new PanoView(stage);
         view = pano;
         view.compass = setCompassText;
