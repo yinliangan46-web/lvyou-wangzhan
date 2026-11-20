@@ -83,11 +83,29 @@
       localStorage.setItem('myl_geo_cache', JSON.stringify(c));
     } catch (e) {}
   }
-  function geocode(q) {
-    var ck = 'nom:' + q;
+  /* 城市中心解析（离线表 → Nominatim），用于给景点搜索加视野框限定 */
+  function cityCenter(city) {
+    var CC = window.MYL_CITY_CENTERS || {};
+    if (city && CC[city]) return Promise.resolve(CC[city]);
+    var C = window.CITY_SPOT_COORDS || {};
+    if (city) {
+      for (var k in C) {
+        if (k.indexOf(city + '·') === 0 && C[k]) return Promise.resolve(C[k]);
+      }
+    }
+    return geocode(city || '');
+  }
+  function geocode(q, center) {
+    var ck = 'nom:' + q + (center ? '|b' : '');
     var cached = geoCacheGet(ck);
     if (cached !== null) return Promise.resolve(cached);
-    return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1&q=' + encodeURIComponent(q))
+    /* center 传入时限定 ±2° 视野框并强制结果落在框内，杜绝同名/异地错配（如"独库公路"→宿迁） */
+    var box = '';
+    if (center) {
+      var d = 2;
+      box = '&viewbox=' + (center[0] - d) + ',' + (center[1] + d) + ',' + (center[0] + d) + ',' + (center[1] - d) + '&bounded=1';
+    }
+    return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1' + box + '&q=' + encodeURIComponent(q))
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (list) {
         var v = (list && list[0]) ? [parseFloat(list[0].lon), parseFloat(list[0].lat)] : null;
@@ -100,10 +118,13 @@
   function resolveCoord(city, name, cb) {
     var c = findCoord(city, name);
     if (c) { cb({ coord: c, kind: 'spot' }); return; }
-    geocode(city + ' ' + name).then(function (g1) {
-      if (g1) { cb({ coord: g1, kind: 'geocoded' }); return; }
-      geocode(city || name).then(function (g2) {
-        cb({ coord: g2, kind: g2 ? 'city' : null });
+    cityCenter(city).then(function (center) {
+      geocode(city + ' ' + name, center).then(function (g1) {
+        if (g1) { cb({ coord: g1, kind: 'geocoded' }); return; }
+        geocode(name, center).then(function (g1b) {
+          if (g1b) { cb({ coord: g1b, kind: 'geocoded' }); return; }
+          cb({ coord: center, kind: center ? 'city' : null });
+        });
       });
     });
   }
