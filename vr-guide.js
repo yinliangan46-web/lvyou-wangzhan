@@ -399,10 +399,9 @@
     this.vyaw *= 0.94; this.vpitch *= 0.94;
     if (this.yaw > 1) this.yaw = 1; if (this.yaw < -1) this.yaw = -1;
     if (this.pitch > 1) this.pitch = 1; if (this.pitch < -1) this.pitch = -1;
-    if (this.zoom > 1) { this.zoom -= 0.0009; if (this.zoom < 1) this.zoom = 1; }
+    /* 去掉自动呼吸缩放：不拖动时画面完全静止 */
     var t = Date.now();
-    var ox = this.cruiseOn ? Math.sin(t * 0.00023) * 0.38 : 0;
-    var oy = this.cruiseOn ? Math.sin(t * 0.00016) * 0.22 : 0;
+    var ox = 0, oy = 0;
     var px = Math.max(-1, Math.min(1, this.yaw + ox)) * this.maxX;
     var py = Math.max(-1, Math.min(1, this.pitch + oy)) * this.maxY;
     this._apply(this.cur.querySelector('img'), px, py);
@@ -708,6 +707,10 @@
           else applyMode('immerse');
         });
       }
+      if (mode === 'immerse' && view && view.shots && view.shots.length > 1) {
+        btn('prev', 'fa-arrow-left', '上一镜头', function () { view.show(view.idx - 1); });
+        btn('next', 'fa-arrow-right', '下一镜头', function () { view.show(view.idx + 1); });
+      }
       if (mode !== 'street' && mode !== 'qy') {
         cruiseBtn = btn('cruise', 'fa-route', '自动漫游', function () {
           var on = !cruiseBtn.classList.contains('on');
@@ -789,9 +792,9 @@
         caption('（' + idx + '/' + total + '）' + item.t, true);
         if (!view || mode === 'street') return;
         var act = item.act || '';
-        if (view.cruiseOn !== undefined && (act === 'cruise' || act === 'start' || act === 'end')) view.cruiseOn = true;
+        /* 不再自动开启漫游/摇移：画面保持静止，用户拖动才动（避免“照片来回播放”感） */
         if (pano) {
-          pano.cruise = act === 'end' ? 0.0009 : 0.0006;
+          pano.cruise = act === 'end' ? 0 : 0;
         } else if (view.show) {
           var n = view.shots.length;
           if (act.indexOf('focus:') === 0) {
@@ -838,9 +841,11 @@
     }
 
     /* --- 启动：Google 街景优先（国内外一致），并网检索真全景与芊云作品互为备选 ---
-       probeGoogle 与 commonsPano 同时发起，任何一路都不阻塞另一路，板块永不卡住 */
+       probeGoogle 与 commonsPano 同时发起，任何一路都不阻塞另一路，板块永不卡住
+       芊云城市兜底作品（cityFallback）只保留在手动切换按钮里，绝不自动顶替景点 */
     var PANO = window.PANO_DATA || {};
     var qyHit = qyvrMatch(spot);
+    var qyOwn = qyHit && !qyHit.cityFallback ? qyHit : null;
     if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
     } else {
@@ -853,12 +858,12 @@
           geocodePoi(spot.city, spot.name).then(function (g) {
             var coord = g || findCoord(spot.city, spot.name);
             if (coord) applyMode('street', coord);
-            else applyMode(qyHit ? 'qy' : 'immerse');
+            else applyMode(qyOwn ? 'qy' : 'immerse');
           });
         } else {
           pCommons.then(function (hit) {
             if (hit) { pendingPano = hit; applyMode('net'); return; }
-            if (qyHit) applyMode('qy');
+            if (qyOwn) applyMode('qy');
             else applyMode('immerse');
           });
         }
