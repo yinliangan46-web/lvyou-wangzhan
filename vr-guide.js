@@ -29,13 +29,24 @@
     if (D[spot.name]) return { id: D[spot.name], name: spot.name };
     var CD = window.QYVR_CITY_DATA || {};
     var list = CD[(spot.city || '').replace(/市$/, '')] || [];
+    if (!list.length) return null;
     var nm = spot.name || '';
-    if (nm && list.length) {
-      for (var i = 0; i < list.length; i++) {
-        var wname = list[i][1] || '';
+    /* 归一化：去掉「景区/风景区/旅游区/公园/步行街/古镇/古城」等后缀再双向包含匹配 */
+    var bare = nm.replace(/(风景名胜)?(旅游)?(景区|风景区|度假区|步行街|历史街区|公园|古镇|古城|老街|旅游区)$/g, '');
+    var i, wname;
+    if (bare && bare !== nm) {
+      for (i = 0; i < list.length; i++) {
+        wname = list[i][1] || '';
+        if (wname.indexOf(bare) > -1 || bare.indexOf(wname) > -1) return { id: list[i][0], name: wname };
+      }
+    }
+    if (nm) {
+      for (i = 0; i < list.length; i++) {
+        wname = list[i][1] || '';
         if (wname.indexOf(nm) > -1 || nm.indexOf(wname) > -1) return { id: list[i][0], name: wname };
       }
     }
+    /* 无本景点专属作品时返回 null：不拿其他作品冒充，VR 走街景/全景链路 */
     return null;
   }
 
@@ -642,7 +653,8 @@
         var cBottom = document.createElement('div');
         cBottom.className = 'vr-qy-cover bottom';
         stage.appendChild(cBottom);
-        noteEl.innerHTML = '全景作品：' + esc(qyHit && qyHit.name ? qyHit.name : spot.name) + ' · 实景拍摄可 360° 环视';
+        var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
+        noteEl.innerHTML = '全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';

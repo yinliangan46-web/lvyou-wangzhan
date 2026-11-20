@@ -46,22 +46,47 @@
     return [lat + dLat, lng + dLng];
   }
 
-  /* ---------- 坐标查找（三级兜底：内置库 → Nominatim POI → 城市中心） ---------- */
+  /* ---------- 坐标查找（多级兜底：内置景点库 → 热点库 → 城市中心） ---------- */
+  function fuzzySpotKey(map, city, name) {
+    /* 模糊匹配：城市前缀一致且景点名互含（兼容「夫子庙」↔「夫子庙步行街」这类差异） */
+    var prefix = city ? city + '·' : '';
+    var best = null, bestLen = -1;
+    for (var k in map) {
+      if (prefix && k.indexOf(prefix) !== 0) continue;
+      var spotPart = prefix ? k.slice(prefix.length) : k.split('·').pop();
+      if (spotPart === name) return map[k];
+      if (spotPart.indexOf(name) > -1 || name.indexOf(spotPart) > -1) {
+        /* 越短越精确，取重叠最短的避免「夫子庙」错配到超长名称 */
+        if (best === null || spotPart.length < bestLen) { best = map[k]; bestLen = spotPart.length; }
+      }
+    }
+    return best;
+  }
   function findCoord(city, name) {
     var C = window.CITY_SPOT_COORDS || {};
+    var H = window.CITY_HOTSPOT_COORDS || {};
     var keys = [];
     if (city && name) keys.push(coordKey(city, name));
     if (name) keys.push(name);
     for (var i = 0; i < keys.length; i++) {
       if (C[keys[i]]) return C[keys[i]];
+      if (H[keys[i]]) return H[keys[i]];
     }
-    /* 城市级兜底：该城市任一景点坐标 → 内置城市中心表（离线保证有图） */
+    /* 模糊匹配两张表（防止「夫子庙」因后缀差异查不到而落到错误兜底） */
+    if (name) {
+      var fz = fuzzySpotKey(C, city, name) || fuzzySpotKey(H, city, name);
+      if (fz) return fz;
+    }
+    /* 城市级兜底：优先城市中心（保证在正确城市内），再用任一城市景点坐标 */
     if (city) {
+      if (window.MYL_CITY_CENTERS && window.MYL_CITY_CENTERS[city]) {
+        return window.MYL_CITY_CENTERS[city];
+      }
       for (var k in C) {
         if (k.indexOf(city + '·') === 0 && C[k]) return C[k];
       }
-      if (window.MYL_CITY_CENTERS && window.MYL_CITY_CENTERS[city]) {
-        return window.MYL_CITY_CENTERS[city];
+      for (var h in H) {
+        if (h.indexOf(city + '·') === 0 && H[h]) return H[h];
       }
     }
     return null;
