@@ -49,7 +49,15 @@
     + '.vr-cap-bar .ic{color:#0e9f8a;margin-top:3px}'
     + '.vr-cap-bar.idle{background:#f6f7fa;border-color:#e6e9ef;color:#666}'
     + '.vr-note{margin-top:8px;font-size:12px;color:#a0a6b0}'
-    + '@media(max-width:640px){.myl-vr{padding:16px 12px}.vr-stage{aspect-ratio:4/3}}';
+    + '@media(max-width:640px){.myl-vr{padding:16px 12px}.vr-stage{aspect-ratio:4/3}}'
+    + '.vr-btn.lang{background:#6d28d9}.vr-btn.lang.on{background:#4c1d95}'
+    + '.vr-btn.ext{background:linear-gradient(120deg,#e0761b,#d6406b);text-decoration:none;display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:10px;padding:9px 15px;font-size:13.5px;font-weight:600;color:#fff}'
+    + '/* 伪全屏（iOS 等不支持原生全屏时的兜底） */'
+    + '.myl-vr.vr-fsx{position:fixed;inset:0;z-index:99999;border-radius:0;margin:0;overflow-y:auto;padding:14px 14px 18px;background:#0d1321}'
+    + '.myl-vr.vr-fsx h3,.myl-vr.vr-fsx .vr-intro{color:#eee}'
+    + '.myl-vr.vr-fsx .vr-stage{aspect-ratio:auto;height:72vh}'
+    + '.myl-vr.vr-fsx .vr-cap-bar{background:rgba(255,255,255,.12)}'
+    + '.myl-vr.vr-fsx .vr-cap-bar span{color:#fff}';
 
   function injectStyle() {
     if (document.getElementById('myl-vr-css')) return;
@@ -112,23 +120,44 @@
     });
   }
 
-  /* ---------- 解说词生成 ---------- */
-  function buildScript(spot) {
+  /* ---------- 解说词生成（中 / EN 双语） ---------- */
+  function buildScript(spot, lang) {
     var s = [];
-    s.push({ t: '欢迎来到' + (spot.city || '') + (spot.city ? '的' : '') + spot.name + '。眼前是这里的实景画面，请跟着我的声音，转动视线，我们一起云游这一站。', act: 'start' });
-    if (spot.desc) s.push({ t: spot.desc, act: 'cruise' });
-    if (spot.tip) s.push({ t: '小贴士：' + spot.tip, act: 'cruise' });
-    if (spot.ticket && spot.ticket !== spot.tip) s.push({ t: '门票与预约：' + spot.ticket + '。出行前记得先确认开放时间。', act: 'cruise' });
+    var en = lang === 'en';
+    var nm = spot.name, ct = spot.city || '';
+    function zh(t, act) { s.push({ t: t, act: act || 'cruise', lang: 'zh-CN' }); }
+    function enx(t, act) { s.push({ t: t, act: act || 'cruise', lang: 'en-US' }); }
+    if (en) {
+      enx('Welcome to ' + nm + (ct ? ', ' + ct : '') + '. You are now viewing real photos of this place. Feel free to drag around while I walk you through.', 'start');
+    } else {
+      zh('欢迎来到' + ct + (ct ? '的' : '') + nm + '。眼前是这里的实景画面，请跟着我的声音，转动视线，我们一起云游这一站。', 'start');
+    }
+    if (spot.desc) {
+      s.push({ t: spot.desc, act: 'cruise', lang: en ? 'zh-CN' : 'zh-CN' });
+      if (en) enx('That was the local introduction, read in Chinese. Let me continue.', 'cruise');
+    }
+    if (spot.tip) zh((en ? 'Travel tip: ' : '小贴士：') + spot.tip);
+    if (spot.ticket && spot.ticket !== spot.tip) {
+      if (en) enx('Tickets and booking: ');
+      zh(spot.ticket + '。出行前记得先确认开放时间。');
+    }
     (spot.facts || []).slice(0, 2).forEach(function (f) {
-      s.push({ t: '一个有意思的冷知识——' + f, act: 'cruise' });
+      if (en) enx('Here is an interesting fact about this place——');
+      zh(f);
     });
     (spot.relSpots || []).slice(0, 3).forEach(function (n, i) {
-      s.push({ t: '看完这里，不妨把' + n + '也排进同一天的行程，距离不远，顺路刚刚好。', act: 'focus:' + (i + 1), poi: n });
+      if (en) enx('Nearby, you can also visit ' + n + '. It is close by and perfect for the same day.', 'focus:' + (i + 1));
+      else zh('看完这里，不妨把' + n + '也排进同一天的行程，距离不远，顺路刚刚好。', 'focus:' + (i + 1));
     });
     if ((spot.relFoods || []).length) {
-      s.push({ t: '逛累了？' + spot.city + '的' + spot.relFoods[0] + '就在不远处，逛完这一圈刚好吃上一顿。', act: 'food' });
+      if (en) enx('Feeling hungry? Try the famous local food ' + spot.relFoods[0] + (ct ? ' in ' + ct : '') + ', just around the corner.', 'food');
+      else zh('逛累了？' + ct + '的' + spot.relFoods[0] + '就在不远处，逛完这一圈刚好吃上一顿。', 'food');
     }
-    s.push({ t: '这就是' + spot.name + '。等你真正站在这里的时候，记得回来告诉我，眼前的实景比云游更美。', act: 'end' });
+    if (en) {
+      enx('That is ' + nm + '. When you finally stand here in person, come back and tell me — the real view is even better than this virtual tour.', 'end');
+    } else {
+      zh('这就是' + nm + '。等你真正站在这里的时候，记得回来告诉我，眼前的实景比云游更美。', 'end');
+    }
     return s;
   }
 
@@ -157,8 +186,8 @@
     var item = this.queue[this.idx++];
     try { speechSynthesis.cancel(); } catch (e) {}
     var u = new SpeechSynthesisUtterance(item.t);
-    u.lang = 'zh-CN';
-    u.rate = 0.95;
+    u.lang = item.lang || 'zh-CN';
+    u.rate = u.lang === 'en-US' ? 0.92 : 0.95;
     u.pitch = 1;
     u.onend = function () { if (!self._stopped) setTimeout(function () { self._next(); }, 350); };
     u.onerror = function () { if (!self._stopped) setTimeout(function () { self._next(); }, 350); };
@@ -563,12 +592,18 @@
     }
 
     /* --- 控制按钮（随模式重建） --- */
-    var playBtn = null, swapBtn = null, cruiseBtn = null, gyroBtn = null, fsBtn = null;
+    var playBtn = null, swapBtn = null, cruiseBtn = null, gyroBtn = null, fsBtn = null, langBtn = null;
+    var vrLang = 'zh';
     function rebuildCtrl() {
       ctrl.innerHTML = '';
       playBtn = btn('play', 'fa-play', '开始解说', function () {
         if (narrator.on) { narrator.stop(); }
-        else { narrator.play(buildScript(spot)); }
+        else { narrator.play(buildScript(spot, vrLang)); }
+      });
+      langBtn = btn('lang', vrLang === 'zh' ? 'fa-language' : 'fa-language', vrLang === 'zh' ? 'English 解说' : '中文解说', function () {
+        vrLang = vrLang === 'zh' ? 'en' : 'zh';
+        langBtn.innerHTML = '<i class="fas fa-language"></i> ' + (vrLang === 'zh' ? 'English 解说' : '中文解说');
+        if (narrator.on) { narrator.stop(); narrator.play(buildScript(spot, vrLang)); }
       });
       if (streetOK) {
         swapBtn = btn('swap', 'fa-shuffle', mode === 'street' ? '切换实景漫游' : '切换真实街景', function () {
@@ -586,13 +621,52 @@
         gyroBtn = btn('gyro', 'fa-mobile-screen', '陀螺仪', function () { toggleGyro(); });
       }
       fsBtn = btn('fs', 'fa-expand', '全屏', function () {
-        if (!document.fullscreenElement) {
-          (stage.requestFullscreen || stage.webkitRequestFullscreen || function () {}).call(stage);
+        var nativeFs = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.msRequestFullscreen;
+        if (!isFs()) {
+          if (nativeFs) {
+            try {
+              var p = nativeFs.call(stage);
+              if (p && p.catch) p.catch(function () { pseudoFs(); });
+            } catch (e) { pseudoFs(); }
+          } else pseudoFs();
         } else {
-          document.exitFullscreen && document.exitFullscreen();
+          if (document.exitFullscreen) document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+          else unPseudoFs();
         }
-        setTimeout(function () { pano && pano.resize(); view && view.resize && view.resize(); }, 300);
+        setTimeout(function () { pano && pano.resize(); view && view.resize && view.resize(); }, 350);
       });
+      function isFs() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement) || root.classList.contains('vr-fsx');
+      }
+      function pseudoFs() {
+        root.classList.add('vr-fsx');
+        document.body.style.overflow = 'hidden';
+        fsBtn.innerHTML = '<i class="fas fa-compress"></i> 退出全屏';
+        pano && pano.resize && pano.resize();
+        view && view.resize && view.resize();
+      }
+      function unPseudoFs() {
+        root.classList.remove('vr-fsx');
+        document.body.style.overflow = '';
+        fsBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏';
+        setTimeout(function () { pano && pano.resize(); view && view.resize && view.resize(); }, 120);
+      }
+      document.addEventListener('fullscreenchange', fsSync);
+      document.addEventListener('webkitfullscreenchange', fsSync);
+      function fsSync() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          fsBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏';
+        }
+      }
+      /* 官方 VR 全景直达（携程，覆盖全国景点） */
+      var ext = document.createElement('a');
+      ext.className = 'vr-btn ext';
+      ext.target = '_blank';
+      ext.rel = 'noopener';
+      ext.innerHTML = '<i class="fas fa-cube"></i> 官方 VR 全景';
+      ext.href = 'https://m.ctrip.com/webapp/you/gspoi/search?searchword=' + encodeURIComponent(spot.city ? spot.city + ' ' + spot.name : spot.name);
+      ctrl.appendChild(ext);
     }
 
     /* --- 拖拽 --- */

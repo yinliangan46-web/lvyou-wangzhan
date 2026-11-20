@@ -566,6 +566,7 @@
 
     /* ===== 逐景点实拍图：360 图片搜索抓取后存本地，一个景点一张 ===== */
     var POI_IMG_SIGHT = {
+        "巢湖": url(P.karst, 'spot'),   /* 湖光山色：避免误配到城市图（合肥天鹅湖CBD） */
         "大理古城": "images/poi/096f5fb3ba.jpg",
         "洱海生态廊道": "images/poi/826fa3f775.jpg",
         "喜洲古镇": "images/poi/c6e7326d81.jpg",
@@ -1144,7 +1145,11 @@
         var poiHit = poiLookup(String(name || ''), kind);
         if (poiHit) return poiHit;
         if (EXACT_IMG[name]) return EXACT_IMG[name];
-        if (kind !== 'food' && !ICONIC[name]) {
+        /* 自然景观（湖/山/海/沙漠等）不用城市图兜底——城市图多为市区CBD，会张冠李戴；
+           改用同类型实景图池，如巢湖→湖山实拍 */
+        var NATURAL_CAT = { lake: 1, mountain: 1, desert: 1, sea: 1, nature: 1, snow: 1, winter: 1, guilin: 1 };
+        var isNatural = NATURAL_CAT[categoryOf(name, kind, city)] && String(name).replace(/[^\u4e00-\u9fa5]/g, '') !== String(city || '');
+        if (kind !== 'food' && !ICONIC[name] && !isNatural) {
             var hitCity = cityOf(name, city);
             if (hitCity) {
                 if (CITY_POI[hitCity]) return CITY_POI[hitCity];

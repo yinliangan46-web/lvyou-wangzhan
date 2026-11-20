@@ -259,8 +259,13 @@
         return 'https://tse1-mm.cn.bing.net/th?q=' + encodeURIComponent(q) + '&w=1600&h=1000&c=7&rs=1&p=0&dpr=1.5&pid=1.7';
     }
     var fallbackImg = IS_FOOD ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
-    var heroQ = info.q || ((info.city || info.loopName || '') + ' ' + NAME +
-        (IS_FOOD ? ' 美食 自然光 特写 实拍' : ' 写实风光 氛围感 高清 构图舒展'));
+    /* 搜索词构造：具体景点名直接搜（巢湖→巢湖实拍）；只有泛称（人民公园/博物馆等）
+       才附加城市名，避免图搜被城市带偏（巢湖→合肥天鹅湖CBD） */
+    var isGeneric = /公园|广场|步行街|博物馆|博物院|图书馆|美术馆|体育|大学|中学|医院|商圈|新区|开发区/.test(NAME) ||
+        (NAME.length <= 2 && !/[湖山海关岛江河瀑泉寺塔桥楼宫园巷街镇村洞崖滩谷峡庙祠阁渡]/.test(NAME));
+    var cityPart = (info.city && isGeneric) ? (info.city + ' ') : '';
+    var heroQ = info.q || (NAME + ' ' + cityPart +
+        (IS_FOOD ? '美食 自然光 特写 实拍' : '写实风光 氛围感 高清 构图舒展'));
     var heroSrc = photo(heroQ);
 
     document.title = NAME + ' · ' + (info.city || info.loopName || '旅行') + ' | MYL 旅行';
