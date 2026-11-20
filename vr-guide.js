@@ -1,23 +1,17 @@
 /* ============================================================
- * MYL · VR 云游板块（v1）
+ * MYL · 实景云游板块（v2 全新改版）
  * 位置：景点详情页地图卡片下方
- * 特性：
- *   1) 全景模式：PANO_DATA 命中的景点用真宽幅全景图，
- *      左右无限拖拽 + 上下俯仰 + 惯性滑动
- *   2) 环绕模式：其余全部景点自动生成 CSS 3D 八方位照片环
- *      （主图 + 周边景点 + 特色美食），左右转环、上下调整视角
- *   3) AI 解说：Web Speech 本地语音（免费无 Key），字幕同步，
- *      解说联动画面（自动巡航 / 转到对应方位）
- *   4) 陀螺仪模式：转动手机即可环视四周（iOS 需授权）
+ * 三种实景模式（自动选择，可手动切换）：
+ *   A) 真实街景（境外城市）：接入 Google 街景实景拍摄车画面，
+ *      像高德街景一样真实可环视（网络可达时自动启用，可一键切换）
+ *   B) 实景漫游（国内城市 / 街景不可达时）：全幅沉浸式实景大图，
+ *      上下左右拖动环视 + 多镜头切换 + 电影感运镜，替代旧版照片环
+ *   C) 实景全景 360°：PANO_DATA 命中的景点用真宽幅全景图
+ * 解说：Web Speech 本地语音（免费无 Key），字幕同步，解说联动镜头
  * 由 enrich.js 调用：MYL_VR.mount(spot)
  * ============================================================ */
 (function () {
   'use strict';
-
-  var T = (function () {
-    var s = {};
-    return function (k, v) { if (arguments.length === 2) { s[k] = v; return v; } return s[k]; };
-  })();
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -28,31 +22,33 @@
   var CSS = ''
     + '.myl-vr{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 4px 18px rgba(0,0,0,.05)}'
     + '.myl-vr h3{margin:0 0 6px;font-size:17px;display:flex;align-items:center;gap:8px;color:#222}'
-    + '.myl-vr h3 .vr-badge{font-size:11px;font-weight:700;color:#7c3aed;background:#f3ecff;border:1px solid #ddd0ff;border-radius:99px;padding:2px 9px}'
+    + '.myl-vr h3 .vr-badge{font-size:11px;font-weight:700;color:#0e9f8a;background:#e9f7f4;border:1px solid #bfe8df;border-radius:99px;padding:2px 9px}'
     + '.myl-vr h3 .vr-sub{font-size:12px;font-weight:400;color:#999;margin-left:auto}'
     + '.vr-intro{font-size:13px;color:#777;margin-bottom:12px}'
     + '.vr-stage{position:relative;border-radius:14px;overflow:hidden;background:#0d1321;aspect-ratio:16/9;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}'
     + '.vr-stage:active{cursor:grabbing}'
-    + '.vr-stage canvas,.vr-ring3d{position:absolute;inset:0;width:100%;height:100%}'
-    + '.vr-ring3d{perspective:920px;overflow:hidden}'
-    + '.vr-ring3d .vr-spin{position:absolute;left:50%;top:50%;transform-style:preserve-3d;width:0;height:0}'
-    + '.vr-ring3d .vr-face{position:absolute;left:-150px;top:-105px;width:300px;height:210px;border-radius:12px;overflow:hidden;'
-    + 'box-shadow:0 10px 30px rgba(0,0,0,.45);backface-visibility:hidden;background:#111}'
-    + '.vr-ring3d .vr-face img{width:100%;height:100%;object-fit:cover;pointer-events:none}'
-    + '.vr-ring3d .vr-face .vr-cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:12px;padding:16px 10px 8px;text-align:center}'
-    + '.vr-compass{position:absolute;top:10px;left:12px;color:rgba(255,255,255,.85);font-size:11px;background:rgba(0,0,0,.35);border-radius:99px;padding:4px 12px;letter-spacing:2px;backdrop-filter:blur(4px);pointer-events:none}'
-    + '.vr-modechip{position:absolute;top:10px;right:12px;color:#fff;font-size:11px;background:rgba(124,58,237,.8);border-radius:99px;padding:4px 12px;backdrop-filter:blur(4px);pointer-events:none}'
-    + '.vr-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:rgba(255,255,255,.55);font-size:11px;pointer-events:none}'
+    + '.vr-stage canvas,.vr-immerse,.vr-street{position:absolute;inset:0;width:100%;height:100%}'
+    + '.vr-immerse .vr-shot{position:absolute;inset:0;opacity:0;transition:opacity .85s ease}'
+    + '.vr-immerse .vr-shot.show{opacity:1}'
+    + '.vr-immerse .vr-shot img{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;max-width:none}'
+    + '.vr-street iframe{position:absolute;inset:0;width:100%;height:100%;border:0}'
+    + '.vr-compass{position:absolute;top:10px;left:12px;color:rgba(255,255,255,.85);font-size:11px;background:rgba(0,0,0,.35);border-radius:99px;padding:4px 12px;letter-spacing:2px;backdrop-filter:blur(4px);pointer-events:none;z-index:3}'
+    + '.vr-modechip{position:absolute;top:10px;right:12px;color:#fff;font-size:11px;background:rgba(14,159,138,.82);border-radius:99px;padding:4px 12px;backdrop-filter:blur(4px);pointer-events:none;z-index:3}'
+    + '.vr-modechip.google{background:rgba(30,110,235,.82)}'
+    + '.vr-shotchip{position:absolute;bottom:12px;left:12px;color:rgba(255,255,255,.9);font-size:11px;background:rgba(0,0,0,.4);border-radius:99px;padding:4px 12px;backdrop-filter:blur(4px);pointer-events:none;z-index:3}'
+    + '.vr-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:rgba(255,255,255,.55);font-size:11px;pointer-events:none;z-index:3}'
     + '.vr-ctrl{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}'
     + '.vr-btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:10px;padding:9px 15px;font-size:13.5px;font-weight:600;color:#fff;transition:opacity .15s;font-family:inherit}'
     + '.vr-btn:hover{opacity:.85}'
     + '.vr-btn.play{background:linear-gradient(120deg,#7c3aed,#4f46e5)}'
+    + '.vr-btn.swap{background:linear-gradient(120deg,#1e6eeb,#0e9f8a)}'
     + '.vr-btn.gyro{background:#0e9f8a}.vr-btn.gyro.on{background:#0c7f70}'
     + '.vr-btn.cruise{background:#475569}.vr-btn.cruise.on{background:#1e293b}'
     + '.vr-btn.fs{background:#334155}'
-    + '.vr-cap-bar{margin-top:10px;background:#f6f3ff;border:1px solid #e6ddff;border-radius:12px;padding:10px 14px;min-height:44px;font-size:13.5px;color:#3b2f66;line-height:1.7;display:flex;gap:10px;align-items:flex-start}'
-    + '.vr-cap-bar .ic{color:#7c3aed;margin-top:3px}'
+    + '.vr-cap-bar{margin-top:10px;background:#eefaf7;border:1px solid #c9ece4;border-radius:12px;padding:10px 14px;min-height:44px;font-size:13.5px;color:#155e51;line-height:1.7;display:flex;gap:10px;align-items:flex-start}'
+    + '.vr-cap-bar .ic{color:#0e9f8a;margin-top:3px}'
     + '.vr-cap-bar.idle{background:#f6f7fa;border-color:#e6e9ef;color:#666}'
+    + '.vr-note{margin-top:8px;font-size:12px;color:#a0a6b0}'
     + '@media(max-width:640px){.myl-vr{padding:16px 12px}.vr-stage{aspect-ratio:4/3}}';
 
   function injectStyle() {
@@ -63,33 +59,58 @@
     document.head.appendChild(s);
   }
 
-  /* ---------- 图片收集（环绕模式） ---------- */
+  /* ---------- 实景镜头收集 ---------- */
   function collectPhotos(spot) {
     var poi = window.mylPOIImg || function () { return ''; };
     var cand = [];
     function add(src, label) { if (src) cand.push({ src: src, label: label }); }
-    add(spot.hero, spot.name + ' · 主视角');
-    add(poi(spot.name, spot.type, spot.city), spot.name);
-    (spot.relSpots || []).forEach(function (n) { add(poi(n, 'spot', spot.city), n); });
-    (spot.relFoods || []).forEach(function (n) { add(poi(n, 'food', spot.city), n + ' · 本地味'); });
+    add(spot.hero || poi(spot.name, spot.type, spot.city), spot.name + ' · 实景主视角');
+    (spot.relSpots || []).slice(0, 3).forEach(function (n) { add(poi(n, 'spot', spot.city), n + ' · 实拍'); });
+    (spot.relFoods || []).slice(0, 2).forEach(function (n) { add(poi(n, 'food', spot.city), n + ' · 本地味'); });
     var fallback = spot.type === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
-    add(fallback, spot.city + ' · 风物');
+    add(fallback, spot.city + ' · 街头实景');
     /* 去重保序 */
     var seen = {}, list = [];
     cand.forEach(function (c) { if (!seen[c.src]) { seen[c.src] = 1; list.push(c); } });
-    /* 不足 8 方位时循环补位 */
-    var base = list.slice();
-    while (list.length < 8 && base.length) {
-      var b = base[list.length % base.length];
-      list.push({ src: b.src, label: b.label });
+    return list.slice(0, 6);
+  }
+
+  /* ---------- 城市国家归属 ---------- */
+  function countryOf(city) {
+    var D = window.CITY_DETAIL || {};
+    for (var k in D) {
+      if (D[k] && D[k].name === city) return D[k].country || '';
     }
-    return list.slice(0, 8);
+    return '';
+  }
+  function findCoord(city, name) {
+    var C = window.CITY_SPOT_COORDS || {};
+    if (city && name && C[city + '·' + name]) return C[city + '·' + name];
+    if (name && C[name]) return C[name];
+    if (city) {
+      for (var k in C) {
+        if (k.indexOf(city + '·') === 0 && C[k]) return C[k];
+      }
+    }
+    return null;
+  }
+
+  /* ---------- Google 可达性探测（2.5s 超时） ---------- */
+  function probeGoogle() {
+    return new Promise(function (res) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; res(false); } }, 2500);
+      var im = new Image();
+      im.onload = function () { if (!done) { done = true; clearTimeout(t); res(true); } };
+      im.onerror = function () { if (!done) { done = true; clearTimeout(t); res(false); } };
+      im.src = 'https://www.gstatic.com/images/branding/product/1x/maps_96dp.png?v=' + Date.now();
+    });
   }
 
   /* ---------- 解说词生成 ---------- */
   function buildScript(spot) {
     var s = [];
-    s.push({ t: '欢迎来到' + (spot.city || '') + (spot.city ? '的' : '') + spot.name + '。现在，请跟着我的声音，转动手中的画面，我们一起云游这一站。', act: 'start' });
+    s.push({ t: '欢迎来到' + (spot.city || '') + (spot.city ? '的' : '') + spot.name + '。眼前是这里的实景画面，请跟着我的声音，转动视线，我们一起云游这一站。', act: 'start' });
     if (spot.desc) s.push({ t: spot.desc, act: 'cruise' });
     if (spot.tip) s.push({ t: '小贴士：' + spot.tip, act: 'cruise' });
     if (spot.ticket && spot.ticket !== spot.tip) s.push({ t: '门票与预约：' + spot.ticket + '。出行前记得先确认开放时间。', act: 'cruise' });
@@ -97,10 +118,10 @@
       s.push({ t: '一个有意思的冷知识——' + f, act: 'cruise' });
     });
     (spot.relSpots || []).slice(0, 3).forEach(function (n, i) {
-      s.push({ t: '看完这里，不妨把' + n + '也排进同一天的行程，距离不远，顺路刚刚好。', act: 'focus:' + (3 + i), poi: n });
+      s.push({ t: '看完这里，不妨把' + n + '也排进同一天的行程，距离不远，顺路刚刚好。', act: 'focus:' + (i + 1), poi: n });
     });
     if ((spot.relFoods || []).length) {
-      s.push({ t: '逛累了？' + spot.city + '的' + spot.relFoods[0] + '就在不远处，转一圈的功夫刚好吃上一顿。', act: 'food' });
+      s.push({ t: '逛累了？' + spot.city + '的' + spot.relFoods[0] + '就在不远处，逛完这一圈刚好吃上一顿。', act: 'food' });
     }
     s.push({ t: '这就是' + spot.name + '。等你真正站在这里的时候，记得回来告诉我，眼前的实景比云游更美。', act: 'end' });
     return s;
@@ -146,7 +167,7 @@
     this.onState(false);
   };
 
-  /* ---------- 全景视图（canvas 圆柱投影） ---------- */
+  /* ---------- 模式 C：实景全景 360°（canvas 圆柱投影） ---------- */
   function PanoView(stage) {
     this.stage = stage;
     this.cv = document.createElement('canvas');
@@ -181,9 +202,7 @@
     if (this.pitch < -1) this.pitch = -1;
     var ctx = this.ctx, W = this.cv.width, H = this.cv.height;
     var im = this.img;
-    /* 圆柱：把图按 yaw 偏移平铺三次实现无缝环绕 */
     var ratio = H / W;
-    var sliceW = Math.max(1, Math.round(im.width * (im.height / im.width > ratio ? ratio * im.width / im.width : 1)));
     var drawH = H;
     var drawW = Math.round(drawH * (im.width / im.height) * 1.35);
     var shift = ((this.yaw % 1) + 1) % 1;
@@ -194,7 +213,6 @@
     for (var x = x0 - drawW; x < W; x += drawW) {
       ctx.drawImage(im, x, vOff * 0.4, drawW, drawH * 1.15);
     }
-    /* 暗角 */
     var g = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, W * 0.75);
     g.addColorStop(0, 'rgba(0,0,0,0)');
     g.addColorStop(1, 'rgba(0,0,0,.4)');
@@ -206,63 +224,146 @@
     this.vyaw -= dx * 0.18;
     this.vpitch += dy * 0.3;
   };
+  PanoView.prototype.gyro = function (g, b) {
+    this.yaw = ((-(g / 90)) % 1 + 1) % 1;
+    this.pitch = Math.max(-1, Math.min(1, (b - 45) / 60));
+  };
   PanoView.prototype.destroy = function () { this._raf && cancelAnimationFrame(this._raf); this.ok = false; };
 
-  /* ---------- 环绕视图（CSS 3D 八方位） ---------- */
-  function RingView(stage, photos) {
+  /* ---------- 模式 B：实景漫游（全幅大图环视 + 多镜头） ---------- */
+  function ImmersiveView(stage, shots) {
     var self = this;
     this.stage = stage;
+    this.shots = shots;
+    this.idx = 0;
     this.wrap = document.createElement('div');
-    this.wrap.className = 'vr-ring3d';
-    var spin = document.createElement('div');
-    spin.className = 'vr-spin';
-    this.spin = spin;
-    var N = photos.length || 8;
-    var R = 380;
-    photos.forEach(function (p, i) {
-      var f = document.createElement('div');
-      f.className = 'vr-face';
-      f.style.transform = 'rotateY(' + (i * 360 / N) + 'deg) translateZ(-' + R + 'px)';
-      f.innerHTML = '<img src="' + esc(p.src) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
-        '<span class="vr-cap">' + esc(p.label || '') + '</span>';
-      spin.appendChild(f);
+    this.wrap.className = 'vr-immerse';
+    this.layerA = document.createElement('div');
+    this.layerB = document.createElement('div');
+    [this.layerA, this.layerB].forEach(function (l) {
+      l.className = 'vr-shot';
+      var im = document.createElement('img');
+      im.alt = '';
+      im.draggable = false;
+      l.appendChild(im);
+      self.wrap.appendChild(l);
     });
-    this.wrap.appendChild(spin);
-    stage.appendChild(this.wrap);
+    this.cur = this.layerA;
+    this.bak = this.layerB;
     this.yaw = 0; this.pitch = 0; this.vyaw = 0; this.vpitch = 0;
-    this.cruise = 0; this.N = N; this.R = R;
-    this._raf = requestAnimationFrame(function () { self.frame(); });
+    this.s0 = 1; this.maxX = 0; this.maxY = 0;
+    this.cruiseOn = false;
+    this.zoom = 1.08;
+    this._raf = null;
     this._loopOn = true;
-    this._loop = function () { if (!self._loopOn) return; self.frame(); requestAnimationFrame(self._loop); };
+    this._loop = function () { if (!self._loopOn) return; self.frame(); self._raf = requestAnimationFrame(self._loop); };
+    stage.appendChild(this.wrap);
+    window.addEventListener('resize', this._onResize = function () { self.resize(); });
+    this.resize();
     requestAnimationFrame(this._loop);
+    this._raf = requestAnimationFrame(this._loop);
+    this.show(0);
   }
-  RingView.prototype.frame = function () {
+  ImmersiveView.prototype.resize = function () {
+    var r = this.stage.getBoundingClientRect();
+    this.sw = Math.max(300, r.width);
+    this.sh = Math.max(170, r.height);
+    var img = this.cur.querySelector('img');
+    this._fit(img);
+  };
+  ImmersiveView.prototype._fit = function (img) {
+    if (!img || !img.naturalWidth) return;
+    var iw = img.naturalWidth, ih = img.naturalHeight;
+    var cover = Math.max(this.sw / iw, this.sh / ih);
+    /* 留出水平环视余量，同时限制最大裁切 */
+    var s = Math.max(cover, Math.min(this.sw * 1.7 / iw, cover * 2.1));
+    this.s0 = s;
+    this.maxX = Math.max(0, (iw * s - this.sw) / 2);
+    this.maxY = Math.max(0, (ih * s - this.sh) / 2);
+    img._iw = iw; img._ih = ih;
+  };
+  ImmersiveView.prototype._apply = function (img, panX, panY) {
+    if (!img || !img._iw) return;
+    var s = this.s0 * this.zoom;
+    var x = this.sw / 2 - img._iw * s / 2 + panX;
+    var y = this.sh / 2 - img._ih * s / 2 + panY;
+    img.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+  };
+  ImmersiveView.prototype.show = function (i) {
+    var self = this;
+    if (!this.shots.length) return;
+    i = ((i % this.shots.length) + this.shots.length) % this.shots.length;
+    this.idx = i;
+    var shot = this.shots[i];
+    var back = this.bak;
+    var img = back.querySelector('img');
+    img.onload = function () {
+      self._fit(img);
+      img.onload = null;
+      back.classList.add('show');
+      self.cur.classList.remove('show');
+      var t = self.cur;
+      self.cur = back;
+      self.bak = t;
+      self.zoom = 1.07;
+      if (self.shotChip) self.shotChip.textContent = '📷 实景镜头 ' + (self.idx + 1) + '/' + self.shots.length + ' · ' + (shot.label || '');
+    };
+    img.onerror = function () { /* 加载失败静默跳过 */ };
+    img.src = shot.src;
+  };
+  ImmersiveView.prototype.frame = function () {
     var k = 0.004;
-    this.yaw += this.vyaw * k + this.cruise;
+    this.yaw += this.vyaw * k;
     this.pitch += this.vpitch * k;
     this.vyaw *= 0.94; this.vpitch *= 0.94;
-    if (this.pitch > 18) this.pitch = 18;
-    if (this.pitch < -18) this.pitch = -18;
-    this.spin.style.transform = 'rotateX(' + this.pitch + 'deg) rotateY(' + this.yaw + 'deg) translateZ(140px)';
-    var deg = ((this.yaw % 360) + 360) % 360;
-    this.compass && this.compass(deg.toFixed(0) + '° · 方位 ' + (Math.round(deg / (360 / this.N)) + 1) + '/' + this.N);
+    if (this.yaw > 1) this.yaw = 1; if (this.yaw < -1) this.yaw = -1;
+    if (this.pitch > 1) this.pitch = 1; if (this.pitch < -1) this.pitch = -1;
+    if (this.zoom > 1) { this.zoom -= 0.0009; if (this.zoom < 1) this.zoom = 1; }
+    var t = Date.now();
+    var ox = this.cruiseOn ? Math.sin(t * 0.00023) * 0.38 : 0;
+    var oy = this.cruiseOn ? Math.sin(t * 0.00016) * 0.22 : 0;
+    var px = Math.max(-1, Math.min(1, this.yaw + ox)) * this.maxX;
+    var py = Math.max(-1, Math.min(1, this.pitch + oy)) * this.maxY;
+    this._apply(this.cur.querySelector('img'), px, py);
+    if (this.maxX > 0) {
+      var deg = Math.round(180 + (px / this.maxX) * 90);
+      this.compass && this.compass(deg + '°');
+    }
   };
-  RingView.prototype.drag = function (dx, dy) {
-    this.vyaw -= dx * 4.2;
-    this.vpitch += dy * 2.2;
+  ImmersiveView.prototype.drag = function (dx, dy) {
+    if (this.maxX > 0) this.vyaw -= dx * 0.045;
+    if (this.maxY > 0) this.vpitch += dy * 0.045;
   };
-  RingView.prototype.faceTo = function (index) {
-    var self = this;
-    var target = 360 - index * (360 / this.N);
-    var from = this.yaw;
-    var steps = 60, cur = 0;
-    var timer = setInterval(function () {
-      cur++;
-      self.yaw = from + (target - from) * (cur / steps);
-      if (cur >= steps) clearInterval(timer);
-    }, 16);
+  ImmersiveView.prototype.gyro = function (g, b) {
+    this.yaw = Math.max(-1, Math.min(1, -(g / 90)));
+    this.pitch = Math.max(-1, Math.min(1, (b - 45) / 60));
   };
-  RingView.prototype.destroy = function () { this._loopOn = false; };
+  ImmersiveView.prototype.destroy = function () {
+    this._loopOn = false;
+    this._raf && cancelAnimationFrame(this._raf);
+    this._onResize && window.removeEventListener('resize', this._onResize);
+  };
+
+  /* ---------- 模式 A：真实街景（Google 街景实景拍摄） ---------- */
+  function StreetView(stage, spot) {
+    this.stage = stage;
+    var coord = findCoord(spot.city, spot.name);
+    if (!coord) throw new Error('no coord');
+    var lat = coord[1], lng = coord[0];
+    this.wrap = document.createElement('div');
+    this.wrap.className = 'vr-street';
+    var fr = document.createElement('iframe');
+    fr.setAttribute('allowfullscreen', 'true');
+    fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+    fr.loading = 'eager';
+    fr.src = 'https://maps.google.com/maps?q=&layer=c&cbll=' + lat + ',' + lng +
+      '&cbp=11,0,0,0,0&output=svembed&hl=zh-CN';
+    this.wrap.appendChild(fr);
+    stage.appendChild(this.wrap);
+  }
+  StreetView.prototype.drag = function () {};
+  StreetView.prototype.gyro = function () {};
+  StreetView.prototype.destroy = function () { try { this.wrap.remove(); } catch (e) {} };
 
   /* ---------- 挂载 ---------- */
   function mount(spot) {
@@ -270,26 +371,23 @@
     injectStyle();
     var host = document.getElementById('meMap');
     if (!host) return;
+
     var root = document.createElement('div');
     root.className = 'myl-vr';
     root.innerHTML =
-      '<h3><i class="fas fa-vr-cardboard" style="color:#7c3aed"></i> VR 云游 · AI 解说' +
-        '<span class="vr-badge">陀螺仪环视 · 语音导览</span><span class="vr-sub">' + esc(spot.name) + '</span></h3>' +
-      '<p class="vr-intro">画面可以上下左右自由拖动；点「开始解说」，AI 导游带你边转边讲；手机上还能开启陀螺仪，转动手机看四周。</p>' +
+      '<h3><i class="fas fa-vr-cardboard" style="color:#0e9f8a"></i> 实景云游 · AI 解说' +
+        '<span class="vr-badge">实景拍摄 · 语音导览</span><span class="vr-sub">' + esc(spot.name) + '</span></h3>' +
+      '<p class="vr-intro">画面可以上下左右自由环视；点「开始解说」，AI 导游带你边看边讲。境外城市自动接入真实街景，国内城市呈现沉浸式实景漫游。</p>' +
       '<div class="vr-stage" id="vrStage">' +
         '<span class="vr-compass" id="vrCompass">0°</span>' +
         '<span class="vr-modechip" id="vrMode">加载中</span>' +
-        '<span class="vr-hint">左右拖动环视 · 上下拖动调整视角</span>' +
+        '<span class="vr-shotchip" id="vrShotChip" style="display:none"></span>' +
+        '<span class="vr-hint" id="vrHint">左右拖动环视 · 上下拖动调整视角</span>' +
       '</div>' +
-      '<div class="vr-ctrl">' +
-        '<button class="vr-btn play" id="vrPlay"><i class="fas fa-play"></i> 开始解说</button>' +
-        '<button class="vr-btn gyro" id="vrGyro"><i class="fas fa-mobile-screen"></i> 陀螺仪</button>' +
-        '<button class="vr-btn cruise" id="vrCruise"><i class="fas fa-route"></i> 自动巡航</button>' +
-        '<button class="vr-btn fs" id="vrFs"><i class="fas fa-expand"></i> 全屏</button>' +
-      '</div>' +
-      '<div class="vr-cap-bar idle" id="vrCap"><i class="fas fa-comment-dots ic"></i><span>解说字幕会显示在这里——欢迎语、景点故事、冷知识、顺路推荐，全都讲给你听。</span></div>';
+      '<div class="vr-ctrl" id="vrCtrl"></div>' +
+      '<div class="vr-cap-bar idle" id="vrCap"><i class="fas fa-comment-dots ic"></i><span>解说字幕会显示在这里——欢迎语、景点故事、冷知识、顺路推荐，全都讲给你听。</span></div>' +
+      '<div class="vr-note" id="vrNote"></div>';
 
-    var mapCard = host.querySelector ? host : host;
     if (host.nextSibling && host.nextSibling.parentNode) {
       host.parentNode.insertBefore(root, host.nextSibling);
     } else if (host.parentElement) {
@@ -299,37 +397,117 @@
     var stage = root.querySelector('#vrStage');
     var capBar = root.querySelector('#vrCap');
     var modeChip = root.querySelector('#vrMode');
-    var view = null, pano = null;
+    var compassEl = root.querySelector('#vrCompass');
+    var hintEl = root.querySelector('#vrHint');
+    var shotChipEl = root.querySelector('#vrShotChip');
+    var ctrl = root.querySelector('#vrCtrl');
+    var noteEl = root.querySelector('#vrNote');
 
-    function setCompass(fn) { if (view && view.compass === undefined) view.compass = fn; else if (view) view.compass = fn; }
+    var view = null, pano = null, mode = null, streetOK = false;
+    var country = countryOf(spot.city);
+
+    function setCompassText(t) { compassEl.textContent = t; }
 
     function caption(text, busy) {
       capBar.className = 'vr-cap-bar' + (busy ? '' : ' idle');
       capBar.innerHTML = '<i class="fas fa-comment-dots ic"></i><span>' + esc(text) + '</span>';
     }
 
-    /* --- 全景优先，失败回退环绕 --- */
-    var PANO = window.PANO_DATA || {};
-    var pd = PANO[spot.name];
-    function initRing() {
-      modeChip.textContent = '360° 环绕 · AI 生成';
-      var photos = collectPhotos(spot);
-      view = new RingView(stage, photos);
-      setCompass(function (t) { root.querySelector('#vrCompass').textContent = t; });
-      bindDrag(view);
-    }
-    if (pd && pd.src) {
-      modeChip.textContent = '实景全景 · 360°';
-      pano = new PanoView(stage);
-      view = pano;
-      setCompass(function (t) { root.querySelector('#vrCompass').textContent = t; });
-      bindDrag(pano);
-      pano.load(pd.src, function () { stage.querySelector('canvas') && stage.querySelector('canvas').remove(); pano.destroy(); initRing(); });
-    } else {
-      initRing();
+    function btn(cls, icon, label, onclick) {
+      var b = document.createElement('button');
+      b.className = 'vr-btn ' + cls;
+      b.innerHTML = '<i class="fas ' + icon + '"></i> ' + label;
+      b.onclick = onclick;
+      ctrl.appendChild(b);
+      return b;
     }
 
-    /* --- 拖拽（Pointer 事件，兼容触摸） --- */
+    function clearView() {
+      if (view) { view.destroy && view.destroy(); view = null; pano = null; }
+      Array.prototype.slice.call(stage.querySelectorAll('canvas,.vr-immerse,.vr-street')).forEach(function (el) { el.remove(); });
+      shotChipEl.style.display = 'none';
+    }
+
+    /* --- 模式装配 --- */
+    function applyMode(m) {
+      clearView();
+      mode = m;
+      cruiseBtn = null; gyroBtn = null;
+      rebuildCtrl();
+      if (m === 'pano') {
+        var PANO = window.PANO_DATA || {};
+        var pd = PANO[spot.name];
+        modeChip.textContent = '实景全景 · 360°';
+        modeChip.className = 'vr-modechip';
+        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
+        pano = new PanoView(stage);
+        view = pano;
+        view.compass = setCompassText;
+        bindDrag(pano);
+        pano.load(pd.src, function () {
+          stage.querySelector('canvas') && stage.querySelector('canvas').remove();
+          pano.destroy();
+          applyMode('immerse');
+        });
+      } else if (m === 'street') {
+        modeChip.textContent = '真实街景 · 实景拍摄';
+        modeChip.className = 'vr-modechip google';
+        hintEl.textContent = '在街景画面内拖动即可环视 · 双指缩放';
+        try {
+          view = new StreetView(stage, spot);
+          noteEl.innerHTML = '街景画面由 Google 街景实景拍摄车采集。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
+          compassEl.textContent = '实景';
+        } catch (e) {
+          applyMode('immerse');
+          return;
+        }
+      } else {
+        modeChip.textContent = '沉浸实景漫游';
+        modeChip.className = 'vr-modechip';
+        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角 · 解说自动切镜头';
+        view = new ImmersiveView(stage, collectPhotos(spot));
+        view.compass = setCompassText;
+        view.shotChip = shotChipEl;
+        shotChipEl.style.display = '';
+        bindDrag(view);
+        noteEl.innerHTML = '';
+      }
+    }
+
+    /* --- 控制按钮（随模式重建） --- */
+    var playBtn = null, swapBtn = null, cruiseBtn = null, gyroBtn = null, fsBtn = null;
+    function rebuildCtrl() {
+      ctrl.innerHTML = '';
+      playBtn = btn('play', 'fa-play', '开始解说', function () {
+        if (narrator.on) { narrator.stop(); }
+        else { narrator.play(buildScript(spot)); }
+      });
+      if (streetOK) {
+        swapBtn = btn('swap', 'fa-shuffle', mode === 'street' ? '切换实景漫游' : '切换真实街景', function () {
+          if (narrator.on) narrator.stop();
+          applyMode(mode === 'street' ? 'immerse' : 'street');
+        });
+      }
+      if (mode !== 'street') {
+        cruiseBtn = btn('cruise', 'fa-route', '自动漫游', function () {
+          var on = !cruiseBtn.classList.contains('on');
+          cruiseBtn.classList.toggle('on', on);
+          if (pano) pano.cruise = on ? 0.0006 : 0;
+          else if (view && view.cruiseOn !== undefined) view.cruiseOn = on;
+        });
+        gyroBtn = btn('gyro', 'fa-mobile-screen', '陀螺仪', function () { toggleGyro(); });
+      }
+      fsBtn = btn('fs', 'fa-expand', '全屏', function () {
+        if (!document.fullscreenElement) {
+          (stage.requestFullscreen || stage.webkitRequestFullscreen || function () {}).call(stage);
+        } else {
+          document.exitFullscreen && document.exitFullscreen();
+        }
+        setTimeout(function () { pano && pano.resize(); view && view.resize && view.resize(); }, 300);
+      });
+    }
+
+    /* --- 拖拽 --- */
     function bindDrag(v) {
       var down = false, lx = 0, ly = 0, pid = null;
       stage.addEventListener('pointerdown', function (e) {
@@ -351,55 +529,36 @@
     var narrator = new Narrator(
       function (item, idx, total) {
         caption('（' + idx + '/' + total + '）' + item.t, true);
-        if (!view) return;
-        if (view.cruiseOn !== undefined) view.cruiseOn = true;
-        if (item.act === 'cruise' || item.act === 'start') {
-          if (pano) pano.cruise = 0.0006;
-          else view.cruise = 0.12;
-        } else if (item.act && item.act.indexOf('focus:') === 0) {
-          if (pano) pano.cruise = 0.0012;
-          else view.cruise = 0;
-          var fi = parseInt(item.act.split(':')[1], 10);
-          if (!pano && view.faceTo) view.faceTo(Math.min(fi, view.N - 1));
-        } else if (item.act === 'food') {
-          if (pano) pano.cruise = 0.0009;
-          else if (view.faceTo) view.faceTo(view.N - 1);
-        } else if (item.act === 'end') {
-          if (pano) pano.cruise = 0;
-          else view.cruise = 0.1;
+        if (!view || mode === 'street') return;
+        var act = item.act || '';
+        if (view.cruiseOn !== undefined && (act === 'cruise' || act === 'start' || act === 'end')) view.cruiseOn = true;
+        if (pano) {
+          pano.cruise = act === 'end' ? 0.0009 : 0.0006;
+        } else if (view.show) {
+          var n = view.shots.length;
+          if (act.indexOf('focus:') === 0) {
+            view.show(parseInt(act.split(':')[1], 10) % n);
+          } else if (act === 'food') {
+            view.show(n - 1);
+          }
         }
       },
       function (playing) {
-        var btn = root.querySelector('#vrPlay');
-        if (playing) { btn.innerHTML = '<i class="fas fa-stop"></i> 停止解说'; }
-        else { btn.innerHTML = '<i class="fas fa-play"></i> 开始解说'; caption('解说结束。想再来一遍？点上方按钮。', false); }
+        if (playing && playBtn) { playBtn.innerHTML = '<i class="fas fa-stop"></i> 停止解说'; }
+        else if (playBtn) {
+          playBtn.innerHTML = '<i class="fas fa-play"></i> 开始解说';
+          caption('解说结束。想再来一遍？点上方按钮。', false);
+        }
       }
     );
-    root.querySelector('#vrPlay').onclick = function () {
-      if (narrator.on) { narrator.stop(); }
-      else { narrator.play(buildScript(spot)); }
-    };
-
-    /* --- 自动巡航开关 --- */
-    var cruiseBtn = root.querySelector('#vrCruise');
-    cruiseBtn.onclick = function () {
-      var on = !cruiseBtn.classList.contains('on');
-      cruiseBtn.classList.toggle('on', on);
-      if (pano) pano.cruise = on ? 0.0006 : 0;
-      else if (view) view.cruise = on ? 0.12 : 0;
-    };
 
     /* --- 陀螺仪 --- */
-    var gyroBtn = root.querySelector('#vrGyro');
     var gyroOn = false;
     function gyroHandler(e) {
-      if (!view || !gyroOn) return;
-      var g = e.gamma || 0, b = e.beta || 0;
-      view.yaw = -(g / 90) * 180;
-      if (pano) { pano.yaw = ((-(g / 90)) % 1 + 1) % 1; pano.pitch = Math.max(-1, Math.min(1, (b - 45) / 60)); }
-      else { view.pitch = Math.max(-18, Math.min(18, (b - 55) / 3)); }
+      if (!view || !gyroOn || mode === 'street') return;
+      view.gyro && view.gyro(e.gamma || 0, e.beta || 0);
     }
-    gyroBtn.onclick = function () {
+    function toggleGyro() {
       function start() {
         gyroOn = !gyroOn;
         gyroBtn.classList.toggle('on', gyroOn);
@@ -418,17 +577,21 @@
       } else {
         caption('当前设备不支持陀螺仪。', false);
       }
-    };
+    }
 
-    /* --- 全屏 --- */
-    root.querySelector('#vrFs').onclick = function () {
-      if (!document.fullscreenElement) {
-        (stage.requestFullscreen || stage.webkitRequestFullscreen || function(){}).call(stage);
-      } else {
-        document.exitFullscreen && document.exitFullscreen();
-      }
-      setTimeout(function () { pano && pano.resize(); }, 300);
-    };
+    /* --- 启动：全景优先 → 街景探测 → 沉浸漫游 --- */
+    var PANO = window.PANO_DATA || {};
+    if (PANO[spot.name] && PANO[spot.name].src) {
+      applyMode('pano');
+    } else {
+      modeChip.textContent = '实景加载中…';
+      var wantStreet = country && country !== '中国' && !!findCoord(spot.city, spot.name);
+      probeGoogle().then(function (ok) {
+        streetOK = ok && wantStreet;
+        if (streetOK) applyMode('street');
+        else applyMode('immerse');
+      });
+    }
   }
 
   window.MYL_VR = { mount: mount };
