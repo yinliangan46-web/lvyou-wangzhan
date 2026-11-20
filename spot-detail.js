@@ -1472,11 +1472,15 @@
 
     if (window.MYL_PANO) window.MYL_PANO.mountAll();
 
-    /* ---------- 新功能增强：天气 / 地图导航 / 分享 ---------- */
+    /* ---------- 新功能增强：天气 / 地图导航 / 分享 / VR 云游 ---------- */
     if (window.MYL_ENRICH) window.MYL_ENRICH.run({
         name: NAME, city: info.city, loop: LOOP,
         type: IS_FOOD ? 'food' : 'spot',
-        desc: info.desc, ticket: info.ticket || info.price
+        desc: info.desc, ticket: info.ticket || info.price,
+        tip: info.tip, cat: cat,
+        facts: (FACTS[IS_FOOD ? 'food' : cat] || []).slice(0, 4),
+        relSpots: relSpots.slice(), relFoods: relFoods.slice(),
+        hero: typeof heroSrc !== 'undefined' ? heroSrc : ''
     });
 
     /* ---------- 导航 ---------- */

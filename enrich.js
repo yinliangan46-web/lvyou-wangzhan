@@ -252,6 +252,8 @@
       } catch (e) {
         mBody.innerHTML = '<div class="me-empty">地图初始化失败</div>' + mBody.innerHTML;
       }
+      /* VR 云游板块：紧跟地图卡片之下 */
+      if (window.MYL_VR) window.MYL_VR.mount(spot);
     });
   }
 
