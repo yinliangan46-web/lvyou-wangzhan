@@ -1472,6 +1472,13 @@
 
     if (window.MYL_PANO) window.MYL_PANO.mountAll();
 
+    /* ---------- 新功能增强：天气 / 地图导航 / 分享 ---------- */
+    if (window.MYL_ENRICH) window.MYL_ENRICH.run({
+        name: NAME, city: info.city, loop: LOOP,
+        type: IS_FOOD ? 'food' : 'spot',
+        desc: info.desc, ticket: info.ticket || info.price
+    });
+
     /* ---------- 导航 ---------- */
     var secs = Array.prototype.slice.call(document.querySelectorAll('.sd-sec'));
     $('sdLinks').innerHTML = secs.map(function (s) {

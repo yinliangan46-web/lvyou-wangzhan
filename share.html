@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="description" content="MYL 旅行分享中心：一键生成目的地种草卡、足迹战绩海报、行程路书长图。" />
+<title>分享中心 · MYL旅行</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="share.css?v=20261130a" />
+</head>
+<body>
+<nav class="sh-nav">
+  <a href="index.html" class="back"><i class="fas fa-arrow-left"></i> 返回首页</a>
+  <span class="brand"><i class="fas fa-share-nodes"></i> MYL · 分享中心</span>
+</nav>
+
+<main class="sh-wrap">
+  <header class="sh-hero">
+    <h1>把你的旅行，做成一张值得转发的小卡片</h1>
+    <p>目的地种草卡 · 足迹战绩海报 · 行程路书长图，全部本地生成，无水印、可保存、可分享</p>
+  </header>
+
+  <section class="sh-mode">
+    <button class="mode-btn on" data-mode="spot"><i class="fas fa-camera-retro"></i><span>目的地种草卡</span></button>
+    <button class="mode-btn" data-mode="footprint"><i class="fas fa-boot-heeled"></i><span>我的足迹海报</span></button>
+    <button class="mode-btn" data-mode="plan"><i class="fas fa-route"></i><span>行程路书卡</span></button>
+  </section>
+
+  <!-- 表单区 -->
+  <section class="sh-form" id="formSpot">
+    <h2><i class="fas fa-camera-retro"></i> 目的地种草卡</h2>
+    <label>景点名称<input id="fSpot" type="text" placeholder="如：洪崖洞" /></label>
+    <label>所在城市<input id="fCity" type="text" placeholder="如：重庆" /></label>
+    <label>一句话安利<textarea id="fDesc" rows="2" placeholder="如：入夜亮灯的吊脚楼，江边拍照超出片"></textarea></label>
+    <label>门票/贴士<input id="fTicket" type="text" placeholder="如：免费 · 建议傍晚前往" /></label>
+    <button class="go" id="genSpot"><i class="fas fa-wand-magic-sparkles"></i> 生成海报</button>
+  </section>
+
+  <section class="sh-form" id="formFootprint" style="display:none">
+    <h2><i class="fas fa-boot-heeled"></i> 我的足迹海报</h2>
+    <p class="hint">自动读取你在「集章打卡」中盖过的章与心愿单，生成足迹战绩图。</p>
+    <div id="fpStats" class="fp-stats"></div>
+    <button class="go" id="genFootprint"><i class="fas fa-wand-magic-sparkles"></i> 生成足迹海报</button>
+  </section>
+
+  <section class="sh-form" id="formPlan" style="display:none">
+    <h2><i class="fas fa-route"></i> 行程路书卡</h2>
+    <label>路书标题<input id="pTitle" type="text" placeholder="如：成都 4 天 3 晚 · 陪爸妈慢游" /></label>
+    <label>行程要点（每行一条）<textarea id="pLines" rows="7" placeholder="Day 1 宽窄巷子 → 人民公园喝茶&#10;Day 2 大熊猫基地 → 春熙路"></textarea></label>
+    <button class="go" id="genPlan"><i class="fas fa-wand-magic-sparkles"></i> 生成路书长图</button>
+  </section>
+
+  <!-- 预览与操作 -->
+  <section class="sh-preview" id="preview" style="display:none">
+    <h2><i class="fas fa-image"></i> 预览（1080 × 1620）</h2>
+    <div class="pv-box"><canvas id="poster" width="1080" height="1620"></canvas></div>
+    <div class="pv-actions">
+      <button class="act save" id="btnSave"><i class="fas fa-download"></i> 保存图片</button>
+      <button class="act webshare" id="btnShare"><i class="fas fa-share-nodes"></i> 分享</button>
+      <button class="act copy" id="btnCopy"><i class="fas fa-link"></i> 复制链接</button>
+    </div>
+    <p class="pv-tip">手机上用「分享」可直接调起微信 / 朋友圈等系统分享面板；保存的图片无水印、清晰可发。</p>
+  </section>
+</main>
+
+<footer class="sh-foot">MYL旅行 · 分享中心 —— 数据均在你的浏览器本地生成，不会上传。</footer>
+
+<script src="share.js?v=20261130a"></script>
+</body>
+</html>
