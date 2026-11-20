@@ -19,18 +19,24 @@
     });
   }
 
-  /* ---------- 芊云全景 VR 作品（伙伴授权作品，嵌入时自动遮蔽平台品牌标识） ----------
-     配置方式：{ '景点名': '芊云作品id' }
-     作品 id 取自分享链接 tour.html?id= 后面那串，如
-     https://vr.he29.com/index/play/tour.html?id=620c9460db0c424 → '620c9460db0c424'
-     也可以在景点详情页 URL 上临时加 &qyvr=作品id 直接预览效果 */
-  var QYVR_DATA = window.QYVR_DATA || {};
-  function qyvrIdFor(spot) {
+  /* ---------- 芊云全景 VR 作品（公开聚合页索引，自动按景点名匹配后页面内嵌入，不跳转网站） ---------- */
+  function qyvrMatch(spot) {
     try {
       var q = new URLSearchParams(location.search).get('qyvr');
-      if (q) return q;
+      if (q) return { id: q, name: '' };
     } catch (e) {}
-    return QYVR_DATA[spot.name] || null;
+    var D = window.QYVR_DATA || {};
+    if (D[spot.name]) return { id: D[spot.name], name: spot.name };
+    var CD = window.QYVR_CITY_DATA || {};
+    var list = CD[(spot.city || '').replace(/市$/, '')] || [];
+    var nm = spot.name || '';
+    if (nm && list.length) {
+      for (var i = 0; i < list.length; i++) {
+        var wname = list[i][1] || '';
+        if (wname.indexOf(nm) > -1 || nm.indexOf(wname) > -1) return { id: list[i][0], name: wname };
+      }
+    }
+    return null;
   }
 
   var CSS = ''
@@ -447,7 +453,13 @@
       function query(q, minRatio) {
         var url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
           encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|size&iiurlwidth=1800&format=json&origin=*';
-        return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        /* 6 秒超时：commons 在部分网络下挂起会导致整个板块卡住"加载中" */
+        var ac = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        var timer = ac ? setTimeout(function () { ac.abort(); }, 6000) : null;
+        return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) {
+          if (timer) clearTimeout(timer);
+          return r.ok ? r.json() : null;
+        }).then(function (d) {
           var best = null;
           var pages = (d && d.query && d.query.pages) || {};
           Object.keys(pages).forEach(function (k) {
@@ -462,7 +474,7 @@
             }
           });
           return best;
-        }).catch(function () { return null; });
+        }).catch(function () { if (timer) clearTimeout(timer); return null; });
       }
       function keep(hit) {
         try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit })); } catch (e) {}
@@ -470,12 +482,15 @@
       }
       var city = spot.city || '';
       /* 轮 1：明确标注 equirectangular 的真全景；轮 2：360 panorama 关键词；
-         轮 3：退回景点名检索，比例仍限制在 2:1 附近。三轮都空 → 确认无真全景。 */
+         轮 3：退回景点名检索，比例仍限制在 2:1 附近。三轮都空 → 确认无真全景。
+         整体 10 秒竞速，超时直接放弃（绝不卡住板块） */
+      var overall = setTimeout(function () { res(null); }, 10000);
       query(spot.name + ' ' + city + ' panorama equirectangular', 1.9).then(function (hit1) {
-        if (hit1) return keep(hit1);
+        if (hit1) { clearTimeout(overall); return keep(hit1); }
         query(spot.name + ' ' + city + ' 360 panorama', 1.9).then(function (hit2) {
-          if (hit2) return keep(hit2);
+          if (hit2) { clearTimeout(overall); return keep(hit2); }
           query(spot.name + ' ' + city, 2.0).then(function (hit3) {
+            clearTimeout(overall);
             keep(hit3);
           });
         });
@@ -540,7 +555,7 @@
     var ctrl = root.querySelector('#vrCtrl');
     var noteEl = root.querySelector('#vrNote');
 
-    var view = null, pano = null, mode = null, streetOK = false;
+    var view = null, pano = null, mode = null, streetOK = false, lastStreetCoord = null;
     var country = countryOf(spot.city);
 
     function setCompassText(t) { compassEl.textContent = t; }
@@ -605,12 +620,13 @@
         modeChip.textContent = '真实街景 · 实景拍摄';
         modeChip.className = 'vr-modechip google';
         hintEl.textContent = '在街景画面内拖动即可环视 · 双指缩放';
+        lastStreetCoord = streetCoord;
         view = new StreetView(stage, streetCoord[1], streetCoord[0]);
         noteEl.innerHTML = '街景画面由 Google 街景实景拍摄车采集。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
         compassEl.textContent = '实景';
       } else if (m === 'qy') {
-        /* 芊云全景 VR 作品（伙伴授权），iframe 官方嵌入方式，上下遮幅屏蔽平台品牌标识 */
-        var qyId = qyvrIdFor(spot);
+        /* 芊云全景 VR 作品：iframe 页面内嵌入（不跳转网站），上下遮幅屏蔽平台品牌标识 */
+        var qyId = qyHit ? qyHit.id : '';
         modeChip.textContent = '真实 VR · 720° 全景漫游';
         modeChip.className = 'vr-modechip';
         hintEl.textContent = '画面内自由拖动环视 · 场景间热点切换';
@@ -626,7 +642,7 @@
         var cBottom = document.createElement('div');
         cBottom.className = 'vr-qy-cover bottom';
         stage.appendChild(cBottom);
-        noteEl.innerHTML = '全景作品由「实景云游计划」提供实景拍摄支持 · 拖动画面 360° 环视';
+        noteEl.innerHTML = '全景作品：' + esc(qyHit && qyHit.name ? qyHit.name : spot.name) + ' · 实景拍摄可 360° 环视';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';
@@ -654,10 +670,18 @@
         langBtn.innerHTML = '<i class="fas fa-language"></i> ' + (vrLang === 'zh' ? 'English 解说' : '中文解说');
         if (narrator.on) { narrator.stop(); narrator.play(buildScript(spot, vrLang)); }
       });
-      if (streetOK || mode === 'qy') {
-        swapBtn = btn('swap', 'fa-shuffle', mode === 'immerse' ? '切换真实街景' : '切换实景漫游', function () {
+      /* 模式互换：街景 ↔ 芊云全景（页面内嵌入，不跳转）↔ 实景漫游 */
+      if (streetOK && qyHit) {
+        swapBtn = btn('swap', 'fa-shuffle', mode === 'qy' ? '切换真实街景' : '切换芊云全景', function () {
           if (narrator.on) narrator.stop();
-          applyMode(mode === 'immerse' ? (streetOK ? 'street' : 'immerse') : 'immerse');
+          if (mode === 'qy') applyMode('street', lastStreetCoord);
+          else applyMode('qy');
+        });
+      } else if (streetOK || mode === 'qy') {
+        swapBtn = btn('swap', 'fa-shuffle', mode === 'immerse' ? (streetOK ? '切换真实街景' : '切换实景漫游') : '切换实景漫游', function () {
+          if (narrator.on) narrator.stop();
+          if (mode === 'immerse' && streetOK) applyMode('street', lastStreetCoord);
+          else applyMode('immerse');
         });
       }
       if (mode !== 'street' && mode !== 'qy') {
@@ -708,14 +732,13 @@
           fsBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏';
         }
       }
-      /* 芊云 VR 作品广场入口（伙伴授权作品） */
-      var sq = document.createElement('a');
-      sq.className = 'vr-btn ext';
-      sq.target = '_blank';
-      sq.rel = 'noopener';
-      sq.innerHTML = '<i class="fas fa-globe"></i> VR 全景广场';
-      sq.href = 'https://9kvr.cn/tour/service/square';
-      ctrl.appendChild(sq);
+      /* 芊云匹配时即使街景不可用，也提供芊云/漫游互换 */
+      if (!streetOK && qyHit && mode !== 'qy') {
+        swapBtn = btn('swap', 'fa-shuffle', '切换芊云全景', function () {
+          if (narrator.on) narrator.stop();
+          applyMode('qy');
+        });
+      }
     }
 
     /* --- 拖拽 --- */
@@ -790,31 +813,31 @@
       }
     }
 
-    /* --- 启动：芊云 VR 作品 → 站内全景 → 全网真 360° 全景 → 真实街景画面 → 沉浸漫游 ---
-       国内外都优先接入 Google 街景画面（与境外一致的体验），探测失败再降级 */
+    /* --- 启动：Google 街景优先（国内外一致），并网检索真全景与芊云作品互为备选 ---
+       probeGoogle 与 commonsPano 同时发起，任何一路都不阻塞另一路，板块永不卡住 */
     var PANO = window.PANO_DATA || {};
-    if (qyvrIdFor(spot)) {
-      applyMode('qy');
-    } else if (PANO[spot.name] && PANO[spot.name].src) {
+    var qyHit = qyvrMatch(spot);
+    if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
     } else {
-      modeChip.textContent = '正在全网检索实景全景…';
-      commonsPano(spot).then(function (hit) {
-        if (hit) {
-          pendingPano = hit;
-          applyMode('net');
-          return;
-        }
-        probeGoogle().then(function (ok) {
-          streetOK = ok;
-          if (!ok) { applyMode('immerse'); return; }
-          modeChip.textContent = '街景定位中…';
+      modeChip.textContent = '正在检索真实街景…';
+      var pCommons = commonsPano(spot);
+      probeGoogle().then(function (ok) {
+        streetOK = ok;
+        if (ok) {
+          pCommons.then(function (hit) { if (hit) pendingPano = hit; });
           geocodePoi(spot.city, spot.name).then(function (g) {
             var coord = g || findCoord(spot.city, spot.name);
             if (coord) applyMode('street', coord);
+            else applyMode(qyHit ? 'qy' : 'immerse');
+          });
+        } else {
+          pCommons.then(function (hit) {
+            if (hit) { pendingPano = hit; applyMode('net'); return; }
+            if (qyHit) applyMode('qy');
             else applyMode('immerse');
           });
-        });
+        }
       });
     }
   }

@@ -105,8 +105,11 @@
       var d = 2;
       box = '&viewbox=' + (center[0] - d) + ',' + (center[1] + d) + ',' + (center[0] + d) + ',' + (center[1] - d) + '&bounded=1';
     }
-    return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1' + box + '&q=' + encodeURIComponent(q))
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    var ac = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = ac ? setTimeout(function () { ac.abort(); }, 8000) : null;
+    return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1' + box + '&q=' + encodeURIComponent(q), ac ? { signal: ac.signal } : undefined)
+      .then(function (r) { if (timer) clearTimeout(timer); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .catch(function (e) { if (timer) clearTimeout(timer); throw e; })
       .then(function (list) {
         var v = (list && list[0]) ? [parseFloat(list[0].lon), parseFloat(list[0].lat)] : null;
         geoCacheSet(ck, v);
@@ -170,9 +173,15 @@
     } catch (e) {}
   }
   function fetchJSON(url) {
-    return fetch(url).then(function (r) {
+    var ac = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = ac ? setTimeout(function () { ac.abort(); }, 8000) : null;
+    return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) {
+      if (timer) clearTimeout(timer);
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
+    }).catch(function (e) {
+      if (timer) clearTimeout(timer);
+      throw e;
     });
   }
   /* 备用源：wttr.in（Open-Meteo 国内网络不稳时自动降级） */
