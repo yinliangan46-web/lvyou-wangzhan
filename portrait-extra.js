@@ -45,6 +45,13 @@ function ensureScore(c, sc){
   if(!sc.c) sc.c=fallbackC(c);
   sc.__name__=c?c.name:'';
   sc.__real=real;
+  sc.__c={
+    name:c?c.name:'',
+    tags:(c&&c.tags)||[],
+    landmarks:(c&&(c.landmarks||c.bLandmarks))||[],
+    pins:(c&&c.routePins)||[],
+    foods:(c&&c.foods||[]).map(function(f){return typeof f==='string'?f:(f.name||'');})
+  };
   return sc;
 }
 
@@ -72,24 +79,59 @@ function radarChart(sc){
     '<polygon points="'+data.join(' ')+'" fill="rgba(37,99,235,.16)" stroke="#2563eb" stroke-width="1.6"/>'+dots+labels+'</svg>';
 }
 
+/* 专属称号：本地素材锚点 + 气质后缀，不套固定类型名 */
+var PERSONA_SUF={
+  culture:['探古客','寻迹人','访俗士','览胜翁','问津客'],
+  food:['寻味客','老饕友','馋游人','食探家','味知己'],
+  photo:['追光者','取景人','掠影客','捕景手','寻影师'],
+  relax:['山居客','闲游者','慢享家','栖心人','逸游人'],
+  night:['灯火客','夜游者','晚归人','寻夜客'],
+  budget:['惠游者','精算客','会享家','淘乐人'],
+  fun:['寻趣家','探险客','撒野派','玩乐人']
+};
+var A_TRAFFIC=/机场|车站|火车站|高铁站|码头|港口|服务区|高速|客运站|口岸/;
+var A_GENERIC=/^(古城|古镇|古都|景区|自然风光|历史|文化|城市|目的地|山水|风光|公园|老街|度假区|风景名胜|自然景观|人文景观|美食|小吃|海滨|海岛|都市|山水风光|山水人文|休闲|度假|慢生活|慢游|潮流|网红|打卡|自由行|美食之都|亲子|风景)/;
+function cleanAnchor(a,name){
+  a=String(a||'').replace(/[·\s（(].*$/,'').trim();
+  if(!a||A_TRAFFIC.test(a)||A_GENERIC.test(a))return'';
+  if(name&&a.indexOf(name)===0)a=a.slice(name.length);
+  if(!a||A_GENERIC.test(a))return'';
+  return a.slice(0,4);
+}
+function anchorOf(d){
+  d=d||{};
+  var lists=[d.tags||[],d.landmarks||[],d.pins||[],d.foods||[]];
+  for(var i=0;i<lists.length;i++){
+    var arr=lists[i];
+    for(var j=0;j<arr.length;j++){
+      var x=cleanAnchor(arr[j],d.name);
+      if(x)return x;
+    }
+  }
+  return'';
+}
 function cityPersona(sc){
   var c=(sc&&sc.c)||{}, r=(sc&&sc.r)||{};
   var pool=[
-    ['culture',(c.culture||r.culture)||0,'历史课代表','走到哪儿都想先翻一翻这座城的来历','fa-landmark'],
-    ['food',(c.food||r.food)||0,'追味干饭人','行程可以松，胃不能受委屈','fa-bowl-food'],
-    ['photo',(c.photo||r.sight)||0,'出片侦察兵','先找机位和光线，再谈逛哪儿','fa-camera-retro'],
-    ['relax',(c.relax||r.pace)||0,'节奏缓冲家','能坐下来喝杯东西，比赶景点重要','fa-leaf'],
-    ['night',c.night||0,'夜行动物','白天养精蓄锐，晚上才开始进城','fa-moon'],
-    ['budget',(c.value||r.budget)||0,'精明划算派','每一笔花销都要花在刀刃上','fa-coins'],
-    ['fun',(c.fun||r.fun)||0,'玩乐冒险家','哪里热闹往哪儿钻，主打一个尽兴','fa-face-grin-stars']
+    ['culture',(c.culture||r.culture)||0,'走到哪儿都想先翻一翻这座城的来历','fa-landmark'],
+    ['food',(c.food||r.food)||0,'行程可以松，胃不能受委屈','fa-bowl-food'],
+    ['photo',(c.photo||r.sight)||0,'先找机位和光线，再谈逛哪儿','fa-camera-retro'],
+    ['relax',(c.relax||r.pace)||0,'能坐下来喝杯东西，比赶景点重要','fa-leaf'],
+    ['night',c.night||0,'白天养精蓄锐，晚上才开始进城','fa-moon'],
+    ['budget',(c.value||r.budget)||0,'每一笔花销都要花在刀刃上','fa-coins'],
+    ['fun',(c.fun||r.fun)||0,'哪里热闹往哪儿钻，主打一个尽兴','fa-face-grin-stars']
   ];
   var max=Math.max.apply(null,pool.map(function(x){return x[1];}));
-  /* 真实评分城只认严格最高分；兜底城在接近最高的候选集里按城市名哈希打散，避免同型扎堆 */
   var strict=!!(sc&&sc.__real);
   var bucket=max<=2?pool:pool.filter(function(x){return x[1]>=max-(strict?0:1);});
   var pick=bucket[hashStr(sc&&sc.__name__)%bucket.length];
-  if(!pick||pick[1]<=0) return {name:'随性漫游者',line:'不设固定路线，跟着心情和偶遇走',icon:'fa-compass'};
-  return {name:pick[2],line:pick[3],icon:pick[4]};
+  if(!pick||pick[1]<=0) return {name:(sc&&sc.__name__)||'随性漫游者',line:'不设固定路线，跟着心情和偶遇走',icon:'fa-compass'};
+  var key=pick[0];
+  var sufArr=PERSONA_SUF[key]||PERSONA_SUF.relax;
+  var suf=sufArr[hashStr(sc&&sc.__name__)%sufArr.length];
+  var anchor=anchorOf(sc&&sc.__c);
+  var title=anchor?anchor+suf:((sc&&sc.__name__)||'')+suf;
+  return {name:title,line:pick[2],icon:pick[3]};
 }
 function personaBanner(sc){
   var p=cityPersona(sc);
