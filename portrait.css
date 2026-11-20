@@ -73,6 +73,11 @@
   .hl i{font-size:11px}
   .risk{margin-top:10px;font-size:12.5px;color:#1d4ed8;background:#eaf1ff;border-radius:10px;padding:9px 12px}
   .risk i{margin-right:5px}
+  .mate-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .mate{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:4px 10px;color:#fff}
+  .vibe-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .vibe{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:#fff;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 12px}
+  .vibe i{color:var(--primary);font-size:11px}
   @media(max-width:600px){.meta-grid{grid-template-columns:repeat(2,1fr)}}
 
 @media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
