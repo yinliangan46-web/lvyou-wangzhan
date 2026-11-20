@@ -1788,6 +1788,7 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
     (function resolveCoords() {
         if (!routePins || !routePins.length) return;
         const _R = window.REAL_POI_COORDS || {};
+        const _EX = window.CITY_SPOT_COORDS || {};
         const _CC = window.ALL_CITY_COORDS || {};
         const center = (coordsArr[0] && isFinite(coordsArr[0][0])) ? coordsArr[0]
             : (_CC[cityName] || null);
@@ -1814,7 +1815,7 @@ window.generateCityRichData = function(cityKey, cityName, provinceName) {
         let fill = 0;
         coordsArr = routePins.map(function (pin, i) {
             if (i === 0) return [center[0], center[1]];
-            const c = _R[cityName + '·' + pin] || _R[pin];
+            const c = _EX[cityName + '·' + pin] || _R[cityName + '·' + pin] || _R[pin];
             if (c && isFinite(c[0]) && isFinite(c[1]) && kmOf(c, center) <= 400) {
                 return [c[0], c[1]];
             }
