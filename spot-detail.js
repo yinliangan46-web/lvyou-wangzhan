@@ -1480,7 +1480,10 @@
         tip: info.tip, cat: cat,
         facts: (FACTS[IS_FOOD ? 'food' : cat] || []).slice(0, 4),
         relSpots: relSpots.slice(), relFoods: relFoods.slice(),
-        hero: typeof heroSrc !== 'undefined' ? heroSrc : ''
+        hero: typeof heroSrc !== 'undefined' ? heroSrc : '',
+        gallery: (typeof galItems !== 'undefined' ? galItems : []).map(function (g) {
+            return { src: g.src, label: NAME + ' · ' + g.label };
+        })
     });
 
     /* ---------- 导航 ---------- */

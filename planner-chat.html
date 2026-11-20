@@ -40,6 +40,22 @@
       <span class="chip" data-t="和小伙伴去厦门3天，喜欢拍照，经济省钱">📷 去厦门3天拍照，经济省钱</span>
     </div>
     <div class="smart-alt"><a href="javascript:void(0)" id="skipSmart">不想打字？使用分步问答 →</a></div>
+    <div class="llm-row" id="llmRow">
+      <span class="llm-tag"><i class="fas fa-robot"></i> 接入开源大模型（可选）</span>
+      <span class="llm-desc">填入 Key 后，整份路书由大模型生成，理解任意口语化需求；不填则用内置规划引擎。</span>
+      <div class="llm-form">
+        <select id="llmProvider">
+          <option value="zhipu">智谱 GLM（glm-4-flash 免费）</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="silicon">硅基流动</option>
+          <option value="moonshot">Kimi</option>
+        </select>
+        <input id="llmKey" type="password" placeholder="粘贴 API Key" autocomplete="off" />
+        <button id="llmSave">保存</button>
+        <a id="llmKeyLink" target="_blank" rel="noopener" href="https://open.bigmodel.cn/usercenter/apikeys">获取 Key ↗</a>
+        <span class="llm-state" id="llmState"></span>
+      </div>
+    </div>
   </section>
 
   <div class="steps" id="steps" style="display:none"></div>
@@ -71,6 +87,6 @@
 <script src="city-augment-12.js"></script>
 <script src="city-augment-13.js"></script>
 <script src="guide-patch.js"></script>
-<script src="planner-chat.js"></script>
+<script src="planner-chat.js?v=20261201d"></script>
 </body>
 </html>

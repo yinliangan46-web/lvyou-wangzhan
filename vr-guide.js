@@ -59,12 +59,14 @@
     document.head.appendChild(s);
   }
 
-  /* ---------- 实景镜头收集 ---------- */
+  /* ---------- 实景镜头收集（优先详情页图库全套实拍，再补周边） ---------- */
   function collectPhotos(spot) {
     var poi = window.mylPOIImg || function () { return ''; };
     var cand = [];
     function add(src, label) { if (src) cand.push({ src: src, label: label }); }
-    add(spot.hero || poi(spot.name, spot.type, spot.city), spot.name + ' · 实景主视角');
+    /* 详情页图库：主图+全景+细节+晨昏+人文，全是该景点真实实拍 */
+    (spot.gallery || []).forEach(function (g) { add(g.src, g.label); });
+    add(poi(spot.name, spot.type, spot.city), spot.name + ' · 实景主视角');
     (spot.relSpots || []).slice(0, 3).forEach(function (n) { add(poi(n, 'spot', spot.city), n + ' · 实拍'); });
     (spot.relFoods || []).slice(0, 2).forEach(function (n) { add(poi(n, 'food', spot.city), n + ' · 本地味'); });
     var fallback = spot.type === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
@@ -72,7 +74,7 @@
     /* 去重保序 */
     var seen = {}, list = [];
     cand.forEach(function (c) { if (!seen[c.src]) { seen[c.src] = 1; list.push(c); } });
-    return list.slice(0, 6);
+    return list.slice(0, 8);
   }
 
   /* ---------- 城市国家归属 ---------- */
@@ -90,6 +92,9 @@
     if (city) {
       for (var k in C) {
         if (k.indexOf(city + '·') === 0 && C[k]) return C[k];
+      }
+      if (window.MYL_CITY_CENTERS && window.MYL_CITY_CENTERS[city]) {
+        return window.MYL_CITY_CENTERS[city];
       }
     }
     return null;
@@ -344,12 +349,85 @@
     this._onResize && window.removeEventListener('resize', this._onResize);
   };
 
-  /* ---------- 模式 A：真实街景（Google 街景实景拍摄） ---------- */
-  function StreetView(stage, spot) {
+  /* ---------- POI 精确地理编码（Nominatim，3.5s 超时，缓存 7 天） ---------- */
+  function geoCacheGet(k) {
+    try {
+      var c = JSON.parse(localStorage.getItem('myl_geo_cache') || '{}');
+      var hit = c[k];
+      if (hit && Date.now() - hit.t < 7 * 86400 * 1000) return hit.v;
+    } catch (e) {}
+    return null;
+  }
+  function geoCacheSet(k, v) {
+    try {
+      var c = JSON.parse(localStorage.getItem('myl_geo_cache') || '{}');
+      c[k] = { t: Date.now(), v: v };
+      localStorage.setItem('myl_geo_cache', JSON.stringify(c));
+    } catch (e) {}
+  }
+  function geocodePoi(city, name) {
+    var q = (city ? city + ' ' : '') + name;
+    var ck = 'nom:' + q;
+    var cached = geoCacheGet(ck);
+    if (cached !== null) return Promise.resolve(cached);
+    return new Promise(function (res) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; res(null); } }, 3500);
+      fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1&q=' + encodeURIComponent(q))
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (list) {
+          if (done) return;
+          done = true; clearTimeout(t);
+          var v = (list && list[0]) ? [parseFloat(list[0].lon), parseFloat(list[0].lat)] : null;
+          geoCacheSet(ck, v);
+          res(v);
+        })
+        .catch(function () { if (!done) { done = true; clearTimeout(t); res(null); } });
+    });
+  }
+
+  /* ---------- 全网真 360° 全景检索（Wikimedia Commons，免费无 Key） ---------- */
+  function commonsPano(spot) {
+    return new Promise(function (res) {
+      var key = 'myl_cm_pano_' + (spot.city || '') + '_' + spot.name;
+      try {
+        var c = JSON.parse(localStorage.getItem(key) || 'null');
+        if (c && Date.now() - c.t < 7 * 86400 * 1000) return res(c.v);
+      } catch (e) {}
+      function query(q, minRatio) {
+        var url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
+          encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|size&iiurlwidth=1800&format=json&origin=*';
+        return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+          var best = null;
+          var pages = (d && d.query && d.query.pages) || {};
+          Object.keys(pages).forEach(function (k) {
+            var ii = pages[k].imageinfo && pages[k].imageinfo[0];
+            if (!ii || !ii.url || !/jpe?g$/i.test(ii.url)) return;
+            var w = ii.width || 0, h = ii.height || 1;
+            var ratio = w / h;
+            if (w >= 1400 && ratio >= minRatio && ratio <= 4) {
+              if (!best || w * h > best.w * best.h) {
+                best = { src: ii.thumburl || ii.url, w: w, h: h, credit: String(pages[k].title || '').replace(/^File:/, '') };
+              }
+            }
+          });
+          return best;
+        }).catch(function () { return null; });
+      }
+      /* 两轮检索：先「景点+panorama」找真全景，找不到再放宽比例搜宽幅实景 */
+      query(spot.name + ' ' + (spot.city || '') + ' panorama', 2.0).then(function (hit1) {
+        if (hit1) { try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit1 })); } catch (e) {} return res(hit1); }
+        query(spot.name + ' ' + (spot.city || ''), 2.5).then(function (hit2) {
+          try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit2 })); } catch (e) {}
+          res(hit2);
+        });
+      });
+    });
+  }
+
+  /* ---------- 模式 A：真实街景（Google 街景实景拍摄，POI 精确定位） ---------- */
+  function StreetView(stage, lat, lng) {
     this.stage = stage;
-    var coord = findCoord(spot.city, spot.name);
-    if (!coord) throw new Error('no coord');
-    var lat = coord[1], lng = coord[0];
     this.wrap = document.createElement('div');
     this.wrap.className = 'vr-street';
     var fr = document.createElement('iframe');
@@ -429,7 +507,8 @@
     }
 
     /* --- 模式装配 --- */
-    function applyMode(m) {
+    var pendingPano = null;
+    function applyMode(m, streetCoord) {
       clearView();
       mode = m;
       cruiseBtn = null; gyroBtn = null;
@@ -449,18 +528,27 @@
           pano.destroy();
           applyMode('immerse');
         });
+      } else if (m === 'net') {
+        modeChip.textContent = '全网实景全景 · 360°';
+        modeChip.className = 'vr-modechip';
+        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
+        noteEl.innerHTML = '全景素材：' + esc(pendingPano.credit || 'Wikimedia Commons 实景拍摄');
+        pano = new PanoView(stage);
+        view = pano;
+        view.compass = setCompassText;
+        bindDrag(pano);
+        pano.load(pendingPano.src, function () {
+          stage.querySelector('canvas') && stage.querySelector('canvas').remove();
+          pano.destroy();
+          applyMode('immerse');
+        });
       } else if (m === 'street') {
         modeChip.textContent = '真实街景 · 实景拍摄';
         modeChip.className = 'vr-modechip google';
         hintEl.textContent = '在街景画面内拖动即可环视 · 双指缩放';
-        try {
-          view = new StreetView(stage, spot);
-          noteEl.innerHTML = '街景画面由 Google 街景实景拍摄车采集。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
-          compassEl.textContent = '实景';
-        } catch (e) {
-          applyMode('immerse');
-          return;
-        }
+        view = new StreetView(stage, streetCoord[1], streetCoord[0]);
+        noteEl.innerHTML = '街景画面由 Google 街景实景拍摄车采集。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
+        compassEl.textContent = '实景';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';
@@ -579,17 +667,34 @@
       }
     }
 
-    /* --- 启动：全景优先 → 街景探测 → 沉浸漫游 --- */
+    /* --- 启动：站内全景 → 全网真 360° 全景 → 真实街景（POI 精确定位） → 沉浸漫游 --- */
     var PANO = window.PANO_DATA || {};
     if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
     } else {
-      modeChip.textContent = '实景加载中…';
-      var wantStreet = country && country !== '中国' && !!findCoord(spot.city, spot.name);
-      probeGoogle().then(function (ok) {
-        streetOK = ok && wantStreet;
-        if (streetOK) applyMode('street');
-        else applyMode('immerse');
+      modeChip.textContent = '正在全网检索实景全景…';
+      commonsPano(spot).then(function (hit) {
+        if (hit) {
+          pendingPano = hit;
+          applyMode('net');
+          return;
+        }
+        var wantStreet = country && country !== '中国';
+        if (wantStreet) {
+          probeGoogle().then(function (ok) {
+            streetOK = ok;
+            if (!ok) { applyMode('immerse'); return; }
+            modeChip.textContent = '街景定位中…';
+            geocodePoi(spot.city, spot.name).then(function (g) {
+              var coord = g || findCoord(spot.city, spot.name);
+              if (coord) applyMode('street', coord);
+              else applyMode('immerse');
+            });
+          });
+        } else {
+          streetOK = false;
+          applyMode('immerse');
+        }
       });
     }
   }

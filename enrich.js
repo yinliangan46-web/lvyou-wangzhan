@@ -46,7 +46,7 @@
     return [lat + dLat, lng + dLng];
   }
 
-  /* ---------- 坐标查找 ---------- */
+  /* ---------- 坐标查找（三级兜底：内置库 → Nominatim POI → 城市中心） ---------- */
   function findCoord(city, name) {
     var C = window.CITY_SPOT_COORDS || {};
     var keys = [];
@@ -55,13 +55,57 @@
     for (var i = 0; i < keys.length; i++) {
       if (C[keys[i]]) return C[keys[i]];
     }
-    /* 城市级兜底：取该城市任一景点坐标 */
+    /* 城市级兜底：该城市任一景点坐标 → 内置城市中心表（离线保证有图） */
     if (city) {
       for (var k in C) {
         if (k.indexOf(city + '·') === 0 && C[k]) return C[k];
       }
+      if (window.MYL_CITY_CENTERS && window.MYL_CITY_CENTERS[city]) {
+        return window.MYL_CITY_CENTERS[city];
+      }
     }
     return null;
+  }
+
+  var geoCache = {};
+  function geoCacheGet(k) {
+    try {
+      var c = JSON.parse(localStorage.getItem('myl_geo_cache') || '{}');
+      var hit = c[k];
+      if (hit && Date.now() - hit.t < 7 * 86400 * 1000) return hit.v;
+    } catch (e) {}
+    return null;
+  }
+  function geoCacheSet(k, v) {
+    try {
+      var c = JSON.parse(localStorage.getItem('myl_geo_cache') || '{}');
+      c[k] = { t: Date.now(), v: v };
+      localStorage.setItem('myl_geo_cache', JSON.stringify(c));
+    } catch (e) {}
+  }
+  function geocode(q) {
+    var ck = 'nom:' + q;
+    var cached = geoCacheGet(ck);
+    if (cached !== null) return Promise.resolve(cached);
+    return fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=zh&limit=1&q=' + encodeURIComponent(q))
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (list) {
+        var v = (list && list[0]) ? [parseFloat(list[0].lon), parseFloat(list[0].lat)] : null;
+        geoCacheSet(ck, v);
+        return v;
+      })
+      .catch(function () { return null; });
+  }
+  /* 返回 {coord:[lng,lat], kind:'spot'|'geocoded'|'city'}，确保地图总能显示 */
+  function resolveCoord(city, name, cb) {
+    var c = findCoord(city, name);
+    if (c) { cb({ coord: c, kind: 'spot' }); return; }
+    geocode(city + ' ' + name).then(function (g1) {
+      if (g1) { cb({ coord: g1, kind: 'geocoded' }); return; }
+      geocode(city || name).then(function (g2) {
+        cb({ coord: g2, kind: g2 ? 'city' : null });
+      });
+    });
   }
 
   /* ---------- 天气 ---------- */
@@ -220,40 +264,55 @@
       wBody.innerHTML = '<div class="me-empty">天气服务暂不可用（离线或网络受限）</div>';
     });
 
-    /* 地图与导航 */
+    /* 地图与导航（三级坐标兜底，确保每个景点都有地图） */
     loadLeaflet(function () {
       var mBody = root.querySelector('#meMap .me-body');
-      var coord = findCoord(spot.city, spot.name);
-      if (!coord) {
-        mBody.innerHTML = '<div class="me-empty">暂无该景点精确坐标，可直接用下方按城市导航。</div>';
-        coord = findCoord(spot.city, spot.city) || findCoord(spot.city, '');
-        if (!coord) return;
-      }
-      var lat = coord[1], lng = coord[0];
-      var gcj = wgs2gcj(lat, lng);
       var q = encodeURIComponent(spot.name);
-      var links =
-        '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/marker?position=' + gcj[1] + ',' + gcj[0] + '&name=' + q + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
-        '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/marker?location=' + lat + ',' + lng + '&title=' + q + '&content=' + q + '&output=html&coord_type=wgs84&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
-        '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/marker?marker=coord:' + gcj[0] + ',' + gcj[1] + ';title:' + q + ';addr:' + q + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>' +
-        '<a class="me-btn share" href="share.html?mode=spot&spot=' + encodeURIComponent(spot.name) + '&city=' + encodeURIComponent(spot.city || '') + '&desc=' + encodeURIComponent(spot.desc || '') + '&ticket=' + encodeURIComponent(spot.ticket || '') + '"><i class="fas fa-share-nodes"></i> 生成分享卡</a>';
-      mBody.innerHTML = '<div id="meMapBox" class="me-map"></div><div class="me-navrow">' + links + '</div>';
-      try {
-        var map = L.map('meMapBox', { scrollWheelZoom: false });
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 18, attribution: '© OpenStreetMap'
-        }).addTo(map);
-        L.marker([lat, lng]).addTo(map).bindPopup('<b>' + esc(spot.name) + '</b>' + (spot.city ? '<br>' + esc(spot.city) : ''));
-        map.setView([lat, lng], 14);
-        var box = document.getElementById('meMapBox');
-        box.addEventListener('click', function () { map.scrollWheelZoom.enable(); });
-        box.addEventListener('mouseleave', function () { map.scrollWheelZoom.disable(); });
-        setTimeout(function () { map.invalidateSize(); }, 60);
-      } catch (e) {
-        mBody.innerHTML = '<div class="me-empty">地图初始化失败</div>' + mBody.innerHTML;
+      var cityQ = encodeURIComponent(spot.city || spot.name);
+      /* 无坐标时导航退化为「关键词搜索」URI，依然可用 */
+      function navLinks(kind, lat, lng) {
+        if (kind === 'spot' || kind === 'geocoded') {
+          var gcj = wgs2gcj(lat, lng);
+          return '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/marker?position=' + gcj[1] + ',' + gcj[0] + '&name=' + q + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
+            '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/marker?location=' + lat + ',' + lng + '&title=' + q + '&content=' + q + '&output=html&coord_type=wgs84&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
+            '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/marker?marker=coord:' + gcj[0] + ',' + gcj[1] + ';title:' + q + ';addr:' + q + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>';
+        }
+        return '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/search?keyword=' + q + '&city=' + cityQ + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
+          '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/place/search?query=' + q + '&region=' + cityQ + '&output=html&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
+          '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/geocoder?keyword=' + q + '&region=' + cityQ + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>';
       }
-      /* VR 云游板块：紧跟地图卡片之下 */
-      if (window.MYL_VR) window.MYL_VR.mount(spot);
+      var shareLink = '<a class="me-btn share" href="share.html?mode=spot&spot=' + encodeURIComponent(spot.name) + '&city=' + encodeURIComponent(spot.city || '') + '&desc=' + encodeURIComponent(spot.desc || '') + '&ticket=' + encodeURIComponent(spot.ticket || '') + '"><i class="fas fa-share-nodes"></i> 生成分享卡</a>';
+
+      resolveCoord(spot.city, spot.name, function (res) {
+        if (!res || !res.coord) {
+          /* 极端情况（无网且无缓存）：仍给出可用的导航搜索按钮 */
+          mBody.innerHTML = '<div class="me-empty">地图服务暂不可用（离线或网络受限），可直接用下方按钮导航。</div><div class="me-navrow">' + navLinks('search') + shareLink + '</div>';
+          if (window.MYL_VR) window.MYL_VR.mount(spot);
+          return;
+        }
+        var kind = res.kind, lat = res.coord[1], lng = res.coord[0];
+        var gcj = kind === 'city' ? wgs2gcj(lat, lng) : wgs2gcj(lat, lng);
+        mBody.innerHTML = '<div id="meMapBox" class="me-map"></div><div class="me-navrow">' + navLinks(kind, lat, lng) + shareLink + '</div>';
+        try {
+          var map = L.map('meMapBox', { scrollWheelZoom: false });
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18, attribution: '© OpenStreetMap'
+          }).addTo(map);
+          var popHtml = kind === 'city'
+            ? '<b>' + esc(spot.city || '') + '市中心</b><br><span style="color:#888">未定位到「' + esc(spot.name) + '」精确位置，导航按钮按名称搜索</span>'
+            : '<b>' + esc(spot.name) + '</b>' + (spot.city ? '<br>' + esc(spot.city) : '');
+          L.marker([lat, lng]).addTo(map).bindPopup(popHtml);
+          map.setView([lat, lng], kind === 'city' ? 12 : 14);
+          var box = document.getElementById('meMapBox');
+          box.addEventListener('click', function () { map.scrollWheelZoom.enable(); });
+          box.addEventListener('mouseleave', function () { map.scrollWheelZoom.disable(); });
+          setTimeout(function () { map.invalidateSize(); }, 60);
+        } catch (e) {
+          mBody.innerHTML = '<div class="me-empty">地图初始化失败</div>' + mBody.innerHTML;
+        }
+        /* 实景云游板块：紧跟地图卡片之下，任何景点必定挂载 */
+        if (window.MYL_VR) window.MYL_VR.mount(spot);
+      });
     });
   }
 

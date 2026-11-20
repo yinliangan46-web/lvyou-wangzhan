@@ -44,6 +44,7 @@ var QS = [
 var ans={};
 var qi=0;
 function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function tag(v){return v?'<span class="tag">'+v+'</span>':'';}
 var LABEL={city:'城市',days:'天数',ppl:'人数',budget:'预算',pref:'偏好'};
 var A = window.MYL ? MYL.indexCities() : [];
@@ -53,6 +54,8 @@ function renderSteps(){
 }
 
 function ask(){
+  /* 跳过已回答的问题（智能输入补答后不重复提问） */
+  while(qi<QS.length&&ans[QS[qi].key]){qi++;}
   if(qi>=QS.length){generate();return;}
   var q=QS[qi];
   if(q.key==='city'){
@@ -116,34 +119,147 @@ function planData(name){
   return {spots:spots,foods:foods,hotels:hotels,traffic:traffic,dayGroups:dayGroups,flight:flight,train:train,ctrip:'https://you.ctrip.com',hotelsUrl:hotelsUrl,isA:isA};
 }
 
-function generate(){
+/* ============ 行程组装：天数严格对齐 + 跨城景点 + 兜底补齐 ============ */
+var curExcursions=[];
+
+function buildDayGroups(pd, reqDays, excursions, cityName){
+  var groups=(pd.dayGroups||[]).filter(function(g){return g.nodes&&g.nodes.length&&g.nodes.some(function(n){return n.n;});});
+  var out=groups.slice(0, reqDays);
+  var usedNodes={};
+  out.forEach(function(g){g.nodes.forEach(function(n){if(n.n)usedNodes[n.n]=1;});});
+  /* 跨城一日游排在本地行程之后 */
+  excursions.forEach(function(ex){
+    out.push({label:'Day X · '+ex.city+'·'+ex.name+' 跨城一日', nodes:[
+      {n:ex.name, d:'从'+cityName+'出发的跨城一日游：早班车出发，'+ex.city+'往返。'+ex.name+'建议预留大半天，门票/索道类提前在线预订。', t:'跨城 · 提前预约'},
+      {n:'交通 · '+cityName+' ⇄ '+ex.city, d:'高铁/动车或自驾往返（单程约2-3小时，具体班次以12306为准），到达后打车或公交直达景区。', t:'当日往返'}
+    ]});
+  });
+  /* 补齐到请求天数：轮转未用到的景点与美食 */
+  var pool=[];
+  groups.forEach(function(g){g.nodes.forEach(function(n){if(n.n&&!usedNodes[n.n])pool.push(n);});});
+  pd.foods.forEach(function(f){pool.push({n:f.n, d:(f.d||'')+'（美食补排）', t:f.p||''});});
+  var pi=0;
+  while(out.length<reqDays){
+    var nodes=[];
+    for(var i=0;i<3&&pi<pool.length;i++,pi++)nodes.push(pool[pi]);
+    if(!nodes.length)nodes=[{n:'自由活动', d:'慢节奏的一天：睡到自然醒，附近街巷随性逛逛，把前几天的遗憾补上。', t:''}];
+    out.push({label:'Day X · 深度慢游', nodes:nodes});
+  }
+  out=out.slice(0, reqDays);
+  out.forEach(function(g,i){ g.label='Day '+(i+1)+' · '+String(g.label).replace(/^Day\s*[X\d]+\s*(?:·\s*)?/,'').replace(/^·\s*/,''); });
+  return out;
+}
+
+function ruleData(pd, name, reqDays){
+  return {days:buildDayGroups(pd, reqDays, curExcursions, name), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
+}
+
+/* ============ 开源大模型接入（OpenAI 兼容接口，可选） ============ */
+var LLM_PROVIDERS={
+  deepseek:{name:'DeepSeek', url:'https://api.deepseek.com/v1/chat/completions', model:'deepseek-chat', keyUrl:'https://platform.deepseek.com/api_keys'},
+  zhipu:{name:'智谱 GLM', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash', keyUrl:'https://open.bigmodel.cn/usercenter/apikeys'},
+  silicon:{name:'硅基流动', url:'https://api.siliconflow.cn/v1/chat/completions', model:'Qwen/Qwen2.5-7B-Instruct', keyUrl:'https://cloud.siliconflow.cn/account/ak'},
+  moonshot:{name:'Kimi', url:'https://api.moonshot.cn/v1/chat/completions', model:'moonshot-v1-8k', keyUrl:'https://platform.moonshot.cn/console/api-keys'}
+};
+function llmCfg(){
+  try{return JSON.parse(localStorage.getItem('myl_llm')||'null');}catch(e){return null;}
+}
+function llmChat(messages, cb){
+  var cfg=llmCfg();
+  var p=LLM_PROVIDERS[cfg.provider]||LLM_PROVIDERS.zhipu;
+  var ctrl=new AbortController();
+  var timer=setTimeout(function(){ctrl.abort();},45000);
+  fetch(p.url,{
+    method:'POST',
+    signal:ctrl.signal,
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+    body:JSON.stringify({model:cfg.model||p.model, messages:messages, temperature:0.7, max_tokens:3000})
+  }).then(function(r){
+    clearTimeout(timer);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(d){
+    var text=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
+    if(!text)throw new Error('空响应');
+    cb(null,text);
+  }).catch(function(e){clearTimeout(timer);cb(e);});
+}
+function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText){
+  var cfg=llmCfg();
+  var p=LLM_PROVIDERS[cfg.provider]||LLM_PROVIDERS.zhipu;
+  var ctx={
+    城市:name, 国家:c.country||'中国', 天数:reqDays, 人数:ans.ppl||2,
+    预算档:({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]||'舒适',
+    偏好:({food:'美食',sight:'景观',culture:'人文',relax:'休闲'})[ans.pref]||'综合',
+    跨城景点:curExcursions.map(function(e){return e.city+'·'+e.name;}),
+    站内景点库:pd.spots.slice(0,12).map(function(s){return s.n+(s.d?'：'+s.d:'');}),
+    站内美食库:pd.foods.slice(0,8).map(function(f){return f.n;}),
+    站内酒店库:pd.hotels.slice(0,4).map(function(h){return h.a+(h.p?'（'+h.p+'）':'');})
+  };
+  var sys='你是一名专业旅行规划师。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文。';
+  var user='请生成行程 JSON，需求：'+JSON.stringify(ctx)+(fromTune?('\n\n用户调整要求：'+tuneText+'（在原行程基础上修改后输出完整 JSON）'):'');
+  llmChat([{role:'system',content:sys},{role:'user',content:user}],function(err,text){
+    if(err)return cb(false,null,err.message||String(err));
+    try{
+      var t2=text.trim().replace(/^```(json)?\s*/i,'').replace(/```\s*$/,'').trim();
+      var j=JSON.parse(t2);
+      if(!j.days||!j.days.length)throw new Error('days 为空');
+      j.days=j.days.slice(0,reqDays);
+      while(j.days.length<reqDays)j.days.push({label:'Day X · 自由深度', nodes:[{n:'自由活动', d:'慢节奏补充一天，逛吃为主。', t:''}]});
+      j.days.forEach(function(g,i){g.label='Day '+(i+1)+' · '+String(g.label||'行程').replace(/^Day\s*\d+\s*(?:·\s*)?/,'').replace(/^·\s*/,'');});
+      j.foods=(j.foods&&j.foods.length?j.foods:pd.foods).map(function(f){return {n:f.n||f.name||'', d:f.d||f.desc||'', p:f.p||f.price||''};});
+      j.hotels=(j.hotels&&j.hotels.length?j.hotels:pd.hotels).map(function(h){return {a:h.a||h.name||'', l:h.l||h.area||'', p:h.p||h.price||''};});
+      j.traffic=(j.traffic&&j.traffic.length)?j.traffic.map(String):pd.traffic;
+      cb(true,j);
+    }catch(e){cb(false,null,'AI 返回解析失败：'+e.message);}
+  });
+}
+
+/* ============ 生成入口：配置了大模型走 AI，否则规则引擎 ============ */
+function generate(fromTune, tuneText){
   var name=ans.city;
   var c=MYL.getCity(name);
   var pd=planData(name);
-  var days=ans.days, ppl=ans.ppl;
-  var prefLabel=QS[4].opts.find(function(o){return o.v===ans.pref;}).label;
+  var reqDays=Math.max(1,Math.min(15,parseInt(ans.days,10)||3));
+  curExcursions=(curExcursions||[]).filter(function(e){return e.city!==name;});
+  var cfg=llmCfg();
+  if(cfg&&cfg.key&&LLM_PROVIDERS[cfg.provider]){
+    $('planBox').innerHTML='<div class="plan"><div class="plan-cover"><h2>🤖 '+esc(name)+' · '+reqDays+'天路书生成中…</h2><div class="sub">'+esc(LLM_PROVIDERS[cfg.provider].name)+' 大模型规划中，通常 5-15 秒</div></div></div>';
+    $('planBox').scrollIntoView({behavior:'smooth'});
+    llmGenerate(name,c,pd,reqDays,function(ok,data,err){
+      if(ok)renderPlan(name,c,pd,data,reqDays,'llm');
+      else renderPlan(name,c,pd,ruleData(pd,name,reqDays),reqDays,'rule',err);
+    },fromTune,tuneText);
+  } else {
+    renderPlan(name,c,pd,ruleData(pd,name,reqDays),reqDays,'rule');
+  }
+}
+
+function renderPlan(name,c,pd,data,reqDays,src,err){
+  var ppl=ans.ppl;
+  var prefLabel=(QS[4].opts.find(function(o){return o.v===ans.pref;})||{}).label||'综合';
   var bname=ans.budget==='budget'?'经济':ans.budget==='comfort'?'舒适':'品质';
-  var dayHtml=pd.dayGroups.map(function(g){
+  var dayHtml=data.days.map(function(g){
     var nodes=g.nodes.map(function(s){return '<div class="node"><div class="t">'+s.n+tag(s.t)+'</div><div class="d">'+(s.d||'')+'</div></div>';}).join('');
     return '<div class="node"><div class="t">'+g.label+'</div>'+nodes+'</div>';
   }).join('')||'<div class="node"><div class="d">该城行程节点整理中，可参考下方景点与交通安排。</div></div>';
-  var foods=pd.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+tag(f.p)+'</div><div class="d">'+(f.d||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';
-  var hotels=pd.hotels.map(function(h){return '<div class="node"><div class="t">'+h.a+tag(h.p)+'</div><div class="d">'+(h.l||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">住宿推荐整理中，可点下方酒店入口查询。</div></div>';
-  var traffic=pd.traffic.map(function(t){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
+  var foods=data.foods.map(function(f){return '<div class="node"><div class="t">'+f.n+tag(f.p)+'</div><div class="d">'+(f.d||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">本地美食清单整理中。</div></div>';
+  var hotels=data.hotels.map(function(h){return '<div class="node"><div class="t">'+h.a+tag(h.p)+'</div><div class="d">'+(h.l||'')+'</div></div>';}).join('')||'<div class="node"><div class="d">住宿推荐整理中，可点下方酒店入口查询。</div></div>';
+  var traffic=data.traffic.map(function(t){return '<div class="node"><div class="d"><i class="fas fa-arrow-right" style="color:var(--primary)"></i> '+t+'</div></div>';}).join('');
   if(!traffic){traffic='<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';}
+  var excNote=curExcursions.length?(' · 顺路跨城：'+curExcursions.map(function(e){return e.city+'·'+e.name;}).join('、')):'';
+  var srcNote=src==='llm'
+    ? (' · '+esc((LLM_PROVIDERS[llmCfg().provider]||{}).name||'大模型')+' 生成')
+    : (' · MYL 规划引擎'+(err?('（AI 兜底：'+esc(String(err).slice(0,50))+'）'):''));
 
   var shareLines=[];
-  if(pd.dayGroups.length && pd.dayGroups[0].label!=='推荐行程'){
-    pd.dayGroups.forEach(function(g,i){
-      shareLines.push('第'+(i+1)+'天 '+String(g.label).replace(/^Day\s*\d+\s*·\s*/,'')+'：'+g.nodes.map(function(s){return s.n;}).filter(Boolean).slice(0,4).join(' → '));
-    });
-  } else {
-    pd.dayGroups.forEach(function(g){ g.nodes.forEach(function(s,j){ if(j<6) shareLines.push(s.n+(s.t?('（'+s.t+'）'):'')); }); });
-  }
-  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(name+' '+days+'天'+ppl+'人路书')+'&lines='+encodeURIComponent(JSON.stringify(shareLines.slice(0,12)));
+  data.days.forEach(function(g,i){
+    shareLines.push('第'+(i+1)+'天 '+String(g.label).replace(/^Day\s*\d+\s*·\s*/,'')+'：'+g.nodes.map(function(s){return s.n;}).filter(Boolean).slice(0,4).join(' → '));
+  });
+  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(name+' '+reqDays+'天'+ppl+'人路书')+'&lines='+encodeURIComponent(JSON.stringify(shareLines.slice(0,12)));
   $('planBox').innerHTML=
   '<div class="plan">'+
-    '<div class="plan-cover"><h2>'+name+' · '+days+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+' · 由 MYL 对话生成</div></div>'+
+    '<div class="plan-cover"><h2>'+name+' · '+reqDays+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+excNote+srcNote+'</div></div>'+
     '<div class="section"><h3><i class="fas fa-plane-departure"></i> 交通安排</h3>'+traffic+
       '<div class="link-grid" style="margin-top:12px">'+
         '<a class="link-card" href="'+pd.flight+'" target="_blank" rel="noopener"><b>携程机票</b><span>查询往返航班</span></a>'+
@@ -160,8 +276,8 @@ function generate(){
   '</div>'+
   '<div class="plan tune-box" id="tuneBox">'+
     '<h3><i class="fas fa-wand-magic-sparkles"></i> 对话式调整 <span class="tune-new">AI 增强 · 新</span></h3>'+
-    '<div class="tune-row"><input id="tuneInput" placeholder="如：改成5天 / 预算紧凑一点 / 换成美食优先 / 换个城市去杭州" autocomplete="off" /><button id="tuneGo"><i class="fas fa-arrows-rotate"></i> 调整</button></div>'+
-    '<div class="tune-tip">支持：改天数、改预算档、改偏好、换城市；调整后立即重新生成路书。</div>'+
+    '<div class="tune-row"><input id="tuneInput" placeholder="如：改成5天 / 加一天去玉龙雪山 / 预算紧凑一点 / 换成美食优先" autocomplete="off" /><button id="tuneGo"><i class="fas fa-arrows-rotate"></i> 调整</button></div>'+
+    '<div class="tune-tip">支持：改天数、改预算档、改偏好、换城市、点名跨城景点（如「加一天去玉龙雪山」）；调整后立即重新生成路书。</div>'+
   '</div>'+
   '<div style="margin-bottom:30px"><button class="btn btn-ghost" onclick="location.reload()"><i class="fas fa-rotate-left"></i> 重新生成一份</button>'+
   ' <a class="btn btn-ghost" href="'+shareUrl+'" target="_blank" rel="noopener"><i class="fas fa-share-nodes"></i> 生成分享海报</a></div>';
@@ -181,16 +297,28 @@ function matchCity(text){
 }
 function detectDays(t){
   var m=t.match(/(\d+)\s*天/);
-  if(m){var n=parseInt(m[1],10);return n>=5?'5':String(Math.max(1,n));}
+  if(m){var n=parseInt(m[1],10);if(n>=1)return String(Math.min(n,15));}
+  /* 中文数字：十X / X十 */
+  m=t.match(/十([一二三四五六七八九]?)\s*天/);
+  if(m){
+    if(!m[1])return '10';
+    return String(10+({'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9}[m[1]]||0));
+  }
+  m=t.match(/([一二两三四五六七八九])\s*天/);
+  if(m){return String({'一':1,'二':2,'两':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9}[m[1]]);}
+  if(/半个月|半月/.test(t))return '15';
+  if(/一周|一个星期|一星期/.test(t))return '7';
   if(/周末|两天|2天/.test(t))return '2';
-  if(/一周|七天|7天|5天|五六天|一周以上/.test(t))return '5';
   if(/三天|3天/.test(t))return '3';
   if(/四天|4天/.test(t))return '4';
+  if(/五天|5天/.test(t))return '5';
+  /* 旅居/长住未说天数：默认按 7 天规划 */
+  if(/旅居|长住|慢生活|住上一段/.test(t))return '7';
   return null;
 }
 function detectPpl(t){
   if(/独行|一个人|自己去|独自|单人/.test(t))return '1';
-  if(/情侣|闺蜜|夫妻|两个人|二人|双人|2人|两人/.test(t))return '2';
+  if(/对象|情侣|闺蜜|夫妻|爱人|女朋友|男朋友|老婆|老公|蜜月|求婚|两个人|二人|双人|2人|两人/.test(t))return '2';
   if(/爸妈|父母|家人|家庭|孩子|娃|老人|一群|朋友|团队|3人|四人|一家/.test(t))return '3';
   var m=t.match(/(\d+)\s*人/);
   if(m){var n=parseInt(m[1],10);return n<=1?'1':(n===2?'2':'3');}
@@ -225,6 +353,35 @@ function parseIntent(t){
     pref:detectPref(t)
   };
 }
+/* ---- 跨城景点识别：用户提到邻城景点（如去大理却提玉龙雪山）时自动安排跨城 ---- */
+function spotCityIndex(){
+  if(window._mylSpotIdx)return window._mylSpotIdx;
+  var idx={};
+  var C=window.CITY_SPOT_COORDS||{};
+  Object.keys(C).forEach(function(k){
+    var p=k.split('·');
+    if(p.length===2&&p[1]&&!/机场|车站|站$/.test(p[1]))idx[p[1]]=p[0];
+  });
+  var D=window.CITY_DETAIL||{};
+  Object.keys(D).forEach(function(k){
+    var city=D[k]&&D[k].name;
+    (D[k].routePins||[]).forEach(function(n){
+      if(n&&!/机场|车站/.test(n)&&!idx[n])idx[n]=city;
+    });
+  });
+  window._mylSpotIdx=idx;
+  return idx;
+}
+function findExcursions(text){
+  if(!window.MYL||!text||!ans.city)return [];
+  var idx=spotCityIndex(),out=[],seen={};
+  Object.keys(idx).forEach(function(n){
+    if(n.length>=2&&text.indexOf(n)>=0&&idx[n]!==ans.city&&!seen[n]&&!MYL.getCity(n)){
+      seen[n]=1;out.push({name:n,city:idx[n]});
+    }
+  });
+  return out;
+}
 function smartStart(raw){
   var text=(raw||'').trim();
   if(!text){alert('先输入你的旅行想法吧');return;}
@@ -240,13 +397,18 @@ function smartStart(raw){
   $('steps').style.display='block';
   $('chat').style.display='block';
   $('chat').innerHTML+='<div class="bubble me">'+text+'</div>';
+  curExcursions=findExcursions(text);
+  var excTag=curExcursions.length?(' 🚄 顺路：'+curExcursions.map(function(e){return e.name+'（'+e.city+'）';}).join('、')):'';
   var tags=got.map(function(k){
     if(k==='city')return '📍 '+ans.city;
-    if(k==='days')return '🗓️ '+ans.days+'天'+(ans.days==='5'?'以上':'');
+    if(k==='days')return '🗓️ '+ans.days+'天';
     if(k==='ppl')return '👥 '+ans.ppl+'人';
     if(k==='budget')return '💰 '+({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget];
     return '🎯 '+({food:'美食',sight:'景观',culture:'人文',relax:'休闲'})[ans.pref];
-  }).join(' ');
+  }).join(' ')+excTag;
+  if(curExcursions.length){
+    $('chat').innerHTML+='<div class="bubble bot"><div class="q">你提到的'+curExcursions.map(function(e){return e.name;}).join('、')+'在'+curExcursions.map(function(e){return e.city;}).join('、')+'，我已经为你在路书里安排好跨城一日游 🚄</div></div>';
+  }
   var missing=QS.filter(function(q){return !ans[q.key];}).map(function(q){return LABEL[q.key];});
   $('chat').innerHTML+='<div class="bubble bot"><div class="q">已识别你的需求：'+tags+'</div>'+
     (missing.length?('还差：'+missing.join('、')+'，我继续问你 👇'):'信息齐全，正在生成路书…')+'</div>';
@@ -256,10 +418,26 @@ function smartStart(raw){
 function parseTune(t){
   var msgs=[], iv=parseIntent(t);
   if(iv.city && iv.city!==ans.city){ans.city=iv.city;msgs.push('目的地 → '+iv.city);}
-  if(iv.days && iv.days!==ans.days){ans.days=iv.days;msgs.push('天数 → '+ans.days+'天'+(ans.days==='5'?'+':''));}
+  if(iv.days && iv.days!==ans.days){ans.days=iv.days;msgs.push('天数 → '+ans.days+'天');}
   if(iv.ppl && iv.ppl!==ans.ppl){ans.ppl=iv.ppl;msgs.push('人数 → '+ans.ppl+'人');}
   if(iv.budget && iv.budget!==ans.budget){ans.budget=iv.budget;msgs.push('预算 → '+({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]);}
   if(iv.pref && iv.pref!==ans.pref){ans.pref=iv.pref;msgs.push('偏好 → '+({food:'美食',sight:'景观',culture:'人文',relax:'休闲'})[ans.pref]);}
+  var exc=findExcursions(t);
+  if(exc.length){
+    exc.forEach(function(e){
+      if(!curExcursions.some(function(x){return x.name===e.name;}))curExcursions.push(e);
+    });
+    msgs.push('跨城安排 → '+exc.map(function(e){return e.city+'·'+e.name;}).join('、'));
+  }
+  /* 用户明确要求去掉跨城 */
+  if(/不去|去掉|删除|取消/.test(t)){
+    var removed=[];
+    curExcursions=curExcursions.filter(function(e){
+      if(t.indexOf(e.name)>=0){removed.push(e.name);return false;}
+      return true;
+    });
+    if(removed.length)msgs.push('已移除 → '+removed.join('、'));
+  }
   return msgs;
 }
 function bindTune(){
@@ -270,11 +448,11 @@ function bindTune(){
     if(!t)return;
     var msgs=parseTune(t);
     if(!msgs.length){
-      $('tuneBox').querySelector('.tune-tip').textContent='没听懂这个调整，试试：改成5天 / 预算紧凑一点 / 换成美食优先 / 换个城市去杭州';
+      $('tuneBox').querySelector('.tune-tip').textContent='没听懂这个调整，试试：改成5天 / 加一天去玉龙雪山 / 预算紧凑一点 / 换成美食优先 / 换个城市去杭州';
       return;
     }
     $('tuneBox').querySelector('.tune-tip').textContent='已按「'+msgs.join('，')+'」重新生成 ✅';
-    generate();
+    generate(true, t);
   }
   go.onclick=doTune;
   input.addEventListener('keydown',function(e){if(e.key==='Enter')doTune();});
@@ -293,5 +471,34 @@ function initSmart(){
     $('chat').style.display='block';
     qi=0;renderSteps();ask();
   };
+  /* --- 大模型设置 --- */
+  var lp=$('llmProvider'), lk=$('llmKey'), ls=$('llmSave'), lst=$('llmState'), llink=$('llmKeyLink');
+  if(lp&&lk&&ls){
+    var cfg0=llmCfg();
+    function refreshLlmUI(){
+      var c=llmCfg();
+      if(c&&c.key){
+        lk.value=c.key;
+        lp.value=c.provider;
+        lst.textContent='✅ 已接入 '+((LLM_PROVIDERS[c.provider]||{}).name||'')+'，路书将由大模型生成';
+      } else {
+        lst.textContent='未接入（使用内置规划引擎）';
+      }
+      llink.href=(LLM_PROVIDERS[lp.value]||{}).keyUrl||llink.href;
+    }
+    lp.onchange=function(){llink.href=(LLM_PROVIDERS[lp.value]||{}).keyUrl||llink.href;};
+    ls.onclick=function(){
+      var k=lk.value.trim();
+      if(k){
+        try{localStorage.setItem('myl_llm',JSON.stringify({provider:lp.value,key:k,model:LLM_PROVIDERS[lp.value].model}));}
+        catch(e){}
+      } else {
+        try{localStorage.removeItem('myl_llm');}catch(e){}
+      }
+      refreshLlmUI();
+      lst.textContent=(k?'✅ 已接入 '+LLM_PROVIDERS[lp.value].name+'，路书将由大模型生成':'未接入（使用内置规划引擎）');
+    };
+    refreshLlmUI();
+  }
 }
 initSmart();
