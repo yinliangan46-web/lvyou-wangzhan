@@ -19,6 +19,20 @@
     });
   }
 
+  /* ---------- 芊云全景 VR 作品（伙伴授权作品，嵌入时自动遮蔽平台品牌标识） ----------
+     配置方式：{ '景点名': '芊云作品id' }
+     作品 id 取自分享链接 tour.html?id= 后面那串，如
+     https://vr.he29.com/index/play/tour.html?id=620c9460db0c424 → '620c9460db0c424'
+     也可以在景点详情页 URL 上临时加 &qyvr=作品id 直接预览效果 */
+  var QYVR_DATA = window.QYVR_DATA || {};
+  function qyvrIdFor(spot) {
+    try {
+      var q = new URLSearchParams(location.search).get('qyvr');
+      if (q) return q;
+    } catch (e) {}
+    return QYVR_DATA[spot.name] || null;
+  }
+
   var CSS = ''
     + '.myl-vr{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 4px 18px rgba(0,0,0,.05)}'
     + '.myl-vr h3{margin:0 0 6px;font-size:17px;display:flex;align-items:center;gap:8px;color:#222}'
@@ -28,6 +42,10 @@
     + '.vr-stage{position:relative;border-radius:14px;overflow:hidden;background:#0d1321;aspect-ratio:16/9;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}'
     + '.vr-stage:active{cursor:grabbing}'
     + '.vr-stage canvas,.vr-immerse,.vr-street{position:absolute;inset:0;width:100%;height:100%}'
+    + '.vr-qy-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}'
+    + '.vr-qy-cover{position:absolute;left:0;right:0;height:56px;z-index:2;pointer-events:none}'
+    + '.vr-qy-cover.top{top:0;background:linear-gradient(to bottom,rgba(5,8,16,.92) 0%,rgba(5,8,16,.55) 55%,rgba(5,8,16,0) 100%)}'
+    + '.vr-qy-cover.bottom{bottom:0;background:linear-gradient(to top,rgba(5,8,16,.92) 0%,rgba(5,8,16,.55) 55%,rgba(5,8,16,0) 100%)}'
     + '.vr-immerse .vr-shot{position:absolute;inset:0;opacity:0;transition:opacity .85s ease}'
     + '.vr-immerse .vr-shot.show{opacity:1}'
     + '.vr-immerse .vr-shot img{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;max-width:none}'
@@ -35,6 +53,7 @@
     + '.vr-compass{position:absolute;top:10px;left:12px;color:rgba(255,255,255,.85);font-size:11px;background:rgba(0,0,0,.35);border-radius:99px;padding:4px 12px;letter-spacing:2px;backdrop-filter:blur(4px);pointer-events:none;z-index:3}'
     + '.vr-modechip{position:absolute;top:10px;right:12px;color:#fff;font-size:11px;background:rgba(14,159,138,.82);border-radius:99px;padding:4px 12px;backdrop-filter:blur(4px);pointer-events:none;z-index:3}'
     + '.vr-modechip.google{background:rgba(30,110,235,.82)}'
+    + '.vr-modechip.tx{background:rgba(55,130,255,.85)}'
     + '.vr-shotchip{position:absolute;bottom:12px;left:12px;color:rgba(255,255,255,.9);font-size:11px;background:rgba(0,0,0,.4);border-radius:99px;padding:4px 12px;backdrop-filter:blur(4px);pointer-events:none;z-index:3}'
     + '.vr-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:rgba(255,255,255,.55);font-size:11px;pointer-events:none;z-index:3}'
     + '.vr-ctrl{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}'
@@ -482,6 +501,58 @@
   StreetView.prototype.gyro = function () {};
   StreetView.prototype.destroy = function () { try { this.wrap.remove(); } catch (e) {} };
 
+  /* WGS-84 → GCJ-02（腾讯街景坐标系，火星坐标偏移算法，公开通用公式） */
+  function wgs2gcj(wgLat, wgLng) {
+    function tLat(x, y) { return -100 + 2 * x + 3 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x)) + (20 * Math.sin(6 * x * Math.PI) + 20 * Math.sin(2 * x * Math.PI)) * 2 / 3 + (20 * Math.sin(y * Math.PI) + 40 * Math.sin(y / 3 * Math.PI)) * 2 / 3 + (160 * Math.sin(y / 12 * Math.PI) + 320 * Math.sin(y * Math.PI / 30)) * 2 / 3; }
+    function tLng(x, y) { return 300 + x + 2 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x)) + (20 * Math.sin(6 * x * Math.PI) + 20 * Math.sin(2 * x * Math.PI)) * 2 / 3 + (20 * Math.sin(x * Math.PI) + 40 * Math.sin(x / 3 * Math.PI)) * 2 / 3 + (150 * Math.sin(x / 12 * Math.PI) + 300 * Math.sin(x / 30 * Math.PI)) * 2 / 3; }
+    var a = 6378245, ee = 0.00669342162296594323;
+    var dLat = tLat(wgLng - 105, wgLat - 35), dLng = tLng(wgLng - 105, wgLat - 35);
+    var rad = wgLat / 180 * Math.PI;
+    var magic = Math.sin(rad); magic = 1 - ee * magic * magic;
+    var sqrt = Math.sqrt(magic);
+    dLat = (dLat * 180) / ((a * (1 - ee)) / (magic * sqrt) * Math.PI);
+    dLng = (dLng * 180) / (a / sqrt * Math.cos(rad) * Math.PI);
+    return [wgLat + dLat, wgLng + dLng];
+  }
+
+  /* 国内真实街景入口卡：腾讯街景官方 URI 直达（新窗口打开，覆盖国内城市实拍全景）。
+     嵌入式街景需要开发者 Key 且域名白名单受限，入口卡方案保证任何环境下都可用。 */
+  function TxStreetView(stage, lat, lng, spot) {
+    this.stage = stage;
+    var gcj = wgs2gcj(lat, lng);
+    var url = 'https://apis.map.qq.com/uri/v1/streetview?marker=coord%3A' + gcj[0].toFixed(6) +
+      '%2C' + gcj[1].toFixed(6) + '%3Btitle%3A' + encodeURIComponent(spot.name || '') + '&referer=mylv';
+    this.wrap = document.createElement('div');
+    this.wrap.className = 'vr-street';
+    var bg = document.createElement('div');
+    bg.style.cssText = 'position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(6px) brightness(.5);transform:scale(1.06)';
+    var photos = collectPhotos(spot);
+    if (photos && photos.length && photos[0].src) bg.style.backgroundImage = 'url("' + photos[0].src + '")';
+    var inner = document.createElement('div');
+    inner.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:0 16px';
+    var icon = document.createElement('div');
+    icon.innerHTML = '<i class="fas fa-street-view" style="font-size:44px;color:#37c2ff"></i>';
+    var t1 = document.createElement('div');
+    t1.style.cssText = 'font-size:16px;font-weight:700;letter-spacing:1px';
+    t1.textContent = '真实街景 · 实景拍摄';
+    var t2 = document.createElement('div');
+    t2.style.cssText = 'font-size:12.5px;color:rgba(255,255,255,.75);max-width:420px;line-height:1.6';
+    t2.textContent = '腾讯街景采集车实拍覆盖国内城市，可 360° 自由环视。点击下方按钮进入实景画面。';
+    var go = document.createElement('a');
+    go.className = 'vr-btn';
+    go.style.cssText = 'background:linear-gradient(120deg,#0e6feb,#37c2ff);font-size:14.5px;padding:11px 26px;border-radius:99px';
+    go.innerHTML = '<i class="fas fa-vr-cardboard"></i> 进入腾讯街景实拍';
+    go.href = url;
+    go.target = '_blank';
+    go.rel = 'noopener';
+    inner.appendChild(icon); inner.appendChild(t1); inner.appendChild(t2); inner.appendChild(go);
+    this.wrap.appendChild(bg); this.wrap.appendChild(inner);
+    stage.appendChild(this.wrap);
+  }
+  TxStreetView.prototype.drag = function () {};
+  TxStreetView.prototype.gyro = function () {};
+  TxStreetView.prototype.destroy = function () { try { this.wrap.remove(); } catch (e) {} };
+
   /* ---------- 挂载 ---------- */
   function mount(spot) {
     if (!spot || !spot.name) return;
@@ -494,7 +565,7 @@
     root.innerHTML =
       '<h3><i class="fas fa-vr-cardboard" style="color:#0e9f8a"></i> 实景云游 · AI 解说' +
         '<span class="vr-badge">实景拍摄 · 语音导览</span><span class="vr-sub">' + esc(spot.name) + '</span></h3>' +
-      '<p class="vr-intro">画面可以上下左右自由环视；点「开始解说」，AI 导游带你边看边讲。境外城市自动接入真实街景，国内城市呈现沉浸式实景漫游。</p>' +
+      '<p class="vr-intro">画面可以上下左右自由环视；点「开始解说」，AI 导游带你边看边讲。境外城市接入 Google 实景街景，国内城市接入腾讯街景实拍与 720° 真全景漫游。</p>' +
       '<div class="vr-stage" id="vrStage">' +
         '<span class="vr-compass" id="vrCompass">0°</span>' +
         '<span class="vr-modechip" id="vrMode">加载中</span>' +
@@ -520,7 +591,7 @@
     var ctrl = root.querySelector('#vrCtrl');
     var noteEl = root.querySelector('#vrNote');
 
-    var view = null, pano = null, mode = null, streetOK = false;
+    var view = null, pano = null, mode = null, streetOK = false, txOK = false, streetBack = 'street';
     var country = countryOf(spot.city);
 
     function setCompassText(t) { compassEl.textContent = t; }
@@ -541,7 +612,7 @@
 
     function clearView() {
       if (view) { view.destroy && view.destroy(); view = null; pano = null; }
-      Array.prototype.slice.call(stage.querySelectorAll('canvas,.vr-immerse,.vr-street')).forEach(function (el) { el.remove(); });
+      Array.prototype.slice.call(stage.querySelectorAll('canvas,.vr-immerse,.vr-street,.vr-qy-frame,.vr-qy-cover')).forEach(function (el) { el.remove(); });
       shotChipEl.style.display = 'none';
     }
 
@@ -588,6 +659,32 @@
         view = new StreetView(stage, streetCoord[1], streetCoord[0]);
         noteEl.innerHTML = '街景画面由 Google 街景实景拍摄车采集。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
         compassEl.textContent = '实景';
+      } else if (m === 'txstreet') {
+        modeChip.textContent = '真实街景 · 国内实拍';
+        modeChip.className = 'vr-modechip tx';
+        hintEl.textContent = '在街景画面内拖动即可环视 · 双指缩放';
+        view = new TxStreetView(stage, streetCoord[1], streetCoord[0], spot);
+        noteEl.innerHTML = '街景画面由腾讯街景实景采集（覆盖国内城市）。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
+        compassEl.textContent = '实景';
+      } else if (m === 'qy') {
+        /* 芊云全景 VR 作品（伙伴授权），iframe 官方嵌入方式，上下遮幅屏蔽平台品牌标识 */
+        var qyId = qyvrIdFor(spot);
+        modeChip.textContent = '真实 VR · 720° 全景漫游';
+        modeChip.className = 'vr-modechip';
+        hintEl.textContent = '画面内自由拖动环视 · 场景间热点切换';
+        var fr = document.createElement('iframe');
+        fr.className = 'vr-qy-frame';
+        fr.setAttribute('allowfullscreen', 'true');
+        fr.setAttribute('allow', 'xr-spatial-tracking; gyroscope; accelerometer');
+        fr.src = 'https://9kvr.cn/tour/index?id=' + encodeURIComponent(qyId);
+        stage.appendChild(fr);
+        var cTop = document.createElement('div');
+        cTop.className = 'vr-qy-cover top';
+        stage.appendChild(cTop);
+        var cBottom = document.createElement('div');
+        cBottom.className = 'vr-qy-cover bottom';
+        stage.appendChild(cBottom);
+        noteEl.innerHTML = '全景作品由「实景云游计划」提供实景拍摄支持 · 拖动画面 360° 环视';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';
@@ -615,13 +712,13 @@
         langBtn.innerHTML = '<i class="fas fa-language"></i> ' + (vrLang === 'zh' ? 'English 解说' : '中文解说');
         if (narrator.on) { narrator.stop(); narrator.play(buildScript(spot, vrLang)); }
       });
-      if (streetOK) {
-        swapBtn = btn('swap', 'fa-shuffle', mode === 'street' ? '切换实景漫游' : '切换真实街景', function () {
+      if (streetOK || txOK || mode === 'qy') {
+        swapBtn = btn('swap', 'fa-shuffle', mode === 'immerse' ? '切换真实街景' : '切换实景漫游', function () {
           if (narrator.on) narrator.stop();
-          applyMode(mode === 'street' ? 'immerse' : 'street');
+          applyMode(mode === 'immerse' ? streetBack : 'immerse');
         });
       }
-      if (mode !== 'street') {
+      if (mode !== 'street' && mode !== 'txstreet' && mode !== 'qy') {
         cruiseBtn = btn('cruise', 'fa-route', '自动漫游', function () {
           var on = !cruiseBtn.classList.contains('on');
           cruiseBtn.classList.toggle('on', on);
@@ -669,14 +766,30 @@
           fsBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏';
         }
       }
-      /* 官方 VR 全景直达（携程，覆盖全国景点） */
-      var ext = document.createElement('a');
-      ext.className = 'vr-btn ext';
-      ext.target = '_blank';
-      ext.rel = 'noopener';
-      ext.innerHTML = '<i class="fas fa-cube"></i> 官方 VR 全景';
-      ext.href = 'https://m.ctrip.com/webapp/you/gspoi/search?searchword=' + encodeURIComponent(spot.city ? spot.city + ' ' + spot.name : spot.name);
-      ctrl.appendChild(ext);
+      /* 国内：腾讯街景实拍直达（官方 URI 能力，任何环境可用）；另有芊云 VR 广场入口 */
+      if (txOK && !streetOK) {
+        var txGo = document.createElement('a');
+        txGo.className = 'vr-btn ext';
+        txGo.target = '_blank';
+        txGo.rel = 'noopener';
+        txGo.innerHTML = '<i class="fas fa-street-view"></i> 腾讯街景实拍';
+        var coordNow = findCoord(spot.city, spot.name);
+        if (coordNow) {
+          var gcjNow = wgs2gcj(coordNow[1], coordNow[0]);
+          txGo.href = 'https://apis.map.qq.com/uri/v1/streetview?marker=coord%3A' + gcjNow[0].toFixed(6) +
+            '%2C' + gcjNow[1].toFixed(6) + '%3Btitle%3A' + encodeURIComponent(spot.name) + '&referer=mylv';
+        } else {
+          txGo.href = 'https://map.qq.com/search/' + encodeURIComponent(spot.name);
+        }
+        ctrl.appendChild(txGo);
+      }
+      var sq = document.createElement('a');
+      sq.className = 'vr-btn ext';
+      sq.target = '_blank';
+      sq.rel = 'noopener';
+      sq.innerHTML = '<i class="fas fa-globe"></i> VR 全景广场';
+      sq.href = 'https://9kvr.cn/tour/service/square';
+      ctrl.appendChild(sq);
     }
 
     /* --- 拖拽 --- */
@@ -751,9 +864,11 @@
       }
     }
 
-    /* --- 启动：站内全景 → 全网真 360° 全景 → 真实街景（POI 精确定位） → 沉浸漫游 --- */
+    /* --- 启动：芊云 VR 作品 → 站内全景 → 全网真 360° 全景 → 真实街景 → 沉浸漫游 --- */
     var PANO = window.PANO_DATA || {};
-    if (PANO[spot.name] && PANO[spot.name].src) {
+    if (qyvrIdFor(spot)) {
+      applyMode('qy');
+    } else if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
     } else {
       modeChip.textContent = '正在全网检索实景全景…';
@@ -777,7 +892,15 @@
           });
         } else {
           streetOK = false;
-          applyMode('immerse');
+          /* 国内：腾讯街景实拍入口卡（有坐标即可用） */
+          var txCoord = findCoord(spot.city, spot.name);
+          if (txCoord) {
+            txOK = true;
+            streetBack = 'txstreet';
+            applyMode('txstreet', txCoord);
+          } else {
+            applyMode('immerse');
+          }
         }
       });
     }
