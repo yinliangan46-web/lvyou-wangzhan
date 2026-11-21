@@ -28,7 +28,15 @@
     var D = window.QYVR_DATA || {};
     if (D[spot.name]) return { id: D[spot.name], name: spot.name };
     var CD = window.QYVR_CITY_DATA || {};
-    var list = CD[(spot.city || '').replace(/市$/, '')] || [];
+    /* 网站城市名 → 芊云数据键名（地级州/地区全称） */
+    var ALIAS = {
+      '大理': '大理白族自治州', '西双版纳': '西双版纳傣族自治州', '恩施': '恩施土家族苗族自治州',
+      '湘西': '湘西土家族苗族自治州', '喀什': '喀什地区', '伊犁': '伊犁哈萨克自治州',
+      '阿勒泰': '阿勒泰地区', '甘孜': '甘孜藏族自治州', '阿坝': '阿坝藏族羌族自治州',
+      '凉山': '凉山彝族自治州', '迪庆': '迪庆藏族自治州', '北京': '北京', '上海': '上海',
+      '天津': '天津', '重庆': '重庆'
+    };
+    var list = CD[(ALIAS[spot.city] || spot.city || '').replace(/市$/, '')] || CD[spot.city || ''] || [];
     if (!list.length) return null;
     var nm = spot.name || '';
     /* 归一化：去掉「景区/风景区/旅游区/公园/步行街/古镇/古城」等后缀再双向包含匹配 */
@@ -46,15 +54,29 @@
         if (wname.indexOf(nm) > -1 || nm.indexOf(wname) > -1) return { id: list[i][0], name: wname };
       }
     }
-    /* 城市级兜底：本景点无专属作品时，选该城市最像「景点实拍」的作品，
-       保证所有景点都有芊云全景可切换（Google 街景失效时的保底体验） */
-    var good = /(景区|风景区|古镇|古城|公园|湖|山|寺|塔|园|街|博物馆|纪念馆|广场|大桥|湿地|峡谷|森林|老街|街区|码头|遗址|石窟|乐园|世界|都|城|村|湾|岛|滩|泉|梯田|瀑布|草原)/;
-    var bad = /(验收|家装|小区|房间|家乡|婚礼|测试|室内|样板|装修|民宿|店铺|幼儿园|宿舍|报告厅|直播间|工地|车位|办公室)/;
+    /* 城市级兜底：本景点无专属作品时，选与景点名重合度最高的「景点实拍」作品，
+       保证所有景点都有芊云全景可切换（诚实标注，不冒充本景点专属） */
+    var good = /(景区|风景区|古镇|古城|公园|湖|山|寺|塔|园|街|博物馆|纪念馆|广场|大桥|湿地|峡谷|森林|老街|街区|码头|遗址|石窟|乐园|世界|都|城|村|湾|岛|滩|泉|梯田|瀑布|草原|长城|门|桥|河|江)/;
+    var bad = /(验收|家装|小区|房间|家乡|婚礼|测试|室内|样板|装修|民宿|店铺|幼儿园|宿舍|报告厅|直播间|工地|车位|办公室|校园|学校|学院|大学|中学|小学|会场|会议|成立|大会|典礼|开业|楼盘|号楼|单元|室$|门店|食堂|教学|实训|培训|售楼|样板间|营业厅|宿舍楼|公寓|客房|酒店|宾馆|餐厅|火锅|面馆|奶茶|烘焙|美容|理发|洗车|4S|展厅|\d室\d厅|平米|平方|户型|门面|●|◎|售房)/;
+    /* 排除名称里写了其他城市名的串味作品 */
+    var CITYNAMES = ['上海','北京','天津','重庆','广州','深圳','成都','杭州','武汉','西安','南京','苏州','厦门','青岛','大连','丽江','大理','拉萨','乌鲁木齐','桂林','三亚','哈尔滨','长春','沈阳','郑州','长沙','福州','昆明','贵阳','南昌','合肥','太原','石家庄','兰州','西宁','银川','呼和浩特','南宁','海口','宁波','无锡','佛山','东莞'];
     var best = null, bestScore = -1;
     for (i = 0; i < list.length; i++) {
       wname = list[i][1] || '';
       if (bad.test(wname)) continue;
-      var s = good.test(wname) ? 2 : 0;
+      var foreign = false;
+      for (var ci = 0; ci < CITYNAMES.length; ci++) {
+        if (CITYNAMES[ci] !== spot.city && wname.indexOf(CITYNAMES[ci]) > -1) { foreign = true; break; }
+      }
+      if (foreign) continue;
+      /* 与景点名的字符重合度优先（如 前门→天安门/正阳门 而非无关作品），
+         同城作品加分（如 上海·东方明珠→上海外滩全景 优于外地路桥） */
+      var ov = 0, c, j;
+      for (j = 0; j < nm.length; j++) {
+        c = nm.charAt(j);
+        if (c && wname.indexOf(c) > -1) ov++;
+      }
+      var s = ov * 3 + (spot.city && wname.indexOf(spot.city.replace(/市$/, '')) > -1 ? 3 : 0) + (good.test(wname) ? 2 : 0);
       if (s > bestScore) { bestScore = s; best = list[i]; }
     }
     if (best) return { id: best[0], name: best[1], cityFallback: true };
@@ -114,7 +136,7 @@
     document.head.appendChild(s);
   }
 
-  /* ---------- 实景镜头收集（优先详情页图库全套实拍，再补周边） ---------- */
+  /* ---------- 实景镜头收集：只收本景点自己的实拍，绝不用周边景点/美食图冒充 ---------- */
   function collectPhotos(spot) {
     var poi = window.mylPOIImg || function () { return ''; };
     var cand = [];
@@ -122,14 +144,10 @@
     /* 详情页图库：主图+全景+细节+晨昏+人文，全是该景点真实实拍 */
     (spot.gallery || []).forEach(function (g) { add(g.src, g.label); });
     add(poi(spot.name, spot.type, spot.city), spot.name + ' · 实景主视角');
-    (spot.relSpots || []).slice(0, 3).forEach(function (n) { add(poi(n, 'spot', spot.city), n + ' · 实拍'); });
-    (spot.relFoods || []).slice(0, 2).forEach(function (n) { add(poi(n, 'food', spot.city), n + ' · 本地味'); });
-    var fallback = spot.type === 'food' ? 'images/food-fallback.jpg' : 'images/city-fallback.jpg';
-    add(fallback, spot.city + ' · 街头实景');
     /* 去重保序 */
     var seen = {}, list = [];
     cand.forEach(function (c) { if (!seen[c.src]) { seen[c.src] = 1; list.push(c); } });
-    return list.slice(0, 8);
+    return list;
   }
 
   /* ---------- 城市国家归属 ---------- */
@@ -945,11 +963,9 @@
       }
     }
 
-    /* --- 启动调度 ---
-       国内：Google 无大陆街景覆盖（搜出来只会是地图不是街景），故不自动展示——
-       有本景点专属芊云作品→芊云；有 Commons 真全景→360° 实拍；否则沉浸实景漫游，
-       芊云城市实拍保留在「切换芊云全景」按钮里（诚实标注，不冒充本景点）。
-       境外：Google 街景优先（cbll 精确坐标 / 名称搜索），失败再降级。 */
+    /* --- 启动调度（恢复用户认可的方案）：谷歌地图街景默认展示，芊云全景一键互换 ---
+       境外有精确坐标→坐标直达街景；国内按景点名称实景搜索引用（命中即本景点画面）。
+       Google 不可达时：本景点专属芊云作品→芊云；Commons 真全景→360°实拍；否则沉浸漫游。 */
     var PANO = window.PANO_DATA || {};
     var qyHit = qyvrMatch(spot);
     var qyOwn = qyHit && !qyHit.cityFallback ? qyHit : null;
@@ -957,20 +973,6 @@
     var isCN = !country || country === '中国' || country.indexOf('中国') > -1;
     if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
-    } else if (isCN) {
-      if (qyOwn) {
-        /* 有本景点专属芊云作品：直接展示 */
-        applyMode('qy');
-      } else {
-        /* 先给沉浸实景漫游（多镜头立即可看），Commons 命中真全景再升级；
-           用户若已手动切换到芊云等模式则不打扰 */
-        applyMode('immerse');
-        commonsPano(spot).then(function (hit) {
-          if (!hit) return;
-          if (mode === 'immerse') { pendingPano = hit; applyMode('net'); }
-          else { pendingPano = hit; }
-        });
-      }
     } else {
       modeChip.textContent = '正在检索真实街景…';
       var pCommons = commonsPano(spot);
@@ -979,7 +981,8 @@
         if (ok) {
           pCommons.then(function (hit) { if (hit) pendingPano = hit; });
           var coord = findCoord(spot.city, spot.name);
-          applyMode('street', coord ? { cbll: coord[1] + ',' + coord[0] } : { q: streetQuery });
+          var spec = (!isCN && coord) ? { cbll: coord[1] + ',' + coord[0] } : { q: streetQuery };
+          applyMode('street', spec);
         } else {
           pCommons.then(function (hit) {
             if (hit) { pendingPano = hit; applyMode('net'); return; }
