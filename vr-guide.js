@@ -282,28 +282,49 @@
       }
     })();
   };
-  /* 引擎 1：百度 TTS 音频（真实 mp3，全设备出声） */
+  /* 引擎 1：百度 TTS 音频（真实 mp3，全设备出声）
+     关键：必须 no-referrer！百度 TTS 接口拦截带外部 Referer 的请求返回空内容
+     （这正是"点开始解说没声音"的根因），不带 Referer 则正常返回 mp3。 */
   Narrator.prototype._speakAudio = function (text, lang, done, fail) {
     var self = this;
-    try { this._a && this._a.pause(); } catch (e) {}
-    var a = new Audio();
-    a.src = ttsUrl(text, lang);
-    a.volume = 1;
-    a.preload = 'auto';
-    this._a = a;
-    var started = false, over = false;
-    var guard = setTimeout(function () { if (!started && !over) { over = true; fail(); } }, 6000);
-    a.onplaying = function () { started = true; clearTimeout(guard); };
-    a.onended = function () { if (!over) { over = true; clearTimeout(guard); done(); } };
-    a.onerror = function () { if (!over) { over = true; clearTimeout(guard); fail(); } };
-    try {
-      var p = a.play();
-      if (p && p.catch) p.catch(function () { if (!over) { over = true; clearTimeout(guard); fail(); } });
-    } catch (e) { if (!over) { over = true; clearTimeout(guard); fail(); } }
-    /* 音频停留看门狗：开始播放但超时未结束（网络卡顿）→ 放行继续，绝不卡解说 */
-    setTimeout(function () {
-      if (!over && started && !self._stopped) { over = true; done(); }
-    }, Math.max(9000, text.length * 480));
+    var attempt = 0;
+    function start() {
+      attempt++;
+      try { self._a && self._a.pause(); } catch (e) {}
+      var a = new Audio();
+      a.src = ttsUrl(text, lang) + (attempt > 1 ? '&r=' + attempt : '');
+      a.volume = 1;
+      a.preload = 'auto';
+      try { a.referrerPolicy = 'no-referrer'; } catch (e) {}
+      a.setAttribute('referrerpolicy', 'no-referrer');
+      self._a = a;
+      var started = false, over = false;
+      var guard = setTimeout(function () { if (!started && !over) { over = true; if (attempt < 2) start(); else fail(); } }, 6000);
+      a.onplaying = function () { started = true; clearTimeout(guard); };
+      a.onended = function () { if (!over) { over = true; clearTimeout(guard); done(); } };
+      a.onerror = function () {
+        if (over) return;
+        over = true; clearTimeout(guard);
+        if (attempt < 2) setTimeout(start, 200);
+        else fail();
+      };
+      try {
+        var p = a.play();
+        if (p && p.catch) p.catch(function () {
+          if (over) return;
+          over = true; clearTimeout(guard);
+          if (attempt < 2) setTimeout(start, 200);
+          else fail();
+        });
+      } catch (e) {
+        if (!over) { over = true; clearTimeout(guard); if (attempt < 2) setTimeout(start, 200); else fail(); }
+      }
+      /* 音频停留看门狗：开始播放但超时未结束（网络卡顿）→ 放行继续，绝不卡解说 */
+      setTimeout(function () {
+        if (!over && started && !self._stopped) { over = true; done(); }
+      }, Math.max(9000, text.length * 480));
+    }
+    start();
   };
   /* 引擎 2：浏览器本地语音（备用）；无语音包时静音看门狗放行字幕 */
   Narrator.prototype._speakWeb = function (text, lang, done, fail) {
@@ -512,7 +533,8 @@
 
   /* ---------- 全网真 360° 全景检索（Wikimedia Commons，免费无 Key） ----------
      只认 2:1 附近的等距柱状全景（equirectangular），宽幅普通照片一律不冒充 VR：
-     点进「VR 全景」必须是可 360° 环视的真全景，否则降级走沉浸实景漫游。 */
+     点进「VR 全景」必须是可 360° 环视的真全景，否则降级走沉浸实景漫游。
+     检索顺序：坐标周边（geo 圆心=景点坐标，一定属于本景点）→ 名称精确匹配 → 名称兜底。 */
   function commonsPano(spot) {
     return new Promise(function (res) {
       var key = 'myl_cm_pano_' + (spot.city || '') + '_' + spot.name;
@@ -520,51 +542,66 @@
         var c = JSON.parse(localStorage.getItem(key) || 'null');
         if (c && Date.now() - c.t < 7 * 86400 * 1000) return res(c.v);
       } catch (e) {}
-      function query(q, minRatio) {
-        var url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
-          encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|size&iiurlwidth=1800&format=json&origin=*';
-        /* 6 秒超时：commons 在部分网络下挂起会导致整个板块卡住"加载中" */
+      function pickFrom(d) {
+        var best = null;
+        var pages = (d && d.query && d.query.pages) || {};
+        Object.keys(pages).forEach(function (k) {
+          var ii = pages[k].imageinfo && pages[k].imageinfo[0];
+          if (!ii || !ii.url || !/jpe?g$/i.test(ii.url)) return;
+          var w = ii.width || 0, h = ii.height || 1;
+          var ratio = w / h;
+          if (w >= 1400 && ratio >= 1.9 && ratio <= 2.6) {
+            if (!best || w * h > best.w * best.h) {
+              best = { src: ii.thumburl || ii.url, w: w, h: h, credit: String(pages[k].title || '').replace(/^File:/, '') };
+            }
+          }
+        });
+        return best;
+      }
+      function fetchUrl(url) {
         var ac = (typeof AbortController !== 'undefined') ? new AbortController() : null;
         var timer = ac ? setTimeout(function () { ac.abort(); }, 6000) : null;
         return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) {
           if (timer) clearTimeout(timer);
           return r.ok ? r.json() : null;
-        }).then(function (d) {
-          var best = null;
-          var pages = (d && d.query && d.query.pages) || {};
-          Object.keys(pages).forEach(function (k) {
-            var ii = pages[k].imageinfo && pages[k].imageinfo[0];
-            if (!ii || !ii.url || !/jpe?g$/i.test(ii.url)) return;
-            var w = ii.width || 0, h = ii.height || 1;
-            var ratio = w / h;
-            if (w >= 1400 && ratio >= minRatio && ratio <= 2.6) {
-              if (!best || w * h > best.w * best.h) {
-                best = { src: ii.thumburl || ii.url, w: w, h: h, credit: String(pages[k].title || '').replace(/^File:/, '') };
-              }
-            }
-          });
-          return best;
-        }).catch(function () { if (timer) clearTimeout(timer); return null; });
+        }).then(pickFrom).catch(function () { if (timer) clearTimeout(timer); return null; });
+      }
+      function query(q, minRatio) {
+        var url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
+          encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|size&iiurlwidth=1800&format=json&origin=*';
+        return fetchUrl(url);
+      }
+      /* 坐标周边检索：以景点坐标为圆心找真全景（地理上保证属于本景点） */
+      function geoNear() {
+        var coord = findCoord(spot.city, spot.name);
+        if (!coord) return Promise.resolve(null);
+        var url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=geosearch&ggscoord=' +
+          coord[1] + '|' + coord[0] + '&ggsradius=800&ggsnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|size&iiurlwidth=1800&format=json&origin=*';
+        return fetchUrl(url);
       }
       function keep(hit) {
         try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: hit })); } catch (e) {}
         res(hit);
       }
       var city = spot.city || '';
-      /* 轮 1：明确标注 equirectangular 的真全景；轮 2：360 panorama 关键词；
-         轮 3：退回景点名检索，比例仍限制在 2:1 附近。三轮都空 → 确认无真全景。
-         整体 10 秒竞速，超时直接放弃（绝不卡住板块） */
-      var overall = setTimeout(function () { res(null); }, 10000);
-      query(spot.name + ' ' + city + ' panorama equirectangular', 1.9).then(function (hit1) {
-        if (hit1) { clearTimeout(overall); return keep(hit1); }
-        query(spot.name + ' ' + city + ' 360 panorama', 1.9).then(function (hit2) {
-          if (hit2) { clearTimeout(overall); return keep(hit2); }
-          query(spot.name + ' ' + city, 2.0).then(function (hit3) {
-            clearTimeout(overall);
-            keep(hit3);
+      /* 轮 1：坐标周边 800 米真全景；轮 2：明确标注 equirectangular；轮 3：360 panorama；
+         轮 4：退回景点名检索，比例仍限制在 2:1 附近。全部空 → 确认无真全景。
+         整体 12 秒竞速，超时直接放弃（绝不卡住板块） */
+      var overall = setTimeout(function () { res(null); }, 12000);
+      var chain = geoNear().then(function (hit0) {
+        if (hit0) { clearTimeout(overall); return keep(hit0); }
+        return query(spot.name + ' ' + city + ' panorama equirectangular', 1.9).then(function (hit1) {
+          if (hit1) { clearTimeout(overall); return keep(hit1); }
+          return query(spot.name + ' ' + city + ' 360 panorama', 1.9).then(function (hit2) {
+            if (hit2) { clearTimeout(overall); return keep(hit2); }
+            return query(spot.name + ' ' + city, 2.0).then(function (hit3) {
+              clearTimeout(overall);
+              keep(hit3);
+            });
           });
         });
       });
+      chain && chain.catch && chain.catch(function () { clearTimeout(overall); res(null); });
     });
   }
 
