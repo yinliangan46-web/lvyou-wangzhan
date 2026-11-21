@@ -605,10 +605,10 @@
     });
   }
 
-  /* ---------- 模式 A：真实街景（按景点名称在 Google 地图实景搜索并引用） ----------
-     不再按坐标抓“最近全景”——坐标定位会把邻近其他景点（如玄武湖）的全景错配过来。
-     改用 Google 地图对「景点名 + 城市」的实景搜索结果，命中的一定是该景点本体的画面。 */
-  function StreetView(stage, query) {
+  /* ---------- 模式 A：真实街景（Google 街景实景拍摄） ----------
+     有精确坐标时用 cbll 定位（直接进入实景画面，境外城市效果好）；
+     无坐标时按名称搜索引用。国内城市无 Google 街景覆盖，不作为默认模式。 */
+  function StreetView(stage, spec) {
     this.stage = stage;
     this.wrap = document.createElement('div');
     this.wrap.className = 'vr-street';
@@ -616,8 +616,13 @@
     fr.setAttribute('allowfullscreen', 'true');
     fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
     fr.loading = 'eager';
-    fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent(query) +
-      '&layer=c&output=svembed&hl=zh-CN';
+    if (spec && spec.cbll) {
+      fr.src = 'https://maps.google.com/maps?q=&layer=c&cbll=' + spec.cbll +
+        '&cbp=11,0,0,0,0&output=svembed&hl=zh-CN';
+    } else {
+      fr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent((spec && spec.q) || '') +
+        '&layer=c&output=svembed&hl=zh-CN';
+    }
     this.wrap.appendChild(fr);
     stage.appendChild(this.wrap);
   }
@@ -638,7 +643,7 @@
     root.innerHTML =
       '<h3><i class="fas fa-vr-cardboard" style="color:#0e9f8a"></i> 实景云游 · AI 解说' +
         '<span class="vr-badge">实景拍摄 · 语音导览</span><span class="vr-sub">' + esc(spot.name) + '</span></h3>' +
-      '<p class="vr-intro">画面可以上下左右自由环视；点「开始解说」，AI 导游用真人语音带你边看边讲（中英双语）。实景画面来自 Google 地图对该景点的实景搜索结果，语音由百度语音合成提供，任何手机都能出声。</p>' +
+      '<p class="vr-intro">点「开始解说」，AI 导游用真人语音带你边看边讲（中英双语）。境外城市接入 Google 实景街景；国内城市展示 720° 真实全景与本站实拍镜头，均可随时一键转换。</p>' +
       '<div class="vr-stage" id="vrStage">' +
         '<span class="vr-compass" id="vrCompass">0°</span>' +
         '<span class="vr-modechip" id="vrMode">加载中</span>' +
@@ -664,8 +669,8 @@
     var ctrl = root.querySelector('#vrCtrl');
     var noteEl = root.querySelector('#vrNote');
 
-    var view = null, pano = null, mode = null, streetOK = false, lastStreetCoord = null;
-    /* Google 实景搜索关键词：景点名 + 城市（引用该景点自己的画面，杜绝邻近景点错配） */
+    var view = null, pano = null, mode = null, streetOK = false;
+    /* Google 实景搜索关键词：景点名 + 城市（境外无坐标时用） */
     var streetQuery = (spot.city ? spot.city + ' ' : '') + spot.name;
     var country = countryOf(spot.city);
 
@@ -691,13 +696,18 @@
       shotChipEl.style.display = 'none';
     }
 
-    /* --- 模式装配 --- */
+    /* --- 模式装配 ---
+       芊云转换原则：任何模式都可一键进入芊云全景；退出时回到进入前的模式。
+       国内景点绝不自动展示 Google 地图（无街景覆盖只会显示地图，不是街景）。 */
     var pendingPano = null;
-    function applyMode(m, streetQuery) {
+    var lastNonQy = null;      /* 进入芊云前的模式 */
+    var lastStreetSpec = null; /* 街景参数（cbll 坐标 或 q 名称） */
+    function applyMode(m, streetSpec) {
       clearView();
       mode = m;
-      cruiseBtn = null; gyroBtn = null;
-      rebuildCtrl();
+      view = null; pano = null;
+      if (m !== 'qy') lastNonQy = m;
+      if (streetSpec) lastStreetSpec = streetSpec;
       if (m === 'pano') {
         var PANO = window.PANO_DATA || {};
         var pd = PANO[spot.name];
@@ -717,7 +727,7 @@
         modeChip.textContent = '真实 VR · 360° 全景实拍';
         modeChip.className = 'vr-modechip';
         hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
-        noteEl.innerHTML = '<i class="fas fa-vr-cardboard"></i> 真实 VR 全景：' + esc(pendingPano.credit || 'Wikimedia Commons 实景拍摄') + ' · 想看官方全景可点「官方 VR 全景」直达';
+        noteEl.innerHTML = '<i class="fas fa-vr-cardboard"></i> 本景点 360° 实拍全景：' + esc(pendingPano.credit || 'Wikimedia Commons');
         pano = new PanoView(stage);
         view = pano;
         view.compass = setCompassText;
@@ -731,9 +741,10 @@
         modeChip.textContent = '真实街景 · 实景拍摄';
         modeChip.className = 'vr-modechip google';
         hintEl.textContent = '在街景画面内拖动即可环视 · 双指缩放';
-        lastStreetCoord = streetQuery;
-        view = new StreetView(stage, streetQuery);
-        noteEl.innerHTML = '画面为 Google 地图对「' + esc(streetQuery) + '」的实景搜索结果（该景点实拍）。若此处未覆盖街景，点上方「切换实景漫游」查看本站实拍镜头。';
+        var spec = streetSpec || lastStreetSpec || { q: streetQuery };
+        lastStreetSpec = spec;
+        view = new StreetView(stage, spec);
+        noteEl.innerHTML = '画面为 Google 街景实拍。若该地点未覆盖街景，可点「切换芊云全景」或「切换实景漫游」。';
         compassEl.textContent = '实景';
       } else if (m === 'qy') {
         /* 芊云全景 VR 作品：iframe 页面内嵌入（不跳转网站），上下遮幅屏蔽平台品牌标识 */
@@ -755,11 +766,11 @@
         stage.appendChild(cBottom);
         var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
         noteEl.innerHTML = '全景作品：' + qyLabel +
-          (qyHit && qyHit.cityFallback ? '（' + esc(spot.city || '') + '城市实拍）' : '') + ' · 实景拍摄可 360° 环视';
+          (qyHit && qyHit.cityFallback ? '（' + esc(spot.city || '') + '城市实拍 · 非本景点专属）' : '') + ' · 实景拍摄可 360° 环视';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';
-        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角 · 解说自动切镜头';
+        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角 · 点下方按钮切换镜头';
         view = new ImmersiveView(stage, collectPhotos(spot));
         view.compass = setCompassText;
         view.shotChip = shotChipEl;
@@ -767,9 +778,11 @@
         bindDrag(view);
         noteEl.innerHTML = '';
       }
+      /* 控制按钮统一在 view 就绪后重建（修复漫游模式镜头切换按钮不出现的问题） */
+      rebuildCtrl();
     }
 
-    /* --- 控制按钮（随模式重建） --- */
+    /* --- 控制按钮（view 就绪后重建） --- */
     var playBtn = null, swapBtn = null, cruiseBtn = null, gyroBtn = null, fsBtn = null, langBtn = null;
     var vrLang = 'zh';
     function rebuildCtrl() {
@@ -778,28 +791,15 @@
         if (narrator.on) { narrator.stop(); }
         else { narrator.play(buildScript(spot, vrLang)); }
       });
-      langBtn = btn('lang', vrLang === 'zh' ? 'fa-language' : 'fa-language', vrLang === 'zh' ? 'English 解说' : '中文解说', function () {
+      langBtn = btn('lang', 'fa-language', vrLang === 'zh' ? 'English 解说' : '中文解说', function () {
         vrLang = vrLang === 'zh' ? 'en' : 'zh';
         langBtn.innerHTML = '<i class="fas fa-language"></i> ' + (vrLang === 'zh' ? 'English 解说' : '中文解说');
         if (narrator.on) { narrator.stop(); narrator.play(buildScript(spot, vrLang)); }
       });
-      /* 模式互换：街景 ↔ 芊云全景（页面内嵌入，不跳转）↔ 实景漫游 */
-      if (streetOK && qyHit) {
-        swapBtn = btn('swap', 'fa-shuffle', mode === 'qy' ? '切换真实街景' : '切换芊云全景', function () {
-          if (narrator.on) narrator.stop();
-          if (mode === 'qy') applyMode('street', lastStreetCoord);
-          else applyMode('qy');
-        });
-      } else if (streetOK || mode === 'qy') {
-        swapBtn = btn('swap', 'fa-shuffle', mode === 'immerse' ? (streetOK ? '切换真实街景' : '切换实景漫游') : '切换实景漫游', function () {
-          if (narrator.on) narrator.stop();
-          if (mode === 'immerse' && streetOK) applyMode('street', lastStreetCoord);
-          else applyMode('immerse');
-        });
-      }
+      /* 沉浸漫游镜头切换（修复：此前按钮在 view 创建前构建，永不出现） */
       if (mode === 'immerse' && view && view.shots && view.shots.length > 1) {
-        btn('prev', 'fa-arrow-left', '上一镜头', function () { view.show(view.idx - 1); });
-        btn('next', 'fa-arrow-right', '下一镜头', function () { view.show(view.idx + 1); });
+        btn('swap', 'fa-arrow-left', '上一镜头', function () { view.show(view.idx - 1); });
+        btn('swap', 'fa-arrow-right', '下一镜头', function () { view.show(view.idx + 1); });
       }
       if (mode !== 'street' && mode !== 'qy') {
         cruiseBtn = btn('cruise', 'fa-route', '自动漫游', function () {
@@ -809,6 +809,28 @@
           else if (view && view.cruiseOn !== undefined) view.cruiseOn = on;
         });
         gyroBtn = btn('gyro', 'fa-mobile-screen', '陀螺仪', function () { toggleGyro(); });
+      }
+      /* 芊云全景转换：任何模式一键进入，退出回到进入前的模式 */
+      if (qyHit) {
+        swapBtn = btn('swap', 'fa-shuffle', mode === 'qy' ? '退出芊云全景' : '切换芊云全景', function () {
+          if (narrator.on) narrator.stop();
+          if (mode === 'qy') {
+            applyMode(lastNonQy || (streetOK ? 'street' : 'immerse'), lastStreetSpec);
+          } else {
+            applyMode('qy');
+          }
+        });
+      }
+      if (mode === 'street') {
+        btn('swap', 'fa-images', '切换实景漫游', function () {
+          if (narrator.on) narrator.stop();
+          applyMode('immerse');
+        });
+      } else if (mode === 'immerse' && streetOK) {
+        btn('swap', 'fa-street-view', '切换真实街景', function () {
+          if (narrator.on) narrator.stop();
+          applyMode('street', lastStreetSpec || { q: streetQuery });
+        });
       }
       fsBtn = btn('fs', 'fa-expand', '全屏', function () {
         var nativeFs = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.msRequestFullscreen;
@@ -848,13 +870,6 @@
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
           fsBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏';
         }
-      }
-      /* 芊云匹配时即使街景不可用，也提供芊云/漫游互换 */
-      if (!streetOK && qyHit && mode !== 'qy') {
-        swapBtn = btn('swap', 'fa-shuffle', '切换芊云全景', function () {
-          if (narrator.on) narrator.stop();
-          applyMode('qy');
-        });
       }
     }
 
@@ -930,14 +945,32 @@
       }
     }
 
-    /* --- 启动：Google 实景搜索优先（按景点名引用该景点自己的画面），并网检索真全景互为备选 ---
-       probeGoogle 与 commonsPano 同时发起，任何一路都不阻塞另一路，板块永不卡住
-       芊云城市兜底作品（cityFallback）只保留在手动切换按钮里，绝不自动顶替景点 */
+    /* --- 启动调度 ---
+       国内：Google 无大陆街景覆盖（搜出来只会是地图不是街景），故不自动展示——
+       有本景点专属芊云作品→芊云；有 Commons 真全景→360° 实拍；否则沉浸实景漫游，
+       芊云城市实拍保留在「切换芊云全景」按钮里（诚实标注，不冒充本景点）。
+       境外：Google 街景优先（cbll 精确坐标 / 名称搜索），失败再降级。 */
     var PANO = window.PANO_DATA || {};
     var qyHit = qyvrMatch(spot);
     var qyOwn = qyHit && !qyHit.cityFallback ? qyHit : null;
+    var country = countryOf(spot.city);
+    var isCN = !country || country === '中国' || country.indexOf('中国') > -1;
     if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
+    } else if (isCN) {
+      if (qyOwn) {
+        /* 有本景点专属芊云作品：直接展示 */
+        applyMode('qy');
+      } else {
+        /* 先给沉浸实景漫游（多镜头立即可看），Commons 命中真全景再升级；
+           用户若已手动切换到芊云等模式则不打扰 */
+        applyMode('immerse');
+        commonsPano(spot).then(function (hit) {
+          if (!hit) return;
+          if (mode === 'immerse') { pendingPano = hit; applyMode('net'); }
+          else { pendingPano = hit; }
+        });
+      }
     } else {
       modeChip.textContent = '正在检索真实街景…';
       var pCommons = commonsPano(spot);
@@ -945,7 +978,8 @@
         streetOK = ok;
         if (ok) {
           pCommons.then(function (hit) { if (hit) pendingPano = hit; });
-          applyMode('street', streetQuery);
+          var coord = findCoord(spot.city, spot.name);
+          applyMode('street', coord ? { cbll: coord[1] + ',' + coord[0] } : { q: streetQuery });
         } else {
           pCommons.then(function (hit) {
             if (hit) { pendingPano = hit; applyMode('net'); return; }
