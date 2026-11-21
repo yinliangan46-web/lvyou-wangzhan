@@ -39,48 +39,28 @@
     var list = CD[(ALIAS[spot.city] || spot.city || '').replace(/市$/, '')] || CD[spot.city || ''] || [];
     if (!list.length) return null;
     var nm = spot.name || '';
+    /* 垃圾作品过滤（住宅/门店/会议等），专属匹配同样适用 */
+    var junk = /(验收|家装|小区|房间|婚礼|测试|室内|样板|装修|店铺|宿舍|报告厅|直播间|工地|车位|办公室|校园|学校|学院|大学|中学|小学|会场|会议|成立|大会|典礼|开业|楼盘|号楼|单元|室$|门店|食堂|教学|实训|培训|售楼|样板间|营业厅|宿舍楼|公寓|客房|酒店|宾馆|餐厅|火锅|面馆|奶茶|烘焙|美容|理发|洗车|4S|展厅|汽车服务|\d室\d厅|平米|平方|户型|门面|●|◎|售房|旗舰店|服务中心)/;
     /* 归一化：去掉「景区/风景区/旅游区/公园/步行街/古镇/古城」等后缀再双向包含匹配 */
     var bare = nm.replace(/(风景名胜)?(旅游)?(景区|风景区|度假区|步行街|历史街区|公园|古镇|古城|老街|旅游区)$/g, '');
     var i, wname;
     if (bare && bare !== nm) {
       for (i = 0; i < list.length; i++) {
         wname = list[i][1] || '';
+        if (junk.test(wname)) continue;
         if (wname.indexOf(bare) > -1 || bare.indexOf(wname) > -1) return { id: list[i][0], name: wname };
       }
     }
     if (nm) {
       for (i = 0; i < list.length; i++) {
         wname = list[i][1] || '';
+        if (junk.test(wname)) continue;
         if (wname.indexOf(nm) > -1 || nm.indexOf(wname) > -1) return { id: list[i][0], name: wname };
       }
     }
-    /* 城市级兜底：本景点无专属作品时，选与景点名重合度最高的「景点实拍」作品，
-       保证所有景点都有芊云全景可切换（诚实标注，不冒充本景点专属） */
-    var good = /(景区|风景区|古镇|古城|公园|湖|山|寺|塔|园|街|博物馆|纪念馆|广场|大桥|湿地|峡谷|森林|老街|街区|码头|遗址|石窟|乐园|世界|都|城|村|湾|岛|滩|泉|梯田|瀑布|草原|长城|门|桥|河|江)/;
-    var bad = /(验收|家装|小区|房间|家乡|婚礼|测试|室内|样板|装修|民宿|店铺|幼儿园|宿舍|报告厅|直播间|工地|车位|办公室|校园|学校|学院|大学|中学|小学|会场|会议|成立|大会|典礼|开业|楼盘|号楼|单元|室$|门店|食堂|教学|实训|培训|售楼|样板间|营业厅|宿舍楼|公寓|客房|酒店|宾馆|餐厅|火锅|面馆|奶茶|烘焙|美容|理发|洗车|4S|展厅|\d室\d厅|平米|平方|户型|门面|●|◎|售房)/;
-    /* 排除名称里写了其他城市名的串味作品 */
-    var CITYNAMES = ['上海','北京','天津','重庆','广州','深圳','成都','杭州','武汉','西安','南京','苏州','厦门','青岛','大连','丽江','大理','拉萨','乌鲁木齐','桂林','三亚','哈尔滨','长春','沈阳','郑州','长沙','福州','昆明','贵阳','南昌','合肥','太原','石家庄','兰州','西宁','银川','呼和浩特','南宁','海口','宁波','无锡','佛山','东莞'];
-    var best = null, bestScore = -1;
-    for (i = 0; i < list.length; i++) {
-      wname = list[i][1] || '';
-      if (bad.test(wname)) continue;
-      var foreign = false;
-      for (var ci = 0; ci < CITYNAMES.length; ci++) {
-        if (CITYNAMES[ci] !== spot.city && wname.indexOf(CITYNAMES[ci]) > -1) { foreign = true; break; }
-      }
-      if (foreign) continue;
-      /* 与景点名的字符重合度优先（如 前门→天安门/正阳门 而非无关作品），
-         同城作品加分（如 上海·东方明珠→上海外滩全景 优于外地路桥） */
-      var ov = 0, c, j;
-      for (j = 0; j < nm.length; j++) {
-        c = nm.charAt(j);
-        if (c && wname.indexOf(c) > -1) ov++;
-      }
-      var s = ov * 3 + (spot.city && wname.indexOf(spot.city.replace(/市$/, '')) > -1 ? 3 : 0) + (good.test(wname) ? 2 : 0);
-      if (s > bestScore) { bestScore = s; best = list[i]; }
-    }
-    if (best) return { id: best[0], name: best[1], cityFallback: true };
-    return { id: list[0][0], name: list[0][1], cityFallback: true };
+    /* 严格原则：只认本景点专属作品（名称双向包含）。
+       没有专属作品就不提供芊云——绝不用同城其他景区的作品冒充 */
+    return null;
   }
 
   var CSS = ''
@@ -783,8 +763,7 @@
         cBottom.className = 'vr-qy-cover bottom';
         stage.appendChild(cBottom);
         var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
-        noteEl.innerHTML = '全景作品：' + qyLabel +
-          (qyHit && qyHit.cityFallback ? '（' + esc(spot.city || '') + '城市实拍 · 非本景点专属）' : '') + ' · 实景拍摄可 360° 环视';
+        noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视';
       } else {
         modeChip.textContent = '沉浸实景漫游';
         modeChip.className = 'vr-modechip';
@@ -963,16 +942,27 @@
       }
     }
 
-    /* --- 启动调度（恢复用户认可的方案）：谷歌地图街景默认展示，芊云全景一键互换 ---
-       境外有精确坐标→坐标直达街景；国内按景点名称实景搜索引用（命中即本景点画面）。
-       Google 不可达时：本景点专属芊云作品→芊云；Commons 真全景→360°实拍；否则沉浸漫游。 */
+    /* --- 启动调度（严格执行：绝不显示无关景区、国内绝不出谷歌地图） ---
+       国内：本景点专属芊云作品→芊云 360° 实拍；否则 Commons 真全景；否则沉浸实景漫游
+       （全部为该景点自己的画面。谷歌大陆无街景覆盖，检索只会出平面地图，故不接入）。
+       境外：谷歌街景（坐标直达景点本体）优先，芊云专属作品可互换。 */
     var PANO = window.PANO_DATA || {};
     var qyHit = qyvrMatch(spot);
-    var qyOwn = qyHit && !qyHit.cityFallback ? qyHit : null;
     var country = countryOf(spot.city);
     var isCN = !country || country === '中国' || country.indexOf('中国') > -1;
     if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
+    } else if (isCN) {
+      if (qyHit) {
+        applyMode('qy');
+      } else {
+        /* 先给本景点自己的实拍镜头，Commons 命中真全景再升级 */
+        applyMode('immerse');
+        commonsPano(spot).then(function (hit) {
+          if (hit && mode === 'immerse') { pendingPano = hit; applyMode('net'); }
+          else if (hit) { pendingPano = hit; }
+        });
+      }
     } else {
       modeChip.textContent = '正在检索真实街景…';
       var pCommons = commonsPano(spot);
@@ -981,12 +971,11 @@
         if (ok) {
           pCommons.then(function (hit) { if (hit) pendingPano = hit; });
           var coord = findCoord(spot.city, spot.name);
-          var spec = (!isCN && coord) ? { cbll: coord[1] + ',' + coord[0] } : { q: streetQuery };
-          applyMode('street', spec);
+          applyMode('street', coord ? { cbll: coord[1] + ',' + coord[0] } : { q: streetQuery });
         } else {
           pCommons.then(function (hit) {
             if (hit) { pendingPano = hit; applyMode('net'); return; }
-            if (qyOwn) applyMode('qy');
+            if (qyHit) applyMode('qy');
             else applyMode('immerse');
           });
         }
