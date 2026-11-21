@@ -625,7 +625,11 @@
         var fr = document.createElement('iframe');
         fr.className = 'vr-qy-frame';
         fr.setAttribute('allowfullscreen', 'true');
-        fr.setAttribute('allow', 'xr-spatial-tracking; gyroscope; accelerometer');
+        /* autoplay 'none'：浏览器层面禁止芊云播放器在打开时自动播放背景音乐/讲解语音
+           （部分作品的作者配置了 BGM，芊云播放器会 autoplay:true 自动响；
+            跨域 iframe 外部无法直接静音，Feature Policy 是唯一可靠拦截手段。
+            用户在画面内主动点按后平台仍可能播放，可点其右上角菜单的音乐图标关闭） */
+        fr.setAttribute('allow', "autoplay 'none'; gyroscope; accelerometer; xr-spatial-tracking");
         fr.src = 'https://9kvr.cn/tour/index?id=' + encodeURIComponent(qyId);
         stage.appendChild(fr);
         var cTop = document.createElement('div');
@@ -635,7 +639,8 @@
         cBottom.className = 'vr-qy-cover bottom';
         stage.appendChild(cBottom);
         var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
-        noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视';
+        noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视' +
+          '。本站已拦截其自动播放的背景音乐；若点按画面后仍有声音，点画面右上角菜单的「音乐」图标即可关闭。';
       } else {
         /* 无真素材：诚实提示，绝不拿无关照片冒充（旧版"上一张/下一镜头"照片漫游已删除） */
         modeChip.textContent = '暂无专属全景';
