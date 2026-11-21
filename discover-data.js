@@ -900,10 +900,37 @@ const bucketList = [
     { name: '南极', lat: -82.00, lng: 0.00, icon: '🐧', route: '15天邮轮，乌斯怀亚出发→德雷克海峡→南极半岛→企鹅栖息地' }
 ];
 
+/* WGS84 → GCJ-02 火星坐标转换：高德瓦片使用 GCJ-02，不转换标记会偏移约 500 米 */
+function __wgs2gcj(lat, lng) {
+    const a = 6378245.0, ee = 0.00669342162296594323;
+    const tLat = (x, y) => {
+        let r = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+        r += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+        r += (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0;
+        r += (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
+        return r;
+    };
+    const tLng = (x, y) => {
+        let r = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+        r += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+        r += (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0;
+        r += (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x / 30.0 * Math.PI)) * 2.0 / 3.0;
+        return r;
+    };
+    let dLat = tLat(lng - 105.0, lat - 35.0), dLng = tLng(lng - 105.0, lat - 35.0);
+    const radLat = lat / 180.0 * Math.PI;
+    let magic = Math.sin(radLat);
+    magic = 1 - ee * magic * magic;
+    const sqrtMagic = Math.sqrt(magic);
+    dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+    dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+    return [lat + dLat, lng + dLng];
+}
+
 function initBucketMap() {
     bucketMapInitialized = true;
     bucketMap = L.map('bucketMap').setView([30, 10], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(bucketMap);
+    L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', { subdomains: ['1','2','3','4'], attribution: '© 高德地图' }).addTo(bucketMap);
     renderBucketMarkers();
     updateBucketStats();
 }
@@ -917,7 +944,8 @@ function renderBucketMarkers() {
             html: `<div style="font-size:24px;cursor:pointer;${hasPhoto ? '' : 'opacity:.5'}">${place.icon}</div>`,
             className: 'bucket-marker', iconSize: [24, 24]
         });
-        const marker = L.marker([place.lat, place.lng], { icon }).addTo(bucketMap);
+        const g = __wgs2gcj(place.lat, place.lng);
+        const marker = L.marker(g, { icon }).addTo(bucketMap);
         const photo = hasPhoto || (typeof mylImgUrl === 'function' ? mylImgUrl(place.name, 'sight') : 'images/city-fallback.jpg');
         marker.bindPopup(`<div style="text-align:center;min-width:190px"><div style="font-size:26px;margin-bottom:4px">${place.icon}</div><div style="font-weight:700;margin-bottom:6px">${place.name}</div><img src="${photo}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px" alt="${place.name}" onerror="this.onerror=null;this.src='images/city-fallback.jpg'" />${hasPhoto ? '<div style="font-size:.72rem;color:#22c55e;margin-bottom:6px">✓ 你已打卡</div>' : ''}<div style="font-size:.78rem;color:#64748b;margin-bottom:8px;text-align:left;background:#f8fafc;padding:8px;border-radius:6px">🗺️ ${place.route}</div><button onclick="openUpload(${idx})" style="background:${hasPhoto ? '#22c55e' : '#ef4444'};color:#fff;border:none;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85rem;">${hasPhoto ? '✓ 已打卡 · 换照片' : '上传照片打卡'}</button></div>`);
     });
@@ -2640,8 +2668,8 @@ function initPackMap(seq) {
     const geo = __packGeo[seq];
     if (!el || !geo || typeof L === 'undefined' || el.dataset.inited) return;
     el.dataset.inited = '1';
-    const map = L.map(el, { zoomControl: false, scrollWheelZoom: false }).setView(geo.center, 11);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    const map = L.map(el, { zoomControl: false, scrollWheelZoom: false }).setView(__wgs2gcj(geo.center[0], geo.center[1]), 11);
+    L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', { subdomains: ['1','2','3','4'], attribution: '© 高德地图' }).addTo(map);
     const latlngs = [];
     geo.stops.forEach((s, i) => {
         const icon = L.divIcon({
@@ -2649,8 +2677,9 @@ function initPackMap(seq) {
             html: `<span>${i + 1}</span>`,
             iconSize: [26, 26], iconAnchor: [13, 13]
         });
-        L.marker([s[0], s[1]], { icon }).addTo(map).bindPopup(s[2]);
-        latlngs.push([s[0], s[1]]);
+        const gs = __wgs2gcj(s[0], s[1]);
+        L.marker(gs, { icon }).addTo(map).bindPopup(s[2]);
+        latlngs.push(gs);
     });
     if (latlngs.length > 1) {
         L.polyline(latlngs, { color: '#8b5cf6', weight: 3, opacity: .7, dashArray: '6 6' }).addTo(map);

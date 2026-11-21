@@ -325,7 +325,7 @@
     document.head.appendChild(s);
   }
 
-  function loadLeaflet(cb) {
+  function loadLeaflet(cb, onFail) {
     if (window.L) { cb(); return; }
     var css = document.createElement('link');
     css.rel = 'stylesheet';
@@ -334,6 +334,7 @@
     var sc = document.createElement('script');
     sc.src = 'vendor/leaflet/leaflet.js';
     sc.onload = cb;
+    sc.onerror = function () { onFail && onFail(); };
     document.head.appendChild(sc);
   }
 
@@ -349,7 +350,7 @@
       '<div class="me-card" id="meWeather"><h3><i class="fas fa-cloud-sun" style="color:#f5a623"></i> 未来 7 天天气' +
         '<span class="me-sub">' + esc(spot.city || spot.name) + ' · Open-Meteo</span></h3><div class="me-body"><div class="me-empty">天气加载中…</div></div></div>' +
       '<div class="me-card" id="meMap"><h3><i class="fas fa-map-location-dot" style="color:#2c9ca8"></i> 位置与导航' +
-        '<span class="me-sub">OpenStreetMap</span></h3><div class="me-body"><div class="me-empty">地图加载中…</div></div></div>';
+        '<span class="me-sub">高德地图</span></h3><div class="me-body"><div class="me-empty">地图加载中…</div></div></div>';
     host.insertBefore(root, host.firstChild);
 
     /* 天气卡片（双源降级：Open-Meteo → wttr.in，均失败显示重试按钮） */
@@ -384,55 +385,83 @@
     }
     getWeather(spot.city, spot.name).then(renderW).catch(weatherFail);
 
-    /* 地图与导航（三级坐标兜底，确保每个景点都有地图） */
-    loadLeaflet(function () {
-      var mBody = root.querySelector('#meMap .me-body');
-      var q = encodeURIComponent(spot.name);
-      var cityQ = encodeURIComponent(spot.city || spot.name);
-      /* 无坐标时导航退化为「关键词搜索」URI，依然可用 */
-      function navLinks(kind, lat, lng) {
-        if (kind === 'spot' || kind === 'geocoded') {
-          var gcj = wgs2gcj(lat, lng);
-          return '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/marker?position=' + gcj[1] + ',' + gcj[0] + '&name=' + q + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
-            '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/marker?location=' + lat + ',' + lng + '&title=' + q + '&content=' + q + '&output=html&coord_type=wgs84&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
-            '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/marker?marker=coord:' + gcj[0] + ',' + gcj[1] + ';title:' + q + ';addr:' + q + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>';
-        }
-        return '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/search?keyword=' + q + '&city=' + cityQ + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
-          '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/place/search?query=' + q + '&region=' + cityQ + '&output=html&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
-          '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/geocoder?keyword=' + q + '&region=' + cityQ + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>';
+    /* 地图与导航（三级坐标兜底，确保每个景点都有地图）
+       体验原则：导航按钮先渲染（零依赖），地图与定位异步补齐；
+       VR 板块立即挂载，绝不等待地图/定位脚本 */
+    var mBody = root.querySelector('#meMap .me-body');
+    var q = encodeURIComponent(spot.name);
+    var cityQ = encodeURIComponent(spot.city || spot.name);
+    /* 无坐标时导航退化为「关键词搜索」URI，依然可用 */
+    function navLinks(kind, lat, lng) {
+      if (kind === 'spot' || kind === 'geocoded') {
+        var gcj = wgs2gcj(lat, lng);
+        return '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/marker?position=' + gcj[1] + ',' + gcj[0] + '&name=' + q + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
+          '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/marker?location=' + lat + ',' + lng + '&title=' + q + '&content=' + q + '&output=html&coord_type=wgs84&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
+          '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/marker?marker=coord:' + gcj[0] + ',' + gcj[1] + ';title:' + q + ';addr:' + q + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>';
       }
-      var shareLink = '<a class="me-btn share" href="share.html?mode=spot&spot=' + encodeURIComponent(spot.name) + '&city=' + encodeURIComponent(spot.city || '') + '&desc=' + encodeURIComponent(spot.desc || '') + '&ticket=' + encodeURIComponent(spot.ticket || '') + '"><i class="fas fa-share-nodes"></i> 生成分享卡</a>';
+      return '<a class="me-btn amap" target="_blank" rel="noopener" href="https://uri.amap.com/search?keyword=' + q + '&city=' + cityQ + '&src=myl&callnative=1"><i class="fas fa-location-arrow"></i> 高德导航</a>' +
+        '<a class="me-btn bmap" target="_blank" rel="noopener" href="https://api.map.baidu.com/place/search?query=' + q + '&region=' + cityQ + '&output=html&src=myl"><i class="fas fa-map-pin"></i> 百度地图</a>' +
+        '<a class="me-btn qqmap" target="_blank" rel="noopener" href="https://apis.map.qq.com/uri/v1/geocoder?keyword=' + q + '&region=' + cityQ + '&referer=myl"><i class="fas fa-compass"></i> 腾讯地图</a>';
+    }
+    var shareLink = '<a class="me-btn share" href="share.html?mode=spot&spot=' + encodeURIComponent(spot.name) + '&city=' + encodeURIComponent(spot.city || '') + '&desc=' + encodeURIComponent(spot.desc || '') + '&ticket=' + encodeURIComponent(spot.ticket || '') + '"><i class="fas fa-share-nodes"></i> 生成分享卡</a>';
 
+    /* ① 导航按钮立即渲染（不依赖 Leaflet / 定位 / 网络） */
+    mBody.innerHTML = '<div id="meMapBox" class="me-map"><div class="me-empty" style="display:flex;align-items:center;justify-content:center;height:100%">定位加载中…</div></div>' +
+      '<div class="me-navrow">' + navLinks('search') + shareLink + '</div>';
+
+    /* ② VR 板块立即挂载（紧跟地图卡片之下，任何景点必定挂载，不等地图） */
+    if (window.MYL_VR) window.MYL_VR.mount(spot);
+
+    /* ③ 地图异步补齐：Leaflet 就绪 + 定位成功后替换占位区 */
+    loadLeaflet(function () {
       resolveCoord(spot.city, spot.name, function (res) {
-        if (!res || !res.coord) {
-          /* 极端情况（无网且无缓存）：仍给出可用的导航搜索按钮 */
-          mBody.innerHTML = '<div class="me-empty">地图服务暂不可用（离线或网络受限），可直接用下方按钮导航。</div><div class="me-navrow">' + navLinks('search') + shareLink + '</div>';
-          if (window.MYL_VR) window.MYL_VR.mount(spot);
+        if (!window.L) return;
+        var box = document.getElementById('meMapBox');
+        if (!box) return;        if (!res || !res.coord) {
+          /* 极端情况（无网且无缓存）：导航按钮已渲染，仅提示地图不可用 */
+          box.innerHTML = '<div class="me-empty" style="display:flex;align-items:center;justify-content:center;height:100%">地图服务暂不可用（离线或网络受限），可直接用下方按钮导航。</div>';
           return;
         }
         var kind = res.kind, lat = res.coord[1], lng = res.coord[0];
-        var gcj = kind === 'city' ? wgs2gcj(lat, lng) : wgs2gcj(lat, lng);
-        mBody.innerHTML = '<div id="meMapBox" class="me-map"></div><div class="me-navrow">' + navLinks(kind, lat, lng) + shareLink + '</div>';
+        var gcj = wgs2gcj(lat, lng);
+        box.innerHTML = '';
+        /* 用精确定位链接替换初始占位的搜索链接 */
+        var oldRow = mBody.querySelector('.me-navrow');
+        if (oldRow) oldRow.outerHTML = '<div class="me-navrow">' + navLinks(kind, lat, lng) + shareLink + '</div>';
         try {
           var map = L.map('meMapBox', { scrollWheelZoom: false });
-          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18, attribution: '© OpenStreetMap'
+          /* 高德瓦片：国内直连可靠（OSM 瓦片服务器在国内大面积被墙导致地图全灰），
+             坐标同步转 GCJ-02 对齐瓦片，避免定位针偏移到相邻街区 */
+          L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+            subdomains: ['1', '2', '3', '4'], maxZoom: 18, attribution: '© 高德地图'
           }).addTo(map);
           var popHtml = kind === 'city'
             ? '<b>' + esc(spot.city || '') + '市中心</b><br><span style="color:#888">未定位到「' + esc(spot.name) + '」精确位置，导航按钮按名称搜索</span>'
             : '<b>' + esc(spot.name) + '</b>' + (spot.city ? '<br>' + esc(spot.city) : '');
-          L.marker([lat, lng]).addTo(map).bindPopup(popHtml);
-          map.setView([lat, lng], kind === 'city' ? 12 : 14);
-          var box = document.getElementById('meMapBox');
+          /* 内联 SVG 定位针：不依赖 marker-icon.png（该文件缺失曾导致 404 且无图钉） */
+          var pin = L.divIcon({
+            className: '',
+            html: '<div style="filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))">' +
+              '<svg width="30" height="42" viewBox="0 0 30 42" xmlns="http://www.w3.org/2000/svg">' +
+              '<path d="M15 1C7.8 1 2 6.8 2 14c0 9.4 11.1 21.2 12.3 22.4a1 1 0 0 0 1.4 0C16.9 35.2 28 23.4 28 14 28 6.8 22.2 1 15 1z" fill="#e2585b" stroke="#fff" stroke-width="1.6"/>' +
+              '<circle cx="15" cy="14" r="5.5" fill="#fff"/></svg></div>',
+            iconSize: [30, 42],
+            iconAnchor: [15, 40],
+            popupAnchor: [0, -40]
+          });
+          L.marker([gcj[0], gcj[1]], { icon: pin }).addTo(map).bindPopup(popHtml);
+          map.setView([gcj[0], gcj[1]], kind === 'city' ? 12 : 14);
           box.addEventListener('click', function () { map.scrollWheelZoom.enable(); });
           box.addEventListener('mouseleave', function () { map.scrollWheelZoom.disable(); });
           setTimeout(function () { map.invalidateSize(); }, 60);
         } catch (e) {
-          mBody.innerHTML = '<div class="me-empty">地图初始化失败</div>' + mBody.innerHTML;
+          box.innerHTML = '<div class="me-empty" style="display:flex;align-items:center;justify-content:center;height:100%">地图初始化失败，可直接用下方按钮导航。</div>';
         }
-        /* 实景云游板块：紧跟地图卡片之下，任何景点必定挂载 */
-        if (window.MYL_VR) window.MYL_VR.mount(spot);
       });
+    }, function () {
+      /* Leaflet 脚本加载失败（弱网/被墙）：导航按钮已可用，仅更新占位提示 */
+      var box = document.getElementById('meMapBox');
+      if (box) box.innerHTML = '<div class="me-empty" style="display:flex;align-items:center;justify-content:center;height:100%">地图脚本加载失败（网络受限），可直接用下方按钮导航。</div>';
     });
   }
 
