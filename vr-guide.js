@@ -400,7 +400,7 @@
     var im = this.img;
     var ratio = H / W;
     var drawH = H;
-    var drawW = Math.round(drawH * (im.width / im.height) * 1.35);
+    var drawW = Math.round(drawH * (im.width / im.height) * (this.stretch || 1.35));
     var shift = ((this.yaw % 1) + 1) % 1;
     var x0 = -shift * drawW;
     var vOff = -this.pitch * H * 0.5 + (drawH - H) * 0.5;
@@ -425,6 +425,19 @@
     this.pitch = Math.max(-1, Math.min(1, (b - 45) / 60));
   };
   PanoView.prototype.destroy = function () { this._raf && cancelAnimationFrame(this._raf); this.ok = false; };
+
+  /* ---------- 本景点实拍照片收集（用于照片全景化） ----------
+     只收本景点自己的画面：POI 主图 + 详情页图库，绝不用周边景点/美食图冒充。 */
+  function collectPhotos(spot) {
+    var poi = window.mylPOIImg || function () { return ''; };
+    var list = [], seen = {};
+    /* 剔除 images/cities/ 城市通用图（与本景点无关且多为 404），只留本景点画面 */
+    function add(src, label) { if (src && !seen[src] && !/\/images\/cities\//.test(src)) { seen[src] = 1; list.push({ src: src, label: label }); } }
+    (spot.gallery || []).forEach(function (g) { add(g.src, g.label); });
+    add(spot.hero, spot.name + ' · 主图');
+    add(poi(spot.name, spot.type, spot.city), spot.name + ' · 实拍');
+    return list;
+  }
 
   /* ---------- 全网真 360° 全景检索（Wikimedia Commons，免费无 Key） ----------
      只认 2:1 附近的等距柱状全景（equirectangular），宽幅普通照片一律不冒充 VR：
@@ -538,7 +551,7 @@
     root.innerHTML =
       '<h3><i class="fas fa-vr-cardboard" style="color:#0e9f8a"></i> 实景云游 · AI 解说' +
         '<span class="vr-badge">实景拍摄 · 语音导览</span><span class="vr-sub">' + esc(spot.name) + '</span></h3>' +
-      '<p class="vr-intro">点「开始解说」，AI 导游用真人语音带你边看边讲（中英双语）。境外城市接入 Google 实景街景；国内城市展示本景点专属的真实 360° 全景，均可一键转换。本站只展示真实素材，绝不使用无关照片。</p>' +
+      '<p class="vr-intro">点「开始解说」，AI 导游用真人语音带你边看边讲（中英双语）。境外城市接入 Google 实景街景；国内城市展示本景点专属的真实 360° 全景，无专属全景的景点用本景点实拍照片渲染成 360° 环幕。全程无声，站内直接观看。</p>' +
       '<div class="vr-stage" id="vrStage">' +
         '<span class="vr-compass" id="vrCompass">0°</span>' +
         '<span class="vr-modechip" id="vrMode">加载中</span>' +
@@ -618,11 +631,11 @@
             checkQy().then(function (bgm) {
               if (!bgm) { applyMode('qy'); return; }
               commonsPano(spot).then(function (h) {
-                if (h) { pendingPano = h; applyMode('net'); } else applyMode('none');
+                if (h) { pendingPano = h; applyMode('net'); } else applyMode('photo');
               });
             });
           } else commonsPano(spot).then(function (h) {
-            if (h) { pendingPano = h; applyMode('net'); } else applyMode('none');
+            if (h) { pendingPano = h; applyMode('net'); } else applyMode('photo');
           });
         });
       } else if (m === 'net') {
@@ -639,9 +652,9 @@
           pano.destroy();
           if (qyHit) {
             checkQy().then(function (bgm) {
-              if (!bgm) applyMode('qy'); else applyMode('none');
+              if (!bgm) applyMode('qy'); else applyMode('photo');
             });
-          } else applyMode('none');
+          } else applyMode('photo');
         });
       } else if (m === 'street') {
         modeChip.textContent = '真实街景 · 实景拍摄';
@@ -675,8 +688,31 @@
         var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
         noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视' +
           '。若出现自动讲解语音，点画面右上角菜单即可关闭。';
+      } else if (m === 'photo') {
+        /* 照片全景化：把本景点自己的实拍照片用全景播放器渲染成 360° 环幕
+           （canvas 圆柱投影 · 无声 · 站内直看；仅在无真 VR 素材时使用） */
+        var phList = collectPhotos(spot);
+        var phIdx = 0;
+        modeChip.textContent = '景点实拍 · 360° 环幕';
+        modeChip.className = 'vr-modechip';
+        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
+        function tryPhoto() {
+          if (phIdx >= phList.length) { applyMode('none'); return; }
+          pano = new PanoView(stage);
+          pano.stretch = 1.05;
+          view = pano;
+          view.compass = setCompassText;
+          bindDrag(pano);
+          pano.load(phList[phIdx].src, function () {
+            stage.querySelector('canvas') && stage.querySelector('canvas').remove();
+            pano.destroy();
+            phIdx++;
+            tryPhoto();
+          });
+        }
+        tryPhoto();
       } else {
-        /* 无真素材：诚实提示，绝不拿无关照片冒充（旧版"上一张/下一镜头"照片漫游已删除） */
+        /* 无任何素材（图库也为空）才提示，绝不拿无关照片冒充 */
         modeChip.textContent = '暂无专属全景';
         modeChip.className = 'vr-modechip';
         hintEl.textContent = '';
@@ -719,7 +755,7 @@
         if (narrator.on) { narrator.stop(); narrator.play(buildScript(spot, vrLang)); }
       });
       /* 360° 全景模式（手动全景 / 网络真全景）提供自动漫游与陀螺仪；街景/芊云/空态不需要 */
-      if (mode === 'pano' || mode === 'net') {
+      if (mode === 'pano' || mode === 'net' || mode === 'photo') {
         cruiseBtn = btn('cruise', 'fa-route', '自动漫游', function () {
           var on = !cruiseBtn.classList.contains('on');
           cruiseBtn.classList.toggle('on', on);
@@ -871,7 +907,7 @@
           commonsPano(spot).then(function (hit) {
             if (mode !== null) return;
             if (hit) { pendingPano = hit; applyMode('net'); }
-            else applyMode('none');
+            else applyMode('photo');
           });
         });
       } else {
@@ -879,7 +915,7 @@
         commonsPano(spot).then(function (hit) {
           if (mode !== null) return;
           if (hit) { pendingPano = hit; applyMode('net'); }
-          else applyMode('none');
+          else applyMode('photo');
         });
       }
     } else {
@@ -897,10 +933,10 @@
           pCommons.then(function (hit) {
             if (mode !== null) return;
             if (hit) { pendingPano = hit; applyMode('net'); return; }
-            if (!qyHit) { applyMode('none'); return; }
+            if (!qyHit) { applyMode('photo'); return; }
             checkQy().then(function (bgm) {
               if (mode !== null) return;
-              if (!bgm) applyMode('qy'); else applyMode('none');
+              if (!bgm) applyMode('qy'); else applyMode('photo');
             });
           });
         }
