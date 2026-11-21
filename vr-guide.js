@@ -40,11 +40,11 @@
     if (!list.length) return null;
     var nm = spot.name || '';
     /* 垃圾作品过滤（住宅/门店/会议等），专属匹配同样适用 */
-    var junk = /(验收|家装|小区|房间|婚礼|测试|室内|样板|装修|店铺|宿舍|报告厅|直播间|工地|车位|办公室|校园|学校|学院|大学|中学|小学|会场|会议|成立|大会|典礼|开业|楼盘|号楼|单元|室$|门店|食堂|教学|实训|培训|售楼|样板间|营业厅|宿舍楼|公寓|客房|酒店|宾馆|餐厅|火锅|面馆|奶茶|烘焙|美容|理发|洗车|4S|展厅|汽车服务|\d室\d厅|平米|平方|户型|门面|●|◎|售房|旗舰店|服务中心)/;
+    var junk = /(验收|家装|小区|房间|婚礼|测试|室内|样板|装修|店铺|宿舍|报告厅|直播间|工地|车位|办公室|校园|学校|学院|大学|中学|小学|会场|会议|成立|大会|典礼|开业|楼盘|号楼|单元|室$|门店|食堂|教学|实训|培训|售楼|样板间|营业厅|宿舍楼|公寓|客房|酒店|宾馆|餐厅|火锅|面馆|奶茶|烘焙|美容|理发|洗车|4S|展厅|汽车服务|维修|手机|电脑|电器|五金|建材|汽配|\d室\d厅|平米|平方|户型|门面|●|◎|售房|旗舰店|服务中心)/;
     /* 归一化：去掉「景区/风景区/旅游区/公园/步行街/古镇/古城」等后缀再双向包含匹配 */
     var bare = nm.replace(/(风景名胜)?(旅游)?(景区|风景区|度假区|步行街|历史街区|公园|古镇|古城|老街|旅游区)$/g, '');
     var i, wname;
-    if (bare && bare !== nm) {
+    if (bare && bare.length >= 2 && bare !== nm) {
       for (i = 0; i < list.length; i++) {
         wname = list[i][1] || '';
         if (junk.test(wname)) continue;
@@ -425,6 +425,55 @@
     this.pitch = Math.max(-1, Math.min(1, (b - 45) / 60));
   };
   PanoView.prototype.destroy = function () { this._raf && cancelAnimationFrame(this._raf); this.ok = false; };
+  PanoView.prototype.loadCanvas = function (cv) {
+    this.img = cv; this.ok = true; this.resize();
+    this._raf = requestAnimationFrame(this._loop);
+  };
+
+  /* ---------- 伪全景合成：普通实拍照片 → 2:1 球面全景图 ----------
+     中央为原照，左右循环镜像对称延展（360° 一整圈只见主体一次），
+     顶/底用原图边缘行拉伸补天空/地面，拖动环视观感接近真实全景球面。
+     返回离屏 canvas，直接作为 PanoView 绘制源（无需导出，跨域图也能用）。 */
+  function fakeEquirect(img) {
+    var W = Math.max(1024, Math.min(2048, Math.round((img.width || 1600) * 2.2)));
+    var H = W >> 1;
+    var c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    var x = c.getContext('2d');
+    var ar = (img.width || 16) / (img.height || 10);
+    var ph = Math.round(H * 0.74);
+    var pw = Math.round(ph * ar);
+    if (pw > W * 0.56) { pw = Math.round(W * 0.56); ph = Math.round(pw / ar); }
+    var px = Math.round((W - pw) / 2), py = Math.round((H - ph) / 2);
+    x.fillStyle = '#101828';
+    x.fillRect(0, 0, W, H);
+    /* 天/地带：原图顶/底边缘拉伸 */
+    try {
+      if (img.width) {
+        x.drawImage(img, 0, 0, img.width, 6, 0, 0, W, py + 1);
+        x.drawImage(img, 0, img.height - 6, img.width, 6, 0, py + ph - 1, W, H - py);
+      }
+    } catch (e) {}
+    /* 循环镜像平铺填满左右 */
+    function seg(sx, fl) {
+      x.save();
+      if (fl) {
+        x.translate(sx + pw, py);
+        x.scale(-1, 1);
+        x.drawImage(img, 0, 0, img.width, img.height, 0, 0, pw, ph);
+      } else {
+        x.drawImage(img, 0, 0, img.width, img.height, sx, py, pw, ph);
+      }
+      x.restore();
+    }
+    var flip = true, cx = px;
+    while (cx > 0) { seg(cx - pw, flip); cx -= pw; flip = !flip; }
+    flip = true; cx = px + pw;
+    while (cx < W) { seg(cx, flip); cx += pw; flip = !flip; }
+    /* 中央原照最后覆盖（消除中心接缝） */
+    x.drawImage(img, 0, 0, img.width, img.height, px, py, pw, ph);
+    return c;
+  }
 
   /* ---------- 本景点实拍照片收集（用于照片全景化） ----------
      只收本景点自己的画面：POI 主图 + 详情页图库，绝不用周边景点/美食图冒充。 */
@@ -433,8 +482,24 @@
     var list = [], seen = {};
     /* 剔除 images/cities/ 城市通用图（与本景点无关且多为 404），只留本景点画面 */
     function add(src, label) { if (src && !seen[src] && !/\/images\/cities\//.test(src)) { seen[src] = 1; list.push({ src: src, label: label }); } }
-    (spot.gallery || []).forEach(function (g) { add(g.src, g.label); });
-    add(spot.hero, spot.name + ' · 主图');
+    /* bing 图搜词重写：原词含「写实风光 氛围感」等模糊修饰，泛称景点
+       （大蜀山/包公园等）极易搜偏（大蜀山→雪山图）。重写为
+       「城市+景点名+实景锚定词」，把搜索牢牢锚定在本景点上 */
+    var QMAP = { '主图': '实拍全景', '全景': '外景', '细节': '近景', '特写': '近景特写', '清晨': '清晨风光', '黄昏': '黄昏风光', '人文': '游人', '夜景': '夜景' };
+    function bingFix(src, suffix) {
+      if (!/cn\.bing\.net\/th\?/.test(src) || typeof URL === 'undefined') return src;
+      try {
+        var u = new URL(src);
+        u.searchParams.set('q', (spot.city ? spot.city + ' ' : '') + spot.name + ' ' + suffix);
+        return u.toString();
+      } catch (e) { return src; }
+    }
+    (spot.gallery || []).forEach(function (g) {
+      var label = String(g.label || '');
+      var tail = label.split('·').pop().trim();
+      add(bingFix(g.src, QMAP[tail] || '实景'), label);
+    });
+    add(bingFix(spot.hero, '实拍'), spot.name + ' · 主图');
     add(poi(spot.name, spot.type, spot.city), spot.name + ' · 实拍');
     return list;
   }
@@ -495,7 +560,7 @@
       /* 轮 1：坐标周边 800 米真全景；轮 2：明确标注 equirectangular；轮 3：360 panorama；
          轮 4：退回景点名检索，比例仍限制在 2:1 附近。全部空 → 确认无真全景。
          整体 12 秒竞速，超时直接放弃（绝不卡住板块） */
-      var overall = setTimeout(function () { res(null); }, 8000);
+      var overall = setTimeout(function () { res(null); }, 5000);
       var chain = geoNear().then(function (hit0) {
         if (hit0) { clearTimeout(overall); return keep(hit0); }
         return query(spot.name + ' ' + city + ' panorama equirectangular', 1.9).then(function (hit1) {
@@ -510,6 +575,55 @@
         });
       });
       chain && chain.catch && chain.catch(function () { clearTimeout(overall); res(null); });
+    });
+  }
+
+  /* ---------- Commons 坐标周边实拍照片（用于照片全景化） ----------
+     与 commonsPano 不同：不要求 2:1 等距全景，普通实拍照片也收。
+     坐标周边 600 米的照片地理上保证属于本景点（比图搜可靠得多）。 */
+  function commonsPhotos(spot) {
+    return new Promise(function (res) {
+      var key = 'myl_cm_photos_' + (spot.city || '') + '_' + spot.name;
+      try {
+        var c = JSON.parse(localStorage.getItem(key) || 'null');
+        if (c && Date.now() - c.t < 7 * 86400 * 1000) return res(c.v);
+      } catch (e) {}
+      var out = [], done = false;
+      var overall = setTimeout(finish, 5000);
+      function finish() {
+        if (done) return;
+        done = true;
+        clearTimeout(overall);
+        try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: out })); } catch (e) {}
+        res(out);
+      }
+      function pick(d) {
+        var pages = (d && d.query && d.query.pages) || {};
+        Object.keys(pages).forEach(function (k) {
+          var ii = pages[k].imageinfo && pages[k].imageinfo[0];
+          if (!ii || !ii.url || !/jpe?g$/i.test(ii.url)) return;
+          var w = ii.width || 0, h = ii.height || 1;
+          if (w >= 900 && w / h >= 1.25 && w / h <= 3.2) {
+            out.push({ src: ii.thumburl || ii.url, credit: String(pages[k].title || '').replace(/^File:/, '') });
+          }
+        });
+      }
+      function fetchUrl(url) {
+        var ac = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        var timer = ac ? setTimeout(function () { ac.abort(); }, 5000) : null;
+        return fetch(url, ac ? { signal: ac.signal } : undefined).then(function (r) {
+          if (timer) clearTimeout(timer);
+          return r.ok ? r.json() : null;
+        }).then(pick).catch(function () { if (timer) clearTimeout(timer); });
+      }
+      var coord = findCoord(spot.city, spot.name);
+      var p1 = coord
+        ? fetchUrl('https://commons.wikimedia.org/w/api.php?action=query&generator=geosearch&ggscoord=' +
+            coord[1] + '|' + coord[0] + '&ggsradius=600&ggsnamespace=6&gsrlimit=25&prop=imageinfo&iiprop=url|size&iiurlwidth=1600&format=json&origin=*')
+        : Promise.resolve();
+      var p2 = fetchUrl('https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
+        encodeURIComponent(spot.name + ' ' + (spot.city || '')) + '&gsrnamespace=6&gsrlimit=15&prop=imageinfo&iiprop=url|size&iiurlwidth=1600&format=json&origin=*');
+      Promise.all([p1, p2]).then(finish, finish);
     });
   }
 
@@ -689,28 +803,37 @@
         noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视' +
           '。若出现自动讲解语音，点画面右上角菜单即可关闭。';
       } else if (m === 'photo') {
-        /* 照片全景化：把本景点自己的实拍照片用全景播放器渲染成 360° 环幕
-           （canvas 圆柱投影 · 无声 · 站内直看；仅在无真 VR 素材时使用） */
-        var phList = collectPhotos(spot);
-        var phIdx = 0;
-        modeChip.textContent = '景点实拍 · 360° 环幕';
+        /* 照片全景化：本景点实拍照片 → 合成 2:1 伪全景球面图 → 全景播放器渲染
+           （无声 · 站内直看；仅在无真 VR 素材时使用）。来源优先 Commons 坐标周边实拍 */
+        modeChip.textContent = '正在合成 360° 全景…';
         modeChip.className = 'vr-modechip';
-        hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
-        function tryPhoto() {
-          if (phIdx >= phList.length) { applyMode('none'); return; }
-          pano = new PanoView(stage);
-          pano.stretch = 1.05;
-          view = pano;
-          view.compass = setCompassText;
-          bindDrag(pano);
-          pano.load(phList[phIdx].src, function () {
-            stage.querySelector('canvas') && stage.querySelector('canvas').remove();
-            pano.destroy();
-            phIdx++;
-            tryPhoto();
-          });
-        }
-        tryPhoto();
+        commonsPhotos(spot).then(function (cl) {
+          if (mode !== 'photo') return;
+          var phList = (cl || []).concat(collectPhotos(spot));
+          var phIdx = 0;
+          function tryPhoto() {
+            if (phIdx >= phList.length) { applyMode('none'); return; }
+            var item = phList[phIdx];
+            var im = new Image();
+            im.onload = function () {
+              if (mode !== 'photo') return;
+              modeChip.textContent = '景点实拍 · 360° 全景';
+              hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
+              noteEl.innerHTML = item.credit
+                ? '<i class="fas fa-camera"></i> 本景点实拍照片全景化：' + esc(item.credit) + '（Wikimedia Commons）'
+                : '';
+              pano = new PanoView(stage);
+              pano.stretch = 1;   /* 2:1 全景图正好环绕一圈 */
+              view = pano;
+              view.compass = setCompassText;
+              bindDrag(pano);
+              pano.loadCanvas(fakeEquirect(im));
+            };
+            im.onerror = function () { phIdx++; tryPhoto(); };
+            im.src = item.src;
+          }
+          tryPhoto();
+        });
       } else {
         /* 无任何素材（图库也为空）才提示，绝不拿无关照片冒充 */
         modeChip.textContent = '暂无专属全景';
