@@ -341,6 +341,9 @@
   /* ---------- 注入 ---------- */
   function run(spot) {
     if (!spot || !spot.name) return;
+    /* 美食详情页不挂天气卡、地图卡与 VR 全景：这些与菜品本身无关，
+       美食页只保留菜品档案、口感、工序、吃法与选店内容。 */
+    if (spot.type === 'food') return;
     injectStyle();
     var host = document.getElementById('sdMain');
     if (!host) return;
