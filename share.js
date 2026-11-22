@@ -57,12 +57,31 @@
     return tryNext();
   }
   function loadMulti(cands, n) {
-    var out = [], i = 0;
+    var out = [], seen = {}, i = 0;
     function next() {
       if (i >= cands.length || out.length >= n) return Promise.resolve(out);
-      return loadImg(cands[i++]).then(function (im) { if (im) out.push(im); return next(); });
+      return loadImg(cands[i++]).then(function (im) {
+        if (im && !seen[im.src]) { seen[im.src] = 1; out.push(im); }
+        return next();
+      });
     }
     return next();
+  }
+  /* 城市实拍候选链：城市本地图 → 城市风光/街景/天际线（落城市池）→ 站内兜底 */
+  function cityImgCandidates(city) {
+    var list = [];
+    var poi = window.mylPOIImg || function () { return ''; };
+    function push(s) { if (s && list.indexOf(s) < 0) list.push(s); }
+    if (city) {
+      push(poi(String(city), 'spot', city));
+      push(poi(String(city) + '城市', 'spot', city));
+      push(poi(String(city) + '街景', 'spot', city));
+      push(poi(String(city) + '天际线', 'spot', city));
+      push('images/city-fallback.jpg');
+    } else {
+      push('images/city-fallback.jpg');
+    }
+    return list;
   }
   /* 从路书标题里解析城市名 → 城市图 */
   function cityFromTitle(title) {
@@ -170,7 +189,155 @@
     return w;
   }
 
-  /* ---------- 风格 1：封面大片 ---------- */
+  /* ---------- 年轻化涂鸦工具 ---------- */
+  var PAL = { yellow: '#FFD23F', coral: '#FF5E7E', pink: '#FF8FB1', mint: '#3FBF9F', sky: '#4FA8E8', purple: '#8B7CF6', ink: '#1E2430', cream: '#FFF8EC', orange: '#FF8A3D' };
+
+  /* 波点满铺背景 */
+  function dotBg(c, gap, color, alpha) {
+    c.save();
+    c.globalAlpha = alpha == null ? 0.12 : alpha;
+    c.fillStyle = color;
+    for (var x = gap / 2; x < W; x += gap) {
+      for (var y = gap / 2; y < H; y += gap) {
+        c.beginPath(); c.arc(x, y, gap * 0.09, 0, Math.PI * 2); c.fill();
+      }
+    }
+    c.restore();
+  }
+  /* 五角星涂鸦 */
+  function star(c, x, y, r, color, rot) {
+    c.save(); c.translate(x, y); c.rotate((rot || 0) * Math.PI / 180);
+    c.beginPath();
+    for (var i = 0; i < 10; i++) {
+      var rr = i % 2 === 0 ? r : r * 0.45;
+      var a = -Math.PI / 2 + i * Math.PI / 5;
+      c[i === 0 ? 'moveTo' : 'lineTo'](Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    c.closePath(); c.fillStyle = color; c.fill(); c.restore();
+  }
+  /* 爱心涂鸦 */
+  function heart(c, x, y, s, color) {
+    c.save(); c.translate(x, y); c.scale(s / 30, s / 30);
+    c.beginPath();
+    c.moveTo(0, 10);
+    c.bezierCurveTo(-22, -8, -10, -24, 0, -10);
+    c.bezierCurveTo(10, -24, 22, -8, 0, 10);
+    c.closePath(); c.fillStyle = color; c.fill(); c.restore();
+  }
+  /* 小太阳（圆 + 射线） */
+  function sun(c, x, y, R, color) {
+    c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = 4; c.lineCap = 'round';
+    c.beginPath(); c.arc(x, y, R, 0, Math.PI * 2); c.fill();
+    for (var i = 0; i < 8; i++) {
+      var a = i * Math.PI / 4;
+      c.beginPath();
+      c.moveTo(x + Math.cos(a) * (R + 6), y + Math.sin(a) * (R + 6));
+      c.lineTo(x + Math.cos(a) * (R + 18), y + Math.sin(a) * (R + 18));
+      c.stroke();
+    }
+    c.restore();
+  }
+  /* 定位水滴标 */
+  function pin(c, x, y, s, color) {
+    c.save(); c.translate(x, y); c.scale(s / 40, s / 40);
+    c.beginPath();
+    c.moveTo(0, 26);
+    c.bezierCurveTo(-18, 4, -16, -16, 0, -16);
+    c.bezierCurveTo(16, -16, 18, 4, 0, 26);
+    c.closePath(); c.fillStyle = color; c.fill();
+    c.beginPath(); c.arc(0, -4, 6, 0, Math.PI * 2); c.fillStyle = '#fff'; c.fill();
+    c.restore();
+  }
+  /* 手绘波浪下划线 */
+  function squiggle(c, x, y, w, color, amp) {
+    c.save(); c.strokeStyle = color; c.lineWidth = 5; c.lineCap = 'round'; c.beginPath();
+    var n = Math.max(4, Math.round(w / 26));
+    for (var i = 0; i <= n; i++) {
+      var px = x + w * i / n, py = y + (i % 2 === 0 ? -amp : amp);
+      i === 0 ? c.moveTo(px, py) : c.lineTo(px, py);
+    }
+    c.stroke(); c.restore();
+  }
+  /* 胶带条 */
+  function tape(c, x, y, w, rot, color, alpha) {
+    c.save(); c.translate(x, y); c.rotate((rot || 0) * Math.PI / 180);
+    c.globalAlpha = alpha == null ? 0.8 : alpha;
+    c.fillStyle = color;
+    c.fillRect(-w / 2, -18, w, 36);
+    c.globalAlpha = 0.25; c.fillStyle = '#fff';
+    c.fillRect(-w / 2, -18, w, 12);
+    c.restore();
+  }
+  /* 荧光笔高亮底（略歪斜的半透明色块） */
+  function hlBlock(c, x, y, w, h, color, rot) {
+    c.save(); c.translate(x + w / 2, y + h / 2); c.rotate((rot || -1.5) * Math.PI / 180);
+    c.globalAlpha = 0.85; c.fillStyle = color;
+    roundRect(c, -w / 2, -h / 2, w, h, h * 0.3); c.fill();
+    c.restore();
+  }
+  /* 粗描边大字：先描边再填充 */
+  function outlineText(c, text, x, y, size, fill, stroke, lineW, align) {
+    c.save();
+    c.font = '800 ' + size + 'px "Noto Sans SC", sans-serif';
+    c.textAlign = align || 'left'; c.lineJoin = 'round';
+    c.lineWidth = lineW || 10; c.strokeStyle = stroke || PAL.ink;
+    c.strokeText(text, x, y);
+    c.fillStyle = fill || '#fff'; c.fillText(text, x, y);
+    c.restore();
+  }
+  /* 圆形贴纸印章 */
+  function stampCircle(c, x, y, r, t1, t2, color) {
+    c.save(); c.translate(x, y); c.rotate(8 * Math.PI / 180);
+    c.fillStyle = color; c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = 'rgba(255,255,255,.85)'; c.lineWidth = 3; c.setLineDash([8, 6]);
+    c.beginPath(); c.arc(0, 0, r - 8, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+    c.fillStyle = '#fff'; c.textAlign = 'center';
+    c.font = '800 ' + Math.round(r * 0.5) + 'px "Noto Sans SC"';
+    c.fillText(t1, 0, t2 ? -4 : 8);
+    if (t2) { c.font = '600 ' + Math.round(r * 0.28) + 'px "Noto Sans SC"'; c.fillText(t2, 0, r * 0.42); }
+    c.restore();
+  }
+  /* 便签纸（微旋转 + 阴影 + 顶部胶条） */
+  function note(c, x, y, w, h, rot, bg) {
+    c.save(); c.translate(x + w / 2, y + h / 2); c.rotate((rot || 0) * Math.PI / 180);
+    c.shadowColor = 'rgba(60,40,20,.25)'; c.shadowBlur = 22; c.shadowOffsetY = 10;
+    c.fillStyle = bg || '#fff'; roundRect(c, -w / 2, -h / 2, w, h, 14); c.fill();
+    c.shadowColor = 'transparent';
+    c.globalAlpha = 0.5; c.fillStyle = PAL.yellow; c.fillRect(-w / 2 + 24, -h / 2, w - 48, 18);
+    c.restore();
+  }
+  /* 一排 hashtag 小胶囊，返回总宽 */
+  function hashTags(c, arr, x, y, opts) {
+    opts = opts || {};
+    c.font = opts.font || '600 26px "Noto Sans SC"';
+    var gap = 18, cx = x, h = opts.h || 46;
+    arr.forEach(function (t) {
+      if (!t) return;
+      var w = c.measureText(t).width + 34;
+      c.fillStyle = opts.bg || 'rgba(255,255,255,.16)';
+      roundRect(c, cx, y, w, h, h / 2); c.fill();
+      if (opts.stroke) { c.strokeStyle = opts.stroke; c.lineWidth = 1.5; roundRect(c, cx, y, w, h, h / 2); c.stroke(); }
+      c.fillStyle = opts.color || '#fff';
+      c.textBaseline = 'middle'; c.fillText(t, cx + 17, y + h / 2 + 2); c.textBaseline = 'alphabetic';
+      cx += w + gap;
+    });
+    return cx - x;
+  }
+  /* 手绘对勾 */
+  function checkMark(c, x, y, s, color) {
+    c.save(); c.strokeStyle = color; c.lineWidth = Math.max(4, s * 0.16); c.lineCap = 'round'; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(x, y); c.lineTo(x + s * 0.35, y + s * 0.38); c.lineTo(x + s, y - s * 0.3); c.stroke();
+    c.restore();
+  }
+  /* hashtag 标签集合：城市 + 通用话题 */
+  function tagSet(o) {
+    var arr = [];
+    if (o.city) arr.push('#' + o.city);
+    arr.push('#旅行日记', '#目的地打卡');
+    return arr;
+  }
+
+  /* ---------- 风格 1：封面大片 · 潮流撞色 ---------- */
   function drawCoverStyle(o, img) {
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#111';
@@ -181,168 +348,218 @@
       ctx.restore();
     } else {
       var g0 = ctx.createLinearGradient(0, 0, W, H);
-      g0.addColorStop(0, '#ff8a5c'); g0.addColorStop(0.5, '#ff5e7e'); g0.addColorStop(1, '#7b4397');
+      g0.addColorStop(0, PAL.sky); g0.addColorStop(0.5, PAL.coral); g0.addColorStop(1, PAL.purple);
       ctx.fillStyle = g0; ctx.fillRect(0, 0, W, H);
     }
     /* 压暗渐变：上浅下深，保证文字可读 */
     var g1 = ctx.createLinearGradient(0, 0, 0, H);
-    g1.addColorStop(0, 'rgba(0,0,0,.42)');
-    g1.addColorStop(0.35, 'rgba(0,0,0,.10)');
-    g1.addColorStop(0.62, 'rgba(0,0,0,.30)');
-    g1.addColorStop(1, 'rgba(0,0,0,.78)');
+    g1.addColorStop(0, 'rgba(0,0,0,.38)');
+    g1.addColorStop(0.35, 'rgba(0,0,0,.08)');
+    g1.addColorStop(0.62, 'rgba(0,0,0,.32)');
+    g1.addColorStop(1, 'rgba(0,0,0,.80)');
     ctx.fillStyle = g1;
     ctx.fillRect(0, 0, W, H);
-    /* 细边框 */
-    ctx.strokeStyle = 'rgba(255,255,255,.35)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(28, 28, W - 56, H - 56);
 
-    ctx.fillStyle = 'rgba(255,255,255,.92)';
-    ctx.font = '600 30px "Noto Sans SC"';
+    /* 撞色几何色块 */
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = PAL.yellow;
+    ctx.beginPath(); ctx.arc(W - 110, 340, 128, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = PAL.coral;
+    ctx.beginPath(); ctx.moveTo(-60, H - 360); ctx.lineTo(360, H - 120); ctx.lineTo(-60, H - 40); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = PAL.mint;
+    ctx.beginPath(); ctx.arc(120, 430, 56, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    /* 涂鸦点缀 */
+    star(ctx, W - 200, 150, 34, PAL.yellow, 12);
+    heart(ctx, 150, 300, 34, PAL.coral);
+    sun(ctx, W - 180, 560, 30, PAL.yellow);
+    star(ctx, 90, 620, 24, '#fff', -10);
+    checkMark(ctx, W - 150, 316, 42, '#fff');
+
+    /* 顶部刊头 */
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 28px "Noto Sans SC"';
     ctx.fillText('📍 我的目的地种草', 64, 120);
+    ctx.fillStyle = 'rgba(255,255,255,.7)';
+    ctx.font = '600 24px "Noto Sans SC"';
+    ctx.fillText('TRAVEL DIARY', 64, 158);
+    squiggle(ctx, 64, 174, 220, PAL.yellow, 5);
     ctx.textAlign = 'right';
-    ctx.font = '400 26px "Noto Sans SC"';
-    ctx.fillStyle = 'rgba(255,255,255,.65)';
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    ctx.font = '500 26px "Noto Sans SC"';
     ctx.fillText(dateStr(), W - 64, 120);
     ctx.textAlign = 'left';
 
-    /* 城市徽章 */
+    /* 城市徽章（撞色胶囊） */
     if (o.city) {
-      chip(ctx, '📍 ' + o.city, 64, 1020, { bg: 'rgba(255,255,255,.20)', stroke: 'rgba(255,255,255,.5)', h: 60 });
+      pin(ctx, 96, 980, 34, PAL.yellow);
+      chip(ctx, o.city, 124, 956, { bg: PAL.coral, color: '#fff', h: 60, font: '700 30px "Noto Sans SC"' });
     }
-    /* 主标题 */
-    ctx.fillStyle = '#fff';
-    ctx.font = '700 ' + (String(o.spot || '').length > 6 ? 88 : 108) + 'px "Noto Serif SC"';
+
+    /* 主标题：荧光高亮底 + 描边大字 */
     var title = o.spot || '未知目的地';
-    if (ctx.measureText(title).width > W - 128) {
-      ctx.font = '700 76px "Noto Serif SC"';
-    }
-    ctx.shadowColor = 'rgba(0,0,0,.5)';
-    ctx.shadowBlur = 18;
-    ctx.fillText(title, 64, 1150);
-    ctx.shadowColor = 'transparent';
+    var tSize = String(title).length > 6 ? 84 : 104;
+    ctx.font = '800 ' + tSize + 'px "Noto Sans SC", sans-serif';
+    if (ctx.measureText(title).width > W - 128) tSize = 72;
+    var tw = ctx.measureText(title).width;
+    hlBlock(ctx, 64, 1006, Math.min(tw + 50, W - 128), 110, PAL.yellow, -1.5);
+    outlineText(ctx, title, 64, 1098, tSize, '#fff', PAL.ink, 12);
 
-    /* 玻璃信息卡 */
-    ctx.fillStyle = 'rgba(255,255,255,.14)';
-    roundRect(ctx, 64, 1210, W - 128, o.ticket ? 260 : 210, 28);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,.30)';
-    ctx.lineWidth = 1.5;
-    roundRect(ctx, 64, 1210, W - 128, o.ticket ? 260 : 210, 28);
-    ctx.stroke();
+    /* 白色信息卡：动态高度，正文与票券分行留足间距 */
+    var cardY = 1150;
+    ctx.fillStyle = PAL.ink;
+    ctx.font = '500 34px "Noto Sans SC"';
+    var used = wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 104, 1218, 860, 58, 2);
+    var descBottom = 1218 + used * 58;
+    var ticketY = descBottom + 24;
+    var cardH = o.ticket ? (ticketY + 58 + 30 - cardY) : (descBottom + 30 - cardY);
     ctx.fillStyle = 'rgba(255,255,255,.96)';
-    ctx.font = '500 36px "Noto Sans SC"';
-    var used = wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 104, 1278, 860, 56, 3);
+    roundRect(ctx, 64, cardY, W - 128, cardH, 28);
+    ctx.fill();
+    ctx.fillStyle = PAL.ink;
+    ctx.font = '500 34px "Noto Sans SC"';
+    wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 104, 1218, 860, 58, 2);
     if (o.ticket) {
-      ctx.fillStyle = 'rgba(255,255,255,.82)';
-      ctx.font = '400 30px "Noto Sans SC"';
-      wrapText(ctx, '🎫 ' + o.ticket, 104, 1278 + used * 56 + 34, 860, 44, 2);
+      ctx.fillStyle = PAL.orange;
+      var tw2 = ctx.measureText('🎫 ' + o.ticket).width + 48;
+      roundRect(ctx, 104, ticketY, Math.min(tw2, 860), 58, 14);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '600 28px "Noto Sans SC"';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🎫 ' + o.ticket.slice(0, 26), 128, ticketY + 29);
+      ctx.textBaseline = 'alphabetic';
     }
 
-    ctx.fillStyle = 'rgba(255,255,255,.95)';
-    ctx.font = '700 40px "Noto Sans SC"';
+    /* 底部 slogan */
+    ctx.fillStyle = '#fff';
+    ctx.font = '800 42px "Noto Sans SC"';
     ctx.fillText('这个假期，一起去看看？', 64, 1500);
+    ctx.fillStyle = PAL.yellow;
+    ctx.font = '700 28px "Noto Sans SC"';
+    ctx.fillText("LET'S GO ✈", 64, 1544);
     brand(ctx, true);
   }
 
-  /* ---------- 风格 2：杂志画报 ---------- */
+  /* ---------- 风格 2：杂志画报 · 年轻编辑拼贴 ---------- */
   function drawMagazine(o, img) {
     ctx.clearRect(0, 0, W, H);
-    /* 纸质底 */
+    /* 暖白纸底 + 波点 */
     var gp = ctx.createLinearGradient(0, 0, 0, H);
-    gp.addColorStop(0, '#faf6ef'); gp.addColorStop(1, '#f1e9db');
+    gp.addColorStop(0, '#FFF8EC'); gp.addColorStop(1, '#FCEFE0');
     ctx.fillStyle = gp;
     ctx.fillRect(0, 0, W, H);
-    /* 上部大图 */
-    var ph = 860;
+    dotBg(ctx, 58, PAL.orange, 0.10);
+
+    /* 背景超大英文水印 */
     ctx.save();
-    ctx.shadowColor = 'rgba(40,30,20,.28)';
-    ctx.shadowBlur = 30;
-    ctx.shadowOffsetY = 12;
-    if (img) {
-      ctx.beginPath();
-      ctx.rect(0, 0, W, ph);
-      ctx.clip();
-      drawCover(ctx, img, 0, 0, W, ph, { zoom: 1.06, focusY: 0.45 });
-      ctx.restore();
-    } else {
-      ctx.fillStyle = '#ff5e7e';
-      ctx.fillRect(0, 0, W, ph);
-      ctx.restore();
-    }
-    /* 图底渐变 + 标题压图 */
-    var g1 = ctx.createLinearGradient(0, ph - 320, 0, ph);
-    g1.addColorStop(0, 'rgba(0,0,0,0)');
-    g1.addColorStop(1, 'rgba(0,0,0,.66)');
-    ctx.save();
-    ctx.beginPath(); ctx.rect(0, ph - 320, W, 320); ctx.clip();
-    ctx.fillStyle = g1; ctx.fillRect(0, ph - 320, W, 320);
+    ctx.fillStyle = 'rgba(20,36,48,.06)';
+    ctx.font = '900 220px "Noto Sans SC", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('TRAVEL', W / 2, H - 120);
     ctx.restore();
 
+    /* 上部倾斜白边相纸 */
+    var ph = 740;
+    ctx.save();
+    ctx.translate(W / 2, ph / 2 + 20);
+    ctx.rotate(-2.2 * Math.PI / 180);
+    ctx.shadowColor = 'rgba(40,30,20,.30)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14;
     ctx.fillStyle = '#fff';
-    ctx.font = '600 28px "Noto Sans SC"';
-    ctx.fillText('MYL 旅行画报 · TRAVEL PICTORIAL', 64, 92);
+    roundRect(ctx, -W / 2 + 24, -ph / 2, W - 48, ph, 22);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    if (img) {
+      ctx.save();
+      roundRect(ctx, -W / 2 + 44, -ph / 2 + 20, W - 88, ph - 40, 14);
+      ctx.clip();
+      drawCover(ctx, img, -W / 2 + 44, -ph / 2 + 20, W - 88, ph - 40, { zoom: 1.06, focusY: 0.45 });
+      ctx.restore();
+    } else {
+      ctx.fillStyle = PAL.coral;
+      roundRect(ctx, -W / 2 + 44, -ph / 2 + 20, W - 88, ph - 40, 14);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    /* 图底渐变 + 标题压图 */
+    var g1 = ctx.createLinearGradient(0, ph - 300, 0, ph + 20);
+    g1.addColorStop(0, 'rgba(0,0,0,0)');
+    g1.addColorStop(1, 'rgba(0,0,0,.62)');
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, ph - 300, W, 320); ctx.clip();
+    ctx.fillStyle = g1; ctx.fillRect(0, ph - 300, W, 320);
+    ctx.restore();
+
+    /* 刊头 */
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 28px "Noto Sans SC"';
+    ctx.fillText('MYL 旅行画报', 64, 92);
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    ctx.font = '600 24px "Noto Sans SC"';
+    ctx.fillText('PIC OF THE CITY', 64, 126);
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(255,255,255,.8)';
-    ctx.font = '400 26px "Noto Sans SC"';
+    ctx.font = '500 26px "Noto Sans SC"';
     ctx.fillText('Vol.' + (new Date().getMonth() + 1) + ' · ' + dateStr(), W - 64, 92);
     ctx.textAlign = 'left';
 
-    /* 红色刊号印章 */
-    ctx.save();
-    ctx.translate(W - 160, 210);
-    ctx.rotate(8 * Math.PI / 180);
-    ctx.fillStyle = '#d43f3a';
-    roundRect(ctx, -74, -50, 148, 100, 14);
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.font = '700 40px "Noto Serif SC"';
-    ctx.textAlign = 'center';
-    ctx.fillText('种草', 0, 8);
-    ctx.font = '600 22px "Noto Sans SC"';
-    ctx.fillText('热推', 0, 38);
-    ctx.restore();
-    ctx.textAlign = 'left';
+    /* 圆形贴纸印章 */
+    stampCircle(ctx, W - 168, 236, 84, '种草', 'HOT', PAL.coral);
 
     /* 压图标题 */
-    ctx.fillStyle = '#fff';
-    ctx.font = '700 ' + (String(o.spot || '').length > 6 ? 84 : 100) + 'px "Noto Serif SC"';
     var title = o.spot || '未知目的地';
-    if (ctx.measureText(title).width > W - 128) ctx.font = '700 74px "Noto Serif SC"';
-    ctx.fillText(title, 64, ph - 92);
+    var mSize = String(title).length > 6 ? 80 : 98;
+    ctx.font = '800 ' + mSize + 'px "Noto Sans SC", sans-serif';
+    if (ctx.measureText(title).width > W - 128) mSize = 72;
+    outlineText(ctx, title, 64, ph - 96, mSize, '#fff', 'rgba(0,0,0,.55)', 8);
     if (o.city) {
-      chip(ctx, o.city + ' · 实景直击', 64, ph - 64, { bg: 'rgba(255,255,255,.18)', stroke: 'rgba(255,255,255,.45)', h: 54 });
+      chip(ctx, '📍 ' + o.city + ' · 实景直击', 64, ph - 56, { bg: PAL.yellow, color: PAL.ink, h: 54, font: '700 28px "Noto Sans SC"' });
     }
 
-    /* 下部编辑排版 */
-    var by = ph + 84;
-    ctx.fillStyle = '#2c3540';
-    ctx.font = '700 34px "Noto Serif SC"';
-    ctx.fillText('「 ' + (o.desc ? o.desc.slice(0, 14) : '值得专程前往') + (o.desc && o.desc.length > 14 ? '…' : ' 」'), 64, by);
+    /* 下部编辑排版：栏目编号 + 正文（编号行不重复正文） */
+    var by = ph + 72;
+    tape(ctx, 200, by - 18, 180, -6, PAL.yellow, 0.8);
+    ctx.fillStyle = PAL.purple;
+    ctx.font = '800 34px "Noto Sans SC"';
+    ctx.fillText('01', 64, by + 20);
+    ctx.fillStyle = PAL.ink;
+    ctx.font = '700 32px "Noto Serif SC"';
+    ctx.fillText('城市直击 · CITY GUIDE', 130, by + 20);
     ctx.fillStyle = '#4a5561';
     ctx.font = '400 32px "Noto Sans SC"';
-    var used = wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 64, by + 66, 952, 54, 4);
-    var ty = by + 66 + used * 54 + 26;
+    var used = wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 64, by + 74, 952, 56, 3);
+    var ty = by + 74 + used * 56 + 28;
+
     if (o.ticket) {
-      ctx.fillStyle = '#fff';
-      ctx.font = '500 28px "Noto Sans SC"';
-      var tw = ctx.measureText('🎫 ' + o.ticket).width + 52;
-      ctx.fillStyle = '#2f6e5e';
-      roundRect(ctx, 64, ty, Math.min(tw, 952), 62, 14);
+      /* 虚线撕边票券 */
+      var tkw = Math.min(ctx.measureText('🎫 ' + o.ticket).width + 56, 952);
+      ctx.fillStyle = PAL.mint;
+      roundRect(ctx, 64, ty, tkw, 64, 14);
       ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.setLineDash([10, 8]);
+      roundRect(ctx, 64, ty, tkw, 64, 14);
+      ctx.stroke(); ctx.setLineDash([]);
       ctx.fillStyle = '#fff';
       ctx.textBaseline = 'middle';
-      ctx.fillText('🎫 ' + o.ticket.slice(0, 24), 90, ty + 33);
+      ctx.font = '700 28px "Noto Sans SC"';
+      ctx.fillText('🎫 ' + o.ticket.slice(0, 24), 92, ty + 34);
       ctx.textBaseline = 'alphabetic';
       ty += 96;
     }
-    /* 装饰分隔线 */
+    /* 装饰：星星 + 虚线分隔 */
+    star(ctx, W - 110, ty + 20, 26, PAL.coral, 8);
     ctx.strokeStyle = '#d9cdb6';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2; ctx.setLineDash([12, 10]);
     ctx.beginPath(); ctx.moveTo(64, ty + 24); ctx.lineTo(W - 64, ty + 24); ctx.stroke();
+    ctx.setLineDash([]);
     ctx.fillStyle = '#8a7f6d';
-    ctx.font = '400 28px "Noto Sans SC"';
-    ctx.fillText('完整攻略 · 实时天气 · 地图导航，尽在 MYL 旅行', 64, ty + 78);
+    ctx.font = '500 28px "Noto Sans SC"';
+    ctx.fillText('完整攻略 · 实时天气 · 地图导航，尽在 MYL 旅行', 64, ty + 72);
+    hashTags(ctx, tagSet(o), 64, ty + 112, { bg: 'rgba(139,124,246,.12)', stroke: 'rgba(139,124,246,.35)', color: PAL.purple, h: 46 });
     brand(ctx, false);
   }
 
@@ -353,56 +570,93 @@
     g.addColorStop(0, '#fdf1e3'); g.addColorStop(0.55, '#fde7ef'); g.addColorStop(1, '#ece7fb');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
-    /* 淡格纹 */
-    ctx.strokeStyle = 'rgba(255,255,255,.5)';
-    ctx.lineWidth = 1;
-    for (var gx = 0; gx < W; gx += 54) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
-    for (var gy = 0; gy < H; gy += 54) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+    dotBg(ctx, 56, PAL.purple, 0.10);
+    /* 撕纸色块 */
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = PAL.yellow;
+    ctx.beginPath(); ctx.moveTo(0, 300); ctx.lineTo(260, 260); ctx.lineTo(220, 420); ctx.lineTo(0, 460); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = PAL.mint;
+    ctx.beginPath(); ctx.moveTo(W, 1080); ctx.lineTo(W - 240, 1040); ctx.lineTo(W - 200, 1200); ctx.lineTo(W, 1240); ctx.closePath(); ctx.fill();
+    ctx.restore();
 
+    /* 顶部刊头 */
     ctx.fillStyle = '#3a4653';
-    ctx.font = '600 32px "Noto Sans SC"';
+    ctx.font = '700 32px "Noto Sans SC"';
     ctx.fillText('📍 我的目的地种草', 64, 120);
+    ctx.fillStyle = '#9aa4ae';
+    ctx.font = '600 24px "Noto Sans SC"';
+    ctx.fillText('PLOG · TRAVEL DIARY', 64, 156);
     ctx.textAlign = 'right';
     ctx.fillStyle = '#9aa4ae';
-    ctx.font = '400 26px "Noto Sans SC"';
+    ctx.font = '500 26px "Noto Sans SC"';
     ctx.fillText(dateStr(), W - 64, 120);
     ctx.textAlign = 'left';
 
-    ctx.fillStyle = '#2c3540';
-    ctx.font = '700 92px "Noto Serif SC"';
+    /* 标题：高亮底 + 描边大字 */
     var title = o.spot || '未知目的地';
-    if (ctx.measureText(title).width > W - 128) ctx.font = '700 72px "Noto Serif SC"';
-    ctx.fillText(title, 64, 236);
-    if (o.city) chip(ctx, '📍 ' + o.city, 66, 268, { bg: 'rgba(255,94,126,.14)', color: '#d6406b', h: 54 });
+    var cSize = String(title).length > 6 ? 84 : 96;
+    ctx.font = '800 ' + cSize + 'px "Noto Sans SC", sans-serif';
+    if (ctx.measureText(title).width > W - 128) cSize = 70;
+    var cw = ctx.measureText(title).width;
+    hlBlock(ctx, 64, 176, Math.min(cw + 46, W - 128), 104, PAL.yellow, -1.5);
+    outlineText(ctx, title, 64, 262, cSize, PAL.ink, '#fff', 6);
+    var cityW = o.city ? chip(ctx, '📍 ' + o.city, 66, 292, { bg: PAL.coral, color: '#fff', h: 54, font: '700 28px "Noto Sans SC"' }) : 0;
+    chip(ctx, '#出片打卡', 66 + cityW + 18, 292, { bg: PAL.mint, color: '#fff', h: 54, font: '700 28px "Noto Sans SC"' });
 
-    /* 三张拍立得 */
+    /* 三张拍立得：主图居左，两张城市副图居右上下排布 */
     var main = imgs[0] || null, s1 = imgs[1] || null, s2 = imgs[2] || null;
-    if (main) photoCard(ctx, main, 130, 380, 620, 620, 10, -3, (o.spot || '') + ' · 实拍');
-    if (s1) photoCard(ctx, s1, 560, 700, 420, 430, 10, 4, (o.city || '') + ' · 城市漫游');
-    if (s2) photoCard(ctx, s2, 120, 950, 400, 410, 10, -2, '在地瞬间');
-    /* 胶带装饰 */
-    ctx.fillStyle = 'rgba(255,214,150,.75)';
-    ctx.save();
-    ctx.translate(700, 350); ctx.rotate(-14 * Math.PI / 180);
-    ctx.fillRect(-70, -22, 140, 44);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(360, 1330); ctx.rotate(6 * Math.PI / 180);
-    ctx.fillRect(-70, -22, 140, 44);
-    ctx.restore();
+    if (main) photoCard(ctx, main, 80, 370, 560, 540, 10, -3, (o.spot || '') + ' · 实拍');
+    if (s1) photoCard(ctx, s1, 580, 400, 380, 380, 10, 4, (o.city || '') + ' · 城市漫游');
+    if (s2) photoCard(ctx, s2, 560, 820, 380, 360, 10, -2, (o.city || '') + ' · 街角');
 
-    /* 文案区 */
-    ctx.fillStyle = 'rgba(255,255,255,.85)';
-    roundRect(ctx, 64, 1368, W - 128, 150, 24);
+    /* 彩色胶带 */
+    tape(ctx, 300, 356, 150, -14, PAL.yellow, 0.85);
+    tape(ctx, 760, 388, 130, 8, PAL.mint, 0.8);
+    tape(ctx, 740, 808, 130, -6, PAL.coral, 0.8);
+
+    /* 手写便签（左下留白处） */
+    note(ctx, 120, 980, 300, 150, -4, '#FFFDF4');
+    ctx.fillStyle = PAL.coral;
+    ctx.font = '800 34px "Noto Sans SC"';
+    ctx.textAlign = 'center';
+    ctx.fillText('must go!', 270, 1052);
+    ctx.fillStyle = '#4a5561';
+    ctx.font = '500 24px "Noto Sans SC"';
+    ctx.fillText('出片率超高 ✨', 270, 1092);
+    ctx.textAlign = 'left';
+    checkMark(ctx, 430, 1046, 30, PAL.mint);
+
+    /* 涂鸦环绕 */
+    heart(ctx, 110, 880, 32, PAL.coral);
+    star(ctx, W - 96, 470, 30, PAL.yellow, 12);
+    sun(ctx, 120, 1180, 26, PAL.orange);
+    star(ctx, 500, 1150, 22, PAL.purple, -8);
+    heart(ctx, W - 120, 1200, 26, PAL.pink);
+    /* 手绘箭头指向主图 */
+    ctx.strokeStyle = PAL.coral; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(520, 560); ctx.quadraticCurveTo(460, 520, 410, 490); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(410, 490); ctx.lineTo(440, 490); ctx.moveTo(410, 490); ctx.lineTo(426, 516); ctx.stroke();
+
+    /* 圆形日期戳（文案卡上方右侧，不压相纸与卡片） */
+    stampCircle(ctx, W - 130, 1196, 54, dateStr(), 'PLOG', PAL.ink);
+
+    /* 文案便签卡（虚线边框） */
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    roundRect(ctx, 64, 1250, W - 128, 150, 24);
     ctx.fill();
+    ctx.strokeStyle = PAL.coral; ctx.lineWidth = 2.5; ctx.setLineDash([14, 10]);
+    roundRect(ctx, 64, 1250, W - 128, 150, 24);
+    ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle = '#4a5561';
     ctx.font = '400 30px "Noto Sans SC"';
-    var used = wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 96, 1424, 820, 46, 2);
+    var used = wrapText(ctx, o.desc || '一个值得专门安排一天慢慢逛的地方。', 96, 1306, 820, 46, 2);
     if (o.ticket && used < 2) {
       ctx.fillStyle = '#8a94a0';
       ctx.font = '400 26px "Noto Sans SC"';
-      ctx.fillText('🎫 ' + o.ticket.slice(0, 30), 96, 1424 + used * 46 + 12);
+      ctx.fillText('🎫 ' + o.ticket.slice(0, 30), 96, 1306 + used * 46 + 12);
     }
+    hashTags(ctx, tagSet(o), 64, 1440, { bg: 'rgba(255,255,255,.92)', stroke: 'rgba(255,143,177,.45)', color: PAL.coral, h: 44 });
     brand(ctx, false);
   }
 
@@ -495,67 +749,152 @@
 
   /* ---------- 海报：行程路书（目的地横幅大图版） ---------- */
   function drawPlan(o, img) {
+    o.city = o.cityName;
     ctx.clearRect(0, 0, W, H);
-    /* 上部城市大图 */
-    var ph = 620;
+    /* 奶油纸面底 + 波点 */
+    var gp = ctx.createLinearGradient(0, 0, 0, H);
+    gp.addColorStop(0, '#FFF8EC'); gp.addColorStop(1, '#FCEFE0');
+    ctx.fillStyle = gp; ctx.fillRect(0, 0, W, H);
+    dotBg(ctx, 64, PAL.orange, 0.08);
+
+    var ph = 460;
+    /* 城市实景图 */
     if (img) {
-      ctx.save();
-      drawCover(ctx, img, 0, 0, W, ph, { zoom: 1.06, focusY: 0.45 });
-      ctx.restore();
+      ctx.save(); drawCover(ctx, img, 0, 0, W, ph, { zoom: 1.06, focusY: 0.45 }); ctx.restore();
     } else {
       var g0 = ctx.createLinearGradient(0, 0, W, ph);
       g0.addColorStop(0, '#0f4c5c'); g0.addColorStop(1, '#76b5a8');
       ctx.fillStyle = g0; ctx.fillRect(0, 0, W, ph);
     }
-    var g1 = ctx.createLinearGradient(0, ph - 300, 0, ph);
+    var g1 = ctx.createLinearGradient(0, ph - 300, 0, ph + 10);
     g1.addColorStop(0, 'rgba(0,0,0,0)');
-    g1.addColorStop(1, 'rgba(0,0,0,.7)');
-    ctx.fillStyle = g1;
-    ctx.fillRect(0, ph - 300, W, 300);
+    g1.addColorStop(1, 'rgba(0,0,0,.72)');
+    ctx.fillStyle = g1; ctx.fillRect(0, ph - 300, W, 310);
 
-    ctx.fillStyle = 'rgba(255,255,255,.92)';
-    ctx.font = '600 30px "Noto Sans SC"';
-    ctx.fillText('🧳 我的行程路书', 64, 110);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(255,255,255,.65)';
-    ctx.font = '400 26px "Noto Sans SC"';
-    ctx.fillText(dateStr(), W - 64, 110);
-    ctx.textAlign = 'left';
+    /* 刊头 */
+    ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.font = '600 28px "Noto Sans SC"';
+    ctx.fillText('MYL 行程路书', 64, 96);
+    ctx.textAlign = 'right'; ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = '500 24px "Noto Sans SC"';
+    ctx.fillText(dateStr(), W - 64, 96); ctx.textAlign = 'left';
 
-    ctx.fillStyle = '#fff';
-    ctx.font = '700 64px "Noto Serif SC"';
-    var tl = wrapText(ctx, o.title || '旅行计划', 64, ph - 130, 950, 80, 2);
-    if (o.cityName) chip(ctx, '📍 ' + o.cityName + ' · 实景', 64, ph - 74, { bg: 'rgba(255,255,255,.18)', stroke: 'rgba(255,255,255,.45)', h: 54 });
+    /* 描边大标题 */
+    var title = o.title || '旅行计划';
+    var tSize = title.length > 8 ? 58 : 70;
+    if (ctx.measureText(title).width > W - 128) tSize = 52;
+    outlineText(ctx, title, 64, ph - 150, tSize, '#fff', 'rgba(0,0,0,.5)', 8);
 
-    /* 下部纸面行程条 */
-    var gp = ctx.createLinearGradient(0, ph, 0, H);
-    gp.addColorStop(0, '#faf7f0'); gp.addColorStop(1, '#f0ebdf');
-    ctx.fillStyle = gp;
-    ctx.fillRect(0, ph, W, H - ph);
+    /* 城市 chip */
+    if (o.cityName) chip(ctx, '📍 ' + o.cityName + (o.meta && o.meta.country ? ' · ' + o.meta.country : ''), 64, ph - 88, { bg: 'rgba(255,255,255,.18)', stroke: 'rgba(255,255,255,.45)', h: 50, font: '700 26px "Noto Sans SC"' });
 
-    var y = ph + 64;
-    var maxRows = Math.floor((H - ph - 210) / 74);
-    (o.lines || []).slice(0, maxRows).forEach(function (l, i) {
-      ctx.fillStyle = 'rgba(255,255,255,.9)';
-      roundRect(ctx, 64, y, 952, 60, 14);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(180,168,140,.4)';
-      ctx.lineWidth = 1;
-      roundRect(ctx, 64, y, 952, 60, 14);
-      ctx.stroke();
-      ctx.fillStyle = '#d6406b';
-      ctx.font = '700 28px "Noto Sans SC"';
-      ctx.fillText(String(i + 1).padStart(2, '0'), 92, y + 40);
-      ctx.fillStyle = '#2c3540';
-      ctx.font = '400 28px "Noto Sans SC"';
-      var line = l.length > 34 ? l.slice(0, 33) + '…' : l;
-      ctx.fillText(line, 158, y + 40);
-      y += 74;
+    /* 速览徽章条 */
+    var meta = o.meta || {};
+    var daysN = meta.daysNum || (title.match(/(\d+)\s*天/) || [])[1] || '';
+    var pplN = meta.ppl || (title.match(/(\d+)\s*人/) || [])[1] || '';
+    var badges = [];
+    if (daysN) badges.push(daysN + ' 天行程');
+    if (pplN) badges.push(pplN + ' 人同行');
+    if (meta.pref) badges.push(meta.pref + '优先');
+    if (meta.budget) badges.push(meta.budget + '档');
+    var bx = 64;
+    badges.forEach(function (b) {
+      var w = ctx.measureText(b).width + 38;
+      ctx.fillStyle = 'rgba(255,255,255,.22)';
+      roundRect(ctx, bx, ph - 20, w, 44, 22); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.5;
+      roundRect(ctx, bx, ph - 20, w, 44, 22); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '600 24px "Noto Sans SC"'; ctx.textBaseline = 'middle';
+      ctx.fillText(b, bx + 19, ph + 3); ctx.textBaseline = 'alphabetic';
+      bx += w + 15;
     });
 
-    ctx.fillStyle = '#2c3540';
-    ctx.font = '700 40px "Noto Sans SC"';
-    ctx.fillText('收藏这份路书，说走就走 🚀', 64, Math.min(y + 60, 1500));
+    /* 小节标题 */
+    var y = ph + 42;
+    ctx.fillStyle = PAL.ink; ctx.font = '800 34px "Noto Sans SC"';
+    ctx.fillText('每日行程', 64, y + 10);
+    star(ctx, W - 110, y, 26, PAL.coral, 8);
+    squiggle(ctx, 64, y + 26, 260, PAL.yellow, 5);
+
+    /* 每日卡片 */
+    var pal = [PAL.coral, PAL.sky, PAL.mint, PAL.purple, PAL.orange, PAL.pink];
+    var days = o.days || [];
+    var availTop = y + 48, availBot = 1120, infoTop = 1136;
+    var k = days.length <= 4 ? 3 : (days.length <= 6 ? 3 : 2);
+    var rowH = 32, headH = 44, pad = 18, gap = 16;
+    var cardH = function (n) { return pad + headH + Math.min(n, k) * rowH + 8; };
+    var total = days.reduce(function (s, g) { return s + cardH(g.nodes.length); }, 0) + gap * Math.max(0, days.length - 1);
+    if (total > availBot - availTop) { rowH = 24; headH = 36; pad = 12; gap = 10; }
+
+    var cy = availTop;
+    days.slice(0, 8).forEach(function (g, i) {
+      var color = pal[i % pal.length];
+      var nodes = g.nodes || [];
+      var n = Math.min(nodes.length, k);
+      var h = pad + headH + n * rowH + 8;
+      /* 卡片阴影白底 */
+      ctx.save();
+      ctx.shadowColor = 'rgba(60,40,20,.18)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 7;
+      ctx.fillStyle = '#fff'; roundRect(ctx, 64, cy, 952, h, 20); ctx.fill();
+      ctx.shadowColor = 'transparent';
+      /* 左侧色条 */
+      ctx.fillStyle = color; roundRect(ctx, 64, cy, 10, h, 5); ctx.fill();
+      /* 编号圆 */
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(126, cy + pad + headH / 2, 26, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = '800 26px "Noto Sans SC"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(i + 1), 126, cy + pad + headH / 2 + 1);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      /* 主题 */
+      ctx.fillStyle = PAL.ink; ctx.font = '800 29px "Noto Sans SC"';
+      var theme = g.label || ('Day ' + (i + 1));
+      theme = theme.length > 18 ? theme.slice(0, 17) + '…' : theme;
+      ctx.fillText(theme, 176, cy + pad + headH / 2 + 2);
+      /* 节点链 */
+      var ny = cy + pad + headH + 4;
+      nodes.slice(0, k).forEach(function (s) {
+        ctx.fillStyle = color; ctx.beginPath(); ctx.arc(126, ny + rowH / 2, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#2c3540'; ctx.font = '500 25px "Noto Sans SC"';
+        var nm = (s.n || '').length > 16 ? (s.n || '').slice(0, 15) + '…' : (s.n || '');
+        ctx.fillText(nm, 156, ny + rowH / 2 + 3);
+        if (s.t) {
+          ctx.fillStyle = '#9aa4ae'; ctx.font = '400 21px "Noto Sans SC"';
+          ctx.fillText(s.t, Math.min(156 + ctx.measureText(nm).width + 32, 780), ny + rowH / 2 + 3);
+        }
+        ny += rowH;
+      });
+      cy += h + gap;
+    });
+
+    /* 美食 / 住宿 / 交通 速览小卡：三类各取代表优先 */
+    var infos = [];
+    var ff = o.foods || [], hh = o.hotels || [], tt = o.traffic || [];
+    if (ff[0]) infos.push({ ic: '🍜', t: ff[0].n, s: ff[0].p || '本地美食' });
+    if (hh[0]) infos.push({ ic: '🏨', t: hh[0].a, s: hh[0].l || hh[0].p || '推荐住宿' });
+    if (tt[0]) infos.push({ ic: '🚄', t: String(tt[0]).slice(0, 12), s: String(tt[0]).slice(12, 26) });
+    if (ff[1]) infos.push({ ic: '🍜', t: ff[1].n, s: ff[1].p || '' });
+    if (ff[2]) infos.push({ ic: '🍜', t: ff[2].n, s: ff[2].p || '' });
+    if (hh[1]) infos.push({ ic: '🏨', t: hh[1].a, s: hh[1].l || hh[1].p || '' });
+    if (tt[1]) infos.push({ ic: '🚄', t: String(tt[1]).slice(0, 12), s: String(tt[1]).slice(12, 26) });
+    var infoY = cy + 16;
+    if (infos.length && infoY < infoTop) {
+      var iw = 302, igap = 23, ix = 64;
+      infos.slice(0, 3).forEach(function (inf) {
+        ctx.fillStyle = '#fff'; roundRect(ctx, ix, infoY, iw, 116, 18); ctx.fill();
+        ctx.fillStyle = PAL.coral; ctx.font = '30px "Noto Sans SC"';
+        ctx.fillText(inf.ic, ix + 24, infoY + 42);
+        ctx.fillStyle = PAL.ink; ctx.font = '700 25px "Noto Sans SC"';
+        var tt = inf.t.length > 9 ? inf.t.slice(0, 8) + '…' : inf.t;
+        ctx.fillText(tt, ix + 24, infoY + 76);
+        ctx.fillStyle = '#8a7f6d'; ctx.font = '400 21px "Noto Sans SC"';
+        var ss = (inf.s || '').length > 12 ? (inf.s || '').slice(0, 11) + '…' : (inf.s || '');
+        ctx.fillText(ss, ix + 24, infoY + 102);
+        ix += iw + igap;
+      });
+    }
+
+    /* 底部标语 + 话题 + 品牌 */
+    ctx.fillStyle = PAL.ink; ctx.font = '800 37px "Noto Sans SC"';
+    ctx.fillText('收藏这份路书，说走就走 🚀', 64, 1416);
+    hashTags(ctx, tagSet(o), 64, 1466, { bg: 'rgba(139,124,246,.12)', stroke: 'rgba(139,124,246,.35)', color: PAL.purple, h: 44 });
     brand(ctx, false);
   }
 
@@ -600,8 +939,8 @@
     loadFirst(spotImgCandidates(o.spot, o.city)).then(function (main) {
       if (currentStyle === 'magazine') { drawMagazine(o, main); }
       else if (currentStyle === 'collage') {
-        loadMulti(spotImgCandidates(o.spot, o.city).concat(
-          o.city ? ['images/city-fallback.jpg'] : []), 3).then(function (imgs) {
+        loadMulti(cityImgCandidates(o.city), 2).then(function (side) {
+          var imgs = [main].concat(side);
           drawCollage(o, imgs.length ? imgs : [null, null, null]);
         });
       } else drawCoverStyle(o, main);
@@ -622,19 +961,40 @@
       showPreview();
     });
   }
+  /* 解析路书结构化数据：优先 URL 里的 data，回退文本 lines */
+  function parsePlanData(title) {
+    var data = null;
+    try { var d = params.get('data'); if (d) data = JSON.parse(d); } catch (e) { data = null; }
+    var days = [], foods = [], hotels = [], traffic = [], meta = {};
+    if (data && Array.isArray(data.days) && data.days.length) {
+      days = data.days;
+      foods = data.foods || []; hotels = data.hotels || []; traffic = data.traffic || [];
+      meta = { daysNum: data.daysN, ppl: data.ppl, pref: data.pref, budget: data.budget, country: data.country, city: data.city };
+    } else {
+      var raw = $('pLines').value.trim() || params.get('lines') || '';
+      var lines = raw ? raw.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean) : [];
+      days = lines.map(function (l, i) {
+        var m = l.match(/^第?\s*\d+\s*天\s*(.*?)[：:](.*)$/);
+        var theme = m ? m[1].trim() : '';
+        var nodes = (m ? m[2] : l).split(/→|->|·/).map(function (s) { return { n: s.trim(), d: '', t: '' }; }).filter(function (x) { return x.n; });
+        return { label: theme || ('Day ' + (i + 1)), nodes: nodes };
+      });
+    }
+    return { days: days, foods: foods, hotels: hotels, traffic: traffic, meta: meta };
+  }
+
   function genPlan() {
     var title = $('pTitle').value.trim() || params.get('title') || '旅行计划';
-    var raw = $('pLines').value.trim() || params.get('lines') || '';
-    var lines = raw ? raw.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean) : [];
-    if (!lines.length) { alert('请先填写至少一行行程要点'); return; }
-    var cityName = cityFromTitle(title);
+    var pd = parsePlanData(title);
+    if (!pd.days.length) { alert('请先填写至少一行行程要点'); return; }
+    var cityName = cityFromTitle(title) || (pd.meta.city || '');
     showPreview();
     ctx.fillStyle = '#1a222c'; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = 'rgba(255,255,255,.85)';
     ctx.font = '600 34px "Noto Sans SC"';
     ctx.fillText('正在取景目的地照片…', 64, 800);
     loadFirst(cityName ? spotImgCandidates(cityName, cityName) : ['images/city-fallback.jpg']).then(function (img) {
-      drawPlan({ title: title, lines: lines, cityName: cityName }, img);
+      drawPlan({ title: title, cityName: cityName, meta: pd.meta, days: pd.days, foods: pd.foods, hotels: pd.hotels, traffic: pd.traffic }, img);
     });
   }
 
@@ -734,7 +1094,7 @@
   }
 
   /* URL 带完整参数时自动生成 */
-  if ((urlMode === 'spot' && params.get('spot')) || (urlMode === 'plan' && (params.get('lines') || params.get('title')))) {
+  if ((urlMode === 'spot' && params.get('spot')) || (urlMode === 'plan' && (params.get('lines') || params.get('title') || params.get('data')))) {
     ready().then(function () {
       if (urlMode === 'spot') genSpot(); else genPlan();
     });

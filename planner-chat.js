@@ -239,7 +239,14 @@ function renderPlan(name,c,pd,data,reqDays,src,err){
   data.days.forEach(function(g,i){
     shareLines.push('第'+(i+1)+'天 '+String(g.label).replace(/^Day\s*\d+\s*·\s*/,'')+'：'+g.nodes.map(function(s){return s.n;}).filter(Boolean).slice(0,4).join(' → '));
   });
-  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(name+' '+reqDays+'天'+ppl+'人路书')+'&lines='+encodeURIComponent(JSON.stringify(shareLines.slice(0,12)));
+  var shareData={
+    city:name, daysN:reqDays, ppl:ppl, pref:prefLabel, budget:bname, country:(c.country||'中国'),
+    days:data.days.map(function(g){return {label:String(g.label||'').replace(/^Day\s*\d+\s*·\s*/,''), nodes:(g.nodes||[]).slice(0,4).map(function(s){return {n:s.n||'', d:String(s.d||'').slice(0,40), t:s.t||''};})};}),
+    foods:(data.foods||[]).slice(0,3).map(function(f){return {n:f.n||'', p:f.p||''};}),
+    hotels:(data.hotels||[]).slice(0,2).map(function(h){return {a:h.a||'', l:String(h.l||'').slice(0,24), p:h.p||''};}),
+    traffic:(data.traffic||[]).slice(0,2)
+  };
+  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(name+' '+reqDays+'天'+ppl+'人路书')+'&lines='+encodeURIComponent(JSON.stringify(shareLines.slice(0,12)))+'&data='+encodeURIComponent(JSON.stringify(shareData));
   $('planBox').innerHTML=
   '<div class="plan">'+
     '<div class="plan-cover"><h2>'+name+' · '+reqDays+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+excNote+srcNote+'</div></div>'+
