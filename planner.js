@@ -3,8 +3,7 @@
  * 选城市 → 勾景点 → 自动生成路线图与每日行程 → 右侧 AI 助手随时改
  * 依赖：leaflet、loop-data.js(REAL_POI_COORDS)、province-data-all.js(ALL_CITY_COORDS)、
  *       script.js(_knownDict)
- * 说明：内置规划引擎开箱即用；也可在「接入设置」里填写豆包/DeepSeek 等
- *       OpenAI 兼容接口，由大模型来理解修改意图（密钥仅存本机 localStorage）。
+ * 说明：AI 助手统一走站点代理（后台 DeepSeek，Key 不出后端）；内置规划引擎仅作离线兜底。
  * ============================================================ */
 (function () {
     'use strict';
@@ -26,12 +25,10 @@
     ];
 
     var SITE_API = 'https://lvyou-wangzhan.vercel.app/api/chat';
+    /* 本站统一走站点代理（后台 DeepSeek，Key 不出后端）；builtin 仅作离线兜底 */
     var AI_PRESETS = {
         site: { label: '站点 AI · DeepSeek（无需填 Key）', endpoint: SITE_API, model: 'auto' },
-        builtin: { label: '内置规划引擎（无需配置，推荐）', endpoint: '', model: '' },
-        doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615' },
-        deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat' },
-        custom: { label: '自定义 OpenAI 兼容接口 / 代理', endpoint: '', model: '' }
+        builtin: { label: '内置规划引擎（离线兜底）', endpoint: '', model: '' }
     };
 
     var TIER1 = ['北京', '上海', '广州', '深圳'];
@@ -1332,30 +1329,17 @@
         } catch (e) { return false; }
     }
     function loadAiCfg() {
-        var raw = null;
-        try {
-            raw = localStorage.getItem(LS_AI);
-            state.aiCfg = raw ? JSON.parse(raw) : { provider: 'builtin', endpoint: '', model: '', key: '' };
-        } catch (e) {
-            state.aiCfg = { provider: 'builtin', endpoint: '', model: '', key: '' };
-        }
-        var cfg = state.aiCfg;
-        var extNoKey = cfg && cfg.provider && cfg.provider !== 'site' && cfg.provider !== 'builtin' && !String(cfg.key || '').trim();
-        if (!raw || extNoKey) probeSiteAI();
+        /* 统一走站点 DeepSeek 代理；不再读取本机残留的外部直连 / 自填 Key 旧配置 */
+        state.aiCfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' };
+        probeSiteAI();
     }
-    /* 站点配置了 DEEPSEEK_API_KEY / ARK_API_KEY 时，自动启用站点 AI，用户无需填 Key */
+    /* 探测站点代理是否已配置后端 Key；成功后标记就绪，失败时调用链路自动回落内置规则 */
     function probeSiteAI() {
         if (!/^https?:$/.test(location.protocol)) return;
         fetch(SITE_API, { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
-            if (!j || !j.configured) return;
-            var c = state.aiCfg || {};
-            if (c.provider === 'site') return;
-            if (c.provider !== 'builtin' && c.provider !== 'site' && String(c.key || '').trim()) return; // 用户填了自己的 Key，尊重其选择
-            state.aiCfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' };
-            state.siteAiReady = true;
-            var ps = $('plAiProvider'); if (ps) ps.value = 'site';
+            state.siteAiReady = !!(j && j.configured);
             updateAgentStatus();
-        }).catch(function () { /* 站点代理不可用时继续用内置引擎 */ });
+        }).catch(function () { state.siteAiReady = false; updateAgentStatus(); });
     }
 
     /* ==================== 生成 / 重新生成 ==================== */
@@ -2219,7 +2203,8 @@
                 .slice(0, 12).map(function (i) { return i.name; });
         });
         return [
-            '你是 MYL 旅行网站的 AI 行程助手，也是资深旅行规划师，中文回答。你什么旅行问题都能答：目的地推荐、签证、季节、交通、美食、预算、路线优化等。',
+            '你是 MYL 旅行网站的 AI 行程助手，也是一位经验丰富、热情主动的资深旅行规划师，全程用中文、口语化、像真人朋友一样回答。',
+            '只要和旅行相关的问题都主动、详细地回答：目的地推荐与对比、几日游路线规划、景点玩法、季节天气与穿搭、签证出入境、交通（飞机/高铁/包车/自驾/市内）、美食餐厅、住宿档次与地段、预算花费、行程节奏优化、避坑提醒、亲子/情侣/独行/银发等不同人群建议、行前准备。不要把问题轻易推回给用户，先给出你的建议。',
             '当前行程 JSON：' + JSON.stringify(compact || {}),
             '偏好：住宿=' + (state.hotelTier || 'comfort') + '，城际偏好=' + (state.transport || 'auto') + '，人均预算=' + (state.budget || '不限'),
             '可加入的候选景点（按城市）：' + JSON.stringify(candidates),
@@ -2229,7 +2214,7 @@
             '{"reply":"给用户看的中文回复，可用<br>换行","actions":[],"cards":[{"type":"flight|train|hotel|food","title":"标题","meta":"说明","price":"¥xxx","link":"https://...","linkText":"携程查价"}]}',
             'actions 可选：addCity{city}、removeCity{city}、addPoi{city,poi}、removePoi{city,poi}、replacePoi{city,poi}、setDays{days}、setPace{pace:relaxed|normal|packed}、setHotelTier{tier:budget|comfort|luxury}、setTransport{value:auto|train|flight}、setBudget{amount}、startCity{city}、movePoiTo{city,poi,day}、addByPref{pref:nature|history|food|family|photo}、dropPaid、refreshPois、loadLoop{id}、clear。',
             '需要用户可以点选航班/高铁/酒店/美食时，用 cards 返回 2-6 张卡，链接使用携程搜索页。',
-            '约束：城市最多 4 座；改行程时尽量只使用候选景点或可选城市中的名字；纯知识问答可直接回答，不要硬塞 action。回复要具体、像真人规划师。'
+            '改行程时尽量使用候选景点或可选城市中的名字；纯知识问答直接回答，不要硬塞 action。涉及实时票价、余票、班次、名额时不要编造数字，说明以跳转的携程/12306/景区官方页面为准。回复要具体、像真人规划师。'
         ].join('\n');
     }
 
@@ -2247,10 +2232,10 @@
         var lower = msg.toLowerCase();
         if (lower.indexOf('typeerror') >= 0 || lower.indexOf('failed to fetch') >= 0 ||
             lower.indexOf('networkerror') >= 0 || lower.indexOf('cors') >= 0) {
-            return '浏览器跨域被拦截（CORS），AI 服务在浏览器里无法直接调用。请选「站点 AI」或在豆包控制台把当前域名加入 CORS 白名单。';
+            return '网络连接失败，AI 服务暂时无法访问，请稍后再试，或切换内置规划引擎。';
         }
         if (msg.indexOf('401') >= 0 || lower.indexOf('unauthorized') >= 0 || lower.indexOf('invalid.*key') >= 0) {
-            return 'API Key 无效或已过期，请在设置里重新粘贴豆包 / DeepSeek 的 Key。';
+            return '后台 AI Key 未配置或已失效，请联系站长确认 DeepSeek 环境变量。';
         }
         if (msg.indexOf('429') >= 0 || msg.indexOf('rate limit') >= 0 || lower.indexOf('too many') >= 0) {
             return '请求太频繁，AI 服务暂时限流，请稍后再试。';
@@ -2660,36 +2645,11 @@
             panel.classList.toggle('open');
         });
 
-        var provSel = $('plAiProvider');
-        if (provSel) provSel.addEventListener('change', function () {
-            var p = AI_PRESETS[provSel.value] || AI_PRESETS.builtin;
-            var ep = $('plAiEndpoint'), md = $('plAiModel');
-            if (ep) ep.value = p.endpoint || '';
-            if (md) md.value = p.model || '';
-        });
-
-        var saveAi = $('plAiSave');
-        if (saveAi) saveAi.addEventListener('click', function () {
-            var provider = ($('plAiProvider') || {}).value || 'builtin';
-            var endpoint = (($('plAiEndpoint') || {}).value || '').trim();
-            var model = (($('plAiModel') || {}).value || '').trim();
-            var key = (($('plAiKey') || {}).value || '').trim();
-            state.aiCfg = { provider: provider, endpoint: endpoint, model: model, key: key };
-            try { localStorage.setItem(LS_AI, JSON.stringify(state.aiCfg)); } catch (e) { }
-            updateAgentStatus();
-            toast(provider === 'builtin' ? '已切换回内置引擎' : '已保存，下一句就会走 ' + ((AI_PRESETS[provider] || {}).label || provider));
-        });
-
         var clearAi = $('plAiClear');
         if (clearAi) clearAi.addEventListener('click', function () {
             state.aiCfg = { provider: 'builtin', endpoint: '', model: '', key: '' };
-            try { localStorage.setItem(LS_AI, JSON.stringify(state.aiCfg)); } catch (e) { }
-            var ps = $('plAiProvider'); if (ps) ps.value = 'builtin';
-            var ep = $('plAiEndpoint'); if (ep) ep.value = '';
-            var md = $('plAiModel'); if (md) md.value = '';
-            var ky = $('plAiKey'); if (ky) ky.value = '';
             updateAgentStatus();
-            toast('已清除接入配置');
+            toast('已暂时切回内置规划引擎，刷新后恢复 DeepSeek');
         });
     }
 
@@ -2826,24 +2786,14 @@
             '  </div>',
             '  <aside class="pl-agent">',
             '    <div class="pl-agent-head"><div class="pl-avatar">AI</div><div style="min-width:0"><strong>AI 行程助手</strong><span id="plAgentStatus">内置规划引擎 · 实时可用</span></div>',
-            '      <button id="plAgentSettings" title="接入豆包/大模型"><i class="fas fa-sliders-h"></i></button></div>',
+            '      <button id="plAgentSettings" title="AI 助手说明"><i class="fas fa-sliders-h"></i></button></div>',
             '    <div class="pl-agent-body" id="plAgentBody"></div>',
             '    <div class="pl-agent-chips" id="plAgentChips"></div>',
             '    <div class="pl-agent-input"><textarea id="plAgentInput" rows="1" placeholder="想怎么改？例如：帮我生成川西环线"></textarea><button id="plAgentSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button></div>',
             '    <div class="pl-ai-panel" id="plAiPanel">',
-            '      <h4>接入大模型</h4>',
-            '      <p class="hint">站点已内置 AI 代理：管理员在 Vercel 环境变量配置 DEEPSEEK_API_KEY 后，所有访客无需填 Key 即可使用 DeepSeek。也可以填自己的 Key（只存本机浏览器）。</p>',
-            '      <div class="pl-ai-field"><label>服务商</label><select id="plAiProvider">',
-            '        <option value="site">站点 AI · DeepSeek（无需填 Key）</option>',
-            '        <option value="builtin">内置规划引擎（无需配置）</option>',
-            '        <option value="doubao">豆包 · 火山方舟（自己的 Key）</option>',
-            '        <option value="deepseek">DeepSeek（自己的 Key）</option>',
-            '        <option value="custom">自定义 OpenAI 兼容接口 / 代理</option>',
-            '      </select></div>',
-            '      <div class="pl-ai-field"><label>接口地址（可换成自建代理）</label><input id="plAiEndpoint" type="text" placeholder="https://ark.cn-beijing.volces.com/api/v3/chat/completions"></div>',
-            '      <div class="pl-ai-field"><label>模型 / 推理接入点 ID</label><input id="plAiModel" type="text" placeholder="doubao-seed-1-6-250615"></div>',
-            '      <div class="pl-ai-field"><label>API Key</label><input id="plAiKey" type="password" placeholder="只存本机 localStorage" autocomplete="off"></div>',
-            '      <div class="pl-ai-btns"><button class="pl-btn-primary" id="plAiSave">保存</button><button class="pl-btn-ghost" id="plAiClear">清除</button></div>',
+            '      <h4>AI 助手 · DeepSeek</h4>',
+            '      <p class="hint">本站 AI 由后台 DeepSeek 模型提供，Key 保存在服务器，访客无需填写接口地址或 Key，可直接对话咨询行程、景点、美食、住宿、交通等各类旅行问题。</p>',
+            '      <div class="pl-ai-btns"><button class="pl-btn-ghost" id="plAiClear">暂时切回内置规划引擎</button></div>',
             '    </div>',
             '  </aside>',
             '</div>'
@@ -2854,14 +2804,6 @@
         if (demo) demo.addEventListener('click', function () { loadDemo(); });
 
         bindEvents();
-
-        // 回填已保存的接入配置
-        if (state.aiCfg) {
-            var ps = $('plAiProvider'); if (ps) ps.value = state.aiCfg.provider || 'builtin';
-            var ep = $('plAiEndpoint'); if (ep) ep.value = state.aiCfg.endpoint || '';
-            var md = $('plAiModel'); if (md) md.value = state.aiCfg.model || '';
-            var ky = $('plAiKey'); if (ky) ky.value = state.aiCfg.key || '';
-        }
 
         // 恢复上次 / 首次空状态（让用户自己选城市）
         var restored = loadLocal();

@@ -154,26 +154,16 @@ function ruleData(pd, name, reqDays){
   return {days:buildDayGroups(pd, reqDays, curExcursions, name), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
 }
 
-/* ============ 开源大模型接入（OpenAI 兼容接口，可选） ============ */
-var LLM_PROVIDERS={
-  deepseek:{name:'DeepSeek', url:'https://api.deepseek.com/v1/chat/completions', model:'deepseek-chat', keyUrl:'https://platform.deepseek.com/api_keys'},
-  zhipu:{name:'智谱 GLM', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash', keyUrl:'https://open.bigmodel.cn/usercenter/apikeys'},
-  silicon:{name:'硅基流动', url:'https://api.siliconflow.cn/v1/chat/completions', model:'Qwen/Qwen2.5-7B-Instruct', keyUrl:'https://cloud.siliconflow.cn/account/ak'},
-  moonshot:{name:'Kimi', url:'https://api.moonshot.cn/v1/chat/completions', model:'moonshot-v1-8k', keyUrl:'https://platform.moonshot.cn/console/api-keys'}
-};
-function llmCfg(){
-  try{return JSON.parse(localStorage.getItem('myl_llm')||'null');}catch(e){return null;}
-}
-function llmChat(messages, cb){
-  var cfg=llmCfg();
-  var p=LLM_PROVIDERS[cfg.provider]||LLM_PROVIDERS.zhipu;
+/* ============ 站点 AI 代理（后台 DeepSeek，Key 不出后端，无需访客填 Key） ============ */
+var SITE_API='https://lvyou-wangzhan.vercel.app/api/chat';
+function siteChat(messages, cb){
   var ctrl=new AbortController();
   var timer=setTimeout(function(){ctrl.abort();},45000);
-  fetch(p.url,{
+  fetch(SITE_API,{
     method:'POST',
     signal:ctrl.signal,
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
-    body:JSON.stringify({model:cfg.model||p.model, messages:messages, temperature:0.7, max_tokens:3000})
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'auto', messages:messages, temperature:0.7, max_tokens:3000})
   }).then(function(r){
     clearTimeout(timer);
     if(!r.ok)throw new Error('HTTP '+r.status);
@@ -185,8 +175,6 @@ function llmChat(messages, cb){
   }).catch(function(e){clearTimeout(timer);cb(e);});
 }
 function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText){
-  var cfg=llmCfg();
-  var p=LLM_PROVIDERS[cfg.provider]||LLM_PROVIDERS.zhipu;
   var ctx={
     城市:name, 国家:c.country||'中国', 天数:reqDays, 人数:ans.ppl||2,
     预算档:({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]||'舒适',
@@ -196,9 +184,9 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText){
     站内美食库:pd.foods.slice(0,8).map(function(f){return f.n;}),
     站内酒店库:pd.hotels.slice(0,4).map(function(h){return h.a+(h.p?'（'+h.p+'）':'');})
   };
-  var sys='你是一名专业旅行规划师。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文。';
+  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文。';
   var user='请生成行程 JSON，需求：'+JSON.stringify(ctx)+(fromTune?('\n\n用户调整要求：'+tuneText+'（在原行程基础上修改后输出完整 JSON）'):'');
-  llmChat([{role:'system',content:sys},{role:'user',content:user}],function(err,text){
+  siteChat([{role:'system',content:sys},{role:'user',content:user}],function(err,text){
     if(err)return cb(false,null,err.message||String(err));
     try{
       var t2=text.trim().replace(/^```(json)?\s*/i,'').replace(/```\s*$/,'').trim();
@@ -222,17 +210,12 @@ function generate(fromTune, tuneText){
   var pd=planData(name);
   var reqDays=Math.max(1,Math.min(15,parseInt(ans.days,10)||3));
   curExcursions=(curExcursions||[]).filter(function(e){return e.city!==name;});
-  var cfg=llmCfg();
-  if(cfg&&cfg.key&&LLM_PROVIDERS[cfg.provider]){
-    $('planBox').innerHTML='<div class="plan"><div class="plan-cover"><h2>🤖 '+esc(name)+' · '+reqDays+'天路书生成中…</h2><div class="sub">'+esc(LLM_PROVIDERS[cfg.provider].name)+' 大模型规划中，通常 5-15 秒</div></div></div>';
-    $('planBox').scrollIntoView({behavior:'smooth'});
-    llmGenerate(name,c,pd,reqDays,function(ok,data,err){
-      if(ok)renderPlan(name,c,pd,data,reqDays,'llm');
-      else renderPlan(name,c,pd,ruleData(pd,name,reqDays),reqDays,'rule',err);
-    },fromTune,tuneText);
-  } else {
-    renderPlan(name,c,pd,ruleData(pd,name,reqDays),reqDays,'rule');
-  }
+  $('planBox').innerHTML='<div class="plan"><div class="plan-cover"><h2>🤖 '+esc(name)+' · '+reqDays+'天路书生成中…</h2><div class="sub">DeepSeek 规划中，通常 5-15 秒</div></div></div>';
+  $('planBox').scrollIntoView({behavior:'smooth'});
+  llmGenerate(name,c,pd,reqDays,function(ok,data,err){
+    if(ok)renderPlan(name,c,pd,data,reqDays,'llm');
+    else renderPlan(name,c,pd,ruleData(pd,name,reqDays),reqDays,'rule',err);
+  },fromTune,tuneText);
 }
 
 function renderPlan(name,c,pd,data,reqDays,src,err){
@@ -249,7 +232,7 @@ function renderPlan(name,c,pd,data,reqDays,src,err){
   if(!traffic){traffic='<div class="node"><div class="d">该城交通方案整理中，可点下方机票与火车票入口查询班次。</div></div>';}
   var excNote=curExcursions.length?(' · 顺路跨城：'+curExcursions.map(function(e){return e.city+'·'+e.name;}).join('、')):'';
   var srcNote=src==='llm'
-    ? (' · '+esc((LLM_PROVIDERS[llmCfg().provider]||{}).name||'大模型')+' 生成')
+    ? ' · DeepSeek 生成'
     : (' · MYL 规划引擎'+(err?('（AI 兜底：'+esc(String(err).slice(0,50))+'）'):''));
 
   var shareLines=[];
@@ -471,34 +454,5 @@ function initSmart(){
     $('chat').style.display='block';
     qi=0;renderSteps();ask();
   };
-  /* --- 大模型设置 --- */
-  var lp=$('llmProvider'), lk=$('llmKey'), ls=$('llmSave'), lst=$('llmState'), llink=$('llmKeyLink');
-  if(lp&&lk&&ls){
-    var cfg0=llmCfg();
-    function refreshLlmUI(){
-      var c=llmCfg();
-      if(c&&c.key){
-        lk.value=c.key;
-        lp.value=c.provider;
-        lst.textContent='✅ 已接入 '+((LLM_PROVIDERS[c.provider]||{}).name||'')+'，路书将由大模型生成';
-      } else {
-        lst.textContent='未接入（使用内置规划引擎）';
-      }
-      llink.href=(LLM_PROVIDERS[lp.value]||{}).keyUrl||llink.href;
-    }
-    lp.onchange=function(){llink.href=(LLM_PROVIDERS[lp.value]||{}).keyUrl||llink.href;};
-    ls.onclick=function(){
-      var k=lk.value.trim();
-      if(k){
-        try{localStorage.setItem('myl_llm',JSON.stringify({provider:lp.value,key:k,model:LLM_PROVIDERS[lp.value].model}));}
-        catch(e){}
-      } else {
-        try{localStorage.removeItem('myl_llm');}catch(e){}
-      }
-      refreshLlmUI();
-      lst.textContent=(k?'✅ 已接入 '+LLM_PROVIDERS[lp.value].name+'，路书将由大模型生成':'未接入（使用内置规划引擎）');
-    };
-    refreshLlmUI();
-  }
 }
 initSmart();
