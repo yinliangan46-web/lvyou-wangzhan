@@ -1339,14 +1339,18 @@
         } catch (e) {
             state.aiCfg = { provider: 'builtin', endpoint: '', model: '', key: '' };
         }
-        if (!raw) probeSiteAI();
+        var cfg = state.aiCfg;
+        var extNoKey = cfg && cfg.provider && cfg.provider !== 'site' && cfg.provider !== 'builtin' && !cfg.key;
+        if (!raw || extNoKey) probeSiteAI();
     }
     /* 站点配置了 DEEPSEEK_API_KEY / ARK_API_KEY 时，自动启用站点 AI，用户无需填 Key */
     function probeSiteAI() {
         if (!/^https?:$/.test(location.protocol)) return;
         fetch(SITE_API, { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
             if (!j || !j.configured) return;
-            if (state.aiCfg && state.aiCfg.provider && state.aiCfg.provider !== 'builtin') return;
+            var c = state.aiCfg || {};
+            if (c.provider === 'site') return;
+            if (c.provider !== 'builtin' && c.provider !== 'site' && c.key) return; // 用户填了自己的 Key，尊重其选择
             state.aiCfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' };
             state.siteAiReady = true;
             var ps = $('plAiProvider'); if (ps) ps.value = 'site';
@@ -2782,7 +2786,7 @@
         if (!el) return;
         var cfg = state.aiCfg || {};
         if (cfg.provider === 'site') {
-            el.textContent = state.siteAiReady ? '站点 AI · 豆包 / DeepSeek 已接入' : '站点 AI · 待管理员配置 Key';
+            el.textContent = state.siteAiReady ? '站点 AI · DeepSeek 已接入' : '站点 AI · 待管理员配置 Key';
         } else if (cfg.provider && cfg.provider !== 'builtin') {
             var label = (AI_PRESETS[cfg.provider] || {}).label || cfg.provider;
             el.textContent = label + (cfg.model ? ' · ' + cfg.model : '') + ' 已接入';
