@@ -475,6 +475,70 @@
     return c;
   }
 
+  /* ---------- 单图加载（失败返回 null，不抛错） ---------- */
+  function loadImage(src) {
+    return new Promise(function (res) {
+      var im = new Image();
+      im.onload = function () { res(im); };
+      im.onerror = function () { res(null); };
+      im.src = src;
+    });
+  }
+
+  /* ---------- 多角度实拍 → 宽幅环视带（离屏 canvas） ----------
+     多张实拍统一等高、横向并排拼成一条可左右拖动的环视带；首尾做柔和渐变，
+     降低循环平铺时的接缝。仅用于无真全景素材的照片兜底态。 */
+  function stitchStrip(imgs) {
+    var H = 1000;
+    var parts = imgs.map(function (im) {
+      var ar = (im.width || 16) / (im.height || 10);
+      return { im: im, w: Math.round(H * ar), h: H };
+    });
+    var W = parts.reduce(function (s, p) { return s + p.w; }, 0);
+    var maxW = 4096;
+    if (W > maxW) {
+      var k = maxW / W;
+      H = Math.round(H * k);
+      parts.forEach(function (p) { p.w = Math.round(p.w * k); p.h = H; });
+      W = maxW;
+    }
+    var c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    var x = c.getContext('2d');
+    x.fillStyle = '#101828';
+    x.fillRect(0, 0, W, H);
+    var ox = 0;
+    parts.forEach(function (p) {
+      x.drawImage(p.im, 0, 0, p.im.width, p.im.height, ox, 0, p.w, p.h);
+      ox += p.w;
+    });
+    var fl = Math.min(48, Math.round(W * 0.03));
+    var g1 = x.createLinearGradient(0, 0, fl, 0);
+    g1.addColorStop(0, 'rgba(16,24,40,.9)'); g1.addColorStop(1, 'rgba(16,24,40,0)');
+    x.fillStyle = g1; x.fillRect(0, 0, fl, H);
+    var g2 = x.createLinearGradient(W, 0, W - fl, 0);
+    g2.addColorStop(0, 'rgba(16,24,40,.9)'); g2.addColorStop(1, 'rgba(16,24,40,0)');
+    x.fillStyle = g2; x.fillRect(W - fl, 0, fl, H);
+    return c;
+  }
+
+  /* ---------- 地图实景外链（兜底态跳转入口） ----------
+     国内跳高德地图搜索，境外跳 Google Maps；有坐标优先按坐标定位，新标签打开。 */
+  function mapExtUrl(spot) {
+    var ct = countryOf(spot.city);
+    var isCN = !ct || ct === '中国' || ct.indexOf('中国') > -1;
+    var q = (spot.city ? spot.city + ' ' : '') + spot.name;
+    var coord = findCoord(spot.city, spot.name);
+    if (isCN) {
+      return coord
+        ? 'https://www.amap.com/search?query=' + encodeURIComponent(q) + '&lnglat=' + coord[0] + ',' + coord[1]
+        : 'https://www.amap.com/search?query=' + encodeURIComponent(q);
+    }
+    return coord
+      ? 'https://www.google.com/maps/search/?api=1&query=' + coord[1] + ',' + coord[0]
+      : 'https://www.google.com/maps/search/' + encodeURIComponent(q);
+  }
+
   /* ---------- 本景点实拍照片收集（用于照片全景化） ----------
      只收本景点自己的画面：POI 主图 + 详情页图库，绝不用周边景点/美食图冒充。 */
   function collectPhotos(spot) {
@@ -793,36 +857,34 @@
         noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视' +
           '。打开时已静音；若点按画面后出现背景音乐，点画面右上角菜单的「音乐」图标即可关闭。';
       } else if (m === 'photo') {
-        /* 照片全景化：本景点实拍照片 → 合成 2:1 伪全景球面图 → 全景播放器渲染
-           （无声 · 站内直看；仅在无真 VR 素材时使用）。来源优先 Commons 坐标周边实拍 */
+        /* 照片全景化：本景点多张实拍照片 → 拼成宽幅环视带（≥2 张）或单张拉伸伪全景（1 张）。
+           无声 · 站内直看；仅在无真 VR 素材时使用。来源优先 Commons 坐标周边实拍 */
         modeChip.textContent = '正在合成 360° 全景…';
         modeChip.className = 'vr-modechip';
         commonsPhotos(spot).then(function (cl) {
           if (mode !== 'photo') return;
-          var phList = (cl || []).concat(collectPhotos(spot));
-          var phIdx = 0;
-          function tryPhoto() {
-            if (phIdx >= phList.length) { applyMode('none'); return; }
-            var item = phList[phIdx];
-            var im = new Image();
-            im.onload = function () {
-              if (mode !== 'photo') return;
-              modeChip.textContent = '景点实拍 · 360° 全景';
-              hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
-              noteEl.innerHTML = item.credit
-                ? '<i class="fas fa-camera"></i> 本景点实拍照片全景化：' + esc(item.credit) + '（Wikimedia Commons）'
-                : '';
-              pano = new PanoView(stage);
-              pano.stretch = 1;   /* 2:1 全景图正好环绕一圈 */
-              view = pano;
-              view.compass = setCompassText;
-              bindDrag(pano);
-              pano.loadCanvas(fakeEquirect(im));
-            };
-            im.onerror = function () { phIdx++; tryPhoto(); };
-            im.src = item.src;
-          }
-          tryPhoto();
+          var phList = (cl || []).concat(collectPhotos(spot)).slice(0, 4);
+          if (!phList.length) { applyMode('none'); return; }
+          Promise.all(phList.map(function (it) { return loadImage(it.src); })).then(function (imgs) {
+            if (mode !== 'photo') return;
+            var ok = imgs.filter(Boolean);
+            if (!ok.length) { applyMode('none'); return; }
+            var credits = [];
+            phList.forEach(function (it, i) { if (imgs[i] && it.credit) credits.push(it.credit); });
+            var multi = ok.length > 1;
+            modeChip.textContent = multi ? '多角度实拍 · 环幕环视' : '景点实拍 · 360° 全景';
+            hintEl.textContent = '左右拖动环视 · 上下拖动调整视角';
+            noteEl.innerHTML = multi
+              ? '<i class="fas fa-images"></i> 本景点多角度实拍拼合环视' + (credits.length ? '：' + esc(credits[0]) + '（Wikimedia Commons）' : '')
+              : '<i class="fas fa-camera"></i> 本景点实拍照片全景化' + (credits.length ? '：' + esc(credits[0]) + '（Wikimedia Commons）' : '');
+            var cv = multi ? stitchStrip(ok) : fakeEquirect(ok[0]);
+            pano = new PanoView(stage);
+            pano.stretch = 1;   /* 宽幅环视带正好环绕一圈 */
+            view = pano;
+            view.compass = setCompassText;
+            bindDrag(pano);
+            pano.loadCanvas(cv);
+          });
         });
       } else {
         /* 无任何素材（图库也为空）才提示，绝不拿无关照片冒充 */
@@ -891,6 +953,18 @@
         }
         setTimeout(function () { pano && pano.resize(); view && view.resize && view.resize(); }, 350);
       });
+      /* 兜底态外链：仅照片环视 / 空态提供「地图看实景」入口；
+         pano 真全景、街景、芊云本身已是真实景，不重复挂外链 */
+      if (mode === 'photo' || mode === 'none') {
+        var ext = document.createElement('a');
+        ext.className = 'vr-btn ext';
+        ext.href = mapExtUrl(spot);
+        ext.target = '_blank';
+        ext.rel = 'noopener';
+        var extCN = !country || country === '中国' || country.indexOf('中国') > -1;
+        ext.innerHTML = '<i class="fas fa-map-location-dot"></i> ' + (extCN ? '地图看实景' : 'Google 地图');
+        ctrl.appendChild(ext);
+      }
       function isFs() {
         return !!(document.fullscreenElement || document.webkitFullscreenElement) || root.classList.contains('vr-fsx');
       }
