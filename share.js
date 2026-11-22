@@ -961,17 +961,33 @@
       showPreview();
     });
   }
-  /* 解析路书结构化数据：优先 URL 里的 data，回退文本 lines */
+  /* 读取路书海报缓存：planner-chat 生成路书时把结构化数据写入 localStorage，
+     URL 只带短令牌 t；同源海报页优先读 URL，回退本地缓存，兼容旧链接。 */
+  function readPlanCache() {
+    try {
+      var raw = localStorage.getItem('myl_share_plan');
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      var token = params.get('t');
+      if (token && obj.token && obj.token !== token) return null;
+      return obj;
+    } catch (e) { return null; }
+  }
+
+  /* 解析路书结构化数据：优先 URL 里的 data，其次本地缓存，回退文本 lines */
   function parsePlanData(title) {
     var data = null;
+    var cache = null;
     try { var d = params.get('data'); if (d) data = JSON.parse(d); } catch (e) { data = null; }
+    if (!data) { cache = readPlanCache(); if (cache && cache.data) data = cache.data; }
     var days = [], foods = [], hotels = [], traffic = [], meta = {};
     if (data && Array.isArray(data.days) && data.days.length) {
       days = data.days;
       foods = data.foods || []; hotels = data.hotels || []; traffic = data.traffic || [];
       meta = { daysNum: data.daysN, ppl: data.ppl, pref: data.pref, budget: data.budget, country: data.country, city: data.city };
     } else {
-      var raw = $('pLines').value.trim() || params.get('lines') || '';
+      var cachedLines = (cache && Array.isArray(cache.lines)) ? cache.lines.join('\n') : '';
+      var raw = $('pLines').value.trim() || params.get('lines') || cachedLines || '';
       var lines = raw ? raw.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean) : [];
       days = lines.map(function (l, i) {
         var m = l.match(/^第?\s*\d+\s*天\s*(.*?)[：:](.*)$/);
@@ -1084,6 +1100,11 @@
       var ls = JSON.parse(params.get('lines'));
       if (Array.isArray(ls)) $('pLines').value = ls.join('\n');
     } catch (e) { $('pLines').value = params.get('lines'); }
+  } else {
+    var planCache = readPlanCache();
+    if (planCache && Array.isArray(planCache.lines) && planCache.lines.length) {
+      $('pLines').value = planCache.lines.join('\n');
+    }
   }
   if (urlMode === 'footprint') {
     var st = footprintStats();
@@ -1093,8 +1114,10 @@
       '<div class="st"><b>' + st.wishes + '</b><span>心愿单</span></div>';
   }
 
-  /* URL 带完整参数时自动生成 */
-  if ((urlMode === 'spot' && params.get('spot')) || (urlMode === 'plan' && (params.get('lines') || params.get('title') || params.get('data')))) {
+  /* URL 带完整参数，或本地缓存有路书数据时自动生成 */
+  var planCacheHit = false;
+  try { var pc0 = readPlanCache(); planCacheHit = !!(pc0 && pc0.data && Array.isArray(pc0.data.days) && pc0.data.days.length); } catch (e) {}
+  if ((urlMode === 'spot' && params.get('spot')) || (urlMode === 'plan' && (params.get('lines') || params.get('title') || params.get('data') || planCacheHit))) {
     ready().then(function () {
       if (urlMode === 'spot') genSpot(); else genPlan();
     });

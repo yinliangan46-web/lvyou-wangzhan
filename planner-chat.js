@@ -246,7 +246,17 @@ function renderPlan(name,c,pd,data,reqDays,src,err){
     hotels:(data.hotels||[]).slice(0,2).map(function(h){return {a:h.a||'', l:String(h.l||'').slice(0,24), p:h.p||''};}),
     traffic:(data.traffic||[]).slice(0,2)
   };
-  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(name+' '+reqDays+'天'+ppl+'人路书')+'&lines='+encodeURIComponent(JSON.stringify(shareLines.slice(0,12)))+'&data='+encodeURIComponent(JSON.stringify(shareData));
+  var shareTitle = name+' '+reqDays+'天'+ppl+'人路书';
+  var shareToken = Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36);
+  /* 行程结构化数据存入 localStorage，避免把整段 JSON 拼进 URL 导致 URI Too Long；
+     URL 只保留模式、标题与一个短令牌，海报页同源读取。 */
+  try {
+    localStorage.setItem('myl_share_plan', JSON.stringify({
+      token: shareToken, title: shareTitle, data: shareData,
+      lines: shareLines.slice(0, 12), ts: Date.now()
+    }));
+  } catch (e) {}
+  var shareUrl='share.html?mode=plan&title='+encodeURIComponent(shareTitle)+'&t='+encodeURIComponent(shareToken);
   $('planBox').innerHTML=
   '<div class="plan">'+
     '<div class="plan-cover"><h2>'+name+' · '+reqDays+'天'+ppl+'人路书</h2><div class="sub">'+bname+'档 · 偏好：'+prefLabel+' · '+(c.country||'中国')+excNote+srcNote+'</div></div>'+
