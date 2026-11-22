@@ -1,4 +1,4 @@
-@import url('service-avatar.css?v=2');
+@import url('service-avatar.css?v=3');
 /* ============ 智能客服（24小时） ============ */
 .cs-fab {
     position: fixed;
@@ -17,9 +17,9 @@
 
 .cs-fab-avatar {
     position: relative;
-    width: 78px;
-    height: 96px;
-    border-radius: 22px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
     box-shadow: 0 10px 26px rgba(37, 99, 235, 0.42);
     display: flex;
@@ -63,7 +63,7 @@
     content: '';
     position: absolute;
     inset: -6px;
-    border-radius: 26px;
+    border-radius: 50%;
     border: 2px solid rgba(59, 130, 246, 0.45);
     animation: csPulse 2.4s ease-out infinite;
 }
@@ -179,8 +179,8 @@
 
 .cs-head-avatar {
     width: 52px;
-    height: 62px;
-    border-radius: 16px;
+    height: 52px;
+    border-radius: 50%;
     background: rgba(255, 255, 255, 0.18);
     display: flex;
     align-items: center;
@@ -729,7 +729,7 @@ body.cs-lock { overflow: hidden; }
     }
 
     .cs-fab { right: 14px; bottom: 84px; }
-    .cs-fab-avatar { width: 64px; height: 80px; border-radius: 18px; font-size: 23px; }
+    .cs-fab-avatar { width: 60px; height: 60px; border-radius: 50%; font-size: 23px; }
     .cs-fab-tip { display: none; }
     .cs-bubblewrap { max-width: 84%; }
     .cs-bubble { font-size: 14px; }
