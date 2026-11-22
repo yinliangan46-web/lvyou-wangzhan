@@ -2,13 +2,14 @@
 .cs-fab-avatar,
 .cs-head-avatar {
     background-image: url('data:image/jpeg;base64,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') !important;
-    background-size: cover !important;
-    background-position: center top !important;
+    background-size: cover;
+    background-position: center;
+    animation: csZoom 4.5s ease-in-out infinite;
 }
 .cs-msg:not(.me) .cs-ava {
     background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAB8VFxsXEx8bGRsjIR8kLk0yLioqLl5DRzhNb2J1c21ibGp7irGWe4OnhGpsmtGcp7a8xsjGd5TZ6NfA5rHCxr7/2wBDASEjIy4oLloyMlq+f2x/vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr7/wAARCABgAGADASIAAhEBAxEB/8QAGgAAAQUBAAAAAAAAAAAAAAAABQABAgMEBv/EADAQAAEEAAQDBQcFAAAAAAAAAAEAAgMRBCExQQUSURMiMmFxBhQjM0JSgWKRobHB/8QAFwEBAQEBAAAAAAAAAAAAAAAAAQACA//EABcRAQEBAQAAAAAAAAAAAAAAAAABEQL/2gAMAwEAAhEDEQA/ANiekk4WmSpPSScBSKlTLiYITUkrQel5rFxPHlrjBC6iPE4f0EIFk5BGnHTRzxSmmSNJ6WrVygsGwaI0IRnhXEHTHsJjb67ruvl6q1YIpKSZIMlSdKlFBOEk4UCCqxk3YYV8m4FD1VwCGcckqGNnU2VVRiwOG94eXvzaD+5RJ2EiDcmgLLhA+LCxua1xLs8jWpW2SRwYM8yOi512kCMXhuyJI8JWeJ7opGvac2mwich7Zh1ro5tFCvC4g7FMZsdYxwkY140cLClSz8Jd2mAj35e6toanWcVhimGKYCekacY04TKYC2wQQrjjMmnqi4ah3HR8Bg6G0UyGwcoODhqvDV+ikX/FBo1WaGcOxLYnmGU1G/QnYog+OJp5siuddpdh8S5rY3EZAC0DkcHupnra3cQmLoSBkCh7RRTGOq6H2fv3eTpf8otSEezz+5KzztGVI1J6TpKDGApgJgFMLWg4CEcfeByNvPWkXe7kYTvsuX4jIZMS7OyMiUFmDDI7LYElGo2NfE0kbLHgYmvwkuWZNE+SJxRigDoNaRWopOBE7ST4Rp5lDMTg5Iiaab3XTd1rL+kaKJaDrmmRm3QjgElYpzDqQuiQqfCN5xNDUczTYI0PqiGFm7aEOIp24UlqdJJCZQphRCmEhGf5JXIzuBlcAutxIJhIBrzXLzYdwxZaGmhn+OqiJ8NZycPdYzdZWuMO5KbuNegSZGGwcrdOX/Fc0crQ0aAKw6flFAHQZpE6dSkU1/EP6QoE7I0d1LBkW8DrzKvUlx/Cjhncs7POwpCCSSSEzhTaoBSalITk5MGhzVAaOa6FjdTxbnxlrwAWnI2dFVFIJLI2ySsW/SfRSCh9P5T3QUEt7VcdkE/cbSe6oydzkpsY0MABJA6oKJNAnoFVH82OvuCskFMcBmSq4Ae3jHmlCVpWmSWS/9k=') !important;
-    background-size: cover !important;
-    background-position: center !important;
+    background-size: cover;
+    background-position: center;
 }
 .cs-fab-avatar > .fa-headset,
 .cs-head-avatar > .fa-headset,
@@ -21,14 +22,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 6px 0 5px;
+    padding: 5px 0 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    font-size: 11px;
+    gap: 3px;
+    font-size: 10px;
     font-weight: 600;
     color: #fff;
-    background: linear-gradient(transparent, rgba(29, 78, 216, 0.88));
+    background: linear-gradient(transparent, rgba(29, 78, 216, 0.9));
     z-index: 2;
+}
+@keyframes csZoom {
+    0%, 100% { background-size: 112%; }
+    50% { background-size: 124%; }
 }
