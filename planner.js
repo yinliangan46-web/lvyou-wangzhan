@@ -1340,7 +1340,7 @@
             state.aiCfg = { provider: 'builtin', endpoint: '', model: '', key: '' };
         }
         var cfg = state.aiCfg;
-        var extNoKey = cfg && cfg.provider && cfg.provider !== 'site' && cfg.provider !== 'builtin' && !cfg.key;
+        var extNoKey = cfg && cfg.provider && cfg.provider !== 'site' && cfg.provider !== 'builtin' && !String(cfg.key || '').trim();
         if (!raw || extNoKey) probeSiteAI();
     }
     /* 站点配置了 DEEPSEEK_API_KEY / ARK_API_KEY 时，自动启用站点 AI，用户无需填 Key */
@@ -1350,7 +1350,7 @@
             if (!j || !j.configured) return;
             var c = state.aiCfg || {};
             if (c.provider === 'site') return;
-            if (c.provider !== 'builtin' && c.provider !== 'site' && c.key) return; // 用户填了自己的 Key，尊重其选择
+            if (c.provider !== 'builtin' && c.provider !== 'site' && String(c.key || '').trim()) return; // 用户填了自己的 Key，尊重其选择
             state.aiCfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' };
             state.siteAiReady = true;
             var ps = $('plAiProvider'); if (ps) ps.value = 'site';
@@ -2269,6 +2269,8 @@
 
     function callAI(userText) {
         var cfg = state.aiCfg || {};
+        var extNoKey = cfg.provider && cfg.provider !== 'site' && cfg.provider !== 'builtin' && !String(cfg.key || '').trim();
+        if (extNoKey) cfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' }; // 无 Key 的外部旧配置，回退站点代理
         var preset = AI_PRESETS[cfg.provider] || {};
         var endpoint = cfg.endpoint || preset.endpoint;
         var model = cfg.model || preset.model;
