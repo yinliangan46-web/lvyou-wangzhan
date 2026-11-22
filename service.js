@@ -33,6 +33,29 @@
 
     var CHIPS_DEFAULT = ['怎么预约门票', '帮我规划行程', '退改政策', '交通和住宿', '转人工客服'];
 
+    /* ===== 大模型智能体配置（Key 只在 Vercel 后端环境变量，前端不存） ===== */
+    var AI_CONFIG = {
+        enabled: true,
+        proxy: 'https://lvyou-wangzhan.vercel.app/api/chat',
+        model: 'deepseek-chat',
+        timeoutMs: 9000
+    };
+
+    var AI_SYSTEM = [
+        '你是 MYL 旅行网站的在线智能客服，中文、友好、简洁，像一位熟悉路线的旅行顾问。',
+        '你能处理：门票/景点预约指引、行程规划建议、机票/高铁/住宿入口指引、退改政策、发票报销、转人工。',
+        '判断访客意图后，先自然回答问题；信息不全时用一句话追问（缺城市/景点/日期/人数/预算就问对应那一项），不要罗列一堆问题。',
+        '【边界，必须遵守】不要编造实时票价、余票、库存、班次、名额；这些以跳转的携程/12306/景区官方小程序为准。不确定就如实说明，并引导到对应入口或人工。',
+        '【输出格式】只返回一个 JSON 对象，不要输出解释、不要 Markdown 代码围栏，字段如下：',
+        '  "reply": 给访客的答复正文，可用 <br>、<b> 做轻量排版，不要自己写外部链接；',
+        '  "intent": 取值之一 ticket/flight/train/hotel/itinerary/refund/invoice/human/faq/chitchat；',
+        '  "city": 提到的城市名，没有就留空字符串；',
+        '  "spot": 提到的景点名，没有就留空字符串；',
+        '  "links": 入口数组，每项 { "label": "入口文案", "url": "https://..." }；拿不准精确地址时留空数组，由前端补默认入口；',
+        '  "chips": 1-4 个下一步推荐问题，字符串数组。',
+        '转人工的标准：访客明确要人工/投诉/纠纷，或连续两次没被解决。人工联系方式：邮箱 2377411629@qq.com，电话 17708491297，7×24 值守。'
+    ].join('\n');
+
     /* 目的地速答：名称 → [天数建议, 亮点, 一句话建议] */
     var DESTS = {
         '北京': ['4-5天', '故宫、八达岭长城、颐和园、天坛、南锣鼓巷', '故宫和国家博物馆要提前 7 天预约，周一多数博物馆闭馆'],
@@ -857,6 +880,93 @@
         return null;
     }
 
+    /* ---------- 大模型智能体链路 ---------- */
+    function stripHtml(s) {
+        return String(s || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+    }
+
+    function defaultLinks(intent, city, spot) {
+        var L = [];
+        switch (intent) {
+            case 'ticket': L.push({ label: '携程门票 / 景点预约', url: 'https://you.ctrip.com/' }); break;
+            case 'flight': L.push({ label: '携程机票比价', url: 'https://flights.ctrip.com/' }); break;
+            case 'train': L.push({ label: '12306 购票', url: 'https://www.12306.cn/' }); break;
+            case 'hotel': L.push({ label: '携程酒店预订', url: 'https://hotels.ctrip.com/' }); break;
+            case 'itinerary': L.push({ label: '站内 AI 行程助手', url: 'index.html#planner' }); break;
+        }
+        return L;
+    }
+
+    function linkCardsHtml(links) {
+        if (!links || !links.length) return '';
+        var h = '<div class="cs-card cs-link-card"><h5>相关入口</h5>';
+        links.forEach(function (l) {
+            h += '<div class="cs-t-row"><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
+                '<i class="fas fa-external-link"></i> ' + esc(l.label) + '</a></div>';
+        });
+        return h + '</div>';
+    }
+
+    function normalizeAi(d) {
+        d = d || {};
+        var reply = String(d.reply || '').trim();
+        if (!reply) throw new Error('AI 空答复');
+        var intent = String(d.intent || 'chitchat').toLowerCase();
+        var city = String(d.city || '').trim();
+        var spot = String(d.spot || '').trim();
+        var links = (Array.isArray(d.links) ? d.links : []).filter(function (l) {
+            return l && l.url && /^https?:\/\//i.test(l.url);
+        });
+        var seen = {};
+        links.forEach(function (l) { seen[l.url] = 1; });
+        defaultLinks(intent, city, spot).forEach(function (l) {
+            if (!seen[l.url]) { links.push(l); seen[l.url] = 1; }
+        });
+        var chips = Array.isArray(d.chips) && d.chips.length ? d.chips.slice(0, 4) : CHIPS_DEFAULT;
+        return { text: reply + linkCardsHtml(links), chips: chips };
+    }
+
+    function aiReply(text) {
+        if (!AI_CONFIG.enabled || !AI_CONFIG.proxy) return Promise.reject(new Error('AI 未配置'));
+        var msgs = [{ role: 'system', content: AI_SYSTEM }];
+        history.slice(-10).forEach(function (h) {
+            if (!h || !h.text) return;
+            msgs.push({ role: h.from === 'me' ? 'user' : 'assistant', content: stripHtml(h.text) });
+        });
+        msgs.push({ role: 'user', content: String(text) });
+
+        var ctrl = null;
+        return new Promise(function (resolve, reject) {
+            if (typeof AbortController !== 'undefined') ctrl = new AbortController();
+            var timer = setTimeout(function () {
+                if (ctrl) ctrl.abort();
+                reject(new Error('AI 响应超时'));
+            }, AI_CONFIG.timeoutMs);
+            fetch(AI_CONFIG.proxy, {
+                method: 'POST',
+                credentials: 'omit',
+                headers: { 'Content-Type': 'application/json' },
+                signal: ctrl ? ctrl.signal : undefined,
+                body: JSON.stringify({
+                    model: AI_CONFIG.model,
+                    messages: msgs,
+                    temperature: 0.3
+                })
+            }).then(function (r) {
+                if (!r.ok) return r.text().then(function () { throw new Error('AI HTTP ' + r.status); });
+                return r.text();
+            }).then(function (t) {
+                var j = JSON.parse(t);
+                var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
+                content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+                var s2 = content.indexOf('{'), e = content.lastIndexOf('}');
+                if (s2 < 0 || e < 0) throw new Error('AI 未返回 JSON');
+                return JSON.parse(content.slice(s2, e + 1));
+            }).then(function (data) { clearTimeout(timer); resolve(normalizeAi(data)); })
+              .catch(function (err) { clearTimeout(timer); reject(err); });
+        });
+    }
+
     function reply(text) {
         var t = String(text || '').trim();
 
@@ -942,13 +1052,23 @@
         toggleSend();
 
         typing();
-        var r = reply(text);
-        var plain = String(r.text).replace(/<[^>]+>/g, '');
-        var delay = 480 + Math.min(700, plain.length * 4);
-        setTimeout(function () {
+
+        function localFallback() {
+            var r = reply(text);
+            var plain = String(r.text).replace(/<[^>]+>/g, '');
+            var delay = 480 + Math.min(700, plain.length * 4);
+            setTimeout(function () {
+                stopTyping();
+                botSay(r);
+            }, delay);
+        }
+
+        aiReply(text).then(function (r) {
             stopTyping();
             botSay(r);
-        }, delay);
+        }).catch(function () {
+            localFallback();
+        });
     }
 
     function toggleSend() {

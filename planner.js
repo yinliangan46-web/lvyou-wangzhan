@@ -25,8 +25,9 @@
         { key: 'relax', label: '慢节奏', icon: 'fa-mug-hot' }
     ];
 
+    var SITE_API = 'https://lvyou-wangzhan.vercel.app/api/chat';
     var AI_PRESETS = {
-        site: { label: '站点 AI（已接入豆包 / DeepSeek，无需填 Key）', endpoint: '/api/chat', model: 'auto' },
+        site: { label: '站点 AI · DeepSeek（无需填 Key）', endpoint: SITE_API, model: 'auto' },
         builtin: { label: '内置规划引擎（无需配置，推荐）', endpoint: '', model: '' },
         doubao: { label: '豆包 · 火山方舟（填自己的 Key）', endpoint: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', model: 'doubao-seed-1-6-250615' },
         deepseek: { label: 'DeepSeek（填自己的 Key）', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat' },
@@ -1343,14 +1344,14 @@
     /* 站点配置了 DEEPSEEK_API_KEY / ARK_API_KEY 时，自动启用站点 AI，用户无需填 Key */
     function probeSiteAI() {
         if (!/^https?:$/.test(location.protocol)) return;
-        fetch('/api/chat', { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
+        fetch(SITE_API, { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
             if (!j || !j.configured) return;
             if (state.aiCfg && state.aiCfg.provider && state.aiCfg.provider !== 'builtin') return;
-            state.aiCfg = { provider: 'site', endpoint: '/api/chat', model: 'auto', key: '' };
+            state.aiCfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' };
             state.siteAiReady = true;
             var ps = $('plAiProvider'); if (ps) ps.value = 'site';
             updateAgentStatus();
-        }).catch(function () { /* 纯静态托管没有 /api/chat，继续用内置引擎 */ });
+        }).catch(function () { /* 站点代理不可用时继续用内置引擎 */ });
     }
 
     /* ==================== 生成 / 重新生成 ==================== */
@@ -2254,7 +2255,7 @@
             return 'AI 服务暂时异常或上游超时，请稍后重试，或切换内置规划引擎。';
         }
         if (msg.indexOf('503') >= 0 || lower.indexOf('未配置') >= 0 || lower.indexOf('not configured') >= 0) {
-            return '站点 AI 未部署后端代理（/api/chat）。如果你是站长，请在 Vercel 上部署本项目并配置 ARK_API_KEY 环境变量。';
+            return '站点 AI 代理暂不可用。如果你是站长，请确认 Vercel 函数已部署并配置 DEEPSEEK_API_KEY 环境变量。';
         }
         if (msg.indexOf('timeout') >= 0 || msg.indexOf('超时') >= 0) {
             return 'AI 响应超时，请稍后重试。';
@@ -2268,7 +2269,7 @@
         var endpoint = cfg.endpoint || preset.endpoint;
         var model = cfg.model || preset.model;
         if (!endpoint) throw new Error('未填写接口地址');
-        var isSite = cfg.provider === 'site' || endpoint === '/api/chat';
+        var isSite = cfg.provider === 'site' || endpoint === '/api/chat' || endpoint === SITE_API;
         var key = cfg.key || '';
 
         var payload = {
@@ -2825,9 +2826,9 @@
             '    <div class="pl-agent-input"><textarea id="plAgentInput" rows="1" placeholder="想怎么改？例如：帮我生成川西环线"></textarea><button id="plAgentSend" aria-label="发送"><i class="fas fa-paper-plane"></i></button></div>',
             '    <div class="pl-ai-panel" id="plAiPanel">',
             '      <h4>接入大模型</h4>',
-            '      <p class="hint">站点已内置 AI 代理：管理员在 Vercel 环境变量配置 DEEPSEEK_API_KEY 或 ARK_API_KEY 后，所有访客无需填 Key 即可使用豆包 / DeepSeek。也可以填自己的 Key（只存本机浏览器）。</p>',
+            '      <p class="hint">站点已内置 AI 代理：管理员在 Vercel 环境变量配置 DEEPSEEK_API_KEY 后，所有访客无需填 Key 即可使用 DeepSeek。也可以填自己的 Key（只存本机浏览器）。</p>',
             '      <div class="pl-ai-field"><label>服务商</label><select id="plAiProvider">',
-            '        <option value="site">站点 AI（豆包 / DeepSeek，无需填 Key）</option>',
+            '        <option value="site">站点 AI · DeepSeek（无需填 Key）</option>',
             '        <option value="builtin">内置规划引擎（无需配置）</option>',
             '        <option value="doubao">豆包 · 火山方舟（自己的 Key）</option>',
             '        <option value="deepseek">DeepSeek（自己的 Key）</option>',
