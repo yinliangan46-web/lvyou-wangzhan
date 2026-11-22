@@ -427,6 +427,7 @@
         aiCfg: null,
         siteAiReady: false,
         map: null,
+        msgMaps: [],
         busy: false
     };
 
@@ -1350,10 +1351,87 @@
     }
 
     /* ==================== AI 助手 ==================== */
-    function pushMsg(role, text, extra, cards) {
-        state.msgs.push({ role: role, text: text, extra: extra || null, cards: cards || null });
+    function pushMsg(role, text, extra, cards, plan) {
+        state.msgs.push({ role: role, text: text, extra: extra || null, cards: cards || null, plan: plan || null });
         if (state.msgs.length > 40) state.msgs.shift();
         renderMsgs();
+    }
+
+    /* 提取行程快照：只保留节点名称与经纬度，供 AI 消息里渲染节点清单 + 小地图 */
+    function planSnapshot(plan) {
+        if (!plan || !plan.daysList || !plan.daysList.length) return null;
+        return {
+            title: plan.title || '',
+            days: plan.days,
+            people: plan.people,
+            cities: (plan.cities || []).slice(),
+            daysList: plan.daysList.map(function (d) {
+                return {
+                    dayNo: d.dayNo, city: d.city, theme: d.theme,
+                    pois: (d.pois || []).map(function (p) { return { name: p.name, lng: p.lng, lat: p.lat }; })
+                };
+            })
+        };
+    }
+
+    /* AI 消息内的线路节点清单 */
+    function planPanelHtml(plan, idx) {
+        if (!plan || !plan.daysList || !plan.daysList.length) return '';
+        var rows = plan.daysList.map(function (d, di) {
+            var color = DAY_COLORS[di % DAY_COLORS.length];
+            var nodes = (d.pois || []).map(function (p) {
+                return '<span class="pl-msg-node">' + esc(p.name) + '</span>';
+            }).join('');
+            return '<div class="pl-msg-day">' +
+                '<div class="pl-msg-day-head"><span class="pl-msg-day-badge" style="background:' + color + '">D' + d.dayNo + '</span>' +
+                '<span class="pl-msg-day-city">' + esc(d.city) + '</span>' +
+                (d.theme ? '<span class="pl-msg-day-theme">' + esc(d.theme) + '</span>' : '') + '</div>' +
+                '<div class="pl-msg-nodes">' + nodes + '</div></div>';
+        }).join('');
+        var totalNodes = plan.daysList.reduce(function (s, d) { return s + (d.pois || []).length; }, 0);
+        return '<div class="pl-msg-plan">' +
+            '<div class="pl-msg-plan-title"><i class="fas fa-route"></i> 线路节点 · ' + plan.days + ' 天 / ' + plan.cities.length + ' 城 / ' + totalNodes + ' 站</div>' +
+            '<div class="pl-msg-days">' + rows + '</div>' +
+            '<div class="pl-msg-map" id="plMsgMap_' + idx + '"></div>' +
+            '</div>';
+    }
+
+    /* 为 AI 消息里的小地图逐个初始化 Leaflet 实例 */
+    function mountMsgMaps() {
+        if (!window.L) return;
+        (state.msgMaps || []).forEach(function (m) { try { m.remove(); } catch (e) { } });
+        state.msgMaps = [];
+        state.msgs.forEach(function (m, i) {
+            if (!m.plan) return;
+            var el = $('plMsgMap_' + i);
+            if (!el) return;
+            var map = L.map(el, { scrollWheelZoom: false, zoomControl: true });
+            L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+                { subdomains: ['1', '2', '3', '4'], maxZoom: 18, minZoom: 3, attribution: '&copy; 高德地图' }).addTo(map);
+            var bounds = [], gNo = 0;
+            m.plan.daysList.forEach(function (d, di) {
+                var color = DAY_COLORS[di % DAY_COLORS.length];
+                var pts = [];
+                d.pois.forEach(function (p) { var g = wgs2gcj(p.lng, p.lat); pts.push([g[1], g[0]]); });
+                if (pts.length > 1) L.polyline(pts, { color: color, weight: 3, opacity: .85, lineJoin: 'round' }).addTo(map);
+                d.pois.forEach(function (p, k) {
+                    gNo++;
+                    var ll = pts[k];
+                    bounds.push(ll);
+                    L.marker(ll, {
+                        icon: L.divIcon({ className: 'pl-pin-wrap', html: '<div class="pl-pin" style="background:' + color + '">' + gNo + '</div>', iconSize: [24, 24], iconAnchor: [12, 12] }),
+                        title: p.name
+                    }).addTo(map).bindTooltip('Day ' + d.dayNo + ' · ' + p.name, { direction: 'top', offset: [0, -12] });
+                });
+            });
+            try {
+                if (bounds.length === 1) map.setView(bounds[0], 12);
+                else if (bounds.length > 1) map.fitBounds(L.latLngBounds(bounds), { padding: [24, 24], maxZoom: 12 });
+            } catch (e) { }
+            setTimeout(function () { map.invalidateSize(); }, 120);
+            setTimeout(function () { map.invalidateSize(); }, 480);
+            state.msgMaps.push(map);
+        });
     }
 
     function cardsHtml(cards) {
@@ -1373,13 +1451,14 @@
     function renderMsgs() {
         var body = $('plAgentBody');
         if (!body) return;
-        body.innerHTML = state.msgs.map(function (m) {
+        body.innerHTML = state.msgs.map(function (m, i) {
             if (m.role === 'user') {
                 return '<div class="pl-msg user"><div class="bubble">' + esc(m.text) + '</div></div>';
             }
-            return '<div class="pl-msg' + (m.typing ? ' typing' : '') + '"><div class="who">AI</div><div class="bubble">' + m.text + cardsHtml(m.cards) + '</div></div>';
+            return '<div class="pl-msg' + (m.typing ? ' typing' : '') + '"><div class="who">AI</div><div class="bubble">' + m.text + cardsHtml(m.cards) + planPanelHtml(m.plan, i) + '</div></div>';
         }).join('');
         body.scrollTop = body.scrollHeight;
+        mountMsgMaps();
     }
 
     function agentQuickChips() {
@@ -2384,7 +2463,8 @@
                 renderAll();
                 if (state.plan) renderResult();
                 saveLocal();
-                pushMsg('ai', reply + (changedAi && !useLocalRerender ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards);
+                var snap = planSnapshot(state.plan);
+                pushMsg('ai', reply + (changedAi && !useLocalRerender ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changedAi) + '</div>' : ''), null, aiCards, snap);
             } catch (e) {
                 state.msgs.pop();
                 var fb = localReply(text);
@@ -2395,8 +2475,9 @@
                 renderAll();
                 if (state.plan) renderResult();
                 saveLocal();
+                var snapFb = planSnapshot(state.plan);
                 pushMsg('ai', (fb.reply || '已按你的要求更新行程。') +
-                    (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hint, null, fb.cards);
+                    (ch ? '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(ch) + '</div>' : '') + hint, null, fb.cards, snapFb);
             } finally {
                 state.busy = false;
             }
@@ -2412,7 +2493,8 @@
                 if (state.plan) renderResult();
                 saveLocal();
                 if (changed) out += '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">已执行：' + esc(changed) + '</div>';
-                pushMsg('ai', out, null, fb.cards);
+                var snapLocal = planSnapshot(state.plan);
+                pushMsg('ai', out, null, fb.cards, snapLocal);
                 state.busy = false;
             }, 320);
         }
@@ -2597,8 +2679,9 @@
             saveLocal();
             var card = $('plResultCard');
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            var snapGen = planSnapshot(state.plan);
             pushMsg('ai', '行程已生成：<b>' + esc(state.plan.title || (state.plan.cities.join(' → ') + ' · ' + state.plan.days + ' 天')) +
-                '</b>。想改哪里直接跟我说，比如「第三天太赶了」「住好点」「加一天」「推荐美食」。');
+                '</b>。想改哪里直接跟我说，比如「第三天太赶了」「住好点」「加一天」「推荐美食」。', null, null, snapGen);
         });
 
         // 助手

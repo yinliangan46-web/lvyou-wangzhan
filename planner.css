@@ -818,3 +818,70 @@
 .pl-map .leaflet-container { font-family: inherit; }
 /* 弹性容器在隐藏卡片里初始化时的兜底 */
 .pl-result[hidden] { display: none; }
+
+/* AI 消息内：线路节点清单 + 小地图 */
+.pl-msg-plan {
+    margin-top: 10px;
+    border: 1px solid #e6eefb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fbff;
+}
+.pl-msg-plan-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #1e293b;
+    padding: 9px 12px;
+    background: #fff;
+    border-bottom: 1px solid #eef3fc;
+}
+.pl-msg-plan-title i { color: #2563eb; }
+.pl-msg-days { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; }
+.pl-msg-day {
+    background: #fff;
+    border: 1px solid #eef3fc;
+    border-radius: 10px;
+    padding: 8px 10px;
+}
+.pl-msg-day-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pl-msg-day-badge {
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 700;
+    border-radius: 7px;
+    padding: 2px 8px;
+    letter-spacing: .2px;
+}
+.pl-msg-day-city { font-weight: 700; color: #0f172a; font-size: .82rem; }
+.pl-msg-day-theme { color: #64748b; font-size: .74rem; }
+.pl-msg-nodes { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.pl-msg-node {
+    font-size: .72rem;
+    color: #334155;
+    background: #f1f6ff;
+    border: 1px solid #e3eeff;
+    border-radius: 999px;
+    padding: 3px 9px;
+    line-height: 1.4;
+}
+.pl-msg-map {
+    height: 210px;
+    width: 100%;
+    border-top: 1px solid #e6eefb;
+    background: #eef4fd;
+}
+.pl-msg-map .leaflet-tooltip {
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .18);
+    font-size: .74rem;
+    color: #1e293b;
+    padding: 5px 9px;
+}
+.pl-msg-map .leaflet-container { font-family: inherit; }
+@media (max-width: 640px) {
+    .pl-msg-map { height: 180px; }
+}
