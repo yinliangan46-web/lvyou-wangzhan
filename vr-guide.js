@@ -740,15 +740,9 @@
         pano.load(pd.src, function () {
           stage.querySelector('canvas') && stage.querySelector('canvas').remove();
           pano.destroy();
-          /* 手动全景图加载失败：芊云（需无 BGM）→ 检索真全景 → 诚实提示 */
-          if (qyHit) {
-            checkQy().then(function (bgm) {
-              if (!bgm) { applyMode('qy'); return; }
-              commonsPano(spot).then(function (h) {
-                if (h) { pendingPano = h; applyMode('net'); } else applyMode('photo');
-              });
-            });
-          } else commonsPano(spot).then(function (h) {
+          /* 手动全景图加载失败：本景点芊云全景 → 检索真全景 → 照片全景化 */
+          if (qyHit) { applyMode('qy'); return; }
+          commonsPano(spot).then(function (h) {
             if (h) { pendingPano = h; applyMode('net'); } else applyMode('photo');
           });
         });
@@ -764,11 +758,7 @@
         pano.load(pendingPano.src, function () {
           stage.querySelector('canvas') && stage.querySelector('canvas').remove();
           pano.destroy();
-          if (qyHit) {
-            checkQy().then(function (bgm) {
-              if (!bgm) applyMode('qy'); else applyMode('photo');
-            });
-          } else applyMode('photo');
+          if (qyHit) applyMode('qy'); else applyMode('photo');
         });
       } else if (m === 'street') {
         modeChip.textContent = '真实街景 · 实景拍摄';
@@ -801,7 +791,7 @@
         stage.appendChild(cBottom);
         var qyLabel = qyHit && qyHit.name ? esc(qyHit.name) : esc(spot.name);
         noteEl.innerHTML = '「' + esc(spot.name) + '」专属全景作品：' + qyLabel + ' · 实景拍摄可 360° 环视' +
-          '。若出现自动讲解语音，点画面右上角菜单即可关闭。';
+          '。打开时已静音；若点按画面后出现背景音乐，点画面右上角菜单的「音乐」图标即可关闭。';
       } else if (m === 'photo') {
         /* 照片全景化：本景点实拍照片 → 合成 2:1 伪全景球面图 → 全景播放器渲染
            （无声 · 站内直看；仅在无真 VR 素材时使用）。来源优先 Commons 坐标周边实拍 */
@@ -841,21 +831,9 @@
         hintEl.textContent = '';
         var empty = document.createElement('div');
         empty.className = 'vr-empty';
-        var hasBgmWork = !!(qyHit && qyBgm === true);
         empty.innerHTML = '<i class="fas fa-vr-cardboard"></i>' +
-          '<div>「' + esc(spot.name) + '」暂无本景点专属的 360° 实景全景素材。</div>' +
-          '<div>' + (hasBgmWork
-            ? '本景点的全景作品含背景音乐且无法静音，已停止自动嵌入。'
-            : '本站只展示真实素材：境外实景街景、本景点专属全景作品，绝不用无关照片冒充。') + '</div>';
-        if (hasBgmWork) {
-          var ext = document.createElement('a');
-          ext.className = 'vr-btn ext';
-          ext.target = '_blank';
-          ext.rel = 'noopener';
-          ext.href = 'https://9kvr.cn/tour/index?id=' + encodeURIComponent(qyHit.id);
-          ext.innerHTML = '<i class="fas fa-up-right-from-square"></i> 打开本景点全景作品（新窗口）';
-          empty.appendChild(ext);
-        }
+          '<div>「' + esc(spot.name) + '」暂无 360° 全景素材。</div>' +
+          '<div>本站只展示真实素材：境外实景街景、本景点专属全景作品，绝不用无关照片冒充。</div>';
         stage.appendChild(empty);
         noteEl.innerHTML = '';
       }
@@ -886,9 +864,8 @@
         });
         gyroBtn = btn('gyro', 'fa-mobile-screen', '陀螺仪', function () { toggleGyro(); });
       }
-      /* 芊云全景转换：任何模式一键进入，退出回到进入前的模式
-         （含背景音乐的作品不提供嵌入入口，qyBgm===false 才显示） */
-      if (qyHit && qyBgm === false) {
+      /* 芊云全景转换：任何模式一键进入，退出回到进入前的模式 */
+      if (qyHit) {
         swapBtn = btn('swap', 'fa-shuffle', mode === 'qy' ? '退出芊云全景' : '切换芊云全景', function () {
           if (narrator.on) narrator.stop();
           if (mode === 'qy') {
@@ -1002,37 +979,22 @@
       }
     }
 
-    /* --- 启动调度（严格执行：绝不显示无关景区、国内绝不出谷歌地图、含 BGM 作品绝不自动嵌入） ---
-       国内：本景点专属芊云作品（先查背景音乐，无 BGM 才嵌入）→ Commons 坐标周边真全景；
-       都没有→诚实提示"暂无专属全景"（含 BGM 作品时提供新窗口打开入口）。
+    /* --- 启动调度（严格执行：绝不显示无关景区、国内绝不出谷歌地图） ---
+       国内：本景点专属芊云全景作品直接嵌入（真 VR，打开时浏览器禁止其自动播放声音）
+             → 其次 Commons 坐标周边真全景 → 都没有则本景点实拍照片全景化。
        （谷歌大陆无街景覆盖，检索只会出平面地图，故国内不接入。）
        境外：谷歌街景（精确坐标直达景点本体，海外坐标见 city-spot-coords-intl.js），
-       芊云专属作品（无 BGM）可互换。 */
+       芊云专属作品可互换。 */
     var PANO = window.PANO_DATA || {};
     var qyHit = qyvrMatch(spot);
     var country = countryOf(spot.city);
     var isCN = !country || country === '中国' || country.indexOf('中国') > -1;
-    /* 芊云作品背景音乐检测结果：null=未检测 false=无 BGM true=含 BGM（不自动嵌入） */
-    var qyBgm = null;
-    function checkQy() {
-      if (!qyHit) { qyBgm = false; return Promise.resolve(false); }
-      return qyBgmCheck(qyHit.id).then(function (b) { qyBgm = b; return b; });
-    }
     if (PANO[spot.name] && PANO[spot.name].src) {
       applyMode('pano');
     } else if (isCN) {
       if (qyHit) {
-        /* 先检测作品是否含背景音乐：无 BGM 才嵌入，有 BGM 改检索真全景 */
-        modeChip.textContent = '正在检索 360° 真全景…';
-        checkQy().then(function (bgm) {
-          if (mode !== null) return;
-          if (!bgm) { applyMode('qy'); return; }
-          commonsPano(spot).then(function (hit) {
-            if (mode !== null) return;
-            if (hit) { pendingPano = hit; applyMode('net'); }
-            else applyMode('photo');
-          });
-        });
+        /* 本景点专属芊云全景作品：直接嵌入（打开时由浏览器禁止其自动播放声音） */
+        applyMode('qy');
       } else {
         modeChip.textContent = '正在检索 360° 真全景…';
         commonsPano(spot).then(function (hit) {
@@ -1048,19 +1010,13 @@
         streetOK = ok;
         if (ok) {
           pCommons.then(function (hit) { if (hit) pendingPano = hit; });
-          /* 芊云切换按钮需按 BGM 检测结果显隐，检测完成后刷新按钮 */
-          checkQy().then(function () { if (mode === 'street') rebuildCtrl(); });
           var coord = findCoord(spot.city, spot.name);
           applyMode('street', coord ? { cbll: coord[1] + ',' + coord[0] } : { q: streetQuery });
         } else {
           pCommons.then(function (hit) {
             if (mode !== null) return;
             if (hit) { pendingPano = hit; applyMode('net'); return; }
-            if (!qyHit) { applyMode('photo'); return; }
-            checkQy().then(function (bgm) {
-              if (mode !== null) return;
-              if (!bgm) applyMode('qy'); else applyMode('photo');
-            });
+            if (qyHit) applyMode('qy'); else applyMode('photo');
           });
         }
       });
