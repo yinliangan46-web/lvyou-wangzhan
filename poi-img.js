@@ -545,20 +545,18 @@
 
     function cityOf(name, city) {
         var c = String(city || '').replace(/[^\u4e00-\u9fa5]/g, '');
-        if (c && (CITY_IMG[c] || CITY_POI[c] || CITY_FALLBACK[c])) return c;
+        if (c && (CITY_IMG[c] || CITY_POI[c])) return c;
         /* 无明确城市时，只认「以城市名开头」的字符串，避免“中山路”误配“中山” */
         name = String(name || '');
         var k;
         for (k in CITY_POI) { if (name.indexOf(k) === 0) return k; }
         for (k in CITY_IMG) { if (name.indexOf(k) === 0) return k; }
-        for (k in CITY_FALLBACK) { if (name.indexOf(k) === 0) return k; }
         /* “繁花 · 上海”这类「主题 · 城市」写法，取城市段 */
         var parts = name.split(/[·｜|、,，\/\s]+/);
         if (parts.length > 1) {
             for (var p = 1; p < parts.length; p++) {
                 for (k in CITY_POI) { if (parts[p].indexOf(k) >= 0) return k; }
                 for (k in CITY_IMG) { if (parts[p].indexOf(k) >= 0) return k; }
-                for (k in CITY_FALLBACK) { if (parts[p].indexOf(k) >= 0) return k; }
             }
         }
         return '';
@@ -566,7 +564,6 @@
 
     /* ===== 逐景点实拍图：360 图片搜索抓取后存本地，一个景点一张 ===== */
     var POI_IMG_SIGHT = {
-        "巢湖": url(P.karst, 'spot'),   /* 湖光山色：避免误配到城市图（合肥天鹅湖CBD） */
         "大理古城": "images/poi/096f5fb3ba.jpg",
         "洱海生态廊道": "images/poi/826fa3f775.jpg",
         "喜洲古镇": "images/poi/c6e7326d81.jpg",
@@ -602,8 +599,7 @@
         "洪崖洞": "images/poi/ee6beeafb8.jpg",
         "磁器口": "images/poi/ff9dcd0e21.jpg",
         "南山一棵树": "images/poi/20d2cb7459.jpg",
-        "橘子洲": "images/poi/68b090d200.jpg",
-        "岳麓山": "images/poi/25031b98c8.jpg",
+        "岳麓山": "images/poi/72a6dee0a9.jpg",
         "太平老街": "images/poi/9d9f0ec703.jpg",
         "湖南博物院": "images/poi/eba7a433f9.jpg",
         "超级文和友": "images/poi/7ffdcb43cf.jpg",
@@ -940,9 +936,7 @@
         "拙政园": "images/poi/db3cab7c63.jpg",
         "留园": "images/poi/4118a3ee18.jpg",
         "平江路": "images/poi/3ddec9e18e.jpg",
-        "橘子洲头": "images/poi/01b6d715c8.jpg",
         "谢子龙影像艺术馆": "images/poi/eb787ab099.jpg",
-        "长沙 · 娱乐之都": "images/poi/65ff9c6140.jpg",
         "泉州开元寺": "images/poi/c8a32876a9.jpg",
         "蟳埔村": "images/poi/b58a360686.jpg",
         "厦门 → 泉州 · 闽南文艺线": "images/poi/28c0e882ce.jpg"
@@ -1131,12 +1125,23 @@
         "姜母鸭": "images/poi/fdc2b0c716.jpg",
         "泉州牛肉面": "images/poi/1d14c622ff.jpg"
     };
+    /* 名称归一：去括号注释、去“的…”时段后缀、去空格标点，便于别名/简称命中本地实拍 */
+    function normName(s) {
+        return String(s || '')
+            .replace(/[（(].*?[)）]/g, '')
+            .replace(/的.*$/, '')
+            .replace(/[\s·｜|、,，/／\-—–]/g, '');
+    }
     function poiLookup(name, kind) {
         var map = kind === 'food' ? POI_IMG_FOOD : POI_IMG_SIGHT;
         if (map[name]) return map[name];
+        var raw = String(name || '');
+        var nname = normName(raw);
         for (var k in map) {
-            if (k.length >= 2 && name.indexOf(k) === 0) return map[k];
-            if (k.length >= 4 && (name.indexOf(k) >= 0 || k.indexOf(name) >= 0)) return map[k];
+            if (k === raw || k === nname) return map[k];
+            var nk = normName(k);
+            if (nk.length >= 2 && (nname.indexOf(nk) === 0 || nk.indexOf(nname) === 0)) return map[k];
+            if (nk.length >= 3 && (nname.indexOf(nk) >= 0 || nk.indexOf(nname) >= 0)) return map[k];
         }
         return '';
     }
@@ -1145,52 +1150,15 @@
         var poiHit = poiLookup(String(name || ''), kind);
         if (poiHit) return poiHit;
         if (EXACT_IMG[name]) return EXACT_IMG[name];
-        /* 自然景观（湖/山/海/沙漠等）不用城市图兜底——城市图多为市区CBD，会张冠李戴；
-           改用同类型实景图池，如巢湖→湖山实拍 */
-        var NATURAL_CAT = { lake: 1, mountain: 1, desert: 1, sea: 1, nature: 1, snow: 1, winter: 1, guilin: 1 };
-        var isNatural = NATURAL_CAT[categoryOf(name, kind, city)] && String(name).replace(/[^\u4e00-\u9fa5]/g, '') !== String(city || '');
-        if (kind !== 'food' && !ICONIC[name] && !isNatural) {
-            var hitCity = cityOf(name, city);
-            if (hitCity) {
-                if (CITY_POI[hitCity]) return CITY_POI[hitCity];
-                if (CITY_IMG[hitCity]) return CITY_IMG[hitCity];
-                /* 没有本地实拍的城市：只在“城市风景/城市名”封面场景用气质图，
-                   具体景点继续按景点类型取图，避免长城配成故宫 */
-                var pureName = String(name).replace(/[^\u4e00-\u9fa5]/g, '');
-                if (CITY_FALLBACK[hitCity] && (name.indexOf('城市') >= 0 || name.indexOf('·') >= 0 || pureName === hitCity)) {
-                    return url(P[CITY_FALLBACK[hitCity]], kind);
-                }
-            }
+        /* 美食未命中本地实拍：回退美食占位，不用城市风光图顶替 */
+        if (kind === 'food') return 'images/food-fallback.jpg';
+        var hitCity = cityOf(name, city);
+        if (hitCity) {
+            if (CITY_POI[hitCity]) return CITY_POI[hitCity];
+            if (CITY_IMG[hitCity]) return CITY_IMG[hitCity];
         }
-        var cat = categoryOf(name, kind, city);
-        var isJP = /日本|东京|京都|大阪|镰仓|秋田|北海道|奈良/.test(String(name) + String(city || ''));
-        var pool = POOLS[cat] || POOLS.nature;
-        if (cat === 'drink') {
-            if (/啤酒|扎啤|精酿|生啤|原浆/.test(String(name))) pool = POOLS.beer;
-            else if (/冰棍|冰激凌|冰淇淋|雪糕|冰糕/.test(String(name))) pool = POOLS.iceCream;
-            else pool = [P.tea];
-        }
-        if (cat === 'street') pool = isJP ? [P.tokyoStreet, P.japanLantern] : [P.nightMarket];
-        if (cat === 'food') {
-            if (isJP) pool = POOLS.jpFood;
-            else {
-                var nm = String(name);
-                if (/面|粉|米线|乌冬|拉面/.test(nm)) pool = POOLS.noodleDish;
-                else if (/炒饭|盖饭|拌饭|抓饭|米饭|饭$/.test(nm)) pool = POOLS.riceBowl;
-                else if (/冰棍|冰激凌|冰淇淋|雪糕|冰糕|刨冰/.test(nm)) pool = POOLS.iceCream;
-                else if (/啤酒|扎啤|精酿|生啤|原浆/.test(nm)) pool = POOLS.beer;
-                else if (/红肠|腊肠|香肠|火腿|熏肉/.test(nm)) pool = POOLS.sausage;
-                else if (/锅包肉|猪排|鸡排|炸肉|炸鸡/.test(nm)) pool = POOLS.cutlet;
-                else if (/肠|烤|腊|排骨|羊排|牛排|肉串|肉$/.test(nm)) pool = POOLS.bbq;
-                else if (/饺|馍|饼|粑|烧卖|小笼|馄饨|团|糕|点心/.test(nm)) pool = POOLS.dimsum;
-                else if (/虾|蟹|蛤|海鲜|贝/.test(nm)) pool = [P.shrimpPlate, P.ramenShrimp];
-                else if (/茶|咖啡|酸奶|奶茶|果汁|茶饮|酒/.test(nm)) pool = [P.tea];
-                else if (/火锅|炖|焖|烤|肉|鸡|鱼|肠|排|血旺|芋|豆|串/.test(nm)) pool = POOLS.meatDish;
-                else pool = [P.dumplings, P.noodles];
-            }
-        }
-        var id = pool[hash(String(name) + cat) % pool.length];
-        return url(id, kind);
+        /* 景点未命中本地实拍：回退城市占位，不再配外网泛化图，避免张冠李戴 */
+        return 'images/city-fallback.jpg';
     }
 
     global.mylPOIImg = poiImg;
