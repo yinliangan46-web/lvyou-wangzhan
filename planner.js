@@ -1366,9 +1366,15 @@
             people: plan.people,
             cities: (plan.cities || []).slice(),
             daysList: plan.daysList.map(function (d) {
+                var timeByPoi = {};
+                (d.blocks || []).forEach(function (b) {
+                    if (b.type === 'poi' && b.poi && b.poi.name) timeByPoi[b.poi.name] = b.time || '';
+                });
                 return {
                     dayNo: d.dayNo, city: d.city, theme: d.theme,
-                    pois: (d.pois || []).map(function (p) { return { name: p.name, lng: p.lng, lat: p.lat }; })
+                    pois: (d.pois || []).map(function (p) {
+                        return { name: p.name, lng: p.lng, lat: p.lat, time: timeByPoi[p.name] || '' };
+                    })
                 };
             })
         };
@@ -1380,7 +1386,8 @@
         var rows = plan.daysList.map(function (d, di) {
             var color = DAY_COLORS[di % DAY_COLORS.length];
             var nodes = (d.pois || []).map(function (p) {
-                return '<span class="pl-msg-node">' + esc(p.name) + '</span>';
+                var t = p.time ? '<i class="pl-msg-node-time">' + esc(p.time) + '</i>' : '';
+                return '<span class="pl-msg-node">' + t + esc(p.name) + '</span>';
             }).join('');
             return '<div class="pl-msg-day">' +
                 '<div class="pl-msg-day-head"><span class="pl-msg-day-badge" style="background:' + color + '">D' + d.dayNo + '</span>' +
@@ -2437,29 +2444,36 @@
                 var acts = Array.isArray(res && res.actions) ? res.actions.slice(0, 8) : [];
                 var changedAi = applyActions(acts);
 
+                // 兜底：AI 没给出可落地的 actions（漏给、城市/景点名对不上）时，
+                // 用本地自然语言引擎从原话里提取城市 / 天数 / 景点，确保行程能真正排出来，
+                // 这样消息里的线路节点清单和地图才会出现。
+                var plan = buildPlan();
+                var fbLocal = null;
+                if (!plan || !state.cities.length) {
+                    fbLocal = localReply(text);
+                    if (fbLocal.actions && fbLocal.actions.length) {
+                        var chLocal = applyActions(fbLocal.actions);
+                        if (chLocal) changedAi = changedAi ? changedAi + '；' + chLocal : chLocal;
+                    }
+                    plan = buildPlan();
+                }
+
                 /* 关键修复：AI 的 actions 通常准确（有 prompt 约束），但 reply 文字容易瞎编。
-                   只要 state 被 AI 有效修改了（changedAi 非空），就丢弃 AI 的 reply 和 cards，
-                   改用本地 buildPlan + summarizePlan 重新渲染 100% 准确的完整回复。
-                   这样不管 AI 瞎编"杭州"还是"上海"，本地引擎都是基于真实的 state 生成 */
-                var useLocalRerender = !!changedAi;
+                   只要本地基于真实 state 建成了行程，就改用本地 buildPlan + summarizePlan
+                   重新渲染 100% 准确的完整回复，不管 AI 之前有没有编城市名 */
+                var useLocalRerender = !!changedAi || !!plan;
                 var aiCards = null;
 
-                if (useLocalRerender) {
-                    var plan = buildPlan();
-                    if (plan) {
-                        var full = summarizePlan(plan, text);
-                        reply = full.reply;
-                        aiCards = full.cards;
-                    } else {
-                        reply = '已按你的要求更新行程：' + changedAi +
-                            '<div style="margin-top:6px;font-size:.76rem;color:#94a3b8">AI 执行了修改，但本地引擎未能生成完整行程，请手动调整。</div>';
-                    }
+                if (plan) {
+                    var full = summarizePlan(plan, text);
+                    reply = full.reply;
+                    aiCards = full.cards;
                 } else if (!reply) {
                     reply = '已按你的要求更新行程。';
                 }
                 if (!aiCards && Array.isArray(res && res.cards)) aiCards = res.cards.slice(0, 8);
                 // 强制重渲染：地图 + 行程列表 + 保存
-                state.plan = buildPlan();
+                state.plan = plan;
                 renderAll();
                 if (state.plan) renderResult();
                 saveLocal();

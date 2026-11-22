@@ -867,6 +867,12 @@
     padding: 3px 9px;
     line-height: 1.4;
 }
+.pl-msg-node-time {
+    font-style: normal;
+    color: #2563eb;
+    font-weight: 700;
+    margin-right: 5px;
+}
 .pl-msg-map {
     height: 210px;
     width: 100%;
