@@ -748,18 +748,22 @@
 
     /* ---------- 旅居大本营 + 中途外出当日往返 ----------
        大本营城市全程住宿、不换酒店；中途景点从大本营当天出发当天返回，
-       不另立城市段。除原话点名的景点外，不给大本营自动补默认推荐。 */
+       不另立城市段。大本营未点名景点时，由引擎补本地代表景点兜底。 */
     function buildBaseTripPlan() {
         var base = state.baseCity;
         var nDays = clamp(Math.max(state.days, 1), 1, 20);
         var trips = (state.dayTrips || []).filter(function (t) {
             return CATALOG[t.city] && CATALOG[t.city].items.some(function (i) { return i.name === t.poi; });
         });
+        var freeDays = Math.max(1, nDays - trips.length);
         var basePicks = (state.picks[base] || []).filter(function (n) {
             return CATALOG[base].items.some(function (i) { return i.name === n; });
         });
+        if (!basePicks.length) {
+            var want = Math.min(Math.max(4, freeDays), CATALOG[base].items.length);
+            basePicks = autoPickCity(base, want);
+        }
         var baseItems = orderedForCity(base, basePicks);
-        var freeDays = Math.max(1, nDays - trips.length);
         var baseChunks = chunkOrdered(baseItems, freeDays);
         var freeIdx = 0;
 
@@ -841,7 +845,7 @@
 
             if (dayNo < nDays) hotelNights++;
             daysList.push({
-                dayNo: dayNo, city: base, cityChange: leg,
+                dayNo: dayNo, city: trip ? trip.city : base, cityChange: leg,
                 theme: pois.length ? pois.map(function (p) { return p.name; }).join(' · ') : base + '自由活动',
                 pois: pois, blocks: blocks, km: Math.round(dayKm), ticket: ticket
             });
@@ -2170,7 +2174,7 @@
                 var baseTrip = detectBaseTrip(text);
 
                 if (baseTrip) {
-                    // 旅居大本营模式：大本营常驻，中途景点当日往返，不另立城市段、不补默认推荐
+                    // 旅居大本营模式：大本营常驻，中途景点当日往返，不另立城市段；大本营未点名景点由引擎补本地代表推荐
                     var b = baseTrip.baseCity;
                     state.baseCity = b;
                     state.dayTrips = baseTrip.dayTrips.slice();
