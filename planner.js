@@ -676,6 +676,14 @@
                         food: foodOf(city, 0), city: city
                     });
                 });
+                /* 单景点日：午餐后接着续游同一景点，不空下午 */
+                if (poiArr.length === 1) {
+                    blocks.push({
+                        time: '14:00', type: 'poi', title: '午后续游 · ' + poiArr[0].name,
+                        desc: '餐后接着逛，补完上午没走到的角落、沿街巷慢慢走',
+                        poi: poiArr[0]
+                    });
+                }
                 blocks.push({
                     time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(city),
                     food: foodOf(city, 1), city: city
@@ -803,6 +811,7 @@
                     ticketSum += ticketOf(item.name);
                     blocks.push({ time: '10:30', type: 'poi', title: item.name, desc: poiDesc(trip.city, item), poi: item });
                     blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(trip.city), food: foodOf(trip.city, 0), city: trip.city });
+                    blocks.push({ time: '14:00', type: 'poi', title: '午后续游 · ' + item.name, desc: '餐后接着逛，补完上午没走到的角落', poi: item });
                 }
                 blocks.push({
                     time: '17:30', type: 'transport',
@@ -824,13 +833,19 @@
                         time: bi === 0 ? '10:00' : '13:30', type: 'poi',
                         title: item.name, desc: poiDesc(base, item), poi: item
                     });
+                    if (bi === 0) {
+                        blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(base), food: foodOf(base, 0), city: base });
+                    }
                 });
                 for (var bd = 1; bd < todayBase.length; bd++) {
                     dayKm += distKm([todayBase[bd - 1].lng, todayBase[bd - 1].lat], [todayBase[bd].lng, todayBase[bd].lat]) * 1.35;
                 }
-                if (todayBase.length) {
-                    blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(base), food: foodOf(base, 0), city: base });
-                } else {
+                if (todayBase.length === 1) {
+                    blocks.push({
+                        time: '14:00', type: 'poi', title: '午后续游 · ' + todayBase[0].name,
+                        desc: '餐后接着逛，补完上午没走到的角落、沿街巷慢慢走', poi: todayBase[0]
+                    });
+                } else if (!todayBase.length) {
                     blocks.push({
                         time: '10:00', type: 'free', title: base + ' 旅居停留 · 自由活动',
                         desc: '住在大本营，睡到自然醒；可自行逛老城 / 咖啡馆 / 周边，未额外安排推荐景点。'
