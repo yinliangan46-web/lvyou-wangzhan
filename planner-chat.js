@@ -155,6 +155,11 @@ function ruleData(pd, name, reqDays){
 }
 
 /* ============ 站点 AI 代理（后台 DeepSeek，Key 不出后端，无需访客填 Key） ============ */
+var lastRaw='';
+var FREE_SYS='你是 MYL 旅行网站的 AI 旅行顾问，中文、友好、简洁。可以回答：目的地推荐与对比、行程节奏建议、景点玩法、季节天气与穿搭、交通/住宿/美食/预算、签证出入境、行前准备，以及本站收录城市、景点、美食、预订入口相关问题。信息不全时用一句话追问最关键的一项，不要罗列一堆问题。涉及实时票价、余票、班次、名额不要编造数字，以携程/12306/景区官方页面为准。若用户明确要一份按天排列的结构化路书，先给要点，并提示可在下方一句话生成完整路书。';
+function freeChat(raw, cb){
+  siteChat([{role:'system',content:FREE_SYS},{role:'user',content:String(raw||'')}], cb);
+}
 var SITE_API='https://lvyou-wangzhan.vercel.app/api/chat';
 function siteChat(messages, cb){
   var ctrl=new AbortController();
@@ -174,7 +179,7 @@ function siteChat(messages, cb){
     cb(null,text);
   }).catch(function(e){clearTimeout(timer);cb(e);});
 }
-function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText){
+function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
   var ctx={
     城市:name, 国家:c.country||'中国', 天数:reqDays, 人数:ans.ppl||2,
     预算档:({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]||'舒适',
@@ -184,8 +189,10 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText){
     站内美食库:pd.foods.slice(0,8).map(function(f){return f.n;}),
     站内酒店库:pd.hotels.slice(0,4).map(function(h){return h.a+(h.p?'（'+h.p+'）':'');})
   };
-  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文。';
-  var user='请生成行程 JSON，需求：'+JSON.stringify(ctx)+(fromTune?('\n\n用户调整要求：'+tuneText+'（在原行程基础上修改后输出完整 JSON）'):'');
+  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文；5) 忠实用户原话：天数、人数、同行关系、明确提到的景点（含其他城市的跨城景点）不得遗漏、不得擅自改成默认值；6) 用户提到的景点若不在站内库，仍按原话列入，并在说明里标注其所属城市。';
+  var user='请生成行程 JSON，需求：'+JSON.stringify(ctx);
+  if(rawText)user+='\n\n用户原话：“'+rawText+'”（以原话为准：天数、人数、同行人、跨城景点与 ctx 解析不符时，按原话纠正）。';
+  if(fromTune)user+='\n\n用户调整要求：'+tuneText+'（在原行程基础上修改后输出完整 JSON）';
   siteChat([{role:'system',content:sys},{role:'user',content:user}],function(err,text){
     if(err)return cb(false,null,err.message||String(err));
     try{
@@ -208,14 +215,14 @@ function generate(fromTune, tuneText){
   var name=ans.city;
   var c=MYL.getCity(name);
   var pd=planData(name);
-  var reqDays=Math.max(1,Math.min(15,parseInt(ans.days,10)||3));
+  var reqDays=Math.max(1,Math.min(15,parseInt(ans.days,10)||7));
   curExcursions=(curExcursions||[]).filter(function(e){return e.city!==name;});
   $('planBox').innerHTML='<div class="plan"><div class="plan-cover"><h2>🤖 '+esc(name)+' · '+reqDays+'天路书生成中…</h2><div class="sub">DeepSeek 规划中，通常 5-15 秒</div></div></div>';
   $('planBox').scrollIntoView({behavior:'smooth'});
   llmGenerate(name,c,pd,reqDays,function(ok,data,err){
     if(ok)renderPlan(name,c,pd,data,reqDays,'llm');
     else renderPlan(name,c,pd,ruleData(pd,name,reqDays),reqDays,'rule',err);
-  },fromTune,tuneText);
+  },fromTune,tuneText,fromTune?tuneText:lastRaw);
 }
 
 function renderPlan(name,c,pd,data,reqDays,src,err){
@@ -296,22 +303,22 @@ function matchCity(text){
   return best;
 }
 function detectDays(t){
-  var m=t.match(/(\d+)\s*天/);
+  var m=t.match(/(\d+)\s*[天日]/);
   if(m){var n=parseInt(m[1],10);if(n>=1)return String(Math.min(n,15));}
   /* 中文数字：十X / X十 */
-  m=t.match(/十([一二三四五六七八九]?)\s*天/);
+  m=t.match(/十([一二三四五六七八九]?)\s*[天日]/);
   if(m){
     if(!m[1])return '10';
     return String(10+({'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9}[m[1]]||0));
   }
-  m=t.match(/([一二两三四五六七八九])\s*天/);
+  m=t.match(/([一二两三四五六七八九])\s*[天日]/);
   if(m){return String({'一':1,'二':2,'两':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9}[m[1]]);}
   if(/半个月|半月/.test(t))return '15';
   if(/一周|一个星期|一星期/.test(t))return '7';
-  if(/周末|两天|2天/.test(t))return '2';
-  if(/三天|3天/.test(t))return '3';
-  if(/四天|4天/.test(t))return '4';
-  if(/五天|5天/.test(t))return '5';
+  if(/周末|两天|2天|两日/.test(t))return '2';
+  if(/三天|3天|三日/.test(t))return '3';
+  if(/四天|4天|四日/.test(t))return '4';
+  if(/五天|5天|五日/.test(t))return '5';
   /* 旅居/长住未说天数：默认按 7 天规划 */
   if(/旅居|长住|慢生活|住上一段/.test(t))return '7';
   return null;
@@ -382,11 +389,34 @@ function findExcursions(text){
   });
   return out;
 }
+function appendBotLoading(){
+  $('chat').style.display='block';
+  var d=document.createElement('div');
+  d.className='bubble bot';
+  d.id='pendingBot';
+  d.innerHTML='<div class="q">正在思考…</div>';
+  $('chat').appendChild(d);
+  return d;
+}
 function smartStart(raw){
   var text=(raw||'').trim();
   if(!text){alert('先输入你的旅行想法吧');return;}
   var iv=parseIntent(text);
+  /* 切换到全新目的地：清掉上一座城市残留的天数/人数/预算/偏好与跨城列表，避免串城 */
+  if(iv.city && iv.city!==ans.city){ ans={}; curExcursions=[]; }
   Object.keys(iv).forEach(function(k){ if(iv[k]) ans[k]=iv[k]; });
+  lastRaw=text;
+  /* 无明确目的地：走开放问答，由 DeepSeek 直接回答或追问，不强制出路书 */
+  if(!iv.city){
+    $('chat').style.display='block';
+    $('chat').innerHTML+='<div class="bubble me">'+esc(text)+'</div>';
+    var pend=appendBotLoading();
+    freeChat(text,function(err,reply){
+      if(err||!reply){pend.innerHTML='<div class="q">暂时没连上 AI，换个说法再试试，或先选一座目的地城市 👇</div>';return;}
+      pend.innerHTML='<div class="q">旅行顾问</div><div>'+esc(reply).replace(/&lt;br&gt;/g,'<br>').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>')+'</div>';
+    });
+    return;
+  }
   var got=['city','days','ppl','budget','pref'].filter(function(k){return ans[k];});
   if(!got.length){
     $('chat').style.display='block';
@@ -416,8 +446,9 @@ function smartStart(raw){
   if(qi<0){generate();}else{renderSteps();ask();}
 }
 function parseTune(t){
+  lastRaw=t;
   var msgs=[], iv=parseIntent(t);
-  if(iv.city && iv.city!==ans.city){ans.city=iv.city;msgs.push('目的地 → '+iv.city);}
+  if(iv.city && iv.city!==ans.city){ans.city=iv.city;curExcursions=[];msgs.push('目的地 → '+iv.city);}
   if(iv.days && iv.days!==ans.days){ans.days=iv.days;msgs.push('天数 → '+ans.days+'天');}
   if(iv.ppl && iv.ppl!==ans.ppl){ans.ppl=iv.ppl;msgs.push('人数 → '+ans.ppl+'人');}
   if(iv.budget && iv.budget!==ans.budget){ans.budget=iv.budget;msgs.push('预算 → '+({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]);}
