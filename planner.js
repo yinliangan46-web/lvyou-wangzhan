@@ -422,6 +422,8 @@
         transport: 'auto',  // auto | train | flight
         budget: 0,          // 人均预算上限，0 = 不限
         loop: null,         // 当前环线 {id,name}
+        baseCity: null,     // 旅居大本营城市（中途外出当日往返，不换酒店）
+        dayTrips: [],       // 中途外出 [{city, poi}]，大本营之外的单点往返
         plan: null,
         msgs: [],
         aiCfg: null,
@@ -567,6 +569,7 @@
             if (lp) return buildLoopPlan(lp);
             state.loop = null;
         }
+        if (state.baseCity && CATALOG[state.baseCity]) return buildBaseTripPlan();
         var cities = state.cities.filter(function (c) { return CATALOG[c]; });
         if (!cities.length) return null;
 
@@ -729,6 +732,138 @@
             pace: state.pace,
             autoExtended: autoExtended,
             cities: cities,
+            daysList: daysList,
+            totals: {
+                km: Math.round(totalKm),
+                tickets: tickets,
+                hotels: Math.round(hotelCost),
+                meals: Math.round(meals),
+                local: Math.round(local),
+                intercity: Math.round(inter),
+                total: Math.round(total),
+                nights: hotelNights
+            }
+        };
+    }
+
+    /* ---------- 旅居大本营 + 中途外出当日往返 ----------
+       大本营城市全程住宿、不换酒店；中途景点从大本营当天出发当天返回，
+       不另立城市段。除原话点名的景点外，不给大本营自动补默认推荐。 */
+    function buildBaseTripPlan() {
+        var base = state.baseCity;
+        var nDays = clamp(Math.max(state.days, 1), 1, 20);
+        var trips = (state.dayTrips || []).filter(function (t) {
+            return CATALOG[t.city] && CATALOG[t.city].items.some(function (i) { return i.name === t.poi; });
+        });
+        var basePicks = (state.picks[base] || []).filter(function (n) {
+            return CATALOG[base].items.some(function (i) { return i.name === n; });
+        });
+        var baseItems = orderedForCity(base, basePicks);
+        var freeDays = Math.max(1, nDays - trips.length);
+        var baseChunks = chunkOrdered(baseItems, freeDays);
+        var freeIdx = 0;
+
+        function itemOf(city, name) {
+            var cat = CATALOG[city];
+            if (!cat) return null;
+            for (var i = 0; i < cat.items.length; i++) if (cat.items[i].name === name) return cat.items[i];
+            return null;
+        }
+
+        var startDay = nDays >= 3 ? 3 : (nDays === 2 ? 2 : 1);
+        var tripDayMap = {};
+        trips.forEach(function (t, i) {
+            tripDayMap[Math.min(startDay + i, nDays)] = t;
+        });
+
+        var daysList = [], ticketSum = 0, trainSum = 0, totalKm = 0, hotelNights = 0;
+        for (var dayNo = 1; dayNo <= nDays; dayNo++) {
+            var trip = tripDayMap[dayNo];
+            var blocks = [], pois = [], leg = null, dayKm = 0, ticket = 0;
+
+            if (trip) {
+                var item = itemOf(trip.city, trip.poi);
+                var legOut = intercity(base, trip.city);
+                var legBack = intercity(trip.city, base);
+                leg = { from: base, to: trip.city, mode: legOut.mode, hours: legOut.hours, km: legOut.km, cost: legOut.cost };
+                trainSum += legOut.cost + legBack.cost;
+                totalKm += legOut.km + legBack.km;
+                blocks.push({
+                    time: '08:00', type: 'transport',
+                    title: '出发 · ' + base + ' → ' + trip.city,
+                    desc: legOut.mode + ' 约 ' + legOut.hours.toFixed(1) + ' 小时，当日往返不住外市'
+                });
+                if (item) {
+                    pois.push(item);
+                    ticket += ticketOf(item.name);
+                    ticketSum += ticketOf(item.name);
+                    blocks.push({ time: '10:30', type: 'poi', title: item.name, desc: poiDesc(trip.city, item), poi: item });
+                    blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(trip.city), food: foodOf(trip.city, 0), city: trip.city });
+                }
+                blocks.push({
+                    time: '17:30', type: 'transport',
+                    title: '返程 · 回' + base,
+                    desc: '游玩结束返回大本营，当晚仍住' + base + '，不另换酒店'
+                });
+                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(base), food: foodOf(base, 1), city: base });
+                blocks.push({
+                    time: '21:00', type: 'hotel', title: '入住 · ' + base + '大本营',
+                    desc: '参考价 ¥' + hotelPrice(base) + '/晚（双床）· 全程不换酒店', hotelCity: base
+                });
+            } else {
+                var todayBase = baseChunks[freeIdx++] || [];
+                todayBase.forEach(function (item, bi) {
+                    pois.push(item);
+                    ticket += ticketOf(item.name);
+                    ticketSum += ticketOf(item.name);
+                    blocks.push({
+                        time: bi === 0 ? '10:00' : '13:30', type: 'poi',
+                        title: item.name, desc: poiDesc(base, item), poi: item
+                    });
+                });
+                for (var bd = 1; bd < todayBase.length; bd++) {
+                    dayKm += distKm([todayBase[bd - 1].lng, todayBase[bd - 1].lat], [todayBase[bd].lng, todayBase[bd].lat]) * 1.35;
+                }
+                if (todayBase.length) {
+                    blocks.push({ time: '12:30', type: 'meal', title: '午餐 · ' + lunchName(base), food: foodOf(base, 0), city: base });
+                } else {
+                    blocks.push({
+                        time: '10:00', type: 'free', title: base + ' 旅居停留 · 自由活动',
+                        desc: '住在大本营，睡到自然醒；可自行逛老城 / 咖啡馆 / 周边，未额外安排推荐景点。'
+                    });
+                }
+                blocks.push({ time: '18:30', type: 'meal', title: '晚餐 · ' + dinnerName(base), food: foodOf(base, 1), city: base });
+                blocks.push({
+                    time: '21:00', type: 'hotel', title: '入住 · ' + base + '市中心',
+                    desc: '参考价 ¥' + hotelPrice(base) + '/晚（双床）· 可查携程实时房价', hotelCity: base
+                });
+            }
+
+            if (dayNo < nDays) hotelNights++;
+            daysList.push({
+                dayNo: dayNo, city: base, cityChange: leg,
+                theme: pois.length ? pois.map(function (p) { return p.name; }).join(' · ') : base + '自由活动',
+                pois: pois, blocks: blocks, km: Math.round(dayKm), ticket: ticket
+            });
+        }
+
+        var rooms = Math.ceil(state.people / 2);
+        var hotelCost = hotelPrice(base) * rooms * hotelNights;
+        var mealPerDay = TIER1.indexOf(base) >= 0 ? 180 : 140;
+        var meals = mealPerDay * nDays * state.people;
+        var local = 70 * nDays * state.people;
+        var tickets = ticketSum * state.people;
+        var inter = trainSum * state.people;
+        var total = hotelCost + meals + local + tickets + inter;
+        var tripNames = trips.map(function (t) { return t.poi; }).join('、');
+
+        return {
+            days: nDays,
+            people: state.people,
+            pace: state.pace,
+            autoExtended: false,
+            cities: [base],
+            title: base + '旅居 ' + nDays + ' 天' + (tripNames ? ' · 中途「' + tripNames + '」当日往返' : ''),
             daysList: daysList,
             totals: {
                 km: Math.round(totalKm),
@@ -1295,7 +1430,7 @@
                 cities: state.cities, days: state.days, people: state.people,
                 prefs: state.prefs, picks: state.picks, pace: state.pace,
                 hotelTier: state.hotelTier, transport: state.transport, budget: state.budget,
-                loop: state.loop
+                loop: state.loop, baseCity: state.baseCity, dayTrips: state.dayTrips
             }));
         } catch (e) { }
     }
@@ -1323,6 +1458,8 @@
             state.people = clamp(+d.people || 2, 1, 20);
             state.prefs = Array.isArray(d.prefs) ? d.prefs : [];
             state.picks = d.picks || {};
+            state.baseCity = CATALOG[d.baseCity] ? d.baseCity : null;
+            state.dayTrips = Array.isArray(d.dayTrips) ? d.dayTrips : [];
             state.pace = d.pace || 'normal';
             state.hotelTier = d.hotelTier || 'comfort';
             state.transport = d.transport || 'auto';
@@ -1593,15 +1730,54 @@
         return { cities: cities.slice(0, 4), days: days, pois: pois };
     }
 
+    /* 识别「旅居大本营 + 中途外出单点往返」语义：
+       原话只直接点了一座停留城市（如"大理旅居七天"），另外由景点名带出了
+       另一座城市（如"玉龙雪山"→丽江）。此时丽江不是独立行程段，而是从大理
+       当日往返的一日外出；多城串联（原话直接说"大理 丽江"）不触发本模式。 */
+    function detectBaseTrip(text) {
+        var main = cityListInText(text);
+        var pois = findAllPoisInText(text);
+        var out = pois.filter(function (p) { return main.indexOf(p.city) < 0; });
+        if (main.length === 1 && out.length >= 1) {
+            return { baseCity: main[0], dayTrips: out };
+        }
+        return null;
+    }
+
     /* 把原话里明确点名的目的地 / 天数 / 景点对齐到 state。
        只要原话出现了当前行程里没有的新城市，就视为一趟新行程：
        先清掉上一趟残留的城市与已选景点，再按原话重建，避免"说南京还出大理"。
        纯修改类指令（加一天、第三天太赶、加上某景点）不带新城市名，不会触发重置。 */
     function reconcileWithIntent(text) {
         var intent = parseIntent(text);
+
+        /* 模式 A：旅居大本营 + 中途外出当日往返。
+           大本营之外的景点只作为一日外出，不另立城市段、不在外过夜；
+           除原话点名的景点外，不给大本营自动补默认推荐。 */
+        var baseTrip = detectBaseTrip(text);
+        if (baseTrip) {
+            state.loop = null;
+            state.baseCity = baseTrip.baseCity;
+            state.dayTrips = baseTrip.dayTrips.slice();
+            state.cities = [baseTrip.baseCity];
+            state.picks = {};
+            state.picks[baseTrip.baseCity] = [];
+            intent.pois.forEach(function (p) {
+                if (p.city === baseTrip.baseCity && state.picks[baseTrip.baseCity].indexOf(p.poi) < 0) {
+                    state.picks[baseTrip.baseCity].push(p.poi);
+                }
+            });
+            if (intent.days) state.days = clamp(intent.days, 1, 20);
+            return true;
+        }
+
+        /* 模式 B：普通多城/多日游，沿用既有串联与默认推荐兜底。
+           纯修改类指令（加一天、第三天太赶）不带城市名，直接保留现有往返结构。 */
         if (!intent.cities.length) return false;
         var hasNew = intent.cities.some(function (c) { return state.cities.indexOf(c) < 0; });
         if (hasNew) {
+            state.baseCity = null;
+            state.dayTrips = [];
             state.cities = intent.cities.slice();
             state.picks = {};
             state.loop = null;
@@ -1991,28 +2167,44 @@
             if (citiesIn.length && (wantFullPlan || dayNum)) {
                 // 扫描所有用户提到的景点，把跨城景点所属的城市也补进来（如"大理+玉龙雪山"→大理+丽江）
                 var allPois = findAllPoisInText(text);
-                allPois.forEach(function (p) {
-                    if (citiesIn.indexOf(p.city) < 0 && citiesIn.length < 4) citiesIn.push(p.city);
-                });
+                var baseTrip = detectBaseTrip(text);
 
-                var d = dayNum || Math.max(2, citiesIn.length);
-                // 把 state 切到这套城市/天数，并抽取用户说的特定景点
-                state.cities = citiesIn.slice(0, 4);
-                state.days = Math.min(d, 20);
-                state.picks = {};
-                citiesIn.forEach(function (c) {
-                    state.picks[c] = [];
-                });
-                // 先把精确匹配的景点加进去（跨城景点也能进对应城市）
-                allPois.forEach(function (p) {
-                    if (state.picks[p.city] && state.picks[p.city].indexOf(p.poi) < 0) {
-                        state.picks[p.city].push(p.poi);
-                    }
-                });
-                // 剩下的城市补自动挑选
-                citiesIn.forEach(function (c) {
-                    if (!state.picks[c].length && CATALOG[c]) state.picks[c] = autoPickCity(c, 4);
-                });
+                if (baseTrip) {
+                    // 旅居大本营模式：大本营常驻，中途景点当日往返，不另立城市段、不补默认推荐
+                    var b = baseTrip.baseCity;
+                    state.baseCity = b;
+                    state.dayTrips = baseTrip.dayTrips.slice();
+                    state.loop = null;
+                    state.cities = [b];
+                    state.days = Math.min(dayNum || 7, 20);
+                    state.picks = {};
+                    state.picks[b] = [];
+                    allPois.forEach(function (p) {
+                        if (p.city === b && state.picks[b].indexOf(p.poi) < 0) state.picks[b].push(p.poi);
+                    });
+                } else {
+                    allPois.forEach(function (p) {
+                        if (citiesIn.indexOf(p.city) < 0 && citiesIn.length < 4) citiesIn.push(p.city);
+                    });
+                    var d = dayNum || Math.max(2, citiesIn.length);
+                    // 把 state 切到这套城市/天数，并抽取用户说的特定景点
+                    state.cities = citiesIn.slice(0, 4);
+                    state.days = Math.min(d, 20);
+                    state.picks = {};
+                    citiesIn.forEach(function (c) {
+                        state.picks[c] = [];
+                    });
+                    // 先把精确匹配的景点加进去（跨城景点也能进对应城市）
+                    allPois.forEach(function (p) {
+                        if (state.picks[p.city] && state.picks[p.city].indexOf(p.poi) < 0) {
+                            state.picks[p.city].push(p.poi);
+                        }
+                    });
+                    // 剩下的城市补自动挑选
+                    citiesIn.forEach(function (c) {
+                        if (!state.picks[c].length && CATALOG[c]) state.picks[c] = autoPickCity(c, 4);
+                    });
+                }
                 var plan = buildPlan();
                 if (plan) {
                     var full = summarizePlan(plan, text);
@@ -2149,6 +2341,8 @@
                     if (a.city) {
                         state.cities = state.cities.filter(function (c) { return c !== a.city; });
                         delete state.picks[a.city];
+                        if (state.baseCity === a.city) { state.baseCity = null; state.dayTrips = []; }
+                        state.dayTrips = (state.dayTrips || []).filter(function (t) { return t.city !== a.city; });
                         notes.push('已移除 ' + a.city);
                     }
                     break;
@@ -2297,6 +2491,8 @@
                 case 'clear':
                     state.cities = [];
                     state.picks = {};
+                    state.baseCity = null;
+                    state.dayTrips = [];
                     state.plan = null;
                     notes.push('已清空');
                     break;
@@ -2976,6 +3172,8 @@
             // 首次打开：空状态，不预填任何城市，等用户自己选
             state.cities = [];
             state.picks = {};
+            state.baseCity = null;
+            state.dayTrips = [];
             state.plan = null;
             renderAll();
         } else {
@@ -3005,6 +3203,8 @@
         state.days = 4;
         state.people = 2;
         state.prefs = ['nature', 'history'];
+        state.baseCity = null;
+        state.dayTrips = [];
         state.pace = 'normal';
         state.picks = {
             '杭州': ['西湖', '灵隐寺', '西溪湿地'],
