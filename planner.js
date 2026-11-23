@@ -426,6 +426,7 @@
         msgs: [],
         aiCfg: null,
         siteAiReady: false,
+        siteAiState: 'unknown',   // unknown | ready | noKey | offline
         map: null,
         msgMaps: [],
         busy: false
@@ -1336,11 +1337,25 @@
     }
     /* 探测站点代理是否已配置后端 Key；成功后标记就绪，失败时调用链路自动回落内置规则 */
     function probeSiteAI() {
-        if (!/^https?:$/.test(location.protocol)) return;
-        fetch(SITE_API, { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
-            state.siteAiReady = !!(j && j.configured);
-            updateAgentStatus();
-        }).catch(function () { state.siteAiReady = false; updateAgentStatus(); });
+        if (!/^https?:$/.test(location.protocol)) { state.siteAiState = 'offline'; updateAgentStatus(); return; }
+        var ctrl = ('AbortController' in window) ? new AbortController() : null;
+        var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
+        fetch(SITE_API, { method: 'GET', signal: ctrl ? ctrl.signal : undefined, cache: 'no-store' })
+            .then(function (r) {
+                return r.text().then(function (t) {
+                    var j = null; try { j = JSON.parse(t); } catch (e) {}
+                    if (j && typeof j.configured === 'boolean') {
+                        state.siteAiReady = !!j.configured;
+                        state.siteAiState = j.configured ? 'ready' : 'noKey';
+                    } else if (r.status === 503) {
+                        state.siteAiReady = false; state.siteAiState = 'noKey';
+                    } else {
+                        state.siteAiReady = false; state.siteAiState = 'offline';
+                    }
+                });
+            })
+            .catch(function () { state.siteAiReady = false; state.siteAiState = 'offline'; })
+            .then(function () { clearTimeout(timer); updateAgentStatus(); });
     }
 
     /* ==================== 生成 / 重新生成 ==================== */
@@ -1563,6 +1578,48 @@
             if (!contained) kept.push(m);
         });
         return kept;
+    }
+
+    /* 从原话抽取确定性意图：目的地城市 / 天数 / 跨城景点。
+       不依赖 AI 返回，用来在大模型漏给动作、城市名对不上时强制对齐到原话。 */
+    function parseIntent(text) {
+        var cities = cityListInText(text);
+        var pois = findAllPoisInText(text);
+        // 跨城景点所属城市一并纳入目的地（如"大理 + 玉龙雪山"→大理 + 丽江）
+        pois.forEach(function (p) {
+            if (cities.indexOf(p.city) < 0 && cities.length < 4) cities.push(p.city);
+        });
+        var days = extractDays(text);
+        return { cities: cities.slice(0, 4), days: days, pois: pois };
+    }
+
+    /* 把原话里明确点名的目的地 / 天数 / 景点对齐到 state。
+       只要原话出现了当前行程里没有的新城市，就视为一趟新行程：
+       先清掉上一趟残留的城市与已选景点，再按原话重建，避免"说南京还出大理"。
+       纯修改类指令（加一天、第三天太赶、加上某景点）不带新城市名，不会触发重置。 */
+    function reconcileWithIntent(text) {
+        var intent = parseIntent(text);
+        if (!intent.cities.length) return false;
+        var hasNew = intent.cities.some(function (c) { return state.cities.indexOf(c) < 0; });
+        if (hasNew) {
+            state.cities = intent.cities.slice();
+            state.picks = {};
+            state.loop = null;
+            state.cities.forEach(function (c) { state.picks[c] = []; });
+        }
+        intent.pois.forEach(function (p) {
+            if (state.cities.indexOf(p.city) < 0) {
+                if (state.cities.length >= 4) return;
+                state.cities.push(p.city);
+            }
+            if (!state.picks[p.city]) state.picks[p.city] = [];
+            if (state.picks[p.city].indexOf(p.poi) < 0) state.picks[p.city].push(p.poi);
+        });
+        state.cities.forEach(function (c) {
+            if (!state.picks[c].length && CATALOG[c]) state.picks[c] = autoPickCity(c, 4);
+        });
+        if (intent.days) state.days = clamp(intent.days, 1, 20);
+        return true;
     }
 
     function localReply(raw) {
@@ -2428,8 +2485,10 @@
         if (input) input.value = '';
 
         var cfg = state.aiCfg || {};
+        var siteUp = cfg.provider === 'site' &&
+            (state.siteAiState === 'ready' || state.siteAiState === 'unknown');
         var useAi = cfg.provider && cfg.provider !== 'builtin' &&
-            (cfg.provider === 'site' || !!cfg.key) &&
+            (cfg.provider === 'site' ? siteUp : !!cfg.key) &&
             (cfg.endpoint || (AI_PRESETS[cfg.provider] || {}).endpoint);
 
         state.busy = true;
@@ -2443,13 +2502,16 @@
                 var reply = (res && res.reply) ? sanitizeAi(res.reply) : '';
                 var acts = Array.isArray(res && res.actions) ? res.actions.slice(0, 8) : [];
                 var changedAi = applyActions(acts);
+                // 原话明确点名了新目的地 / 天数 / 跨城景点时，强制对齐到原话，
+                // 避免 AI 漏给城市动作后沿用了上一趟残留的城市。
+                var aligned = reconcileWithIntent(text);
 
                 // 兜底：AI 没给出可落地的 actions（漏给、城市/景点名对不上）时，
                 // 用本地自然语言引擎从原话里提取城市 / 天数 / 景点，确保行程能真正排出来，
                 // 这样消息里的线路节点清单和地图才会出现。
                 var plan = buildPlan();
                 var fbLocal = null;
-                if (!plan || !state.cities.length) {
+                if (!plan || !state.cities.length || aligned) {
                     fbLocal = localReply(text);
                     if (fbLocal.actions && fbLocal.actions.length) {
                         var chLocal = applyActions(fbLocal.actions);
@@ -2483,6 +2545,7 @@
                 state.msgs.pop();
                 var fb = localReply(text);
                 var ch = applyActions(fb.actions);
+                reconcileWithIntent(text);
                 var hint = '<div style="margin-top:6px;font-size:.74rem;color:#f59e0b">⚠️ ' + esc(formatCallError(e)) + '</div>';
                 // AI 挂了走 localReply，一样要重渲染
                 state.plan = buildPlan();
@@ -2500,6 +2563,7 @@
                 state.msgs.pop();
                 var fb = localReply(text);
                 var changed = applyActions(fb.actions);
+                reconcileWithIntent(text);
                 var out = fb.reply || '已按你的要求更新行程。';
                 // 关键修复：改完 state 后强制重新构建 plan + 渲染地图 + 保存
                 state.plan = buildPlan();
@@ -2845,7 +2909,11 @@
         if (!el) return;
         var cfg = state.aiCfg || {};
         if (cfg.provider === 'site') {
-            el.textContent = state.siteAiReady ? '站点 AI · DeepSeek 已接入' : '站点 AI · 待管理员配置 Key';
+            var st = state.siteAiState;
+            if (st === 'ready') el.textContent = '站点 AI · DeepSeek 已接入';
+            else if (st === 'noKey') el.textContent = '站点 AI · 待管理员配置 Key';
+            else if (st === 'offline') el.textContent = '站点 AI 暂不可达 · 内置规划引擎可用';
+            else el.textContent = '站点 AI 检测中…';
         } else if (cfg.provider && cfg.provider !== 'builtin') {
             var label = (AI_PRESETS[cfg.provider] || {}).label || cfg.provider;
             el.textContent = label + (cfg.model ? ' · ' + cfg.model : '') + ' 已接入';
