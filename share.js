@@ -165,6 +165,19 @@
     while (t.length && c.measureText(t + '…').width > maxW) t = t.slice(0, -1);
     return t + '…';
   }
+  /* 测量文本在指定宽度下折成的行数（不绘制），供卡片高度自适应 */
+  function countLines(c, text, maxW, maxLines) {
+    var lines = 0;
+    String(text || '').split(/\n/).forEach(function (seg) {
+      var cur = '';
+      for (var i = 0; i < seg.length; i++) {
+        if (c.measureText(cur + seg[i]).width > maxW) { lines++; cur = seg[i]; if (lines >= (maxLines || 99)) return; }
+        else cur += seg[i];
+      }
+      if (cur) lines++;
+    });
+    return Math.min(lines, maxLines || 99);
+  }
   function brand(c, light) {
     c.textAlign = 'left';
     c.fillStyle = light ? 'rgba(255,255,255,.92)' : '#3a4653';
@@ -769,7 +782,7 @@
     ctx.fillStyle = gp; ctx.fillRect(0, 0, W, H);
     dotBg(ctx, 64, PAL.orange, 0.08);
 
-    var ph = 380;
+    var ph = 360;
     /* 城市实景图 */
     if (img) {
       ctx.save(); drawCover(ctx, img, 0, 0, W, ph, { zoom: 1.06, focusY: 0.45 }); ctx.restore();
@@ -820,7 +833,7 @@
     });
 
     /* 小节标题 */
-    var y = ph + 56;
+    var y = ph + 44;
     ctx.fillStyle = PAL.ink; ctx.font = '800 34px "Noto Sans SC"';
     ctx.fillText('每日行程', 64, y + 10);
     star(ctx, W - 110, y, 26, PAL.coral, 8);
@@ -829,26 +842,43 @@
     /* 每日卡片 */
     var pal = [PAL.coral, PAL.sky, PAL.mint, PAL.purple, PAL.orange, PAL.pink];
     var days = o.days || [];
-    var availTop = y + 44, availBot = 1210, infoTop = 1230;
+    var availTop = y + 44, availBot = 1350, infoTop = 1370;
     var k = days.length <= 4 ? 3 : (days.length <= 6 ? 3 : 2);
-    var pad = 16, headH = 42, gap = 14, txtW = 836;
-    var nFont = 26, subFont = 22, rowN = 30, rowSub = 24, subGap = 4;
+    var txtW = 836, subMax = 2;
+    var levels = [
+      { pad: 14, headH: 40, gap: 12, nFont: 25, subFont: 21, rowN: 28, rowSub: 22, subGap: 4, cr: 26, th: 29 },
+      { pad: 10, headH: 30, gap: 8,  nFont: 21, subFont: 17, rowN: 23, rowSub: 18, subGap: 2, cr: 21, th: 22 },
+      { pad: 8,  headH: 26, gap: 6,  nFont: 19, subFont: 15, rowN: 21, rowSub: 16, subGap: 2, cr: 18, th: 20 }
+    ];
     function subText(s) { return [s.d, s.t].filter(Boolean).join(' · '); }
-    function nodeH(s) { return subText(s) ? rowN + subGap + rowSub : rowN; }
-    function cardH(nodes) {
-      var nn = Math.min(nodes.length, k), h = pad + headH + 8;
-      for (var i = 0; i < nn; i++) h += nodeH(nodes[i]);
+    function subLines(s, lv) {
+      var sub = subText(s);
+      if (!sub) return 0;
+      ctx.font = '400 ' + lv.subFont + 'px "Noto Sans SC"';
+      return countLines(ctx, sub, txtW, subMax);
+    }
+    function nodeH(s, lv) {
+      var ln = subLines(s, lv);
+      return lv.rowN + (ln ? lv.subGap + ln * lv.rowSub : 0);
+    }
+    function cardH(nodes, lv) {
+      var nn = Math.min(nodes.length, k), h = lv.pad + lv.headH + 8;
+      for (var i = 0; i < nn; i++) h += nodeH(nodes[i], lv);
       return h;
     }
-    var total = days.reduce(function (s, g) { return s + cardH(g.nodes || []); }, 0) + gap * Math.max(0, days.length - 1);
-    var tight = total > availBot - availTop;
-    if (tight) { pad = 9; headH = 28; gap = 7; nFont = 20; subFont = 16; rowN = 22; rowSub = 16; subGap = 2; }
+    function totalH(lv) {
+      return days.reduce(function (s, g) { return s + cardH(g.nodes || [], lv); }, 0) + lv.gap * Math.max(0, days.length - 1);
+    }
+    var li = 0;
+    if (totalH(levels[0]) > availBot - availTop) li = 1;
+    if (totalH(levels[1]) > availBot - availTop) li = 2;
+    var L = levels[li], tight = li > 0;
 
     var cy = availTop;
     days.slice(0, 8).forEach(function (g, i) {
       var color = pal[i % pal.length];
       var nodes = g.nodes || [];
-      var h = cardH(nodes);
+      var h = cardH(nodes, L);
       /* 卡片阴影白底 */
       ctx.save();
       ctx.shadowColor = 'rgba(60,40,20,.18)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 7;
@@ -858,28 +888,29 @@
       ctx.fillStyle = color; roundRect(ctx, 64, cy, 10, h, 5); ctx.fill();
       /* 编号圆 */
       ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(126, cy + pad + headH / 2, tight ? 21 : 26, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(126, cy + L.pad + L.headH / 2, L.cr, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.font = '800 ' + (tight ? 22 : 26) + 'px "Noto Sans SC"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(i + 1), 126, cy + pad + headH / 2 + 1);
+      ctx.fillText(String(i + 1), 126, cy + L.pad + L.headH / 2 + 1);
       ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
       /* 主题 */
-      ctx.fillStyle = PAL.ink; ctx.font = '800 ' + (tight ? 22 : 29) + 'px "Noto Sans SC"';
+      ctx.fillStyle = PAL.ink; ctx.font = '800 ' + L.th + 'px "Noto Sans SC"';
       var theme = truncate(ctx, g.label || ('Day ' + (i + 1)), 780);
-      ctx.fillText(theme, 176, cy + pad + headH / 2 + 2);
-      /* 节点链：名称一行，备注（说明/门票时长）另起一行，按宽截断不溢出 */
-      var ny = cy + pad + headH + 4;
+      ctx.fillText(theme, 176, cy + L.pad + L.headH / 2 + 2);
+      /* 节点链：名称一行加粗，备注自动换行完整展示，按宽折行不省略 */
+      var ny = cy + L.pad + L.headH + 4;
       nodes.slice(0, k).forEach(function (s) {
         var sub = subText(s);
-        ctx.fillStyle = color; ctx.beginPath(); ctx.arc(126, ny + rowN / 2, 6, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#2c3540'; ctx.font = '600 ' + nFont + 'px "Noto Sans SC"';
-        ctx.fillText(truncate(ctx, s.n || '', txtW), 156, ny + rowN / 2 + 1);
+        var ln = subLines(s, L);
+        ctx.fillStyle = color; ctx.beginPath(); ctx.arc(126, ny + L.rowN / 2, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = PAL.ink; ctx.font = '600 ' + L.nFont + 'px "Noto Sans SC"';
+        ctx.fillText(truncate(ctx, s.n || '', txtW), 156, ny + L.rowN / 2 + 1);
         if (sub) {
-          ctx.fillStyle = '#9aa4ae'; ctx.font = '400 ' + subFont + 'px "Noto Sans SC"';
-          ctx.fillText(truncate(ctx, sub, txtW), 156, ny + rowN + subGap + rowSub / 2 - 1);
+          ctx.fillStyle = '#7A8694'; ctx.font = '400 ' + L.subFont + 'px "Noto Sans SC"';
+          wrapText(ctx, sub, 156, ny + L.rowN + L.subGap + L.rowSub - 4, txtW, L.rowSub, subMax);
         }
-        ny += sub ? rowN + subGap + rowSub : rowN;
+        ny += ln ? L.rowN + L.subGap + ln * L.rowSub : L.rowN;
       });
-      cy += h + gap;
+      cy += h + L.gap;
     });
 
     /* 美食 / 住宿 / 交通 速览小卡：三类各取代表优先 */
