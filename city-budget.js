@@ -1882,7 +1882,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["清东陵",108],["月岛",110],["南湖景区",0],["滦州古城",0],["唐山地震遗址纪念公园",0]]
  },
  "秦皇岛": {
   "tier": "normal",
@@ -1911,7 +1911,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["老龙头",60],["天下第一关",50],["北戴河海滨",0],["乐岛海洋王国",200],["山海关古城",0]]
  },
  "邯郸": {
   "tier": "normal",
@@ -1940,7 +1940,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["娲皇宫",70],["广府古城",0],["丛台公园",0],["京娘湖",60],["赵苑公园",0]]
  },
  "邢台": {
   "tier": "normal",
@@ -1969,7 +1969,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["崆山白云洞",60],["邢台大峡谷",50],["天河山",70],["达活泉公园",0],["清风楼",0]]
  },
  "保定": {
   "tier": "normal",
@@ -1998,7 +1998,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["野三坡百里峡",90],["直隶总督署",35],["白洋淀",40],["古莲花池",0]]
  },
  "张家口": {
   "tier": "normal",
@@ -2027,7 +2027,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大境门",13],["草原天路",0],["空中草原",65],["天漠",35],["崇礼奥运公园",0]]
  },
  "承德": {
   "tier": "normal",
@@ -2056,7 +2056,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["避暑山庄",130],["布达拉行宫",80],["磬锤峰",50]]
  },
  "沧州": {
   "tier": "normal",
@@ -2085,7 +2085,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["吴桥杂技大世界",160],["沧州铁狮子",20],["南大港湿地",60],["东光铁佛寺",0],["大运河博物馆",0]]
  },
  "廊坊": {
   "tier": "normal",
@@ -2114,7 +2114,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["只有红楼梦戏剧幻城",388],["丝绸之路国际交流中心",0],["水云间文化商街",0]]
  },
  "衡水": {
   "tier": "normal",
@@ -2143,7 +2143,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["衡水湖",0],["武强年画博物馆",0],["周窝音乐小镇",0],["闾里古镇",0]]
  },
  "大同": {
   "tier": "normal",
@@ -2172,7 +2172,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["云冈石窟",120],["悬空寺",115],["华严寺",50],["恒山",45],["大同古城",0]]
  },
  "阳泉": {
   "tier": "normal",
@@ -2201,7 +2201,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["藏山",50],["娘子关",65],["小河古村",0]]
  },
  "长治": {
   "tier": "normal",
@@ -2230,7 +2230,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["八泉峡",100],["太行山大峡谷",65],["黄崖洞",85],["八路军太行纪念馆",0],["通天峡",60]]
  },
  "晋城": {
   "tier": "normal",
@@ -2259,7 +2259,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["皇城相府",110],["王莽岭",110],["锡崖沟",30]]
  },
  "朔州": {
   "tier": "normal",
@@ -2288,7 +2288,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["应县木塔",50],["崇福寺",30],["金沙滩古战场",50]]
  },
  "晋中": {
   "tier": "normal",
@@ -2317,7 +2317,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["平遥古城",125],["乔家大院",115],["王家大院",55],["绵山",130],["常家庄园",60]]
  },
  "运城": {
   "tier": "normal",
@@ -2346,7 +2346,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["解州关帝庙",60],["鹳雀楼",54],["永乐宫",50],["普救寺",60],["运城盐湖",55]]
  },
  "忻州": {
   "tier": "normal",
@@ -2375,7 +2375,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["五台山",135],["雁门关",90],["忻州古城",0]]
  },
  "临汾": {
   "tier": "normal",
@@ -2404,7 +2404,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["壶口瀑布",80],["洪洞大槐树",80],["云丘山",80],["小西天",35]]
  },
  "吕梁": {
   "tier": "normal",
