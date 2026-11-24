@@ -8407,7 +8407,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["乌海湖",0],["金沙湾",30],["桌子山",0]]
  },
  "赤峰": {
   "tier": "normal",
@@ -8436,7 +8436,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["玉龙沙湖",80],["克什克腾草原",140],["贡格尔草原",0],["喀喇沁亲王府",48]]
  },
  "通辽": {
   "tier": "normal",
@@ -8465,7 +8465,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大青沟",50],["孝庄园",50],["奈曼旗怪柳",0],["奈曼王府",40]]
  },
  "鄂尔多斯": {
   "tier": "normal",
@@ -8494,7 +8494,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["响沙湾",130],["成吉思汗陵",120],["七星湖",100],["苏泊罕大草原",0]]
  },
  "呼伦贝尔": {
   "tier": "normal",
@@ -8523,7 +8523,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["呼伦贝尔大草原",0],["额尔古纳湿地",65],["满洲里国门",60],["呼伦湖",40]]
  },
  "巴彦淖尔": {
   "tier": "normal",
@@ -8552,7 +8552,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["乌梁素海",25],["纳林湖",50],["阴山岩画",0]]
  },
  "乌兰察布": {
   "tier": "normal",
@@ -8581,7 +8581,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["辉腾锡勒草原",90],["岱海",20],["格根塔拉草原",38]]
  },
  "柳州": {
   "tier": "popular",
