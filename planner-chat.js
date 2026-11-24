@@ -243,7 +243,7 @@ var FREE_SYS='你是 MYL 旅行网站的 AI 旅行顾问，中文、友好、简
 function freeChat(raw, cb){
   siteChat([{role:'system',content:FREE_SYS},{role:'user',content:String(raw||'')}], cb);
 }
-var SITE_API='https://lvyou-wangzhan.vercel.app/api/chat';
+var SITE_API='https://myl-ai-proxy.yinliangan46.workers.dev';
 function siteChat(messages, cb){
   var ctrl=new AbortController();
   var timer=setTimeout(function(){ctrl.abort();},45000);

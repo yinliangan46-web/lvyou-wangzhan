@@ -24,7 +24,7 @@
         { key: 'relax', label: '慢节奏', icon: 'fa-mug-hot' }
     ];
 
-    var SITE_API = 'https://lvyou-wangzhan.vercel.app/api/chat';
+    var SITE_API = 'https://myl-ai-proxy.yinliangan46.workers.dev';
     /* 本站统一走站点代理（后台 DeepSeek，Key 不出后端）；builtin 仅作离线兜底 */
     var AI_PRESETS = {
         site: { label: '站点 AI · DeepSeek（无需填 Key）', endpoint: SITE_API, model: 'auto' },

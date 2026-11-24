@@ -36,7 +36,7 @@
     /* ===== 大模型智能体配置（Key 只在 Vercel 后端环境变量，前端不存） ===== */
     var AI_CONFIG = {
         enabled: true,
-        proxy: 'https://lvyou-wangzhan.vercel.app/api/chat',
+        proxy: 'https://myl-ai-proxy.yinliangan46.workers.dev',
         model: 'deepseek-chat',
         timeoutMs: 9000
     };
