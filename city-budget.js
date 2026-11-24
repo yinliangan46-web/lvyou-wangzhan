@@ -7247,7 +7247,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["三苏祠",40],["瓦屋山",100],["柳江古镇",0],["黑龙滩",20]]
  },
  "宜宾": {
   "tier": "normal",
@@ -7276,7 +7276,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["蜀南竹海",100],["兴文石海",80],["李庄古镇",0],["僰王山",50]]
  },
  "广安": {
   "tier": "normal",
@@ -7305,7 +7305,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["邓小平故里",0],["华蓥山",95],["天意谷",100]]
  },
  "达州": {
   "tier": "normal",
@@ -7334,7 +7334,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["八台山",90],["賨人谷",49],["真佛山",38],["巴山大峡谷",60]]
  },
  "雅安": {
   "tier": "normal",
@@ -7363,7 +7363,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["碧峰峡",100],["上里古镇",0],["蒙顶山",60]]
  },
  "巴中": {
   "tier": "normal",
@@ -7392,7 +7392,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["光雾山",80],["米仓山",90],["诺水河",120]]
  },
  "资阳": {
   "tier": "normal",
@@ -7421,7 +7421,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["圆觉洞",30],["卧佛院",0],["陈毅故居",0]]
  },
  "六盘水": {
   "tier": "normal",
@@ -7450,7 +7450,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["乌蒙大草原",30],["野玉海",0],["玉舍森林公园",20],["梅花山",0]]
  },
  "遵义": {
   "tier": "popular",
@@ -7508,7 +7508,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["黄果树",160],["龙宫",130],["天龙屯堡",35],["云峰八寨",50]]
  },
  "毕节": {
   "tier": "normal",
@@ -7537,7 +7537,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["百里杜鹃",130],["织金洞",110],["草海",0]]
  },
  "铜仁": {
   "tier": "normal",
@@ -7566,7 +7566,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["梵净山",100],["九龙洞",70],["大明边城",18]]
  },
  "曲靖": {
   "tier": "popular",
@@ -7624,7 +7624,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["抚仙湖",0],["李家山博物馆",0],["哀牢山",0],["禄充",15]]
  },
  "保山": {
   "tier": "normal",
@@ -7653,7 +7653,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["和顺古镇",55],["热海",65],["火山地质公园",35],["银杏村",30]]
  },
  "昭通": {
   "tier": "normal",
@@ -7682,7 +7682,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大山包",78],["豆沙关",60],["西部大峡谷",128],["黄连河",50]]
  },
  "普洱": {
   "tier": "normal",
@@ -7711,7 +7711,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["太阳河森林公园",100],["墨江北回归线",40],["那柯里",0],["普洱茶博览苑",30]]
  },
  "临沧": {
   "tier": "normal",
@@ -7740,7 +7740,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["翁丁原始部落",65],["崖画谷",25],["玉龙湖",0],["班洪葫芦王地",30]]
  },
  "铜川": {
   "tier": "normal",
@@ -7769,7 +7769,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["药王山",70],["照金香山",35],["玉华宫",60],["陈炉古镇",0]]
  },
  "宝鸡": {
   "tier": "normal",
@@ -7798,7 +7798,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["太白山",90],["法门寺",96],["关山草原",60],["龙门洞",27]]
  },
  "咸阳": {
   "tier": "normal",
@@ -7827,7 +7827,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["乾陵",100],["茂陵",75],["汉阳陵",70]]
  },
  "渭南": {
   "tier": "normal",
