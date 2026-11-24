@@ -5478,7 +5478,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["云台山",120],["青天河",70],["陈家沟",30],["神农山",65]]
  },
  "濮阳": {
   "tier": "normal",
@@ -5507,7 +5507,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["戚城文物景区",0],["濮上园",0],["东北庄野生动物园",78],["濮水小镇",0]]
  },
  "许昌": {
   "tier": "normal",
@@ -5536,7 +5536,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["春秋楼",25],["灞陵桥",30],["鄢陵花木博览园",30],["曹魏古城",0]]
  },
  "漯河": {
   "tier": "normal",
@@ -5565,7 +5565,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["许慎文化园",30],["小商桥",30],["沙澧河风景区",0],["河上街古镇",0]]
  },
  "三门峡": {
   "tier": "normal",
@@ -5594,7 +5594,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["虢国博物馆",40],["陕州地坑院",60],["天鹅湖",0],["函谷关",75]]
  },
  "南阳": {
   "tier": "normal",
@@ -5623,7 +5623,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["卧龙岗武侯祠",50],["老界岭",60],["宝天曼",75],["内乡县衙",60]]
  },
  "商丘": {
   "tier": "normal",
@@ -5652,7 +5652,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["芒砀山",90],["汉梁王陵",55],["商丘古城",0]]
  },
  "信阳": {
   "tier": "normal",
@@ -5681,7 +5681,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["鸡公山",60],["南湾湖",70],["波尔登森林公园",45],["西九华山",100]]
  },
  "周口": {
   "tier": "normal",
@@ -5710,7 +5710,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["太昊陵",40],["关帝庙",30],["龙湖风景区",0],["太清宫",60]]
  },
  "驻马店": {
   "tier": "normal",
@@ -5739,7 +5739,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["嵖岈山",70],["南海禅寺",40],["薄山湖",40],["皇家驿站",0]]
  },
  "黄石": {
   "tier": "normal",
@@ -5768,7 +5768,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["黄石国家矿山公园",35],["仙岛湖",75],["天空之城",129],["东方山",0]]
  },
  "十堰": {
   "tier": "normal",
@@ -5797,7 +5797,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["武当山",130],["丹江大坝",50],["太极湖",0],["武当大明峰",80]]
  },
  "宜昌": {
   "tier": "normal",
@@ -5826,7 +5826,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["三峡大坝",0],["三峡人家",150],["清江画廊",145],["三游洞",60]]
  },
  "襄阳": {
   "tier": "normal",
@@ -5855,7 +5855,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["古隆中",67],["唐城",90],["春秋寨",72],["岘山",0]]
  },
  "鄂州": {
   "tier": "normal",
@@ -5884,7 +5884,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["梁子岛生态旅游区",30],["西山风景区",0],["莲花山",0],["鄂州市博物馆",0]]
  },
  "荆门": {
   "tier": "normal",
@@ -5913,7 +5913,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["明显陵",65],["漳河风景区",98],["莫愁村",0],["美人谷",68]]
  },
  "孝感": {
   "tier": "normal",
@@ -5942,7 +5942,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["双峰山",0],["观音湖",0],["董永公园",0],["天紫湖",40]]
  },
  "荆州": {
   "tier": "normal",
@@ -5971,7 +5971,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["宾阳楼",35],["荆州博物馆",0],["关公义园",14],["洈水",28],["楚王车马阵",85]]
  },
  "黄冈": {
   "tier": "normal",
@@ -6000,7 +6000,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["东坡赤壁",40],["天堂寨",80],["遗爱湖",0],["李时珍文化旅游区",39]]
  },
  "咸宁": {
   "tier": "normal",
