@@ -2462,7 +2462,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["老虎滩海洋公园",220],["星海广场",0],["金石滩",0],["棒棰岛",20],["圣亚海洋世界",110]]
  },
  "鞍山": {
   "tier": "normal",
@@ -3390,7 +3390,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["鼋头渚(含渡船)",90],["灵山大佛",210],["惠山古镇",70],["拈花湾",150]]
  },
  "徐州": {
   "tier": "normal",
@@ -3709,7 +3709,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["天一阁博物院",30],["老外滩",0],["南塘老街",0],["东钱湖",0]]
  },
  "温州": {
   "tier": "popular",
@@ -3738,7 +3738,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["雁荡山",170],["江心屿",25],["楠溪江",0]]
  },
  "嘉兴": {
   "tier": "popular",
@@ -3767,7 +3767,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["乌镇西栅",150],["西塘古镇",95],["南湖景区",60]]
  },
  "湖州": {
   "tier": "normal",
@@ -3825,7 +3825,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["鲁迅故里",0],["沈园(白天)",40],["兰亭景区",70],["东湖景区",50]]
  },
  "金华": {
   "tier": "popular",
@@ -3854,7 +3854,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["横店影视城(秦王宫)",180],["双龙洞",80],["诸葛八卦村",70]]
  },
  "衢州": {
   "tier": "normal",
@@ -3941,7 +3941,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["国清寺",0],["石梁飞瀑",60],["琼台仙谷",65],["天台山大瀑布",100]]
  },
  "丽水": {
   "tier": "normal",
@@ -4463,7 +4463,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["开元寺",0],["西街",0],["清源山",70],["蟳埔村",0],["崇武古城",40]]
  },
  "漳州": {
   "tier": "popular",
@@ -4492,7 +4492,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["云水谣古镇",90],["田螺坑土楼群",90],["东山岛",0],["漳州古城",0]]
  },
  "南平": {
   "tier": "normal",
@@ -6435,7 +6435,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["长隆海洋王国",395],["圆明新园",0],["情侣路",0],["外伶仃岛",0]]
  },
  "汕头": {
   "tier": "normal",
@@ -6493,7 +6493,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["祖庙",20],["清晖园",15],["南风古灶",0],["西樵山",0]]
  },
  "江门": {
   "tier": "normal",
@@ -6812,7 +6812,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["鸦片战争博物馆",0],["松山湖生态景区",0]]
  },
  "中山": {
   "tier": "popular",
@@ -6841,7 +6841,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["孙中山故居纪念馆",0],["中山城",65]]
  },
  "潮州": {
   "tier": "normal",
@@ -7479,7 +7479,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["遵义会议会址",0],["娄山关",0],["赤水大瀑布",80],["海龙屯",65]]
  },
  "安顺": {
   "tier": "normal",
@@ -7595,7 +7595,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["九龙瀑布群",65],["陆良彩色沙林",65],["罗平油菜花海",0],["珠江源风景区",35]]
  },
  "玉溪": {
   "tier": "normal",
@@ -8610,7 +8610,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["程阳八寨",80],["龙潭公园",0],["柳侯祠",10]]
  },
  "梧州": {
   "tier": "normal",
@@ -8668,7 +8668,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["银滩",0],["涠洲岛(上岛费)",98],["北海海底世界",148],["金海湾红树林",80]]
  },
  "防城港": {
   "tier": "normal",
@@ -11133,7 +11133,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["古文化街",0],["五大道",0],["意式风情区",0],["盘山",78],["天津之眼摩天轮",96],["瓷房子",50]]
  },
  "都江堰": {
   "tier": "normal",
