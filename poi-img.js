@@ -3215,7 +3215,19 @@
   "碑林博物馆": "images/poi/029de424f2.jpg",
   "大明宫国家遗址公园": "images/poi/d3c2b622e8.jpg",
   "西安博物院": "images/poi/265ec0e045.jpg",
-  "秦始皇陵": "images/poi/3439dded58.jpg"
+  "秦始皇陵": "images/poi/3439dded58.jpg",
+  "十八梯": "images/poi/3e8447b290.jpg",
+  "三峡博物馆": "images/poi/cec214b9ea.jpg",
+  "重庆美术馆": "images/poi/7de31caa96.jpg",
+  "四川美术学院（黄桷坪校区）": "images/poi/8eda50298c.jpg",
+  "涂鸦一条街": "images/poi/530a07356a.jpg",
+  "岳麓书院": "images/poi/4612f9c845.jpg",
+  "坡子街": "images/poi/713a4d0628.jpg",
+  "五一广场": "images/poi/fccc3ef517.jpg",
+  "李自健美术馆": "images/poi/c348ba0aff.jpg",
+  "梅溪湖大剧院": "images/poi/b79745b2f9.jpg",
+  "白沙古井": "images/poi/1c440f27ef.jpg",
+  "鹅岭二厂": "images/poi/388cc73920.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
