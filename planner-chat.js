@@ -154,6 +154,88 @@ function ruleData(pd, name, reqDays){
   return {days:buildDayGroups(pd, reqDays, curExcursions, name), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
 }
 
+/* ============ 行程动态报价表：按本行程节点 + 城市三档基准累加 ============ */
+function parseYuan(s){
+  if(!s) return null;
+  var str=String(s);
+  if(/免费|¥0|0元|无门票|免票/.test(str)) return 0;
+  var m=str.match(/¥\s*(\d+(?:\.\d+)?)/);
+  if(m) return Math.round(+m[1]);
+  m=str.match(/(\d+)\s*元/);
+  return m ? +m[1] : null;
+}
+function parseFoodPrice(p){
+  if(!p) return null;
+  var m=String(p).match(/¥\s*(\d+(?:\.\d+)?)/);
+  if(m) return Math.round(+m[1]);
+  return null;
+}
+var BUDGET_DEF={transport:[300,1200],hotel:{budget:180,comfort:300,luxury:500},food:{budget:60,comfort:95,luxury:150},ticket:{budget:30,comfort:60,luxury:100},local:{budget:22,comfort:38,luxury:70}};
+
+function renderBudget(name, c, data, reqDays, ppl){
+  var bud=(window.MYL_BUDGET&&window.MYL_BUDGET.baseOf(name,c&&c.country))||BUDGET_DEF;
+  var nights=Math.max(0,reqDays-1);
+  var rooms=ppl===1?1:ppl===2?1:2;
+  /* 解析本行程节点门票 */
+  var ticketFixed=0, ticketNodes=[];
+  (data.days||[]).forEach(function(g){
+    (g.nodes||[]).forEach(function(n){
+      var v=parseYuan(n.t);
+      if(v!==null){ ticketFixed+=v; ticketNodes.push({n:n.n||'', p:v}); }
+    });
+  });
+  var foodNodes=(data.foods||[]).map(function(f){return {n:f.n||'', p:parseFoodPrice(f.p)};}).filter(function(f){return f.n;});
+
+  var tiers=[['budget','经济'],['comfort','舒适'],['luxury','品质']];
+  function calc(t){
+    var lo=bud.transport[0], hi=bud.transport[1], mid=Math.round((lo+hi)/2);
+    var flightPer=t==='budget'?lo:(t==='luxury'?hi:mid);
+    var flight=flightPer*ppl;
+    var hotel=bud.hotel[t]*nights*rooms;
+    var food=bud.food[t]*reqDays*ppl;
+    var ticket=ticketFixed>0 ? ticketFixed*ppl : bud.ticket[t]*reqDays*ppl;
+    var local=bud.local[t]*reqDays*ppl;
+    var total=flight+hotel+food+ticket+local;
+    return {flight:flight,hotel:hotel,food:food,ticket:ticket,local:local,total:total,per:Math.round(total/ppl),flightPer:flightPer};
+  }
+  var rows=[
+    {label:'往返大交通', unit:'人均往返', note:'机票/高铁往返', key:'flight', per:'flightPer'},
+    {label:'住宿', unit:'每晚每间', note:nights+' 晚 × '+rooms+' 间', key:'hotel'},
+    {label:'餐饮', unit:'每人每天', note:reqDays+' 天 × '+ppl+' 人', key:'food'},
+    {label:'景点门票', unit:'每人', note:ticketFixed>0?'按行程节点累加':'未标票价按每日门票基准', key:'ticket'},
+    {label:'当地交通', unit:'每人每天', note:'地铁/打车/接驳', key:'local'}
+  ];
+  var cmap={budget:calc('budget'),comfort:calc('comfort'),luxury:calc('luxury')};
+  var head='<tr><th>项目</th><th>口径</th>'+tiers.map(function(t){return '<th>'+t[1]+'</th>';}).join('')+'</tr>';
+  var body=rows.map(function(r){
+    var tds=tiers.map(function(t){
+      var v=cmap[t[0]][r.key];
+      var per=r.per?'<div class="dt-unit">人均 ¥'+cmap[t[0]][r.per]+'</div>':'';
+      return '<td><div class="dt-sub">¥'+v.toLocaleString()+'</div>'+per+'</td>';
+    }).join('');
+    return '<tr><td class="dt-label">'+r.label+'<div class="dt-note">'+r.note+'</div></td>'+tds+'</tr>';
+  }).join('');
+  var totalRow='<tr class="dt-total"><td>合计总价</td><td>按本行程测算</td>'+tiers.map(function(t){
+    return '<td><div class="dt-sub">¥'+cmap[t[0]].total.toLocaleString()+'</div><div class="dt-unit">人均 ¥'+cmap[t[0]].per.toLocaleString()+'</div></td>';
+  }).join('')+'</tr>';
+
+  var spotDetail=ticketNodes.length
+    ? '<div class="budget-sub"><b>本行程门票明细</b>'+ticketNodes.map(function(s){
+        return '<div class="li">'+esc(s.n)+'<span class="lp">'+(s.p===0?'免费':'¥'+s.p+'/人')+'</span></div>';
+      }).join('')+'</div>' : '';
+  var foodDetail=foodNodes.length
+    ? '<div class="budget-sub"><b>美食人均参考</b>'+foodNodes.map(function(s){
+        return '<div class="li">'+esc(s.n)+'<span class="lp">'+(s.p==null?'以门店为准':'¥'+s.p+'/人')+'</span></div>';
+      }).join('')+'</div>' : '';
+
+  return '<div class="section budget-section"><h3><i class="fas fa-receipt"></i> 行程报价表（'+reqDays+' 天 · '+ppl+' 人）</h3>'+
+    '<div class="dt-wrap"><table class="dt">'+head+body+totalRow+'</table></div>'+
+    '<div class="note">大交通为往返人均区间估算；住宿按晚数与房间数，餐饮/门票/当地交通按天数人数累加。价格为公开参考价，实际以景区、酒店与平台实时报价为准。</div>'+
+    '<div class="budget-detail-col">'+spotDetail+foodDetail+'</div>'+
+  '</div>';
+}
+
+
 /* ============ 站点 AI 代理（后台 DeepSeek，Key 不出后端，无需访客填 Key） ============ */
 var lastRaw='';
 var FREE_SYS='你是 MYL 旅行网站的 AI 旅行顾问，中文、友好、简洁。可以回答：目的地推荐与对比、行程节奏建议、景点玩法、季节天气与穿搭、交通/住宿/美食/预算、签证出入境、行前准备，以及本站收录城市、景点、美食、预订入口相关问题。信息不全时用一句话追问最关键的一项，不要罗列一堆问题。涉及实时票价、余票、班次、名额不要编造数字，以携程/12306/景区官方页面为准。若用户明确要一份按天排列的结构化路书，先给要点，并提示可在下方一句话生成完整路书。';
@@ -275,6 +357,7 @@ function renderPlan(name,c,pd,data,reqDays,src,err){
     '<div class="section"><h3><i class="fas fa-map-location-dot"></i> 景点节点（按天分段）</h3>'+dayHtml+'</div>'+
     '<div class="section"><h3><i class="fas fa-utensils"></i> 美食推荐</h3>'+foods+'</div>'+
     '<div class="section"><h3><i class="fas fa-hotel"></i> 住宿建议</h3>'+hotels+'</div>'+
+    renderBudget(name,c,data,reqDays,ppl)+
     '<div class="section"><h3><i class="fas fa-link"></i> 预订入口</h3><div class="link-grid">'+
       '<a class="link-card" href="'+pd.ctrip+'" target="_blank" rel="noopener"><b>携程景点</b><span>门票与预约查询</span></a>'+
       '<a class="link-card" href="'+pd.hotelsUrl+'" target="_blank" rel="noopener"><b>携程酒店</b><span>查询住宿价格</span></a>'+

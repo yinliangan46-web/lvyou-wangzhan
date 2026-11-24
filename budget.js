@@ -19,7 +19,76 @@ function $(id){return document.getElementById(id);}
 function lp(v){return v?' <span class="lp">'+v+'</span>':'';}
 function lpJoin(){var a=[].slice.call(arguments).filter(Boolean);return a.length?' <span class="lp">'+a.join(' · ')+'</span>':'';}
 function cityList(){ return window.MYL ? MYL.indexCities() : []; }
-function baseOf(name){ return BASE[name] || DEF; }
+function baseOf(name){
+  var c = MYL.getCity(name);
+  var old = BASE[name];
+  var nb = (window.MYL_BUDGET && MYL_BUDGET.baseOf(name, c && c.country)) || null;
+  if(old){
+    return { flight:old.flight, flightLo:old.flight, flightHi:old.flight,
+      hotel:old.hotel, food:old.food, ticket:old.ticket, local:old.local,
+      spots:(nb && nb.spots)||[], country:c&&c.country||'' };
+  }
+  if(nb){
+    var lo=nb.transport[0], hi=nb.transport[1], mid=Math.round((lo+hi)/2);
+    return { flight:mid, flightLo:lo, flightHi:hi,
+      hotel:nb.hotel, food:nb.food, ticket:nb.ticket, local:nb.local,
+      spots:nb.spots||[], country:c&&c.country||nb.abroad?'境外':'国内' };
+  }
+  return { flight:DEF.flight, flightLo:DEF.flight, flightHi:DEF.flight,
+    hotel:DEF.hotel, food:DEF.food, ticket:DEF.ticket, local:DEF.local, spots:[], country:'' };
+}
+
+/* 三档详细报价明细表：按天数/人数/晚数/房间数逐项累加 */
+function detailTable(city, days, ppl){
+  var nights=days-1;
+  var rooms = ppl===1?1:ppl===2?1:2;
+  var tiers=['budget','comfort','luxury'];
+  var tlabel={budget:'经济',comfort:'舒适',luxury:'品质'};
+  function roomNights(){return nights+' 晚 × '+rooms+' 间';}
+  function pD(){return days+' 天 × '+ppl+' 人';}
+  var rows=[
+    {label:'往返大交通', unit:'人均往返参考', note:'机票/高铁往返',
+      price:function(t){ var lo=city.flightLo||city.flight, hi=city.flightHi||city.flight; return t==='budget'?lo:(t==='luxury'?hi:city.flight); },
+      subtotal:function(t,v){ return v*ppl; }},
+    {label:'住宿', unit:'每晚每间', note:roomNights(),
+      price:function(t){ return city.hotel[t]; },
+      subtotal:function(t,v){ return v*nights*rooms; }},
+    {label:'餐饮', unit:'每人每天', note:pD(),
+      price:function(t){ return city.food[t]; },
+      subtotal:function(t,v){ return v*days*ppl; }},
+    {label:'景点门票', unit:'每人每天', note:'含主要景点与体验',
+      price:function(t){ return city.ticket[t]; },
+      subtotal:function(t,v){ return v*days*ppl; }},
+    {label:'当地交通', unit:'每人每天', note:'地铁/打车/接驳',
+      price:function(t){ return city.local[t]; },
+      subtotal:function(t,v){ return v*days*ppl; }}
+  ];
+  var sums={budget:0,comfort:0,luxury:0};
+  var head='<tr><th>项目</th><th>单价口径</th>'+tiers.map(function(t){return '<th>'+tlabel[t]+'</th>';}).join('')+'</tr>';
+  var body=rows.map(function(r){
+    var tds=tiers.map(function(t){
+      var v=r.price(t), sub=r.subtotal(t,v);
+      sums[t]+=sub;
+      return '<td><div class="dt-sub">¥'+sub.toLocaleString()+'</div><div class="dt-unit">¥'+v+'/'+r.unit.replace('人均往返参考','人往返')+'</div></td>';
+    }).join('');
+    return '<tr><td class="dt-label">'+r.label+'<div class="dt-note">'+r.note+'</div></td>'+tds+'</tr>';
+  }).join('');
+  var totalRow='<tr class="dt-total"><td>合计总价</td><td>按本行程测算</td>'+tiers.map(function(t){
+    return '<td><div class="dt-sub">¥'+sums[t].toLocaleString()+'</div><div class="dt-unit">人均 ¥'+Math.round(sums[t]/ppl).toLocaleString()+'</div></td>';
+  }).join('')+'</tr>';
+
+  /* 代表景点逐项门票 */
+  var spots=(city.spots||[]).map(function(s){
+    var n=s[0], p=s[1];
+    return '<div class="li">'+n+'<span class="lp">'+(p===0?'免费':'¥'+p+'/人')+'</span></div>';
+  }).join('');
+  var spotsHtml=spots?'<div class="dsec"><h4><i class="fas fa-ticket"></i> 代表景点门票参考</h4>'+spots+'</div>':'';
+
+  return '<div class="chart-sec budget-detail"><h4><i class="fas fa-receipt"></i> 详细报价明细（'+days+' 天 · '+ppl+' 人 · 三档对比）</h4>'+
+    '<div class="dt-wrap"><table class="dt">'+head+body+totalRow+'</table></div>'+
+    '<div class="note">大交通为往返人均区间估算；门票/餐饮/住宿/当地交通按所选档位单价×天数人数累加。价格为公开参考价，实际以景区与平台实时报价为准。</div>'+
+    spotsHtml+'</div>';
+}
 
 function renderCities(){
   var all=cityList();
@@ -157,6 +226,7 @@ function calc(){
       trend+
       '<div style="margin-top:16px">'+details+'</div>'+
       '<div class="note">未列入精细基准的城市为中性参考价，实际以平台实时报价为准。</div>'+
+      detailTable(city, days, ppl)+
       detailSection(c)+
     '</div>'+
     '<div class="plans">'+plans+'</div>';

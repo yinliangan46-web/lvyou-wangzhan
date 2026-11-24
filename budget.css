@@ -7,6 +7,7 @@
   .logo{display:flex;align-items:center;gap:6px;font-weight:900;font-size:17px;color:var(--primary);text-decoration:none}
   .nav-links{display:flex;gap:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .nav-links a{color:var(--muted);text-decoration:none;font-size:12.5px;white-space:nowrap}
+  .nav-links a:hover{color:var(--primary)}
   .hero{padding:30px 0 14px}
   .hero h1{font-size:25px;font-weight:900;margin-bottom:6px}
   .hero p{color:var(--muted);font-size:15px}
@@ -67,5 +68,19 @@
   .trend{margin-top:6px}
   .trend svg{display:block;width:100%}
   .trend-note{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* 详细报价明细表 */
+.budget-detail{margin-top:18px}
+.dt-wrap{overflow-x:auto}
+table.dt{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+table.dt th,table.dt td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+table.dt th{color:var(--muted);font-weight:700;font-size:12px}
+table.dt th:not(:first-child),table.dt td:not(:first-child){text-align:right}
+.dt-label{font-weight:700}
+.dt-note{color:var(--muted);font-size:11px;font-weight:400;margin-top:2px}
+.dt-sub{font-weight:900;color:var(--primary);font-size:15px}
+.dt-unit{color:var(--muted);font-size:11px;margin-top:1px}
+.dt-total td{background:var(--soft);border-top:1.5px solid var(--primary)}
+.dt-total .dt-sub{font-size:17px}
 
 @media(min-width:768px){.nav{height:56px}.logo{font-size:16px;gap:5px}.nav-links{gap:16px}.nav-links a{font-size:12.5px}}
