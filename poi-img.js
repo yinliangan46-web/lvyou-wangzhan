@@ -3203,7 +3203,19 @@
   "江汉关博物馆": "images/poi/a697f64149.jpg",
   "黎黄陂路": "images/poi/4cefd9558a.jpg",
   "晴川阁": "images/poi/95e2a1f6c7.jpg",
-  "楚河汉街": "images/poi/4ed2b84127.jpg"
+  "楚河汉街": "images/poi/4ed2b84127.jpg",
+  "南头古城": "images/poi/ee1669cc41.jpg",
+  "小梅沙": "images/poi/dd5f14bc9b.jpg",
+  "深圳博物馆": "images/poi/af6b9a8bae.jpg",
+  "何香凝美术馆": "images/poi/06003859a9.jpg",
+  "海上世界": "images/poi/2f9efb29fc.jpg",
+  "甘坑客家小镇": "images/poi/1c91325071.jpg",
+  "陕西历史博物馆": "images/poi/f1fd2d8d51.jpg",
+  "华清宫": "images/poi/eb03387713.jpg",
+  "碑林博物馆": "images/poi/029de424f2.jpg",
+  "大明宫国家遗址公园": "images/poi/d3c2b622e8.jpg",
+  "西安博物院": "images/poi/265ec0e045.jpg",
+  "秦始皇陵": "images/poi/3439dded58.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
