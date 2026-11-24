@@ -8842,7 +8842,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["贺州黄姚古镇",88],["姑婆山",60],["十八水",30]]
  },
  "河池": {
   "tier": "normal",
@@ -8871,7 +8871,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["巴马长寿村",0],["大化七百弄",70],["刘三姐故里",60]]
  },
  "来宾": {
   "tier": "normal",
@@ -8900,7 +8900,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["圣堂山",65],["百崖大峡谷",60],["来宾盘古公园",0]]
  },
  "崇左": {
   "tier": "normal",
@@ -8929,7 +8929,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["德天瀑布",115],["明仕田园",80],["友谊关",40]]
  },
  "日喀则": {
   "tier": "normal",
