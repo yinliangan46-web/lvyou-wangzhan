@@ -3192,6 +3192,18 @@
   "北京奥林匹克森林公园": "images/poi/18ed68deef.jpg",
   "王府井商业街": "images/poi/62033e0a8b.jpg",
   "簋街": "images/poi/d317ea2b91.jpg",
+  "苏堤": "images/poi/a198660bd5.jpg",
+  "白堤": "images/poi/2e02cb67c3.jpg",
+  "河坊街": "images/poi/94a70b6c8a.jpg",
+  "良渚博物院": "images/poi/3563d77672.jpg",
+  "钱塘江大桥": "images/poi/ecb675d558.jpg",
+  "塘栖古镇": "images/poi/fc5f4d7e50.jpg",
+  "武汉大学": "images/poi/d419ab57aa.jpg",
+  "湖北省博物馆": "images/poi/ebdc03046b.jpg",
+  "江汉关博物馆": "images/poi/a697f64149.jpg",
+  "黎黄陂路": "images/poi/4cefd9558a.jpg",
+  "晴川阁": "images/poi/95e2a1f6c7.jpg",
+  "楚河汉街": "images/poi/4ed2b84127.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
