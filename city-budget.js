@@ -7856,7 +7856,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["华山",160],["少华山",60],["司马迁祠",80],["党家村",50]]
  },
  "延安": {
   "tier": "normal",
@@ -7885,7 +7885,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["黄帝陵",75],["壶口瀑布",75],["宝塔山",0],["杨家岭革命旧址",0]]
  },
  "汉中": {
   "tier": "normal",
@@ -7914,7 +7914,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["武侯祠",50],["石门栈道",75],["黎坪森林公园",75],["华阳古镇",0]]
  },
  "榆林": {
   "tier": "normal",
@@ -7943,7 +7943,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["镇北台",30],["红石峡",30],["红碱淖",55],["高家堡古城",0]]
  },
  "安康": {
   "tier": "normal",
@@ -7972,7 +7972,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["瀛湖",70],["南宫山",90],["香溪洞",0],["燕翔洞",70]]
  },
  "商洛": {
   "tier": "normal",
@@ -8001,7 +8001,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["金丝峡",100],["牛背梁",110],["柞水溶洞",100],["塔云山",100]]
  },
  "嘉峪关": {
   "tier": "normal",
@@ -8030,7 +8030,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["嘉峪关关城",110],["悬壁长城",21],["长城第一墩",21],["紫轩葡萄酒庄园",0]]
  },
  "金昌": {
   "tier": "normal",
@@ -8059,7 +8059,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["骊靬古城",0],["紫金花海",0],["火星1号基地",128],["金川国家矿山公园",0]]
  },
  "白银": {
   "tier": "normal",
@@ -8088,7 +8088,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["黄河石林",40],["会宁红军会师旧址",0],["永泰龟城",0],["水川黄河湿地公园",0]]
  },
  "天水": {
   "tier": "normal",
@@ -8117,7 +8117,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["麦积山石窟",80],["伏羲庙",20],["仙人崖",40],["天水古城",0]]
  },
  "武威": {
   "tier": "normal",
@@ -8146,7 +8146,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["雷台景区",45],["武威文庙",30],["天梯山石窟",30],["鸠摩罗什寺",0]]
  },
  "张掖": {
   "tier": "normal",
@@ -8175,7 +8175,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["七彩丹霞",70],["马蹄寺",74],["大佛寺",60],["平山湖大峡谷",100]]
  },
  "平凉": {
   "tier": "normal",
@@ -8204,7 +8204,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["崆峒山",110],["大云寺王母宫",60],["龙隐寺",0]]
  },
  "酒泉": {
   "tier": "normal",
@@ -8233,7 +8233,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["西汉酒泉胜迹",30],["酒泉卫星发射中心",150],["金塔沙漠胡杨林",65],["玉门关",40]]
  },
  "庆阳": {
   "tier": "normal",
@@ -8262,7 +8262,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["北石窟寺",30],["周祖陵",30],["药王洞养生小镇",0],["北石窟驿",0]]
  },
  "定西": {
   "tier": "normal",
@@ -8291,7 +8291,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["贵清山",50],["遮阳山",40],["渭河源",50],["灞陵桥",0]]
  },
  "陇南": {
   "tier": "normal",
@@ -8320,7 +8320,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["官鹅沟",150],["万象洞",60],["西狭颂",40],["鸡峰山",50]]
  },
  "海东": {
   "tier": "normal",
@@ -8349,7 +8349,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["瞿昙寺",50],["孟达天池",65],["北山国家森林公园",50],["互助土族故土园",60]]
  },
  "包头": {
   "tier": "normal",
@@ -8378,7 +8378,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["五当召",60],["北方兵器城",15],["赛汗塔拉城中草原",0],["希拉穆仁草原",50]]
  },
  "乌海": {
   "tier": "normal",
