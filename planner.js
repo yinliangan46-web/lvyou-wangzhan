@@ -592,22 +592,12 @@
             for (var ri = 0; ri < nDays - used; ri++) preAlloc[cities[ri % cities.length]]++;
         }
 
-        // 每城需要 = alloc[c] × 每天景点上限，确保每天都有内容
+        // 严格遵循客户勾选：已勾选的景点全部进入行程/地图，未勾选一律不自动补入；
+        // 仅当一城一个都没勾选时，才按偏好兜底一批，避免出现空行程。
         cities.forEach(function (c) {
-            var need = preAlloc[c] * capPerDay();  // 每天最多 capPerDay 个
-            var sorted = CATALOG[c].items.slice().sort(function (a, b) {
-                return (prefScore(b) * 10 - b.idx) - (prefScore(a) * 10 - a.idx);
-            });
-            if (!picks[c].length) picks[c] = [];
-            sorted.forEach(function (it) {
-                if (picks[c].length >= need) return;
-                if (picks[c].indexOf(it.name) < 0) picks[c].push(it.name);
-            });
-            // 极端情况：CATALOG 本身景点不够，至少保底 2 个
-            if (picks[c].length < 2) {
-                sorted.forEach(function (it) {
-                    if (picks[c].length < 2 && picks[c].indexOf(it.name) < 0) picks[c].push(it.name);
-                });
+            if (!picks[c].length) {
+                var need = preAlloc[c] * capPerDay();
+                picks[c] = autoPickCity(c, Math.min(Math.max(2, need), CATALOG[c].items.length));
             }
         });
 
