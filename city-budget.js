@@ -6029,7 +6029,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["三国赤壁古战场",135],["陆水湖",0],["九宫山",60],["隐水洞",112]]
  },
  "随州": {
   "tier": "normal",
@@ -6058,7 +6058,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["炎帝故里",70],["大洪山",95],["琵琶湖",40]]
  },
  "株洲": {
   "tier": "normal",
@@ -6087,7 +6087,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["炎帝陵",62],["方特欢乐世界",299],["神农城",0]]
  },
  "湘潭": {
   "tier": "normal",
@@ -6116,7 +6116,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["毛泽东故居",0],["滴水洞",40],["盘龙大观园",80],["彭德怀故居",0]]
  },
  "衡阳": {
   "tier": "normal",
@@ -6145,7 +6145,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["南岳衡山",110],["南岳大庙",58],["水濂洞",30],["岣嵝峰",30]]
  },
  "邵阳": {
   "tier": "normal",
@@ -6174,7 +6174,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["崀山",136],["南山",70],["白云洞",45],["云山",45]]
  },
  "岳阳": {
   "tier": "normal",
@@ -6203,7 +6203,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["岳阳楼",70],["君山岛",78],["仙姑岩",68]]
  },
  "常德": {
   "tier": "normal",
@@ -6232,7 +6232,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["桃花源",128],["壶瓶山大峡谷",70],["夷望溪",78],["柳叶湖",0]]
  },
  "益阳": {
   "tier": "normal",
@@ -6261,7 +6261,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["桃花江竹海",45],["茶马古道",104],["山乡巨变第一村",0],["明清古巷",0]]
  },
  "郴州": {
   "tier": "normal",
@@ -6290,7 +6290,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["东江湖",55],["莽山",80],["飞天山",38],["王仙岭",40]]
  },
  "永州": {
   "tier": "normal",
@@ -6319,7 +6319,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["柳子庙",25],["浯溪碑林",30],["阳明山",70],["舜帝庙遗址",30]]
  },
  "怀化": {
   "tier": "normal",
@@ -6348,7 +6348,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["黔阳古城",60],["万佛山",60],["洪江古商城",90],["皇都侗文化村",0]]
  },
  "娄底": {
   "tier": "normal",
@@ -6377,7 +6377,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["紫鹊界梯田",68],["梅山龙宫",98],["大熊山",70],["波月洞",70]]
  },
  "韶关": {
   "tier": "normal",
@@ -6406,7 +6406,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["丹霞山",100],["南华寺",20],["金鸡岭",40]]
  },
  "珠海": {
   "tier": "popular",
@@ -6464,7 +6464,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["礐石风景区",10],["南澳岛",0],["青澳湾",0],["蓝水星",155]]
  },
  "佛山": {
   "tier": "popular",
@@ -6522,7 +6522,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["小鸟天堂",25],["自力村",78],["立园",100],["马降龙",60]]
  },
  "湛江": {
   "tier": "normal",
@@ -6551,7 +6551,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["湖光岩",50],["特呈岛",0],["硇洲岛",0],["鼎龙湾",138]]
  },
  "茂名": {
   "tier": "normal",
@@ -6580,7 +6580,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["中国第一滩",0],["放鸡岛",180],["浪漫海岸",70],["茂名森林公园",20]]
  },
  "肇庆": {
   "tier": "normal",
@@ -6609,7 +6609,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["七星岩",70],["鼎湖山",70],["星湖湿地公园",0]]
  },
  "惠州": {
   "tier": "normal",
