@@ -8639,7 +8639,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["梧州骑楼城",0],["石表山",50],["梧州中山公园",0]]
  },
  "北海": {
   "tier": "popular",
@@ -8697,7 +8697,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["白浪滩",0],["十万大山",60],["东兴京岛",0]]
  },
  "钦州": {
   "tier": "normal",
@@ -8726,7 +8726,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["钦州三娘湾",40],["刘永福故居",0],["八寨沟",45]]
  },
  "贵港": {
   "tier": "normal",
@@ -8755,7 +8755,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["桂平西山",90],["金田起义旧址",25],["大藤峡",80]]
  },
  "玉林": {
   "tier": "normal",
@@ -8784,7 +8784,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大容山",60],["云天民俗文化城",150],["真武阁",45]]
  },
  "百色": {
   "tier": "normal",
@@ -8813,7 +8813,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["通灵大峡谷",115],["百色起义纪念馆",0],["德天瀑布",115]]
  },
  "贺州": {
   "tier": "normal",
@@ -9103,7 +9103,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["沙湖",60],["北武当",40],["平罗玉皇阁",22]]
  },
  "吴忠": {
   "tier": "normal",
@@ -9132,7 +9132,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["吴忠黄河大峡谷",95],["青铜峡",0],["董府",50]]
  },
  "固原": {
   "tier": "normal",
@@ -9161,7 +9161,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["六盘山",65],["须弥山石窟",60],["老龙潭",30]]
  },
  "中卫": {
   "tier": "normal",
@@ -9190,7 +9190,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["沙坡头",80],["通湖草原",60],["高庙",0]]
  },
  "克拉玛依": {
   "tier": "normal",
