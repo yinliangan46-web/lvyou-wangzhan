@@ -173,6 +173,7 @@ function parseFoodPrice(p){
 var BUDGET_DEF={transport:[300,1200],hotel:{budget:180,comfort:300,luxury:500},food:{budget:60,comfort:95,luxury:150},ticket:{budget:30,comfort:60,luxury:100},local:{budget:22,comfort:38,luxury:70}};
 
 function renderBudget(name, c, data, reqDays, ppl){
+  ppl=Number(ppl)||1;
   var bud=(window.MYL_BUDGET&&window.MYL_BUDGET.baseOf(name,c&&c.country))||BUDGET_DEF;
   var nights=Math.max(0,reqDays-1);
   var rooms=ppl===1?1:ppl===2?1:2;
