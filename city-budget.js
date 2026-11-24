@@ -4927,7 +4927,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["台儿庄古城",118],["抱犊崮",60],["冠世榴园",60],["铁道游击队纪念园",0]]
  },
  "东营": {
   "tier": "normal",
@@ -4956,7 +4956,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["黄河口生态旅游区",60],["孙子文化园",120],["黄河三角洲动物园",25]]
  },
  "烟台": {
   "tier": "normal",
@@ -4985,7 +4985,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["蓬莱阁",100],["长岛南北长山",100],["南山旅游区",120],["养马岛",0]]
  },
  "潍坊": {
   "tier": "normal",
@@ -5014,7 +5014,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["青州古城",0],["十笏园",22],["沂山",80],["富华游乐园",50]]
  },
  "济宁": {
   "tier": "normal",
@@ -5043,7 +5043,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["三孔景区",140],["水泊梁山",55],["微山湖旅游区",100],["尼山圣境",120]]
  },
  "泰安": {
   "tier": "normal",
@@ -5072,7 +5072,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["泰山",115],["岱庙",30],["方特欢乐世界",240]]
  },
  "威海": {
   "tier": "normal",
@@ -5101,7 +5101,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["刘公岛",122],["成山头",148],["华夏城",98],["那香海",0]]
  },
  "日照": {
   "tier": "normal",
@@ -5130,7 +5130,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["万平口",50],["海滨国家森林公园",30],["五莲山",65],["浮来山",35]]
  },
  "临沂": {
   "tier": "normal",
@@ -5159,7 +5159,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["王羲之故居",20],["沂蒙山天蒙旅游区",100],["地下大峡谷",49],["龟蒙景区",70]]
  },
  "德州": {
   "tier": "normal",
@@ -5188,7 +5188,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["泉城欧乐堡梦幻世界",220],["减河湿地公园",0],["董子园",0],["黄河故道森林公园",40]]
  },
  "聊城": {
   "tier": "normal",
@@ -5217,7 +5217,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["光岳楼",30],["东昌湖",0],["东阿阿胶城",30]]
  },
  "滨州": {
   "tier": "normal",
@@ -5246,7 +5246,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["孙子兵法城",36],["黄河楼",25],["魏氏庄园",45],["中海风景区",0]]
  },
  "菏泽": {
   "tier": "normal",
@@ -5275,7 +5275,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["曹州牡丹园",60],["水浒好汉城",60],["孙膑旅游城",40],["老城曹州",0]]
  },
  "开封": {
   "tier": "normal",
@@ -5304,7 +5304,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["清明上河园",120],["开封府",65],["大相国寺",40],["龙亭",45],["包公祠",30]]
  },
  "洛阳": {
   "tier": "normal",
@@ -5333,7 +5333,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["龙门石窟",90],["白马寺",35],["老君山",100],["关林",40],["应天门",60]]
  },
  "平顶山": {
   "tier": "normal",
@@ -5362,7 +5362,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["尧山",65],["中原大佛",120],["画眉谷",60],["二郎山",50]]
  },
  "安阳": {
   "tier": "normal",
@@ -5391,7 +5391,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["殷墟",70],["红旗渠",80],["太行大峡谷",80],["岳飞庙",38]]
  },
  "鹤壁": {
   "tier": "normal",
@@ -5420,7 +5420,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["云梦山",68],["大伾山",45],["浚县古城",0],["五岩山",29]]
  },
  "新乡": {
   "tier": "normal",
@@ -5449,7 +5449,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["八里沟",120],["万仙山",62],["回龙天界山",80]]
  },
  "焦作": {
   "tier": "normal",
