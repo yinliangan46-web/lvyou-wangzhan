@@ -6638,7 +6638,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["罗浮山",54],["惠州西湖",0],["巽寮湾",0],["南昆山",30]]
  },
  "梅州": {
   "tier": "normal",
@@ -6667,7 +6667,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["雁南飞茶田",80],["灵光寺",0],["雁鸣湖",50],["五指石",150]]
  },
  "汕尾": {
   "tier": "normal",
@@ -6696,7 +6696,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["红海湾",20],["玄武山",25],["凤山祖庙",0],["金町湾",0]]
  },
  "河源": {
   "tier": "normal",
@@ -6725,7 +6725,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["万绿湖",175],["苏家围",22],["恐龙博物馆",15],["野趣沟",50]]
  },
  "阳江": {
   "tier": "normal",
@@ -6754,7 +6754,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大角湾",48],["凌霄岩",43],["海陵岛",0],["海上丝绸之路博物馆",0]]
  },
  "清远": {
   "tier": "normal",
@@ -6783,7 +6783,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["古龙峡",180],["黄腾峡",198],["宝晶宫",76],["连州地下河",120]]
  },
  "东莞": {
   "tier": "popular",
@@ -6870,7 +6870,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["广济桥",20],["开元寺",0],["韩文公祠",0],["牌坊街",0]]
  },
  "揭阳": {
   "tier": "normal",
@@ -6899,7 +6899,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["德安里",40],["黄满寨瀑布",80],["京明温泉",138],["揭阳学宫",0]]
  },
  "云浮": {
   "tier": "normal",
@@ -6928,7 +6928,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["蟠龙洞",40],["天露山",68],["国恩寺",0],["象窝山",0]]
  },
  "儋州": {
   "tier": "normal",
@@ -6957,7 +6957,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["东坡书院",38],["石花水洞",53],["海南热带植物园",27],["莲花山",50]]
  },
  "自贡": {
   "tier": "normal",
@@ -6986,7 +6986,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["恐龙博物馆",40],["彩灯大世界",118],["燊海井",25],["方特恐龙王国",280]]
  },
  "攀枝花": {
   "tier": "normal",
@@ -7015,7 +7015,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["颛顼龙洞",50],["二滩森林公园",40],["格萨拉",50]]
  },
  "泸州": {
   "tier": "normal",
@@ -7044,7 +7044,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["老窖景区",50],["花田酒地",50],["尧坝古镇",0],["玉蟾山",0]]
  },
  "德阳": {
   "tier": "normal",
@@ -7073,7 +7073,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["三星堆博物馆",72],["白马关",0],["石刻公园",0]]
  },
  "绵阳": {
   "tier": "normal",
@@ -7102,7 +7102,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["越王楼",45],["报恩寺",40],["窦圌山",65],["北川羌城",25]]
  },
  "广元": {
   "tier": "normal",
@@ -7131,7 +7131,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["剑门关",105],["翠云廊",40],["皇泽寺",50],["千佛崖",50]]
  },
  "遂宁": {
   "tier": "normal",
@@ -7160,7 +7160,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["广德寺",0],["灵泉寺",0],["中国死海",180],["观音湖",0]]
  },
  "内江": {
   "tier": "normal",
@@ -7189,7 +7189,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["石板河",50],["圣水寺",0],["罗泉古镇",0],["大千园",0]]
  },
  "南充": {
   "tier": "normal",
@@ -7218,7 +7218,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["阆中古城",110],["朱德故里",0],["西山风景区",10],["升钟湖",0]]
  },
  "眉山": {
   "tier": "normal",
