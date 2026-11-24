@@ -2433,7 +2433,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["碛口古镇",10],["北武当山",72],["卦山",51],["玄中寺",25]]
  },
  "大连": {
   "tier": "popular",
@@ -2491,7 +2491,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["千山",80],["玉佛苑",30],["二一九公园",0],["鞍山博物馆",0]]
  },
  "抚顺": {
   "tier": "normal",
@@ -2520,7 +2520,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["赫图阿拉城",60],["皇家海洋乐园",200]]
  },
  "本溪": {
   "tier": "normal",
@@ -2549,7 +2549,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["本溪水洞",150],["关门山",90],["绿石谷",70],["五女山",80]]
  },
  "丹东": {
   "tier": "normal",
@@ -2578,7 +2578,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["鸭绿江断桥",30],["虎山长城",60],["凤凰山",80],["抗美援朝纪念馆",0],["安东老街",0]]
  },
  "锦州": {
   "tier": "normal",
@@ -2607,7 +2607,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["笔架山",65],["辽沈战役纪念馆",0],["奉国寺",25],["北普陀山",0]]
  },
  "营口": {
   "tier": "normal",
@@ -2636,7 +2636,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["望儿山",40],["西炮台",10],["仙人岛",30],["山海广场",0],["辽河老街",0]]
  },
  "阜新": {
   "tier": "normal",
@@ -2665,7 +2665,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["海棠山",50],["瑞应寺",0],["乌兰木图山",39]]
  },
  "辽阳": {
   "tier": "normal",
@@ -2694,7 +2694,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["广佑寺",0],["白塔公园",0],["核伙沟",20],["冷热地公园",10]]
  },
  "盘锦": {
   "tier": "normal",
@@ -2723,7 +2723,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["红海滩",110],["鼎翔生态旅游区",25],["金帛滩",60]]
  },
  "铁岭": {
   "tier": "normal",
@@ -2752,7 +2752,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["象牙山",50],["龙首山",0],["莲花湖湿地",0],["银冈书院",0]]
  },
  "朝阳": {
   "tier": "normal",
@@ -2781,7 +2781,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["凤凰山",60],["鸟化石国家地质公园",85],["化石谷",50]]
  },
  "葫芦岛": {
   "tier": "normal",
@@ -2810,7 +2810,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["兴城古城",100],["九门口水上长城",80],["龙湾海滨",0],["兴城海滨",0]]
  },
  "吉林": {
   "tier": "normal",
@@ -2839,7 +2839,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["雾凇岛",80],["松花湖",10],["北山公园",0],["朱雀山",32]]
  },
  "四平": {
   "tier": "normal",
@@ -2868,7 +2868,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["叶赫那拉城",41],["二龙湖",10],["半拉山门",5]]
  },
  "辽源": {
   "tier": "normal",
@@ -2897,7 +2897,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["魁星楼",30],["龙首山",0],["辽源市博物馆",0]]
  },
  "通化": {
   "tier": "normal",
@@ -2926,7 +2926,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["五女峰",65],["高句丽文物古迹景区",30],["云峰湖",40],["玉皇山公园",0]]
  },
  "白山": {
   "tier": "normal",
@@ -2955,7 +2955,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["望天鹅风景区",100],["长白山北景区",105]]
  },
  "松原": {
   "tier": "normal",
@@ -2984,7 +2984,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["查干湖",68],["龙华寺",0],["乾安泥林",60]]
  },
  "白城": {
   "tier": "normal",
