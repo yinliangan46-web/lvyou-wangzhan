@@ -3593,7 +3593,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["瘦西湖",100],["个园",45],["何园",45],["大明寺",45]]
  },
  "镇江": {
   "tier": "normal",
@@ -3622,7 +3622,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["金山",50],["焦山",60],["北固山",30],["茅山",80],["西津渡",0]]
  },
  "泰州": {
   "tier": "normal",
@@ -3651,7 +3651,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["溱湖湿地",80],["凤城河",0],["千垛景区",100],["溱潼古镇",40]]
  },
  "宿迁": {
   "tier": "normal",
@@ -3680,7 +3680,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["项王故里",80],["洪泽湖湿地",30],["皂河龙运城",0]]
  },
  "宁波": {
   "tier": "popular",
@@ -3796,7 +3796,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["南浔古镇",0],["中国大竹海",50],["太湖旅游度假区",0],["下渚湖湿地",69]]
  },
  "绍兴": {
   "tier": "popular",
@@ -3883,7 +3883,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["江郎山",0],["廿八都古镇",75],["龙游石窟",85],["孔氏南宗家庙",10]]
  },
  "舟山": {
   "tier": "normal",
@@ -3912,7 +3912,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["普陀山",160],["朱家尖南沙",70],["桃花岛",50],["东极岛",0]]
  },
  "台州": {
   "tier": "popular",
@@ -3970,7 +3970,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["古堰画乡",50],["仙都景区",100],["遂昌金矿",98],["云和梯田",80]]
  },
  "芜湖": {
   "tier": "normal",
@@ -3999,7 +3999,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["方特旅游区",280],["赭山公园",0],["镜湖公园",0],["鸠兹古镇",0]]
  },
  "蚌埠": {
   "tier": "normal",
@@ -4028,7 +4028,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["龙子湖风景区",0],["张公山风景区",0],["湖上升明月古民居博览园",60]]
  },
  "淮南": {
   "tier": "normal",
@@ -4057,7 +4057,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["八公山",40],["焦岗湖",40],["上窑国家森林公园",0],["舜耕山",0]]
  },
  "马鞍山": {
   "tier": "normal",
@@ -4086,7 +4086,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["采石矶",68],["雨山湖公园",0],["太湖山国家森林公园",40],["李白墓园",30]]
  },
  "淮北": {
   "tier": "normal",
@@ -4115,7 +4115,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["相山公园",0],["南湖湿地公园",0],["隋唐大运河博物馆",0],["隋唐运河古镇",0]]
  },
  "铜陵": {
   "tier": "normal",
@@ -4144,7 +4144,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["天井湖公园",0],["大通古镇",0],["凤凰山景区",20],["犁桥水镇",45]]
  },
  "安庆": {
   "tier": "normal",
@@ -4173,7 +4173,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["天柱山",130],["迎江寺",10],["菱湖公园",0],["五千年文博园",105]]
  },
  "滁州": {
   "tier": "normal",
@@ -4202,7 +4202,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["琅琊山",65],["明皇陵",50],["小岗村",0]]
  },
  "阜阳": {
   "tier": "normal",
@@ -4231,7 +4231,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["八里河旅游区",85],["迪沟生态旅游区",40],["阜阳生态乐园",52],["文峰塔",10]]
  },
  "宿州": {
   "tier": "normal",
@@ -4260,7 +4260,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["皇藏峪国家森林公园",50],["虞姬文化园",30],["宿州野生动物园",88]]
  },
  "六安": {
   "tier": "normal",
@@ -4289,7 +4289,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["天堂寨",100],["万佛湖",65],["大别山石窟",80]]
  },
  "亳州": {
   "tier": "normal",
