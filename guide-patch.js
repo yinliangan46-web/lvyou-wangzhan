@@ -168,8 +168,15 @@
     var hasTraffic = (c.airfare && c.airfare.length) || (c.trains && c.trains.length);
     var hasHotel = c.hotels && c.hotels.length;
 
+    /* 天数/晚数与实际行程节点对齐：有标注的城市按最终行程天数生成 n天(n-1)晚；
+       无标注的 B 级城市保持空，不臆造行程长度。 */
+    var effDays = c.days
+      ? (itin.length ? itin.length + '天' + Math.max(0, itin.length - 1) + '晚' : c.days)
+      : c.days;
+
     return Object.assign({}, c, {
       itinerary: itin,
+      days: effDays,
       foods: foods,
       landmarks: landmarks,
       history: history,
