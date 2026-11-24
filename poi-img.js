@@ -3375,7 +3375,19 @@
         "文和友": "images/poi/afa7e81fa8.jpg",
         "冬瓜山肉肠": "images/poi/8ecdd0dcb3.jpg",
         "姜母鸭": "images/poi/fdc2b0c716.jpg",
-        "泉州牛肉面": "images/poi/1d14c622ff.jpg"
+        "泉州牛肉面": "images/poi/1d14c622ff.jpg",
+        "南京盐水鸭": "images/poi/b2b3bac440.jpg",
+        "鸭血粉丝汤": "images/poi/0ff51b4c75.jpg",
+        "武汉热干面": "images/poi/5a192fa552.jpg",
+        "成都担担面": "images/poi/5969c9d22a.jpg",
+        "广式烧鹅": "images/poi/8e70792d77.jpg",
+        "广州肠粉": "images/poi/83d217553f.jpg",
+        "柳州螺蛳粉": "images/poi/a0de485e36.jpg",
+        "过桥米线": "images/poi/1580ff5a3f.jpg",
+        "西安凉皮": "images/poi/80e563f172.jpg",
+        "逍遥镇胡辣汤": "images/poi/75c15bc201.jpg",
+        "嘉兴粽子": "images/poi/748d55d8ed.jpg",
+        "宁波汤圆": "images/poi/65d36e0a84.jpg"
     };
     /* 名称归一：去括号注释、去“的…”时段后缀、去空格标点，便于别名/简称命中本地实拍 */
     function normName(s) {
