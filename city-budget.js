@@ -3013,7 +3013,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["向海自然保护区",0],["莫莫格自然保护区",60]]
  },
  "延边": {
   "tier": "normal",
@@ -3042,7 +3042,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["朝鲜族民俗园",30],["长白山北坡",105],["水上市场",0],["延边大学",0],["图们口岸",0]]
  },
  "齐齐哈尔": {
   "tier": "normal",
@@ -3071,7 +3071,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["扎龙生态旅游区",65],["龙沙公园",0],["明月岛",50]]
  },
  "鸡西": {
   "tier": "normal",
@@ -3100,7 +3100,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["兴凯湖新开流景区",40],["虎头要塞",25],["乌苏里江起点广场",0],["麒麟山",30]]
  },
  "鹤岗": {
   "tier": "normal",
@@ -3129,7 +3129,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["龙江三峡",0],["名山岛",0],["鹤立湖",0]]
  },
  "双鸭山": {
   "tier": "normal",
@@ -3158,7 +3158,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["珍宝岛",0],["七星山国家森林公园",0],["安邦河湿地公园",0],["挹娄文化风情园",0]]
  },
  "大庆": {
   "tier": "normal",
@@ -3187,7 +3187,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["铁人王进喜纪念馆",0],["大庆博物馆",0],["龙凤湿地",0],["油田乐园",0],["大庆石油馆",50]]
  },
  "伊春": {
   "tier": "normal",
@@ -3216,7 +3216,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["汤旺河林海奇石",70],["五营红松林海",60],["茅兰沟",65],["金山鹿苑",40]]
  },
  "佳木斯": {
   "tier": "normal",
@@ -3245,7 +3245,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["水源山公园",20],["三江口生态旅游区",0],["街津口赫哲族村",70],["黑瞎子岛",80]]
  },
  "七台河": {
   "tier": "normal",
@@ -3274,7 +3274,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["石龙山国家森林公园",30],["桃山湖国家湿地公园",0],["冠军公园",0],["仙洞山",0]]
  },
  "牡丹江": {
   "tier": "normal",
@@ -3303,7 +3303,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["镜泊湖",100],["雪乡",140],["横道河子东北虎林园",50],["柴河小九寨",72]]
  },
  "黑河": {
   "tier": "normal",
@@ -3332,7 +3332,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["五大连池风景区",0],["瑷珲古城",0],["中俄民族风情园",40],["龙门石寨",45]]
  },
  "绥化": {
   "tier": "normal",
@@ -3361,7 +3361,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["金龟山庄",30],["东林寺",0],["绥棱林业局生态文化景区",0]]
  },
  "无锡": {
   "tier": "popular",
@@ -3419,7 +3419,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["云龙湖",0],["汉文化景区",90],["龟山汉墓",80],["户部山",25]]
  },
  "常州": {
   "tier": "normal",
@@ -3448,7 +3448,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["中华恐龙园",198],["天目湖山水园",120],["南山竹海",90],["天宁寺",0]]
  },
  "南通": {
   "tier": "normal",
@@ -3477,7 +3477,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["狼山风景区",70],["濠河风景区",0],["圆陀角黄金海滩",30]]
  },
  "连云港": {
   "tier": "normal",
@@ -3506,7 +3506,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["花果山",90],["连岛",50],["渔湾",40],["孔望山",40]]
  },
  "淮安": {
   "tier": "normal",
@@ -3535,7 +3535,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["周恩来故里",0],["淮安府署",50],["吴承恩故居",40],["里运河文化长廊",0]]
  },
  "盐城": {
   "tier": "normal",
@@ -3564,7 +3564,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["丹顶鹤湿地生态旅游区",40],["中华麋鹿园",45],["荷兰花海",50],["大洋湾生态旅游景区",40]]
  },
  "扬州": {
   "tier": "normal",
