@@ -247,7 +247,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["象鼻山",0],["芦笛岩",90],["独秀峰·王城",100],["漓江游船(三星船)",210],["两江四湖夜航",190],["兴坪古镇",0]]
  },
  "西安": {
   "tier": "popular",
@@ -426,7 +426,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["丽江古城维护费",50],["玉龙雪山进山费",100],["玉龙雪山大索道",140],["束河古镇",0]]
  },
  "东京": {
   "tier": "abroad",
@@ -681,7 +681,7 @@ window.CITY_BUDGET = {
    "comfort": 50,
    "luxury": 90
   },
-  "spots": []
+  "spots": [["香港迪士尼乐园(1日成人·HK$)",669],["香港海洋公园(成人·HK$)",538],["太平山缆车+凌霄阁摩天台(HK$)",198],["维多利亚港",0]]
  },
  "长春": {
   "tier": "popular",
@@ -781,7 +781,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["大理古城",0],["崇圣寺三塔",75],["苍山感通索道(往返)",100],["洱海生态廊道",0],["双廊古镇",0]]
  },
  "敦煌": {
   "tier": "popular",
@@ -810,7 +810,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["莫高窟(旺季正常参观)",238],["鸣沙山月牙泉",110],["雅丹国家地质公园",50],["阳关遗址",50],["玉门关遗址",40]]
  },
  "福州": {
   "tier": "popular",
@@ -839,7 +839,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["三坊七巷",0],["鼓山",0],["福州西湖公园",0],["西禅寺",20]]
  },
  "广州": {
   "tier": "first",
@@ -897,7 +897,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["黔灵山公园",0],["青岩古镇(套票)",60],["天河潭",10]]
  },
  "海口": {
   "tier": "popular",
@@ -926,7 +926,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["骑楼老街",0],["假日海滩",0],["雷琼火山群地质公园",45],["五公祠",28]]
  },
  "杭州": {
   "tier": "first",
@@ -1026,7 +1026,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["三河古镇",0],["包公园(联票)",40],["逍遥津公园",0],["巢湖",0]]
  },
  "黄果树": {
   "tier": "popular",
@@ -1055,7 +1055,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["黄果树瀑布(旺季门票)",160]]
  },
  "黄山": {
   "tier": "popular",
@@ -1084,7 +1084,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["黄山风景区(平旺季)",190],["云谷索道",80],["玉屏索道",90],["西海大峡谷缆车",100]]
  },
  "呼和浩特": {
   "tier": "popular",
@@ -1113,7 +1113,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["大召寺",35],["内蒙古博物院",0],["昭君博物院",0],["响沙湾",130]]
  },
  "济南": {
   "tier": "popular",
@@ -1209,7 +1209,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["石林风景区",130],["云南民族村",90],["西山龙门",40],["滇池",0]]
  },
  "兰州": {
   "tier": "popular",
@@ -1238,7 +1238,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["中山桥",0],["甘肃省博物馆",0],["白塔山公园",0],["五泉山公园",0],["水车博览园",10]]
  },
  "拉萨": {
   "tier": "popular",
@@ -1267,7 +1267,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["布达拉宫(旺季一号线)",200],["大昭寺",85],["罗布林卡",60],["色拉寺",50],["八廓街",0]]
  },
  "乐山": {
   "tier": "popular",
@@ -1296,7 +1296,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["乐山大佛",80],["峨眉山(旺季门票)",160]]
  },
  "南昌": {
   "tier": "popular",
@@ -1325,7 +1325,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["滕王阁",50],["八一广场",0],["梅岭",30],["绳金塔",0]]
  },
  "南京": {
   "tier": "first",
@@ -1404,7 +1404,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["青秀山",20],["大明山",96],["三街两巷",0]]
  },
  "青岛": {
   "tier": "first",
@@ -1520,7 +1520,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["正定隆兴寺",50],["赵州桥",0],["西柏坡纪念馆",0]]
  },
  "苏州": {
   "tier": "first",
@@ -1591,7 +1591,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["晋祠博物馆",80],["永祚寺(双塔寺)",30],["山西博物院",0]]
  },
  "乌鲁木齐": {
   "tier": "popular",
@@ -1620,7 +1620,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["天山天池(夏秋季门票)",95],["新疆维吾尔自治区博物馆",0],["新疆国际大巴扎",0]]
  },
  "武汉": {
   "tier": "popular",
@@ -1728,7 +1728,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["塔尔寺(旺季全价)",70]]
  },
  "西双版纳": {
   "tier": "popular",
@@ -1757,7 +1757,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["中科院热带植物园",80],["野象谷",60],["曼听公园",40]]
  },
  "银川": {
   "tier": "popular",
@@ -1786,7 +1786,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["镇北堡西部影城",80],["西夏王陵(含观光车)",75],["沙湖",50]]
  },
  "张家界": {
   "tier": "popular",
@@ -1853,7 +1853,7 @@ window.CITY_BUDGET = {
    "comfort": 40,
    "luxury": 80
   },
-  "spots": []
+  "spots": [["嵩山少林寺",80],["二七纪念塔",0]]
  },
  "唐山": {
   "tier": "normal",
