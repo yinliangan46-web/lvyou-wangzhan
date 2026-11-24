@@ -4318,7 +4318,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["花戏楼",50],["曹操运兵道",40],["南京巷钱庄",30],["林拥城",0]]
  },
  "池州": {
   "tier": "normal",
@@ -4347,7 +4347,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["九华山",160],["牯牛降",90],["杏花村",0],["九华天池",80]]
  },
  "宣城": {
   "tier": "normal",
@@ -4376,7 +4376,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["敬亭山",50],["桃花潭",65],["查济古镇",65],["中国鳄鱼湖",30]]
  },
  "莆田": {
   "tier": "normal",
@@ -4405,7 +4405,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["湄洲岛",65],["九鲤湖",50],["南少林寺",0],["妈祖文化园",50]]
  },
  "三明": {
   "tier": "normal",
@@ -4434,7 +4434,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大金湖",80],["桃源洞",60],["玉华洞",75],["尚书第",20]]
  },
  "泉州": {
   "tier": "popular",
@@ -4521,7 +4521,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["武夷山",150],["下梅古民居",50],["九曲溪竹筏",100],["宋街",0]]
  },
  "龙岩": {
   "tier": "normal",
@@ -4550,7 +4550,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["永定土楼",65],["冠豸山",100],["古田会议旧址",0],["龙硿洞",47]]
  },
  "宁德": {
   "tier": "normal",
@@ -4579,7 +4579,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["太姥山",140],["白水洋",120],["鸳鸯溪",80],["嵛山岛",80]]
  },
  "景德镇": {
   "tier": "normal",
@@ -4608,7 +4608,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["古窑民俗博览区",95],["陶溪川文创街区",0],["瑶里风景区",110],["浮梁古县衙",45]]
  },
  "萍乡": {
   "tier": "normal",
@@ -4637,7 +4637,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["武功山",70],["孽龙洞",65],["安源路矿工人运动纪念馆",0]]
  },
  "九江": {
   "tier": "normal",
@@ -4666,7 +4666,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["庐山",160],["浔阳楼",19],["白鹿洞书院",40],["东林大佛",0]]
  },
  "新余": {
   "tier": "normal",
@@ -4695,7 +4695,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["仙女湖",75],["抱石公园",0]]
  },
  "鹰潭": {
   "tier": "normal",
@@ -4724,7 +4724,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["龙虎山",120],["上清古镇",0]]
  },
  "赣州": {
   "tier": "normal",
@@ -4753,7 +4753,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["通天岩",55],["郁孤台",0],["叶坪景区",35],["八境台",0]]
  },
  "吉安": {
   "tier": "normal",
@@ -4782,7 +4782,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["井冈山",165],["庐陵文化生态园",0],["白鹭洲书院",30]]
  },
  "宜春": {
   "tier": "normal",
@@ -4811,7 +4811,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["明月山",95],["三爪仑",80],["温汤镇",0],["禅都文化博览园",60]]
  },
  "抚州": {
   "tier": "normal",
@@ -4840,7 +4840,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["大觉山",60],["文昌里历史文化街区",0]]
  },
  "上饶": {
   "tier": "normal",
@@ -4869,7 +4869,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["三清山",120],["婺源江湾",60],["龟峰",60],["望仙谷",100]]
  },
  "淄博": {
   "tier": "normal",
@@ -4898,7 +4898,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["周村古商城",50],["潭溪山",80],["鲁山森林公园",25],["聊斋城",40]]
  },
  "枣庄": {
   "tier": "normal",
