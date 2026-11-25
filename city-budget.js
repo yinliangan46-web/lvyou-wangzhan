@@ -8958,7 +8958,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["华山",140],["西岳庙",15],["司马迁祠",80]]
  },
  "昌都": {
   "tier": "normal",
@@ -8987,7 +8987,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["壶口瀑布",100],["延安革命纪念馆",0],["黄帝陵",75]]
  },
  "林芝": {
   "tier": "normal",
@@ -9016,7 +9016,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["汉中武侯祠",60],["朱鹮梨园",0],["石门栈道",70]]
  },
  "山南": {
   "tier": "normal",
@@ -9045,7 +9045,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["榆林古城",0],["红碱淖",55],["镇北台",30]]
  },
  "那曲": {
   "tier": "normal",
@@ -9074,7 +9074,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["瀛湖",35],["南宫山",50]]
  },
  "石嘴山": {
   "tier": "normal",
@@ -9219,7 +9219,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["金丝峡",100],["牛背梁",100],["棣花古镇",0]]
  },
  "吐鲁番": {
   "tier": "normal",
