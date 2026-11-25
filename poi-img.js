@@ -3323,7 +3323,19 @@
   "徽州古城": "images/poi/59450d3569.jpg",
   "屯溪老街": "images/poi/35ea60f1a8.jpg",
   "新安江山水画廊": "images/poi/0676903854.jpg",
-  "唐模": "images/poi/03d8b9bdc0.jpg"
+  "唐模": "images/poi/03d8b9bdc0.jpg",
+  "福建博物院": "images/poi/a294b7402b.jpg",
+  "福州美术馆": "images/poi/354b3a409b.jpg",
+  "林则徐纪念馆": "images/poi/ab8a2af5c0.jpg",
+  "严复故居": "images/poi/2c1141e55e.jpg",
+  "马尾船政文化景区": "images/poi/84da231b71.jpg",
+  "连江奇达村": "images/poi/3d488a540c.jpg",
+  "滇池": "images/poi/109e4ee786.jpg",
+  "云南大学": "images/poi/cf1c63cc5b.jpg",
+  "云南民族村": "images/poi/9f982de186.jpg",
+  "云南省博物馆": "images/poi/8cf81468d5.jpg",
+  "大观楼": "images/poi/9e3e6f340a.jpg",
+  "官渡古镇": "images/poi/34eaa9a163.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
