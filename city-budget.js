@@ -10002,7 +10002,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["长白山北坡",105],["延吉图们江",0],["朝鲜族民俗村",30]]
  },
  "大兴安岭地区": {
   "tier": "normal",
@@ -10031,7 +10031,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["北极村",88],["北红村",0],["龙江第一湾",50]]
  },
  "济源": {
   "tier": "normal",
@@ -10060,7 +10060,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["王屋山",50],["小浪底",40],["五龙口",50]]
  },
  "恩施土家族苗族自治州": {
   "tier": "normal",
@@ -10089,7 +10089,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["恩施大峡谷",170],["腾龙洞",150],["屏山峡谷",210]]
  },
  "湘西土家族苗族自治州": {
   "tier": "normal",
@@ -10118,7 +10118,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["凤凰古城",0],["沱江",0],["沈从文故居",20]]
  },
  "三沙": {
   "tier": "normal",
