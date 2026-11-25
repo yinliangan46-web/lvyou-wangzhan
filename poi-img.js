@@ -3335,7 +3335,19 @@
   "云南民族村": "images/poi/9f982de186.jpg",
   "云南省博物馆": "images/poi/8cf81468d5.jpg",
   "大观楼": "images/poi/9e3e6f340a.jpg",
-  "官渡古镇": "images/poi/34eaa9a163.jpg"
+  "官渡古镇": "images/poi/34eaa9a163.jpg",
+  "洛阳桥": "images/poi/88c49e95c0.jpg",
+  "天后宫": "images/poi/6777b618ff.jpg",
+  "崇武古城": "images/poi/5420d03536.jpg",
+  "泉州博物馆": "images/poi/fc5839a9da.jpg",
+  "闽台缘博物馆": "images/poi/c064e4710c.jpg",
+  "蔡氏古民居": "images/poi/ac592843b2.jpg",
+  "遵义会议会址": "images/poi/b22826790a.jpg",
+  "赤水丹霞": "images/poi/f6f591849d.jpg",
+  "丙安古镇": "images/poi/84bf98f853.jpg",
+  "娄山关": "images/poi/2e56cb42f6.jpg",
+  "海龙屯": "images/poi/4def960bae.jpg",
+  "茅台镇": "images/poi/ff64868712.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
