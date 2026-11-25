@@ -3359,7 +3359,19 @@
   "无锡博物院": "images/poi/e067741b26.jpg",
   "三国城": "images/poi/354fe52797.jpg",
   "水浒城": "images/poi/dd7856379d.jpg",
-  "宜兴竹海": "images/poi/11679bb057.jpg"
+  "宜兴竹海": "images/poi/11679bb057.jpg",
+  "正定古城": "images/poi/79558f53f5.jpg",
+  "荣国府": "images/poi/ad2c44f760.jpg",
+  "抱犊寨": "images/poi/63bcd32d4f.jpg",
+  "河北博物院": "images/poi/fa03a5fbb6.jpg",
+  "石家庄美术馆": "images/poi/bfd052d3e0.jpg",
+  "驼梁": "images/poi/90fe7fdf51.jpg",
+  "洛阳博物馆": "images/poi/b63204e5f4.jpg",
+  "隋唐洛阳城国家遗址公园": "images/poi/8ba03ebc43.jpg",
+  "洛邑古城": "images/poi/9123337427.jpg",
+  "隋唐城遗址植物园": "images/poi/f0518a4817.jpg",
+  "洛阳古代艺术博物馆": "images/poi/919e0277e6.jpg",
+  "天子驾六博物馆": "images/poi/e9bcacd61f.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
