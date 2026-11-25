@@ -3419,7 +3419,19 @@
   "盐业历史博物馆": "images/poi/224328d99b.jpg",
   "仙市古镇": "images/poi/d96cd7ca2a.jpg",
   "荣县大佛": "images/poi/285f15a169.jpg",
-  "上海博物馆": "images/poi/89674c8724.jpg"
+  "上海博物馆": "images/poi/89674c8724.jpg",
+  "京杭大运河杭州段": "images/poi/6f3516837c.jpg",
+  "富春江": "images/poi/eae1709080.jpg",
+  "桐庐垂云通天河": "images/poi/628c8ab63b.jpg",
+  "杭州动物园": "images/poi/1005a11bc9.jpg",
+  "杭州博物馆": "images/poi/0ef728f373.jpg",
+  "情人坝": "images/poi/b43719c08e.jpg",
+  "北九水": "images/poi/4ea95eb859.jpg",
+  "第一海水浴场": "images/poi/a567923a62.jpg",
+  "青岛美术馆": "images/poi/202600cbe3.jpg",
+  "西海美术馆": "images/poi/1379aaa27f.jpg",
+  "青岛邮电博物馆": "images/poi/383142575a.jpg",
+  "木兰天池": "images/poi/e4ddbbc60d.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
