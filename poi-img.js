@@ -3371,7 +3371,19 @@
   "洛邑古城": "images/poi/9123337427.jpg",
   "隋唐城遗址植物园": "images/poi/f0518a4817.jpg",
   "洛阳古代艺术博物馆": "images/poi/919e0277e6.jpg",
-  "天子驾六博物馆": "images/poi/e9bcacd61f.jpg"
+  "天子驾六博物馆": "images/poi/e9bcacd61f.jpg",
+  "周庄": "images/poi/51d3914456.jpg",
+  "甪直古镇": "images/poi/89bffffaac.jpg",
+  "木渎古镇": "images/poi/559552bf5b.jpg",
+  "御窑金砖博物馆": "images/poi/dc88000f1b.jpg",
+  "苏州丝绸博物馆": "images/poi/b6a6544edb.jpg",
+  "盘门景区": "images/poi/ecd8615f8f.jpg",
+  "广东美术馆": "images/poi/11100db9de.jpg",
+  "黄埔军校旧址": "images/poi/fd5e17e542.jpg",
+  "花城广场": "images/poi/45f732670a.jpg",
+  "太古仓码头": "images/poi/8076d92dee.jpg",
+  "广州博物馆": "images/poi/4d22c56dc6.jpg",
+  "黄花岗": "images/poi/74f669cd80.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
