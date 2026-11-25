@@ -3251,7 +3251,19 @@
   "天主教堂": "images/poi/8980caf9d7.jpg",
   "迎宾馆": "images/poi/d5ca567f96.jpg",
   "黄县路": "images/poi/a3870879fc.jpg",
-  "五四广场": "images/poi/7d63608276.jpg"
+  "五四广场": "images/poi/7d63608276.jpg",
+  "户部巷": "images/poi/d080313371.jpg",
+  "昙华林": "images/poi/5ab7db9f86.jpg",
+  "武汉美术馆": "images/poi/c6787e4bef.jpg",
+  "辛亥革命武昌起义纪念馆": "images/poi/60c38a3149.jpg",
+  "长江大桥": "images/poi/d855760836.jpg",
+  "汉阳造艺术区": "images/poi/6b9e3df8b7.jpg",
+  "辽宁省博物馆": "images/poi/a28887ace9.jpg",
+  "沈阳博物馆": "images/poi/f18ae635d6.jpg",
+  "九一八历史博物馆": "images/poi/ca68c0beb2.jpg",
+  "中街": "images/poi/b29b5aec52.jpg",
+  "老北市": "images/poi/17e7808e47.jpg",
+  "中国工业博物馆": "images/poi/c4e9e9e5be.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
