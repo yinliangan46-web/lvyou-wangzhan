@@ -3347,7 +3347,19 @@
   "丙安古镇": "images/poi/84bf98f853.jpg",
   "娄山关": "images/poi/2e56cb42f6.jpg",
   "海龙屯": "images/poi/4def960bae.jpg",
-  "茅台镇": "images/poi/ff64868712.jpg"
+  "茅台镇": "images/poi/ff64868712.jpg",
+  "西夏王陵": "images/poi/8db9c965a4.jpg",
+  "镇北堡西部影城": "images/poi/aef8bcac08.jpg",
+  "宁夏博物馆": "images/poi/48746498a8.jpg",
+  "黄沙古渡": "images/poi/0f202fe1ce.jpg",
+  "中华回乡文化园": "images/poi/d56fc45ce9.jpg",
+  "黄河军事文化博览园": "images/poi/c0bb35d681.jpg",
+  "南长街": "images/poi/6a6edfc04b.jpg",
+  "清名桥古运河": "images/poi/23a5ca3b13.jpg",
+  "无锡博物院": "images/poi/e067741b26.jpg",
+  "三国城": "images/poi/354fe52797.jpg",
+  "水浒城": "images/poi/dd7856379d.jpg",
+  "宜兴竹海": "images/poi/11679bb057.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
