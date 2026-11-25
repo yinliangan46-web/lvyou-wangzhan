@@ -3239,7 +3239,19 @@
   "北京路步行街": "images/poi/62175f16dd.jpg",
   "粤剧艺术博物馆": "images/poi/e1a2c050d9.jpg",
   "广东省博物馆": "images/poi/e67ed674f4.jpg",
-  "广州图书馆": "images/poi/8b83168f24.jpg"
+  "广州图书馆": "images/poi/8b83168f24.jpg",
+  "九溪十八涧": "images/poi/aef71dabd3.jpg",
+  "南宋御街": "images/poi/c0a3e000eb.jpg",
+  "中国美术学院象山校区": "images/poi/a6e4bdc040.jpg",
+  "浙江省博物馆": "images/poi/9539c03d7e.jpg",
+  "浙江美术馆": "images/poi/b0b44af5f0.jpg",
+  "中国茶叶博物馆": "images/poi/e418f194cc.jpg",
+  "小鱼山": "images/poi/039acd0007.jpg",
+  "基督教堂": "images/poi/9b32ff47bf.jpg",
+  "天主教堂": "images/poi/8980caf9d7.jpg",
+  "迎宾馆": "images/poi/d5ca567f96.jpg",
+  "黄县路": "images/poi/a3870879fc.jpg",
+  "五四广场": "images/poi/7d63608276.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
