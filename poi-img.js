@@ -3299,7 +3299,19 @@
   "大足石刻": "images/poi/3bfba0e8a2.jpg",
   "龚滩古镇": "images/poi/96a2361a5e.jpg",
   "白公馆": "images/poi/46555b5ea9.jpg",
-  "武隆天坑": "images/poi/e6d840378b.jpg"
+  "武隆天坑": "images/poi/e6d840378b.jpg",
+  "都正街": "images/poi/738ac9ea06.jpg",
+  "铜官窑古镇": "images/poi/db62af59f2.jpg",
+  "靖港古镇": "images/poi/9af6d6b22a.jpg",
+  "后湖国际艺术园": "images/poi/533facc4f6.jpg",
+  "湖南第一师范": "images/poi/54830b3f7b.jpg",
+  "太平街": "images/poi/70eee17876.jpg",
+  "五大道": "images/poi/11dfdd8c33.jpg",
+  "张学良故居": "images/poi/212c8b2445.jpg",
+  "天津博物馆": "images/poi/edd04d40a7.jpg",
+  "天津美术馆": "images/poi/b3c76ee9a1.jpg",
+  "西开教堂": "images/poi/6c875b8b3d.jpg",
+  "大悲禅院": "images/poi/383b21b359.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
