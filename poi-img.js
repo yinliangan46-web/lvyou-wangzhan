@@ -3461,7 +3461,25 @@
   "M+": "images/poi/b0d947f8f8.jpg",
   "香港公园": "images/poi/0d57b350aa.jpg",
   "天坛大佛": "images/poi/b731183498.jpg",
-  "安仁古镇": "images/poi/248c0f4241.jpg"
+  "安仁古镇": "images/poi/248c0f4241.jpg",
+  "怪坡": "images/poi/e9c622d2ce.jpg",
+  "沈阳森林动物园": "images/poi/f55440b177.jpg",
+  "辽宁博物馆": "images/poi/479130a522.jpg",
+  "纯阳宫": "images/poi/c11cd56de5.jpg",
+  "太原古县城": "images/poi/a36c85baf0.jpg",
+  "山西青铜博物馆": "images/poi/b06d686d53.jpg",
+  "太原美术馆": "images/poi/252248b7a1.jpg",
+  "青龙古镇": "images/poi/8292896a00.jpg",
+  "公主府": "images/poi/36a107171a.jpg",
+  "塞上老街": "images/poi/0179649e52.jpg",
+  "莫尼山非遗小镇": "images/poi/b20a69ac53.jpg",
+  "将军衙署": "images/poi/468940ae81.jpg",
+  "公主府公园": "images/poi/7ba87f0194.jpg",
+  "宁波博物馆": "images/poi/de841ad8cb.jpg",
+  "宁波美术馆": "images/poi/af73043056.jpg",
+  "石浦渔港古城": "images/poi/fbcce81453.jpg",
+  "前童古镇": "images/poi/1abad65523.jpg",
+  "日湖公园": "images/poi/0b30204ccb.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
