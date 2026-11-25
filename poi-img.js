@@ -3395,7 +3395,19 @@
   "中国陶瓷博物馆": "images/poi/7131e0ed79.jpg",
   "瑶里古镇": "images/poi/f1cc4be37e.jpg",
   "浮梁古县衙": "images/poi/1a50761d91.jpg",
-  "陶阳里": "images/poi/52a2c1dcc1.jpg"
+  "陶阳里": "images/poi/52a2c1dcc1.jpg",
+  "靖江王城": "images/poi/9abced85e8.jpg",
+  "芦笛岩": "images/poi/a94a1d37fe.jpg",
+  "遇龙河": "images/poi/ba5b88ab83.jpg",
+  "十里画廊": "images/poi/ea6d6b9d4e.jpg",
+  "兴坪古镇": "images/poi/d9fe225a9a.jpg",
+  "银子岩": "images/poi/caea90c02e.jpg",
+  "贵州省博物馆": "images/poi/df6efe9963.jpg",
+  "青岩古镇": "images/poi/3e3542e4c3.jpg",
+  "天河潭": "images/poi/2995899338.jpg",
+  "高坡云顶": "images/poi/b490fdb34c.jpg",
+  "多彩贵州城": "images/poi/33b0d5446f.jpg",
+  "息烽集中营": "images/poi/53a4826fe3.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
