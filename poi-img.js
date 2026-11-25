@@ -3227,7 +3227,19 @@
   "李自健美术馆": "images/poi/c348ba0aff.jpg",
   "梅溪湖大剧院": "images/poi/b79745b2f9.jpg",
   "白沙古井": "images/poi/1c440f27ef.jpg",
-  "鹅岭二厂": "images/poi/388cc73920.jpg"
+  "鹅岭二厂": "images/poi/388cc73920.jpg",
+  "沧浪亭": "images/poi/345d2f037f.jpg",
+  "苏州博物馆": "images/poi/b085b8c1ed.jpg",
+  "苏州博物馆西馆": "images/poi/ed0ee2e272.jpg",
+  "苏州美术馆": "images/poi/2be21f2620.jpg",
+  "诚品书店": "images/poi/2534ccd06c.jpg",
+  "同里古镇": "images/poi/6cbd686774.jpg",
+  "沙面": "images/poi/07ff466c7c.jpg",
+  "上下九步行街": "images/poi/4b55c562ad.jpg",
+  "北京路步行街": "images/poi/62175f16dd.jpg",
+  "粤剧艺术博物馆": "images/poi/e1a2c050d9.jpg",
+  "广东省博物馆": "images/poi/e67ed674f4.jpg",
+  "广州图书馆": "images/poi/8b83168f24.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
