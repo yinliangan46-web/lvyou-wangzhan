@@ -3383,7 +3383,19 @@
   "花城广场": "images/poi/45f732670a.jpg",
   "太古仓码头": "images/poi/8076d92dee.jpg",
   "广州博物馆": "images/poi/4d22c56dc6.jpg",
-  "黄花岗": "images/poi/74f669cd80.jpg"
+  "黄花岗": "images/poi/74f669cd80.jpg",
+  "俄罗斯风情街": "images/poi/d31e51b0cf.jpg",
+  "中山广场": "images/poi/66c93a5554.jpg",
+  "旅顺口": "images/poi/4ec478bf97.jpg",
+  "日俄监狱旧址": "images/poi/9233d61d2f.jpg",
+  "大连自然博物馆": "images/poi/f0128f9827.jpg",
+  "大连美术馆": "images/poi/f07b926568.jpg",
+  "陶溪川文创街区": "images/poi/a201f5a4e4.jpg",
+  "御窑厂国家考古遗址公园": "images/poi/83e425d76c.jpg",
+  "中国陶瓷博物馆": "images/poi/7131e0ed79.jpg",
+  "瑶里古镇": "images/poi/f1cc4be37e.jpg",
+  "浮梁古县衙": "images/poi/1a50761d91.jpg",
+  "陶阳里": "images/poi/52a2c1dcc1.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
