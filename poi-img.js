@@ -3431,7 +3431,19 @@
   "青岛美术馆": "images/poi/202600cbe3.jpg",
   "西海美术馆": "images/poi/1379aaa27f.jpg",
   "青岛邮电博物馆": "images/poi/383142575a.jpg",
-  "木兰天池": "images/poi/e4ddbbc60d.jpg"
+  "木兰天池": "images/poi/e4ddbbc60d.jpg",
+  "百花洲": "images/poi/bb4d393f77.jpg",
+  "济南博物馆": "images/poi/1da4c79b73.jpg",
+  "泉城广场": "images/poi/29b662cdf5.jpg",
+  "百花公园": "images/poi/e668e7e224.jpg",
+  "方特东方神画": "images/poi/5076fe7ef8.jpg",
+  "郑州商代遗址": "images/poi/80ef1ee7d6.jpg",
+  "黄河风景名胜区": "images/poi/45aa652f8f.jpg",
+  "郑州海洋馆": "images/poi/31e5d48e70.jpg",
+  "郑州大剧院": "images/poi/0fced3d1ef.jpg",
+  "建业电影小镇": "images/poi/e76ae6ebe2.jpg",
+  "开封府": "images/poi/9907a9fc32.jpg",
+  "包公祠": "images/poi/d6af2d1ccb.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
