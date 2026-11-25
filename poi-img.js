@@ -3287,7 +3287,19 @@
   "半坡博物馆": "images/poi/77195cd563.jpg",
   "曲江池遗址公园": "images/poi/fa206f0ea1.jpg",
   "高家大院": "images/poi/e05c9f14c6.jpg",
-  "易俗社文化街区": "images/poi/6f5cf18c00.jpg"
+  "易俗社文化街区": "images/poi/6f5cf18c00.jpg",
+  "东部华侨城": "images/poi/d7175d755c.jpg",
+  "较场尾": "images/poi/3ca6cd10f6.jpg",
+  "深圳美术馆": "images/poi/3dc8c04cbc.jpg",
+  "关山月美术馆": "images/poi/08e97f754a.jpg",
+  "欢乐海岸": "images/poi/4434893551.jpg",
+  "OCT-LOFT华侨城创意文化园": "images/poi/bd83895618.jpg",
+  "弹子石老街": "images/poi/39fbe55bce.jpg",
+  "来福士探索舱": "images/poi/d1d8dab8ab.jpg",
+  "大足石刻": "images/poi/3bfba0e8a2.jpg",
+  "龚滩古镇": "images/poi/96a2361a5e.jpg",
+  "白公馆": "images/poi/46555b5ea9.jpg",
+  "武隆天坑": "images/poi/e6d840378b.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
