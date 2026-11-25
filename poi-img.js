@@ -3275,7 +3275,19 @@
   "郑州博物馆": "images/poi/a780c16b65.jpg",
   "郑州美术馆": "images/poi/f1158f2864.jpg",
   "只有河南·戏剧幻城": "images/poi/a35ddefb02.jpg",
-  "康百万庄园": "images/poi/77015688a2.jpg"
+  "康百万庄园": "images/poi/77015688a2.jpg",
+  "大熊猫繁育研究基地": "images/poi/970c48692b.jpg",
+  "杜甫草堂": "images/poi/9ad1220876.jpg",
+  "成都博物馆": "images/poi/5acd7e863a.jpg",
+  "金沙遗址博物馆": "images/poi/c7ffb927e8.jpg",
+  "文殊院": "images/poi/532e70a928.jpg",
+  "青羊宫": "images/poi/ae306a2965.jpg",
+  "永兴坊": "images/poi/369c158561.jpg",
+  "西安美术馆": "images/poi/57c9e08a84.jpg",
+  "半坡博物馆": "images/poi/77195cd563.jpg",
+  "曲江池遗址公园": "images/poi/fa206f0ea1.jpg",
+  "高家大院": "images/poi/e05c9f14c6.jpg",
+  "易俗社文化街区": "images/poi/6f5cf18c00.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
