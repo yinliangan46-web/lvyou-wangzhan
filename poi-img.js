@@ -3311,7 +3311,19 @@
   "天津博物馆": "images/poi/edd04d40a7.jpg",
   "天津美术馆": "images/poi/b3c76ee9a1.jpg",
   "西开教堂": "images/poi/6c875b8b3d.jpg",
-  "大悲禅院": "images/poi/383b21b359.jpg"
+  "大悲禅院": "images/poi/383b21b359.jpg",
+  "防洪纪念塔": "images/poi/41c8050ddd.jpg",
+  "圣阿列克谢耶夫教堂": "images/poi/304279f364.jpg",
+  "靖宇街": "images/poi/75b5e97069.jpg",
+  "哈尔滨音乐厅": "images/poi/02b056ec20.jpg",
+  "黑龙江省博物馆": "images/poi/4d6d056b05.jpg",
+  "马迭尔宾馆": "images/poi/4f94e29033.jpg",
+  "光明顶": "images/poi/eff750ec6d.jpg",
+  "呈坎": "images/poi/2cb89f79a6.jpg",
+  "徽州古城": "images/poi/59450d3569.jpg",
+  "屯溪老街": "images/poi/35ea60f1a8.jpg",
+  "新安江山水画廊": "images/poi/0676903854.jpg",
+  "唐模": "images/poi/03d8b9bdc0.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
