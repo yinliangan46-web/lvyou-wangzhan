@@ -3443,7 +3443,25 @@
   "郑州大剧院": "images/poi/0fced3d1ef.jpg",
   "建业电影小镇": "images/poi/e76ae6ebe2.jpg",
   "开封府": "images/poi/9907a9fc32.jpg",
-  "包公祠": "images/poi/d6af2d1ccb.jpg"
+  "包公祠": "images/poi/d6af2d1ccb.jpg",
+  "八一起义纪念馆": "images/poi/f89f349a5b.jpg",
+  "江西省博物馆": "images/poi/4439ac6121.jpg",
+  "南昌汉代海昏侯国遗址博物馆": "images/poi/7b98a1d49f.jpg",
+  "八一广场": "images/poi/817b8da062.jpg",
+  "秋水广场": "images/poi/8737b325c5.jpg",
+  "包公园": "images/poi/4625b6b09c.jpg",
+  "安徽博物院": "images/poi/a9df058c55.jpg",
+  "安徽省地质博物馆": "images/poi/a9cd1abe07.jpg",
+  "渡江战役纪念馆": "images/poi/e36ea43589.jpg",
+  "合肥三国遗址公园": "images/poi/50c5dfbee8.jpg",
+  "星光大道": "images/poi/30d296ccea.jpg",
+  "大澳渔村": "images/poi/0758cbccf4.jpg",
+  "西贡": "images/poi/5723871942.jpg",
+  "昂坪360": "images/poi/902c2d0302.jpg",
+  "M+": "images/poi/b0d947f8f8.jpg",
+  "香港公园": "images/poi/0d57b350aa.jpg",
+  "天坛大佛": "images/poi/b731183498.jpg",
+  "安仁古镇": "images/poi/248c0f4241.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
