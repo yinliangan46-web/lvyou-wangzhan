@@ -3479,7 +3479,25 @@
   "宁波美术馆": "images/poi/af73043056.jpg",
   "石浦渔港古城": "images/poi/fbcce81453.jpg",
   "前童古镇": "images/poi/1abad65523.jpg",
-  "日湖公园": "images/poi/0b30204ccb.jpg"
+  "日湖公园": "images/poi/0b30204ccb.jpg",
+  "基诺山寨": "images/poi/43cc00e033.jpg",
+  "望天树": "images/poi/8a88052e65.jpg",
+  "傣族村寨": "images/poi/d7c84c2ce7.jpg",
+  "温州博物馆": "images/poi/67c78a8b4b.jpg",
+  "泽雅": "images/poi/d27ead198d.jpg",
+  "泰顺廊桥": "images/poi/a79a1837ce.jpg",
+  "文成百丈漈": "images/poi/06ad1f8156.jpg",
+  "温州市景山森林公园": "images/poi/850539d5aa.jpg",
+  "柯岩": "images/poi/9c46d56861.jpg",
+  "安昌古镇": "images/poi/0fe572fe13.jpg",
+  "仓桥直街": "images/poi/26e5586b30.jpg",
+  "书圣故里": "images/poi/dec568dcf5.jpg",
+  "大禹陵": "images/poi/4b71205149.jpg",
+  "开平碉楼": "images/poi/e7033748e9.jpg",
+  "自力村": "images/poi/1759dde7ed.jpg",
+  "赤坎古镇": "images/poi/6e08c912a9.jpg",
+  "古劳水乡": "images/poi/6ba7235eaa.jpg",
+  "小鸟天堂": "images/poi/b76e1164ed.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
