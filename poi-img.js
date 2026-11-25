@@ -3263,7 +3263,19 @@
   "九一八历史博物馆": "images/poi/ca68c0beb2.jpg",
   "中街": "images/poi/b29b5aec52.jpg",
   "老北市": "images/poi/17e7808e47.jpg",
-  "中国工业博物馆": "images/poi/c4e9e9e5be.jpg"
+  "中国工业博物馆": "images/poi/c4e9e9e5be.jpg",
+  "五龙潭": "images/poi/e214d491c3.jpg",
+  "芙蓉街": "images/poi/6434413898.jpg",
+  "曲水亭街": "images/poi/cd78e1bc14.jpg",
+  "山东博物馆": "images/poi/150b699fc7.jpg",
+  "山东美术馆": "images/poi/f9868c2d93.jpg",
+  "老商埠": "images/poi/6a41976c1e.jpg",
+  "河南博物院": "images/poi/e82a33e850.jpg",
+  "二七纪念塔": "images/poi/1ad1ab360f.jpg",
+  "郑州博物馆": "images/poi/a780c16b65.jpg",
+  "郑州美术馆": "images/poi/f1158f2864.jpg",
+  "只有河南·戏剧幻城": "images/poi/a35ddefb02.jpg",
+  "康百万庄园": "images/poi/77015688a2.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
