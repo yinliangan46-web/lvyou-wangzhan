@@ -3407,7 +3407,19 @@
   "天河潭": "images/poi/2995899338.jpg",
   "高坡云顶": "images/poi/b490fdb34c.jpg",
   "多彩贵州城": "images/poi/33b0d5446f.jpg",
-  "息烽集中营": "images/poi/53a4826fe3.jpg"
+  "息烽集中营": "images/poi/53a4826fe3.jpg",
+  "小公园开埠区": "images/poi/acb9b9b315.jpg",
+  "礐石风景区": "images/poi/672c637b92.jpg",
+  "汕头大学": "images/poi/c529e8606e.jpg",
+  "老妈宫": "images/poi/f205010dae.jpg",
+  "陈慈黉故居": "images/poi/066aebdfe4.jpg",
+  "汕头博物馆": "images/poi/ab41a05334.jpg",
+  "自贡恐龙博物馆": "images/poi/c40460ab09.jpg",
+  "燊海井": "images/poi/c9c8582fe0.jpg",
+  "盐业历史博物馆": "images/poi/224328d99b.jpg",
+  "仙市古镇": "images/poi/d96cd7ca2a.jpg",
+  "荣县大佛": "images/poi/285f15a169.jpg",
+  "上海博物馆": "images/poi/89674c8724.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
@@ -3644,3 +3656,4 @@
     global.mylPOIImg = poiImg;
     global.mylPOICategory = categoryOf;
 })(window);
+
