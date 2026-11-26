@@ -166,18 +166,26 @@ function rebalanceDays(days, poolSpots, reqDays){
   days.forEach(function(g,i){ if(!/跨城/.test(g.label||'')){ localIdx.push(i); localGroups.push(g); } });
   var L=localGroups.length;
   if(!L) return days;
-  var used={}, scenic=[], transit=[];
+  /* 非景点节点：交通接驳、抵达入住、退房返程、用餐小吃、自由活动等，不占用每天的景点名额 */
+  var NONSPOT=/^交通\s*·|抵达|入住|退房|前往机场|前往车站|接机|接站|送站|返程|出发|自由活动|早餐|午餐|晚餐|小吃|招牌菜|饮品|美食|特色菜|逛吃|休整|休息|收拾|夜宵|美食街|步行街|商业街|夜市|市集|公园|广场|商圈|街区|街$|巷$|湖$|江$|河$/;
+  function isSpot(n){ return !!(n&&n.n) && !NONSPOT.test(n.n); }
+  var used={}, scenic=[];
   localGroups.forEach(function(g){
     (g.nodes||[]).forEach(function(n){
       if(!n||!n.n) return;
-      if(/^交通\s*·/.test(n.n)){ transit.push(n); }
-      else if(!used[n.n]){ used[n.n]=1; scenic.push(n); }
+      if(used[n.n]) return;
+      used[n.n]=1;
+      if(isSpot(n)) scenic.push(n);
     });
   });
   (poolSpots||[]).forEach(function(s){
     var node={n:s.n||s.name||'', d:s.d||s.desc||'', t:s.t||s.p||''};
-    if(node.n && !used[node.n]){ used[node.n]=1; scenic.push(node); }
+    if(node.n && !used[node.n]){
+      used[node.n]=1;
+      if(isSpot(node)) scenic.push(node);
+    }
   });
+  /* 真景点足够排满 2 站/天才每天 2 个；天数长、真景点不够时退化为每天 1 个 */
   var min = scenic.length >= L*2 ? 2 : 1;
   var buckets=localGroups.map(function(g){ return {label:g.label, nodes:[]}; });
   var idx=0, k, bi;
@@ -189,10 +197,10 @@ function rebalanceDays(days, poolSpots, reqDays){
     if(b.nodes.length<3) b.nodes.push(scenic[idx]);
     idx++;
   }
+  /* 非景点（用餐/抵达/退房/交通等）不挂进每日景点节点：用餐走美食区、交通走交通区，避免挤占景点位 */
   buckets.forEach(function(b){
     if(!b.nodes.length) b.nodes.push({n:'自由活动', d:'慢节奏的一天：睡到自然醒，附近街巷随性逛逛，把前几天的遗憾补上。', t:''});
   });
-  if(transit.length && buckets.length) buckets[0].nodes=buckets[0].nodes.concat(transit);
   bi=0;
   return days.map(function(g){ return /跨城/.test(g.label||'') ? g : buckets[bi++]; });
 }
@@ -647,5 +655,6 @@ function initSmart(){
   };
 }
 initSmart();
+
 
 
