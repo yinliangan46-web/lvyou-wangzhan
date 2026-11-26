@@ -3551,7 +3551,25 @@
   "大同火山群": "images/poi/0ebc5d7552.jpg",
   "代王府": "images/poi/972c161b4f.jpg",
   "世外桃源": "images/poi/3511e63e32.jpg",
-  "雨花台": "images/poi/c0920e37b2.jpg"
+  "雨花台": "images/poi/c0920e37b2.jpg",
+  "九曲溪": "images/poi/7cd9e5815c.jpg",
+  "大红袍景区": "images/poi/2986f1bcfc.jpg",
+  "一线天": "images/poi/74789a4280.jpg",
+  "虎啸岩": "images/poi/203572275f.jpg",
+  "武夷宫": "images/poi/21f3d49f1f.jpg",
+  "下梅古村": "images/poi/521e92dd79.jpg",
+  "荆州古城": "images/poi/325ec28afd.jpg",
+  "荆州博物馆": "images/poi/5e0918c698.jpg",
+  "张居正故居": "images/poi/c3abf8d54b.jpg",
+  "楚王车马阵": "images/poi/3c3db79ae5.jpg",
+  "纪南城": "images/poi/f41bcff3b8.jpg",
+  "菩萨顶": "images/poi/bb463ddb19.jpg",
+  "黛螺顶": "images/poi/9e67e8e899.jpg",
+  "河边民俗博物馆": "images/poi/0b065e2e46.jpg",
+  "永乐宫": "images/poi/4d770c0edf.jpg",
+  "李家大院": "images/poi/2f1a6c9c19.jpg",
+  "舜帝陵": "images/poi/df1272eaf1.jpg",
+  "运城博物馆": "images/poi/e1fee27d11.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
