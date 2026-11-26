@@ -36,7 +36,11 @@
     /* ===== 大模型智能体配置（Key 只在 Vercel 后端环境变量，前端不存） ===== */
     var AI_CONFIG = {
         enabled: true,
-        proxy: 'https://myl-ai-proxy.yinliangan46.workers.dev',
+        proxies: [
+            'https://lvyou-wangzhan.vercel.app/api/chat',
+            'https://myl-ai-proxy.yinliangan46.workers.dev'
+        ],
+        proxy: 'https://lvyou-wangzhan.vercel.app/api/chat',
         model: 'deepseek-chat',
         timeoutMs: 9000
     };
@@ -927,7 +931,7 @@
     }
 
     function aiReply(text) {
-        if (!AI_CONFIG.enabled || !AI_CONFIG.proxy) return Promise.reject(new Error('AI 未配置'));
+        if (!AI_CONFIG.enabled || !AI_CONFIG.proxies || !AI_CONFIG.proxies.length) return Promise.reject(new Error('AI 未配置'));
         var msgs = [{ role: 'system', content: AI_SYSTEM }];
         history.slice(-10).forEach(function (h) {
             if (!h || !h.text) return;
@@ -935,36 +939,42 @@
         });
         msgs.push({ role: 'user', content: String(text) });
 
-        var ctrl = null;
-        return new Promise(function (resolve, reject) {
-            if (typeof AbortController !== 'undefined') ctrl = new AbortController();
-            var timer = setTimeout(function () {
-                if (ctrl) ctrl.abort();
-                reject(new Error('AI 响应超时'));
-            }, AI_CONFIG.timeoutMs);
-            fetch(AI_CONFIG.proxy, {
-                method: 'POST',
-                credentials: 'omit',
-                headers: { 'Content-Type': 'application/json' },
-                signal: ctrl ? ctrl.signal : undefined,
-                body: JSON.stringify({
-                    model: AI_CONFIG.model,
-                    messages: msgs,
-                    temperature: 0.3
-                })
-            }).then(function (r) {
-                if (!r.ok) return r.text().then(function () { throw new Error('AI HTTP ' + r.status); });
-                return r.text();
-            }).then(function (t) {
-                var j = JSON.parse(t);
-                var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
-                content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-                var s2 = content.indexOf('{'), e = content.lastIndexOf('}');
-                if (s2 < 0 || e < 0) throw new Error('AI 未返回 JSON');
-                return JSON.parse(content.slice(s2, e + 1));
-            }).then(function (data) { clearTimeout(timer); resolve(normalizeAi(data)); })
-              .catch(function (err) { clearTimeout(timer); reject(err); });
-        });
+        var pi = 0;
+        function attempt() {
+            if (pi >= AI_CONFIG.proxies.length) return Promise.reject(new Error('AI 代理暂不可达'));
+            var url = AI_CONFIG.proxies[pi++];
+            var ctrl = null;
+            return new Promise(function (resolve, reject) {
+                if (typeof AbortController !== 'undefined') ctrl = new AbortController();
+                var timer = setTimeout(function () {
+                    if (ctrl) ctrl.abort();
+                    reject(new Error('AI 响应超时'));
+                }, AI_CONFIG.timeoutMs);
+                fetch(url, {
+                    method: 'POST',
+                    credentials: 'omit',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: ctrl ? ctrl.signal : undefined,
+                    body: JSON.stringify({
+                        model: AI_CONFIG.model,
+                        messages: msgs,
+                        temperature: 0.3
+                    })
+                }).then(function (r) {
+                    if (!r.ok) return r.text().then(function () { throw new Error('AI HTTP ' + r.status); });
+                    return r.text();
+                }).then(function (t) {
+                    var j = JSON.parse(t);
+                    var content = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
+                    content = content.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+                    var s2 = content.indexOf('{'), e = content.lastIndexOf('}');
+                    if (s2 < 0 || e < 0) throw new Error('AI 未返回 JSON');
+                    return JSON.parse(content.slice(s2, e + 1));
+                }).then(function (data) { clearTimeout(timer); resolve(normalizeAi(data)); })
+                  .catch(function (err) { clearTimeout(timer); reject(err); });
+            }).catch(function () { return attempt(); });
+        }
+        return attempt();
     }
 
     function reply(text) {

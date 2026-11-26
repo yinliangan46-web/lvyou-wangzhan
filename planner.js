@@ -24,7 +24,12 @@
         { key: 'relax', label: '慢节奏', icon: 'fa-mug-hot' }
     ];
 
-    var SITE_API = 'https://myl-ai-proxy.yinliangan46.workers.dev';
+    /* 站点 AI 代理端点：按顺序依次回退，哪个可达走哪个；Key 只在后端，前端不存 */
+    var SITE_APIS = [
+        'https://lvyou-wangzhan.vercel.app/api/chat',
+        'https://myl-ai-proxy.yinliangan46.workers.dev'
+    ];
+    var SITE_API = SITE_APIS[0];
     /* 本站统一走站点代理（后台 DeepSeek，Key 不出后端）；builtin 仅作离线兜底 */
     var AI_PRESETS = {
         site: { label: '站点 AI · DeepSeek（无需填 Key）', endpoint: SITE_API, model: 'auto' },
@@ -1481,27 +1486,36 @@
         state.aiCfg = { provider: 'site', endpoint: SITE_API, model: 'auto', key: '' };
         probeSiteAI();
     }
-    /* 探测站点代理是否已配置后端 Key；成功后标记就绪，失败时调用链路自动回落内置规则 */
+    /* 探测站点代理是否已配置后端 Key；依次回退多个端点，成功后标记就绪，失败时回落内置规则 */
     function probeSiteAI() {
         if (!/^https?:$/.test(location.protocol)) { state.siteAiState = 'offline'; updateAgentStatus(); return; }
-        var ctrl = ('AbortController' in window) ? new AbortController() : null;
-        var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
-        fetch(SITE_API, { method: 'GET', signal: ctrl ? ctrl.signal : undefined, cache: 'no-store' })
-            .then(function (r) {
-                return r.text().then(function (t) {
-                    var j = null; try { j = JSON.parse(t); } catch (e) {}
-                    if (j && typeof j.configured === 'boolean') {
-                        state.siteAiReady = !!j.configured;
-                        state.siteAiState = j.configured ? 'ready' : 'noKey';
-                    } else if (r.status === 503) {
-                        state.siteAiReady = false; state.siteAiState = 'noKey';
-                    } else {
-                        state.siteAiReady = false; state.siteAiState = 'offline';
-                    }
-                });
-            })
-            .catch(function () { state.siteAiReady = false; state.siteAiState = 'offline'; })
-            .then(function () { clearTimeout(timer); updateAgentStatus(); });
+        var i = 0, sawNoKey = false;
+        function next() {
+            if (i >= SITE_APIS.length) {
+                state.siteAiReady = false;
+                state.siteAiState = sawNoKey ? 'noKey' : 'offline';
+                updateAgentStatus(); return;
+            }
+            var url = SITE_APIS[i++];
+            var ctrl = ('AbortController' in window) ? new AbortController() : null;
+            var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
+            fetch(url, { method: 'GET', signal: ctrl ? ctrl.signal : undefined, cache: 'no-store' })
+                .then(function (r) {
+                    return r.text().then(function (t) {
+                        var j = null; try { j = JSON.parse(t); } catch (e) {}
+                        if (j && typeof j.configured === 'boolean') {
+                            if (j.configured) { state.siteAiReady = true; state.siteAiState = 'ready'; clearTimeout(timer); updateAgentStatus(); return; }
+                            sawNoKey = true;
+                        } else if (r.status === 503) {
+                            sawNoKey = true;
+                        }
+                        next();
+                    });
+                })
+                .catch(function () { next(); })
+                .then(function () { clearTimeout(timer); });
+        }
+        next();
     }
 
     /* ==================== 生成 / 重新生成 ==================== */
@@ -2669,9 +2683,22 @@
             });
         }
 
+        if (isSite) {
+            /* 站点代理：按 SITE_APIS 顺序依次回退；401/Key 问题不换端点，其余网络/上游错误换下一个 */
+            var siteIdx = 0;
+            function trySite() {
+                if (siteIdx >= SITE_APIS.length) throw new Error('站点 AI 代理暂不可达');
+                return doFetch(SITE_APIS[siteIdx++], false).catch(function (e) {
+                    if (e.status === 401) throw e;
+                    return trySite();
+                });
+            }
+            return trySite();
+        }
+
         return doFetch(endpoint, false).catch(function (e) {
             // 非 site 的外部 API，TypeError 通常意味着 CORS 拦截，自动走代理
-            if (!isSite && !e.status && (e.message === 'Failed to fetch' ||
+            if (!e.status && (e.message === 'Failed to fetch' ||
                 String(e).indexOf('TypeError') >= 0)) {
                 return doFetch(endpoint, true);
             }

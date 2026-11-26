@@ -97,6 +97,11 @@ function planData(name){
     return {spots:spots,foods:foods,hotels:hotels,traffic:traffic,dayGroups:dayGroups,
       flight:d.flight,train:d.train,ctrip:d.ctrip,hotelsUrl:d.hotels,isA:true};
   }
+  /* 合并站内补充景点库（地标库 / 重点城市景点库 / 线路补充池），保证冷门城也有足够可排景点 */
+  function extraSpotNames(){
+    var L=window.CITY_LANDMARKS||{}, B=window.CITY_POI_BANK||{}, E=window.CITY_EXTRA_SPOTS||{};
+    return [].concat(L[name]||[], B[name]||[], E[name]||[]);
+  }
   if(isA){
     dayGroups=(c.itinerary||[]).map(function(day){
       return {label:day.day+' · '+cleanTheme(day.theme), nodes:(day.timeline||[]).map(function(t){
@@ -104,11 +109,15 @@ function planData(name){
       })};
     });
     spots=dayGroups.reduce(function(a,g){return a.concat(g.nodes);},[]);
+    var seenA={}; spots=spots.filter(function(n){return n.n&&!seenA[n.n]&&(seenA[n.n]=1);});
+    extraSpotNames().forEach(function(x){ if(x&&!seenA[x]){seenA[x]=1;spots.push({n:x,d:'当地代表性景点',t:''});} });
     foods=(c.foods||[]).map(function(f){return {n:f.name,d:f.desc||'',p:f.price||''};});
     hotels=(c.hotels||[]).map(function(h){return {a:h.name,l:h.area||h.highlight||'',p:h.price||''};});
     traffic=(c.transport||[]).map(function(t){return t.label+'：'+t.value;});
   } else {
-    spots=(c.bLandmarks||[]).map(function(x){return {n:x,d:'当地代表性地标',t:''};});
+    var names=[].concat(c.bLandmarks||[], extraSpotNames());
+    var seenB={}; spots=[];
+    names.forEach(function(x){ if(x&&!seenB[x]){seenB[x]=1;spots.push({n:x,d:'当地代表性地标',t:''});} });
     foods=(c.bFoods||[]).map(function(f){return {n:f,d:'',p:''};});
     hotels=[]; traffic=[];
     dayGroups=[{label:'当地概览', nodes:spots}];
@@ -175,7 +184,11 @@ function rebalanceDays(days, poolSpots, reqDays){
   for(k=0;k<min;k++){
     buckets.forEach(function(b){ if(idx<scenic.length) b.nodes.push(scenic[idx++]); });
   }
-  while(idx<scenic.length){ buckets[idx%L].nodes.push(scenic[idx]); idx++; }
+  while(idx<scenic.length){
+    var b=buckets[idx%L];
+    if(b.nodes.length<3) b.nodes.push(scenic[idx]);
+    idx++;
+  }
   buckets.forEach(function(b){
     if(!b.nodes.length) b.nodes.push({n:'自由活动', d:'慢节奏的一天：睡到自然醒，附近街巷随性逛逛，把前几天的遗憾补上。', t:''});
   });
@@ -277,24 +290,34 @@ var FREE_SYS='你是 MYL 旅行网站的 AI 旅行顾问，中文、友好、简
 function freeChat(raw, cb){
   siteChat([{role:'system',content:FREE_SYS},{role:'user',content:String(raw||'')}], cb);
 }
-var SITE_API='https://myl-ai-proxy.yinliangan46.workers.dev';
+/* 站点 AI 代理端点：按顺序依次回退，哪个可达走哪个；Key 只在后端，前端不存 */
+var SITE_APIS=[
+  'https://lvyou-wangzhan.vercel.app/api/chat',
+  'https://myl-ai-proxy.yinliangan46.workers.dev'
+];
 function siteChat(messages, cb){
-  var ctrl=new AbortController();
-  var timer=setTimeout(function(){ctrl.abort();},45000);
-  fetch(SITE_API,{
-    method:'POST',
-    signal:ctrl.signal,
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'auto', messages:messages, temperature:0.7, max_tokens:3000})
-  }).then(function(r){
-    clearTimeout(timer);
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return r.json();
-  }).then(function(d){
-    var text=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
-    if(!text)throw new Error('空响应');
-    cb(null,text);
-  }).catch(function(e){clearTimeout(timer);cb(e);});
+  var idx=0;
+  function attempt(){
+    if(idx>=SITE_APIS.length){ cb(new Error('AI 代理暂不可达，请稍后再试或使用内置规划引擎')); return; }
+    var url=SITE_APIS[idx++];
+    var ctrl=new AbortController();
+    var timer=setTimeout(function(){ctrl.abort();},18000);
+    fetch(url,{
+      method:'POST',
+      signal:ctrl.signal,
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'auto', messages:messages, temperature:0.7, max_tokens:3000})
+    }).then(function(r){
+      clearTimeout(timer);
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return r.json();
+    }).then(function(d){
+      var text=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
+      if(!text)throw new Error('空响应');
+      cb(null,text);
+    }).catch(function(e){clearTimeout(timer);attempt();});
+  }
+  attempt();
 }
 function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
   var ctx={
