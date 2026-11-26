@@ -3533,7 +3533,25 @@
   "阳关": "images/poi/6a1d32b41d.jpg",
   "敦煌博物馆": "images/poi/a87186e1e8.jpg",
   "河仓城": "images/poi/d949e08920.jpg",
-  "王家大院": "images/poi/6d81b84615.jpg"
+  "王家大院": "images/poi/6d81b84615.jpg",
+  "碧螺塔": "images/poi/ac9975d6e6.jpg",
+  "孤独图书馆": "images/poi/e89ea8b6e6.jpg",
+  "南戴河": "images/poi/896f3697a7.jpg",
+  "北海老街": "images/poi/6476d7cc51.jpg",
+  "海底世界": "images/poi/0b6db84498.jpg",
+  "柳江": "images/poi/ea6f1dd4bf.jpg",
+  "三江侗族自治县": "images/poi/f2d87bd3cb.jpg",
+  "挖色": "images/poi/df7fee87b2.jpg",
+  "寂照庵": "images/poi/73e8ad31e1.jpg",
+  "天龙八部影视城": "images/poi/4356d56955.jpg",
+  "白沙古镇": "images/poi/a41dd7fa8f.jpg",
+  "四方街": "images/poi/224a07e54b.jpg",
+  "文海村": "images/poi/7cfbbe4010.jpg",
+  "大同博物馆": "images/poi/2d81f9b610.jpg",
+  "大同火山群": "images/poi/0ebc5d7552.jpg",
+  "代王府": "images/poi/972c161b4f.jpg",
+  "世外桃源": "images/poi/3511e63e32.jpg",
+  "雨花台": "images/poi/c0920e37b2.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
