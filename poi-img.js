@@ -3587,7 +3587,23 @@
   "牯牛降": "images/poi/d49557ac45.jpg",
   "南屏": "images/poi/ccc0365eb4.jpg",
   "潜口民宅": "images/poi/0a63cc7dfa.jpg",
-  "杨柳青古镇": "images/poi/41570c233a.jpg"
+  "杨柳青古镇": "images/poi/41570c233a.jpg",
+  "四川博物院": "images/poi/84da168756.jpg",
+  "街子古镇": "images/poi/dd3c7c4c36.jpg",
+  "洛带古镇": "images/poi/4c5bed1c7c.jpg",
+  "建川博物馆": "images/poi/afe0709026.jpg",
+  "汉长安城未央宫遗址": "images/poi/bac230483d.jpg",
+  "蓝田白鹿原": "images/poi/03b925a403.jpg",
+  "昆明池": "images/poi/994d9cd11d.jpg",
+  "上海科技馆": "images/poi/8b99c436ec.jpg",
+  "上海自然博物馆": "images/poi/aeb861578b.jpg",
+  "广富林文化遗址": "images/poi/a1963f9be1.jpg",
+  "钓鱼城": "images/poi/e29a6a3116.jpg",
+  "渣滓洞": "images/poi/a5e9a50c47.jpg",
+  "白帝城": "images/poi/47297add69.jpg",
+  "茂陵": "images/poi/21d6b3959c.jpg",
+  "乾陵": "images/poi/031f5e5468.jpg",
+  "神农顶": "images/poi/e780a6e365.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
