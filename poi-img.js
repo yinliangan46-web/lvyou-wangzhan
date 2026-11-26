@@ -3651,7 +3651,23 @@
   "台儿庄古城": "images/poi/67ea9e4ae4.jpg",
   "雷台汉墓": "images/poi/02799ae061.jpg",
   "周村古商城": "images/poi/25b8c5665d.jpg",
-  "青州古城": "images/poi/560ae468a5.jpg"
+  "青州古城": "images/poi/560ae468a5.jpg",
+  "德基美术馆": "images/poi/6a2c78b98b.jpg",
+  "金陵美术馆": "images/poi/0e290f2a07.jpg",
+  "合美术馆": "images/poi/b7fa8fccc9.jpg",
+  "新竹都城隍庙": "images/poi/ba1d7d2524.jpg",
+  "豆沙关": "images/poi/211e6149b6.jpg",
+  "昭通古城": "images/poi/082d845fb0.jpg",
+  "炎帝陵": "images/poi/95abe93c6d.jpg",
+  "连州地下河": "images/poi/5a23bc8292.jpg",
+  "悬臂长城": "images/poi/1633126ed6.jpg",
+  "常州博物馆": "images/poi/c86c30f55e.jpg",
+  "六祖惠能故居": "images/poi/01896eb1c4.jpg",
+  "邓小平故居": "images/poi/0de4045480.jpg",
+  "中华龙文化博物馆": "images/poi/8e84ecbeea.jpg",
+  "戚城遗址": "images/poi/21a282ca3b.jpg",
+  "聂耳故居": "images/poi/5adf6130a8.jpg",
+  "曹魏古城": "images/poi/66d789ed96.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
