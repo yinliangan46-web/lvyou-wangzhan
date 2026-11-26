@@ -150,8 +150,42 @@ function buildDayGroups(pd, reqDays, excursions, cityName){
   return out;
 }
 
+/* ============ 每日景点均衡：短天数每天≥2站，景点不足才每天1站 ============ */
+function rebalanceDays(days, poolSpots, reqDays){
+  if(!days||!days.length) return days;
+  var localIdx=[], localGroups=[];
+  days.forEach(function(g,i){ if(!/跨城/.test(g.label||'')){ localIdx.push(i); localGroups.push(g); } });
+  var L=localGroups.length;
+  if(!L) return days;
+  var used={}, scenic=[], transit=[];
+  localGroups.forEach(function(g){
+    (g.nodes||[]).forEach(function(n){
+      if(!n||!n.n) return;
+      if(/^交通\s*·/.test(n.n)){ transit.push(n); }
+      else if(!used[n.n]){ used[n.n]=1; scenic.push(n); }
+    });
+  });
+  (poolSpots||[]).forEach(function(s){
+    var node={n:s.n||s.name||'', d:s.d||s.desc||'', t:s.t||s.p||''};
+    if(node.n && !used[node.n]){ used[node.n]=1; scenic.push(node); }
+  });
+  var min = scenic.length >= L*2 ? 2 : 1;
+  var buckets=localGroups.map(function(g){ return {label:g.label, nodes:[]}; });
+  var idx=0, k, bi;
+  for(k=0;k<min;k++){
+    buckets.forEach(function(b){ if(idx<scenic.length) b.nodes.push(scenic[idx++]); });
+  }
+  while(idx<scenic.length){ buckets[idx%L].nodes.push(scenic[idx]); idx++; }
+  buckets.forEach(function(b){
+    if(!b.nodes.length) b.nodes.push({n:'自由活动', d:'慢节奏的一天：睡到自然醒，附近街巷随性逛逛，把前几天的遗憾补上。', t:''});
+  });
+  if(transit.length && buckets.length) buckets[0].nodes=buckets[0].nodes.concat(transit);
+  bi=0;
+  return days.map(function(g){ return /跨城/.test(g.label||'') ? g : buckets[bi++]; });
+}
+
 function ruleData(pd, name, reqDays){
-  return {days:buildDayGroups(pd, reqDays, curExcursions, name), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
+  return {days:rebalanceDays(buildDayGroups(pd, reqDays, curExcursions, name), pd.spots, reqDays), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
 }
 
 /* ============ 行程动态报价表：按本行程节点 + 城市三档基准累加 ============ */
@@ -272,7 +306,7 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
     站内美食库:pd.foods.slice(0,8).map(function(f){return f.n;}),
     站内酒店库:pd.hotels.slice(0,4).map(function(h){return h.a+(h.p?'（'+h.p+'）':'');})
   };
-  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文；5) 忠实用户原话：天数、人数、同行关系、明确提到的景点（含其他城市的跨城景点）不得遗漏、不得擅自改成默认值；6) 用户提到的景点若不在站内库，仍按原话列入，并在说明里标注其所属城市。';
+  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文；5) 忠实用户原话：天数、人数、同行关系、明确提到的景点（含其他城市的跨城景点）不得遗漏、不得擅自改成默认值；6) 用户提到的景点若不在站内库，仍按原话列入，并在说明里标注其所属城市；7) 每日景点数量要合理均衡：城市可排景点充足时（如3天以内的热门城市），每天安排2-3个景点，不要出现整天只有1个景点的安排；只有当天数较长、站内景点不够排满时，才允许某天1个景点或自由活动；跨城一日游当天除外。';
   var user='请生成行程 JSON，需求：'+JSON.stringify(ctx);
   if(rawText)user+='\n\n用户原话：“'+rawText+'”（以原话为准：天数、人数、同行人、跨城景点与 ctx 解析不符时，按原话纠正）。';
   if(fromTune)user+='\n\n用户调整要求：'+tuneText+'（在原行程基础上修改后输出完整 JSON）';
@@ -284,6 +318,7 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
       if(!j.days||!j.days.length)throw new Error('days 为空');
       j.days=j.days.slice(0,reqDays);
       while(j.days.length<reqDays)j.days.push({label:'Day X · 自由深度', nodes:[{n:'自由活动', d:'慢节奏补充一天，逛吃为主。', t:''}]});
+      j.days=rebalanceDays(j.days, pd.spots, reqDays);
       j.days.forEach(function(g,i){g.label='Day '+(i+1)+' · '+String(g.label||'行程').replace(/^Day\s*\d+\s*(?:·\s*)?/,'').replace(/^·\s*/,'');});
       j.foods=(j.foods&&j.foods.length?j.foods:pd.foods).map(function(f){return {n:f.n||f.name||'', d:f.d||f.desc||'', p:f.p||f.price||''};});
       j.hotels=(j.hotels&&j.hotels.length?j.hotels:pd.hotels).map(function(h){return {a:h.a||h.name||'', l:h.l||h.area||'', p:h.p||h.price||''};});
