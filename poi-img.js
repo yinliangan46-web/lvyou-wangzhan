@@ -3635,7 +3635,23 @@
   "越王楼": "images/poi/4bfb4ff7ce.jpg",
   "绵阳博物馆": "images/poi/28c1cff416.jpg",
   "罗城古镇": "images/poi/2a76100d6a.jpg",
-  "尧坝古镇": "images/poi/b542143733.jpg"
+  "尧坝古镇": "images/poi/b542143733.jpg",
+  "喀什博物馆": "images/poi/d19120f5bb.jpg",
+  "白鹿洞书院": "images/poi/4bd03e5840.jpg",
+  "叶剑英故居": "images/poi/600831f691.jpg",
+  "魏集古村落": "images/poi/a8a6a247e1.jpg",
+  "定海古城": "images/poi/2e274f6779.jpg",
+  "潮州古城墙": "images/poi/25b73630ef.jpg",
+  "石鼓书院": "images/poi/ca8eb1d5dd.jpg",
+  "如皋古城": "images/poi/27801947fb.jpg",
+  "苏稽古镇": "images/poi/9cf1f3a832.jpg",
+  "伪满八大部": "images/poi/50fda634bc.jpg",
+  "和顺古镇": "images/poi/729e402ce5.jpg",
+  "黄果树瀑布": "images/poi/21bb7f8add.jpg",
+  "台儿庄古城": "images/poi/67ea9e4ae4.jpg",
+  "雷台汉墓": "images/poi/02799ae061.jpg",
+  "周村古商城": "images/poi/25b8c5665d.jpg",
+  "青州古城": "images/poi/560ae468a5.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
