@@ -3683,7 +3683,23 @@
   "洪江古商城": "images/poi/c709072f34.jpg",
   "榆林古城": "images/poi/a620331bf1.jpg",
   "齐文化博物馆": "images/poi/43f502b5f5.jpg",
-  "明显陵": "images/poi/78aebee573.jpg"
+  "明显陵": "images/poi/78aebee573.jpg",
+        "安徽省博物馆": "images/poi/9d8931012d.jpg",
+        "王羲之故居": "images/poi/0fd563b91e.jpg",
+        "邵武和平古镇": "images/poi/74fdd9dd2f.jpg",
+        "毛泽东故居": "images/poi/39dd100a7e.jpg",
+        "百色起义纪念馆": "images/poi/f07ff5bd2b.jpg",
+        "风琴博物馆": "images/poi/bcd32f59bb.jpg",
+        "钢琴博物馆": "images/poi/d6d7b88124.jpg",
+        "灌县古城": "images/poi/ce6f3dd5b7.jpg",
+        "泸定桥": "images/poi/2c8467ada6.jpg",
+        "天生桥": "images/poi/9d4ef05556.jpg",
+        "松潘古城": "images/poi/08d2b0100f.jpg",
+        "建昌古城": "images/poi/d583867186.jpg",
+        "会理古城": "images/poi/a0e066c3f4.jpg",
+        "大研古城": "images/poi/98c3229a97.jpg",
+        "甲蕃古城": "images/poi/99ce5b5fba.jpg",
+        "藏文化博物馆": "images/poi/f4de96be8e.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
