@@ -3715,7 +3715,23 @@
         "晋国博物馆": "images/poi/01a6a940d9.jpg",
         "冉庄地道战遗址": "images/poi/f964bfb743.jpg",
         "高昌故城": "images/poi/b1c286ba57.jpg",
-        "孙中山故居": "images/poi/cd53b3495b.jpg"
+        "孙中山故居": "images/poi/cd53b3495b.jpg",
+        "宋夹城": "images/poi/18ffbbae65.jpg",
+        "刘三姐故里": "images/poi/833debd88b.jpg",
+        "英德宝晶宫": "images/poi/7e20485007.jpg",
+        "迪拜博物馆": "images/poi/c09298a2af.jpg",
+        "丽景门": "images/poi/adf1ee4ff5.jpg",
+        "陶寺遗址": "images/poi/edbb17d4e1.jpg",
+        "思溪延村": "images/poi/0488c7dcf5.jpg",
+        "美庐别墅": "images/poi/2c1ca74fe8.jpg",
+        "广西博物馆": "images/poi/be390accfd.jpg",
+        "镇江博物馆": "images/poi/32995da3b6.jpg",
+        "龟山汉墓": "images/poi/f5fa8ddc43.jpg",
+        "唐闸古镇": "images/poi/8926437540.jpg",
+        "惠州博物馆": "images/poi/e701290f0a.jpg",
+        "南昌汉代海昏侯墓": "images/poi/8dde0b4754.jpg",
+        "儋州东坡书院": "images/poi/671c82f356.jpg",
+        "赤壁古战场": "images/poi/11d4fb9c9f.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
