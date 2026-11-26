@@ -160,32 +160,57 @@ function buildDayGroups(pd, reqDays, excursions, cityName){
 }
 
 /* ============ 每日景点均衡：短天数每天≥2站，景点不足才每天1站 ============ */
-function rebalanceDays(days, poolSpots, reqDays){
+function cityScenicNames(name){
+  if(!name) return [];
+  var L=window.CITY_LANDMARKS||{}, B=window.CITY_POI_BANK||{}, E=window.CITY_EXTRA_SPOTS||{};
+  var c=(window.MYL&&window.MYL.getCity(name))||{};
+  var arr=[].concat(L[name]||[], B[name]||[], E[name]||[], c.bLandmarks||[]);
+  var seen={}, out=[];
+  arr.forEach(function(n){ if(n&&!seen[n]){seen[n]=1;out.push(n);} });
+  return out;
+}
+function matchScenic(nodeName, names){
+  var i, canon;
+  for(i=0;i<names.length;i++){ canon=names[i]; if(canon===nodeName) return canon; }
+  for(i=0;i<names.length;i++){ canon=names[i]; if(nodeName.indexOf(canon)>=0) return canon; }
+  for(i=0;i<names.length;i++){ canon=names[i]; if(canon.indexOf(nodeName)>=0 && canon.length<=nodeName.length+4) return canon; }
+  return null;
+}
+function rebalanceDays(days, poolSpots, reqDays, cityName){
   if(!days||!days.length) return days;
   var localIdx=[], localGroups=[];
   days.forEach(function(g,i){ if(!/跨城/.test(g.label||'')){ localIdx.push(i); localGroups.push(g); } });
   var L=localGroups.length;
   if(!L) return days;
-  /* 非景点节点：交通接驳、抵达入住、退房返程、用餐小吃、自由活动等，不占用每天的景点名额 */
-  var NONSPOT=/^交通\s*·|抵达|入住|退房|前往机场|前往车站|接机|接站|送站|返程|出发|自由活动|早餐|午餐|晚餐|小吃|招牌菜|饮品|美食|特色菜|逛吃|休整|休息|收拾|夜宵|美食街|步行街|商业街|夜市|市集|公园|广场|商圈|街区|街$|巷$|湖$|江$|河$/;
-  function isSpot(n){ return !!(n&&n.n) && !NONSPOT.test(n.n); }
-  var used={}, scenic=[];
+  /* 流程/用餐/交通/休整类短语，不占用每天景点名额 */
+  var NONSPOT=/抵达|入住|退房|前往机场|前往车站|接机|接站|送站|返程|出发|登机|值机|安检|返回酒店|起床|整理行李|行李|自由活动|自由闲逛|闲逛|下午茶|早餐|午餐|晚餐|夜宵|小吃|招牌菜|饮品|美食|特色菜|逛吃|休整|休息|漫步|游览|景区|深度|接送|车站|机场|酒店|时间|下午|上午/;
+  /* 弱景点：休闲街区/公园/湖泊/乐园/温泉等，不占核心景点名额，核心排完再兜底 */
+  var WEAK=/街$|巷$|步行街|公园|湿地|乐园|温泉|广场|商圈|街区|夜市|市集|欢乐谷/;
+  var names=cityScenicNames(cityName);
+  function classify(n){
+    if(!n||!n.n) return null;
+    var hit=names.length?matchScenic(n.n,names):null;
+    if(hit){ n.n=hit; return WEAK.test(hit)?'weak':'spot'; }
+    if(NONSPOT.test(n.n)) return 'other';
+    return names.length?'other':'spot';
+  }
+  var used={}, scenic=[], weakArr=[];
   localGroups.forEach(function(g){
     (g.nodes||[]).forEach(function(n){
       if(!n||!n.n) return;
-      if(used[n.n]) return;
-      used[n.n]=1;
-      if(isSpot(n)) scenic.push(n);
+      var k=classify(n);
+      if(k==='spot' && !used[n.n]){ used[n.n]=1; scenic.push(n); }
+      else if(k==='weak' && !used[n.n]){ used[n.n]=1; weakArr.push(n); }
     });
   });
   (poolSpots||[]).forEach(function(s){
     var node={n:s.n||s.name||'', d:s.d||s.desc||'', t:s.t||s.p||''};
-    if(node.n && !used[node.n]){
-      used[node.n]=1;
-      if(isSpot(node)) scenic.push(node);
-    }
+    if(!node.n) return;
+    var k=classify(node);
+    if(k==='spot' && !used[node.n]){ used[node.n]=1; scenic.push(node); }
+    else if(k==='weak' && !used[node.n]){ used[node.n]=1; weakArr.push(node); }
   });
-  /* 真景点足够排满 2 站/天才每天 2 个；天数长、真景点不够时退化为每天 1 个 */
+  /* 核心景点足够排满 2 站/天才每天 2 个；天数长、核心景点不够时退化为每天 1 个 */
   var min = scenic.length >= L*2 ? 2 : 1;
   var buckets=localGroups.map(function(g){ return {label:g.label, nodes:[]}; });
   var idx=0, k, bi;
@@ -197,7 +222,11 @@ function rebalanceDays(days, poolSpots, reqDays){
     if(b.nodes.length<3) b.nodes.push(scenic[idx]);
     idx++;
   }
-  /* 非景点（用餐/抵达/退房/交通等）不挂进每日景点节点：用餐走美食区、交通走交通区，避免挤占景点位 */
+  /* 弱景点只补到还空着的天，不往已排核心景点的天里硬塞 */
+  var wi=0;
+  buckets.forEach(function(b){
+    if(!b.nodes.length && wi<weakArr.length) b.nodes.push(weakArr[wi++]);
+  });
   buckets.forEach(function(b){
     if(!b.nodes.length) b.nodes.push({n:'自由活动', d:'慢节奏的一天：睡到自然醒，附近街巷随性逛逛，把前几天的遗憾补上。', t:''});
   });
@@ -206,7 +235,7 @@ function rebalanceDays(days, poolSpots, reqDays){
 }
 
 function ruleData(pd, name, reqDays){
-  return {days:rebalanceDays(buildDayGroups(pd, reqDays, curExcursions, name), pd.spots, reqDays), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
+  return {days:rebalanceDays(buildDayGroups(pd, reqDays, curExcursions, name), pd.spots, reqDays, name), foods:pd.foods, hotels:pd.hotels, traffic:pd.traffic};
 }
 
 /* ============ 行程动态报价表：按本行程节点 + 城市三档基准累加 ============ */
@@ -350,7 +379,7 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
       if(!j.days||!j.days.length)throw new Error('days 为空');
       j.days=j.days.slice(0,reqDays);
       while(j.days.length<reqDays)j.days.push({label:'Day X · 自由深度', nodes:[{n:'自由活动', d:'慢节奏补充一天，逛吃为主。', t:''}]});
-      j.days=rebalanceDays(j.days, pd.spots, reqDays);
+      j.days=rebalanceDays(j.days, pd.spots, reqDays, name);
       j.days.forEach(function(g,i){g.label='Day '+(i+1)+' · '+String(g.label||'行程').replace(/^Day\s*\d+\s*(?:·\s*)?/,'').replace(/^·\s*/,'');});
       j.foods=(j.foods&&j.foods.length?j.foods:pd.foods).map(function(f){return {n:f.n||f.name||'', d:f.d||f.desc||'', p:f.p||f.price||''};});
       j.hotels=(j.hotels&&j.hotels.length?j.hotels:pd.hotels).map(function(h){return {a:h.a||h.name||'', l:h.l||h.area||'', p:h.p||h.price||''};});
@@ -655,6 +684,7 @@ function initSmart(){
   };
 }
 initSmart();
+
 
 
 
