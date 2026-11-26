@@ -3619,7 +3619,23 @@
   "木兰围场": "images/poi/266c0be275.jpg",
   "甘肃省博物馆": "images/poi/756e23cf9f.jpg",
   "青城古镇": "images/poi/1e68cb3130.jpg",
-  "龙湖古寨": "images/poi/8c87067b49.jpg"
+  "龙湖古寨": "images/poi/8c87067b49.jpg",
+  "天津自然博物馆": "images/poi/684cd2adc3.jpg",
+  "石家大院": "images/poi/8fc2f0d23a.jpg",
+  "唐山博物馆": "images/poi/9c76035e04.jpg",
+  "滦州古城": "images/poi/dab610dedd.jpg",
+  "大境门": "images/poi/bec3add095.jpg",
+  "蔚县暖泉古镇": "images/poi/ef5b33c414.jpg",
+  "鄂尔多斯博物院": "images/poi/4577d57470.jpg",
+  "新疆维吾尔自治区博物馆": "images/poi/1727ff31af.jpg",
+  "新疆美术馆": "images/poi/19d08c0c21.jpg",
+  "唐家湾古镇": "images/poi/f26f3d27ed.jpg",
+  "湖光岩": "images/poi/f25bb555fb.jpg",
+  "雷州古城": "images/poi/fd548c17b0.jpg",
+  "越王楼": "images/poi/4bfb4ff7ce.jpg",
+  "绵阳博物馆": "images/poi/28c1cff416.jpg",
+  "罗城古镇": "images/poi/2a76100d6a.jpg",
+  "尧坝古镇": "images/poi/b542143733.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
