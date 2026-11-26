@@ -3497,7 +3497,25 @@
   "自力村": "images/poi/1759dde7ed.jpg",
   "赤坎古镇": "images/poi/6e08c912a9.jpg",
   "古劳水乡": "images/poi/6ba7235eaa.jpg",
-  "小鸟天堂": "images/poi/b76e1164ed.jpg"
+  "小鸟天堂": "images/poi/b76e1164ed.jpg",
+  "三峡大坝": "images/poi/2b0622bbd4.jpg",
+  "葛洲坝": "images/poi/23b6112057.jpg",
+  "屈原故里": "images/poi/3547031ac2.jpg",
+  "车溪": "images/poi/e233012be2.jpg",
+  "百里荒": "images/poi/2c807ef76a.jpg",
+  "古隆中": "images/poi/63e54fb791.jpg",
+  "襄阳古城": "images/poi/048db9b592.jpg",
+  "习家池": "images/poi/3bf7fb818f.jpg",
+  "襄阳古城墙": "images/poi/121b6ded2c.jpg",
+  "金鞭溪": "images/poi/53f00a4d37.jpg",
+  "武陵源": "images/poi/13803835ac.jpg",
+  "芙蓉镇": "images/poi/56ed1cd197.jpg",
+  "土家风情园": "images/poi/4d49555cc0.jpg",
+  "广西民族博物馆": "images/poi/b396532223.jpg",
+  "南宁博物馆": "images/poi/5d59e01d32.jpg",
+  "扬美古镇": "images/poi/e9c5343910.jpg",
+  "海南省博物馆": "images/poi/82c121f2bf.jpg",
+  "云洞图书馆": "images/poi/9622e2dc7e.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
