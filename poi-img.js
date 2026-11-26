@@ -3603,7 +3603,23 @@
   "白帝城": "images/poi/47297add69.jpg",
   "茂陵": "images/poi/21d6b3959c.jpg",
   "乾陵": "images/poi/031f5e5468.jpg",
-  "神农顶": "images/poi/e780a6e365.jpg"
+  "神农顶": "images/poi/e780a6e365.jpg",
+  "侵华日军南京大屠杀遇难同胞纪念馆": "images/poi/26c17d9a65.jpg",
+  "张之洞与武汉博物馆": "images/poi/771f306b30.jpg",
+  "扬州博物馆": "images/poi/c5686f3f8b.jpg",
+  "盐官古城": "images/poi/f1cb61e400.jpg",
+  "梅花洲": "images/poi/8e25caaa99.jpg",
+  "濮院古镇": "images/poi/63edbff04a.jpg",
+  "哈尔滨博物馆": "images/poi/dd3018eb58.jpg",
+  "关东古巷": "images/poi/e12ca97bcc.jpg",
+  "731部队罪证陈列馆": "images/poi/decad38c1b.jpg",
+  "榆次老城": "images/poi/5599c49abf.jpg",
+  "日昇昌票号": "images/poi/b017daba97.jpg",
+  "金山岭长城": "images/poi/44c8de0330.jpg",
+  "木兰围场": "images/poi/266c0be275.jpg",
+  "甘肃省博物馆": "images/poi/756e23cf9f.jpg",
+  "青城古镇": "images/poi/1e68cb3130.jpg",
+  "龙湖古寨": "images/poi/8c87067b49.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
