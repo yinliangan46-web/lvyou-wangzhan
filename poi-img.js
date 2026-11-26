@@ -3667,7 +3667,23 @@
   "中华龙文化博物馆": "images/poi/8e84ecbeea.jpg",
   "戚城遗址": "images/poi/21a282ca3b.jpg",
   "聂耳故居": "images/poi/5adf6130a8.jpg",
-  "曹魏古城": "images/poi/66d789ed96.jpg"
+  "曹魏古城": "images/poi/66d789ed96.jpg",
+  "阆中古城": "images/poi/fd32278661.jpg",
+  "朱德故居": "images/poi/e308cc2b2d.jpg",
+  "文天祥纪念馆": "images/poi/6250962bd0.jpg",
+  "淮阳太昊陵": "images/poi/006d806524.jpg",
+  "汉阳陵": "images/poi/17b0caba88.jpg",
+  "商丘古城": "images/poi/753f71b691.jpg",
+  "棣花古镇": "images/poi/fcce9101ef.jpg",
+  "梅山龙宫": "images/poi/a5bb743c60.jpg",
+  "友谊关": "images/poi/f60c75d0b4.jpg",
+  "昭化古城": "images/poi/42dc7d313a.jpg",
+  "庆阳周祖陵": "images/poi/13fdea9a9b.jpg",
+  "黄帝陵": "images/poi/ead0f4814b.jpg",
+  "洪江古商城": "images/poi/c709072f34.jpg",
+  "榆林古城": "images/poi/a620331bf1.jpg",
+  "齐文化博物馆": "images/poi/43f502b5f5.jpg",
+  "明显陵": "images/poi/78aebee573.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
