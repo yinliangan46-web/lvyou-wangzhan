@@ -3699,7 +3699,23 @@
         "会理古城": "images/poi/a0e066c3f4.jpg",
         "大研古城": "images/poi/98c3229a97.jpg",
         "甲蕃古城": "images/poi/99ce5b5fba.jpg",
-        "藏文化博物馆": "images/poi/f4de96be8e.jpg"
+        "藏文化博物馆": "images/poi/f4de96be8e.jpg",
+        "盘橐城": "images/poi/ca4a19958e.jpg",
+        "沧源崖画": "images/poi/083c240ec0.jpg",
+        "揭阳楼": "images/poi/d9871fbccd.jpg",
+        "客家围龙屋": "images/poi/b834512c04.jpg",
+        "孙子兵法城": "images/poi/187965c111.jpg",
+        "光岳楼": "images/poi/786a520b3f.jpg",
+        "真武阁": "images/poi/518d9bf9e3.jpg",
+        "茶马古道": "images/poi/99268ed438.jpg",
+        "春秋楼": "images/poi/d869892bde.jpg",
+        "贺州黄姚古镇": "images/poi/15d75c5ab2.jpg",
+        "陈毅故居": "images/poi/292be8f146.jpg",
+        "铜川博物馆": "images/poi/29bd4a087b.jpg",
+        "晋国博物馆": "images/poi/01a6a940d9.jpg",
+        "冉庄地道战遗址": "images/poi/f964bfb743.jpg",
+        "高昌故城": "images/poi/b1c286ba57.jpg",
+        "孙中山故居": "images/poi/cd53b3495b.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
