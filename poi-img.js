@@ -3515,7 +3515,25 @@
   "南宁博物馆": "images/poi/5d59e01d32.jpg",
   "扬美古镇": "images/poi/e9c5343910.jpg",
   "海南省博物馆": "images/poi/82c121f2bf.jpg",
-  "云洞图书馆": "images/poi/9622e2dc7e.jpg"
+  "云洞图书馆": "images/poi/9622e2dc7e.jpg",
+  "杨梅坑": "images/poi/8a9a0861f0.jpg",
+  "观澜版画村": "images/poi/6bc0bda384.jpg",
+  "深圳天文台": "images/poi/ddb257cd30.jpg",
+  "观澜山水田园": "images/poi/9391772ee9.jpg",
+  "鸦片战争博物馆": "images/poi/7a5d5c09d1.jpg",
+  "南风古灶": "images/poi/baf2cafd2c.jpg",
+  "逢简水乡": "images/poi/d08e2fef2a.jpg",
+  "佛山博物馆": "images/poi/5be475b69c.jpg",
+  "黄飞鸿纪念馆": "images/poi/afbf258522.jpg",
+  "海埂大坝": "images/poi/00128bd9b9.jpg",
+  "东川红土地": "images/poi/0ed0408c5e.jpg",
+  "东关清真大寺": "images/poi/b1ad5d8066.jpg",
+  "青海省博物馆": "images/poi/6e0b634756.jpg",
+  "丹噶尔古城": "images/poi/f9b6a6bc2e.jpg",
+  "阳关": "images/poi/6a1d32b41d.jpg",
+  "敦煌博物馆": "images/poi/a87186e1e8.jpg",
+  "河仓城": "images/poi/d949e08920.jpg",
+  "王家大院": "images/poi/6d81b84615.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
