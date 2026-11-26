@@ -37,10 +37,11 @@
     var AI_CONFIG = {
         enabled: true,
         proxies: [
+            'https://1542537436-h68qqsb997.ap-guangzhou.tencentscf.com',
             'https://myl-ai-proxy.yinliangan46.workers.dev',
             'https://lvyou-wangzhan.vercel.app/api/chat'
         ],
-        proxy: 'https://myl-ai-proxy.yinliangan46.workers.dev',
+        proxy: 'https://1542537436-h68qqsb997.ap-guangzhou.tencentscf.com',
         model: 'deepseek-chat',
         timeoutMs: 15000
     };
@@ -1309,4 +1310,5 @@
         init();
     }
 })();
+
 

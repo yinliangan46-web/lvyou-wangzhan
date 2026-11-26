@@ -292,6 +292,7 @@ function freeChat(raw, cb){
 }
 /* 站点 AI 代理端点：按顺序依次回退，哪个可达走哪个；Key 只在后端，前端不存 */
 var SITE_APIS=[
+  'https://1542537436-h68qqsb997.ap-guangzhou.tencentscf.com',
   'https://myl-ai-proxy.yinliangan46.workers.dev',
   'https://lvyou-wangzhan.vercel.app/api/chat'
 ];
@@ -646,4 +647,5 @@ function initSmart(){
   };
 }
 initSmart();
+
 
