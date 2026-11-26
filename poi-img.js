@@ -3569,7 +3569,25 @@
   "永乐宫": "images/poi/4d770c0edf.jpg",
   "李家大院": "images/poi/2f1a6c9c19.jpg",
   "舜帝陵": "images/poi/df1272eaf1.jpg",
-  "运城博物馆": "images/poi/e1fee27d11.jpg"
+  "运城博物馆": "images/poi/e1fee27d11.jpg",
+  "开封博物馆": "images/poi/3a90db0f3a.jpg",
+  "中国翰园碑林": "images/poi/edd16d54d9.jpg",
+  "天波杨府": "images/poi/47863a0d0b.jpg",
+  "朱仙镇": "images/poi/3ee6e5a2d2.jpg",
+  "果子沟大桥": "images/poi/7ac74bdb70.jpg",
+  "霍尔果斯口岸": "images/poi/a550057563.jpg",
+  "昭苏油菜花": "images/poi/525a43ca64.jpg",
+  "特克斯八卦城": "images/poi/4347429195.jpg",
+  "金华博物馆": "images/poi/2749ddb07e.jpg",
+  "侍王府": "images/poi/2f811b1561.jpg",
+  "方岩": "images/poi/9dce2687f1.jpg",
+  "李庄古镇": "images/poi/7c659cc551.jpg",
+  "僰人巨石阵": "images/poi/f36dd4e4a8.jpg",
+  "五粮液景区": "images/poi/70f2310f72.jpg",
+  "牯牛降": "images/poi/d49557ac45.jpg",
+  "南屏": "images/poi/ccc0365eb4.jpg",
+  "潜口民宅": "images/poi/0a63cc7dfa.jpg",
+  "杨柳青古镇": "images/poi/41570c233a.jpg"
 };
     var POI_IMG_FOOD = {
         "喜洲粑粑": "images/poi/416c2d6330.jpg",
