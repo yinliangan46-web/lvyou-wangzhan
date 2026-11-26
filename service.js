@@ -37,12 +37,12 @@
     var AI_CONFIG = {
         enabled: true,
         proxies: [
-            'https://lvyou-wangzhan.vercel.app/api/chat',
-            'https://myl-ai-proxy.yinliangan46.workers.dev'
+            'https://myl-ai-proxy.yinliangan46.workers.dev',
+            'https://lvyou-wangzhan.vercel.app/api/chat'
         ],
-        proxy: 'https://lvyou-wangzhan.vercel.app/api/chat',
+        proxy: 'https://myl-ai-proxy.yinliangan46.workers.dev',
         model: 'deepseek-chat',
-        timeoutMs: 9000
+        timeoutMs: 15000
     };
 
     var AI_SYSTEM = [
@@ -1309,3 +1309,4 @@
         init();
     }
 })();
+
