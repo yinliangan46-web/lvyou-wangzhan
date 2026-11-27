@@ -9248,7 +9248,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["交河故城",70],["火焰山景区",40],["葡萄沟",60],["坎儿井",40]]
  },
  "哈密": {
   "tier": "normal",
@@ -9393,7 +9393,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["那拉提草原(门票)",95],["那拉提空中草原区间车",40]]
  },
  "塔城": {
   "tier": "normal",
@@ -9451,7 +9451,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["喀纳斯景区(门票,旺季)",160],["喀纳斯区间车",70],["禾木景区(门票)",50]]
  },
  "台北": {
   "tier": "normal",
@@ -10292,7 +10292,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["西江千户苗寨(门票)",90],["苗寨观光车",20]]
  },
  "黔南布依族苗族自治州": {
   "tier": "normal",
@@ -10437,7 +10437,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["野象谷",60],["曼听公园",40],["中科院热带植物园",80]]
  },
  "大理白族自治州": {
   "tier": "normal",
@@ -10466,7 +10466,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["崇圣寺三塔",75],["苍山感通索道(往返)",100],["蝴蝶泉",40]]
  },
  "德宏傣族景颇族自治州": {
   "tier": "normal",
@@ -10611,7 +10611,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["拉卜楞寺",40],["扎尕那",40]]
  },
  "海北藏族自治州": {
   "tier": "normal",
@@ -11075,7 +11075,7 @@ window.CITY_BUDGET = {
    "comfort": 35,
    "luxury": 60
   },
-  "spots": []
+  "spots": [["喀纳斯景区(门票,旺季)",160],["喀纳斯区间车",70],["禾木景区(门票)",50]]
  },
  "湘西": {
   "tier": "normal",
