@@ -183,10 +183,11 @@ function rebalanceDays(days, poolSpots, reqDays, cityName){
   var L=localGroups.length;
   if(!L) return days;
   /* 流程/用餐/交通/休整类短语，不占用每天景点名额 */
-  var NONSPOT=/抵达|入住|退房|前往机场|前往车站|接机|接站|送站|返程|出发|登机|值机|安检|返回酒店|起床|整理行李|行李|自由活动|自由闲逛|闲逛|下午茶|早餐|午餐|晚餐|夜宵|小吃|招牌菜|饮品|美食|特色菜|逛吃|休整|休息|漫步|游览|景区|深度|接送|车站|机场|酒店|时间|下午|上午/;
+  var NONSPOT=/抵达|入住|退房|前往机场|前往车站|接机|接站|送站|返程|出发|登机|值机|安检|返回酒店|起床|整理行李|行李|自由活动|自由闲逛|闲逛|下午茶|早餐|午餐|晚餐|夜宵|小吃|招牌菜|饮品|美食|特色菜|逛吃|休整|休息|漫步|游览|深度|接送|车站|机场|时间|下午|上午/;
   /* 弱景点：休闲街区/公园/湖泊/乐园/温泉等，不占核心景点名额，核心排完再兜底 */
   var WEAK=/街$|巷$|步行街|公园|湿地|乐园|温泉|广场|商圈|街区|夜市|市集|欢乐谷/;
   var names=cityScenicNames(cityName);
+  (poolSpots||[]).forEach(function(s){ var nm=s.n||s.name||''; if(nm && !NONSPOT.test(nm) && names.indexOf(nm)<0) names.push(nm); });
   function classify(n){
     if(!n||!n.n) return null;
     var hit=names.length?matchScenic(n.n,names):null;
@@ -209,6 +210,13 @@ function rebalanceDays(days, poolSpots, reqDays, cityName){
     var k=classify(node);
     if(k==='spot' && !used[node.n]){ used[node.n]=1; scenic.push(node); }
     else if(k==='weak' && !used[node.n]){ used[node.n]=1; weakArr.push(node); }
+  });
+  /* 白名单中尚未用到的景点一并纳入候选，避免手写/行程节点偏少导致每天只剩 1 站 */
+  names.forEach(function(canon){
+    if(!canon || used[canon]) return;
+    used[canon]=1;
+    var node={n:canon, d:'当地代表性景点', t:''};
+    if(WEAK.test(canon)) weakArr.push(node); else scenic.push(node);
   });
   /* 核心景点足够排满 2 站/天才每天 2 个；天数长、核心景点不够时退化为每天 1 个 */
   var min = scenic.length >= L*2 ? 2 : 1;
@@ -363,11 +371,11 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
     预算档:({budget:'经济',comfort:'舒适',luxury:'品质'})[ans.budget]||'舒适',
     偏好:({food:'美食',sight:'景观',culture:'人文',relax:'休闲'})[ans.pref]||'综合',
     跨城景点:curExcursions.map(function(e){return e.city+'·'+e.name;}),
-    站内景点库:pd.spots.slice(0,12).map(function(s){return s.n+(s.d?'：'+s.d:'');}),
+    站内景点库:pd.spots.slice(0,20).map(function(s){return s.n+(s.d?'：'+s.d:'');}),
     站内美食库:pd.foods.slice(0,8).map(function(f){return f.n;}),
     站内酒店库:pd.hotels.slice(0,4).map(function(h){return h.a+(h.p?'（'+h.p+'）':'');})
   };
-  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文；5) 忠实用户原话：天数、人数、同行关系、明确提到的景点（含其他城市的跨城景点）不得遗漏、不得擅自改成默认值；6) 用户提到的景点若不在站内库，仍按原话列入，并在说明里标注其所属城市；7) 每日景点数量要合理均衡：城市可排景点充足时（如3天以内的热门城市），每天安排2-3个景点，不要出现整天只有1个景点的安排；只有当天数较长、站内景点不够排满时，才允许某天1个景点或自由活动；跨城一日游当天除外。';
+  var sys='你是一名专业旅行规划师，根据用户需求结合站内景点/美食/酒店库生成贴近真实的中文路书。严格输出纯 JSON（不要 markdown 代码块、不要任何解释文字），格式：{"days":[{"label":"Day 1 · 主题","nodes":[{"n":"节点名","d":"一句话说明","t":"门票或时长"}]}],"foods":[{"n":"","d":"","p":""}],"hotels":[{"a":"","l":"","p":""}],"traffic":["交通方式：说明"]}. 要求：1) days 数量必须正好等于指定天数；2) 若给出跨城景点，每个安排一整天跨城行程并写清往返交通；3) 内容贴近真实地理与门票常识；4) 全部中文；5) 忠实用户原话：天数、人数、同行关系、明确提到的景点（含其他城市的跨城景点）不得遗漏、不得擅自改成默认值；6) 用户提到的景点若不在站内库，仍按原话列入，并在说明里标注其所属城市；7) 每日景点数量要合理均衡：城市可排景点充足时（如3天以内的热门城市），每天安排2-3个景点，不要出现整天只有1个景点的安排；只有当天数较长、站内景点不够排满时，才允许某天1个景点或自由活动；跨城一日游当天除外；8) 站内库仅作参考，若库内该城景点不足以排满每天2个，可凭常识补充该城市真实存在、确有其地的知名古迹/博物馆/名山/古镇/景区/街区，不要编造虚构景点；门票价格不确定时 t 留空，不要瞎写数字。';
   var user='请生成行程 JSON，需求：'+JSON.stringify(ctx);
   if(rawText)user+='\n\n用户原话：“'+rawText+'”（以原话为准：天数、人数、同行人、跨城景点与 ctx 解析不符时，按原话纠正）。';
   if(fromTune)user+='\n\n用户调整要求：'+tuneText+'（在原行程基础上修改后输出完整 JSON）';
@@ -375,7 +383,8 @@ function llmGenerate(name,c,pd,reqDays,cb,fromTune,tuneText,rawText){
     if(err)return cb(false,null,err.message||String(err));
     try{
       var t2=text.trim().replace(/^```(json)?\s*/i,'').replace(/```\s*$/,'').trim();
-      var j=JSON.parse(t2);
+      var m=t2.match(/\{[\s\S]*\}/);
+      var j=JSON.parse(m?m[0]:t2);
       if(!j.days||!j.days.length)throw new Error('days 为空');
       j.days=j.days.slice(0,reqDays);
       while(j.days.length<reqDays)j.days.push({label:'Day X · 自由深度', nodes:[{n:'自由活动', d:'慢节奏补充一天，逛吃为主。', t:''}]});
@@ -684,6 +693,7 @@ function initSmart(){
   };
 }
 initSmart();
+
 
 
 

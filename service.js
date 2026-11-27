@@ -620,7 +620,7 @@
             return { text: html, chips: [city + ' ' + dayNum + ' 日游', '帮我规划行程', '转人工客服'] };
         }
 
-        var arriveRe = /抵达|入住|退房|返程|前往机场|值机|登机|起床|酒店早餐/;
+        var arriveRe = /抵达|入住|退房|前往机场|前往车站|接机|接站|送站|返程|出发|登机|值机|安检|返回酒店|起床|整理行李|行李|自由活动|自由闲逛|闲逛|下午茶|早餐|午餐|晚餐|夜宵|小吃|招牌菜|饮品|美食|特色菜|逛吃|休整|休息|漫步|游览|深度|接送|车站|机场/;
         var picked;
 
         if (dayNum === 1) {
@@ -644,11 +644,7 @@
             var label = dayNum === 1 ? 'Day 1' : (d.day || ('Day ' + (idx + 1)));
             html += '<span class="cs-line"></span><b>' + esc(label) + '</b>' +
                 (d.theme ? ' <span class="cs-t-tip">' + esc(d.theme) + '</span>' : '');
-            var items = (d.timeline || []).slice(0, 6);
-            if (dayNum === 1) {
-                var filtered = items.filter(function (it) { return !arriveRe.test(String(it.activity || '')); });
-                if (filtered.length) items = filtered;
-            }
+            var items = (d.timeline || []).slice(0, 6).filter(function (it) { return !arriveRe.test(String(it.activity || '')); });
             items.forEach(function (it) {
                 var time = it.time ? '<span class="cs-t-time">' + esc(it.time) + '</span>' : '';
                 var act = esc(it.activity || '');
@@ -1310,5 +1306,6 @@
         init();
     }
 })();
+
 
 
