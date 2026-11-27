@@ -637,6 +637,16 @@
             for (var si = 0; si < left; si++) alloc[shares[si % shares.length].c]++;
         }
 
+        /* 短天数每天至少 2 个景点：已选景点不足 2×天数时，按偏好从本站景点库补足；
+           库内景点不够排满时才维持现状（退化为一天一个），不虚构景点。 */
+        cities.forEach(function (c) {
+            var need = alloc[c] * 2;
+            var have = picks[c];
+            var rest = CATALOG[c].items.filter(function (i) { return have.indexOf(i.name) < 0; });
+            rest.sort(function (a, b) { return (prefScore(b) * 10 - b.idx) - (prefScore(a) * 10 - a.idx); });
+            while (have.length < need && rest.length) have.push(rest.shift().name);
+        });
+
         var daysList = [];
         var dayNo = 0, totalKm = 0, ticketSum = 0, trainSum = 0, prevCity = null;
         var hotelNights = 0;
@@ -3285,5 +3295,6 @@
         }
     };
 })();
+
 
 
